@@ -10,18 +10,18 @@
 
 namespace kege{
 
-    void Engine::addSystem( const std::string& name )
-    {
-        kege::Ref< kege::System > system = SystemFactory::instance().create( name, this );
-        if ( system )
-        {
-            addSystem( system );
-        }
-        else
-        {
-            KEGE_LOG_ERROR << "system create function for -> "<< name <<" dont exist." <<Log::nl;
-        }
-    }
+//    void Engine::addSystem( const std::string& name )
+//    {
+//        kege::Ref< kege::System > system = SystemFactory::instance().create( name, this );
+//        if ( system )
+//        {
+//            addSystem( system );
+//        }
+//        else
+//        {
+//            KEGE_LOG_ERROR << "system create function for -> "<< name <<" dont exist." <<Log::nl;
+//        }
+//    }
 
     void Engine::changeScene( uint32_t scene_id )
     {
@@ -50,10 +50,7 @@ namespace kege{
         _scene = scene;
 
         // alert systems of the scene change
-        for (kege::Ref< kege::System > system : _systems )
-        {
-            system->onSceneChange();
-        }
+        _esm->onSceneChange();
     }
 
     kege::Scene* Engine::getScene()
@@ -61,40 +58,27 @@ namespace kege{
         return _scene.ref();
     }
 
-    void Engine::addSystem( kege::Ref< kege::System > system )
+    void Engine::addSystem( kege::System* system )
     {
         _systems.push_back( system );
-
-        if ( system->checkFlag( kege::System::REQUIRE_UPDATE ) )
-        {
-            _system_updates.push_back( system.ref() );
-        }
-        if ( system->checkFlag( kege::System::REQUIRE_RENDER ) )
-        {
-            _system_renders.push_back( system.ref() );
-        }
-        if ( system->checkFlag( kege::System::REQUIRE_INPUT ) )
-        {
-            _system_inputs.push_back( system.ref() );
-        }
     }
 
-    kege::InputContextManager& Engine::getInputContextManager()
-    {
-        return _input_context_manager;
-    }
+//    kege::InputContextManager& Engine::getInputContextManager()
+//    {
+//        return _input_context_manager;
+//    }
+//
+//    kege::UserInputReceiver& Engine::getUserInputReceiver()
+//    {
+//        return _input_receiver;
+//    }
+//
+//    kege::MappedInputs& Engine::getMappedInputs()
+//    {
+//        return _mapped_inputs;
+//    }
 
-    kege::UserInputReceiver& Engine::getUserInputReceiver()
-    {
-        return _input_receiver;
-    }
-
-    kege::MappedInputs& Engine::getMappedInputs()
-    {
-        return _mapped_inputs;
-    }
-
-    kege::AssetSystem& Engine::getAssetSystem()
+    kege::AssetSystem& Engine::assetSystem()
     {
         return _asset_system;
     }
@@ -103,35 +87,52 @@ namespace kege{
     {
         return _virtual_directory;
     }
-    
-    kege::RenderGraph* Engine::getRenderGraph()
+
+    kege::CoreRenderGraph& Engine::renderGraph()
     {
-        return _graph.ref();
+        return _render_graph;
+    }
+    kege::CoreGraphics& Engine::graphics()
+    {
+        return _graphics;
+    }
+    kege::CoreInput& Engine::input()
+    {
+        return _input;
+    }
+    kege::CoreESM& Engine::esm()
+    {
+        return _esm;
+    }
+    kege::CoreECS& Engine::ecs()
+    {
+        return _ecs;
+    }
+    kege::CoreVFS& Engine::vfs()
+    {
+        return _vfs;
     }
 
-    kege::GraphicsWindow* Engine::getWindow()
-    {
-        return _window.ref();
-    }
-    
-    kege::Graphics* Engine::getGraphics()
-    {
-        return _graphics.ref();
-    }
+//    kege::RenderGraph* Engine::getRenderGraph()
+//
+//    kege::GraphicsWindow* Engine::getWindow()
+//    {
+//        return _window.ref();
+//    }
+//    
+//    kege::Graphics* Engine::getGraphics()
+//    {
+//        return _graphics._module.;
+//    }
 
-    bool Engine::initalize()
+    bool Engine::initialize()
     {
-        Log::info << "\n- Engine initializing...\n";
-
         _root_directory = "/Users/kae/Developer/xcode/KE-GE/kege";
-        _virtual_directory.add( "assets", "/Users/kae/Developer/xcode/KE-GE/kege/assets" );
-        _virtual_directory.add( "graphics-shaders", "/Users/kae/Developer/xcode/KE-GE/kege/assets/shaders/glsl/graphics" );
-        _virtual_directory.add( "compute-shaders", "/Users/kae/Developer/xcode/KE-GE/kege/assets/shaders/glsl/compute" );
 
-        if ( !initalizeAllSystems() )
+        if ( !initalizeCoreSystems() )
         {
             return false;
-        };
+        }
 
         // 10. Load Initial Scene
         // Example: Load the first scene file path if available
@@ -153,10 +154,7 @@ namespace kege{
 
 
         // alert systems of the scene change
-        for (kege::Ref< kege::System > system : _systems )
-        {
-            system->onSceneChange();
-        }
+        _esm->onSceneChange();
 
         // 12. Final Preparations
         _previous_time = Duration::zero(); // Reset for first delta time calculation in loop()
@@ -176,86 +174,7 @@ namespace kege{
 
         _asset_system.shutdown();
 
-        _input_context_manager.shutdown();
-        _input_receiver.shutdown();
-        _mapped_inputs.clear();
-
-        _system_inputs.clear();
-        _system_renders.clear();
-        _system_updates.clear();
-        shutdownAllSystems();
-
-        //if ( _audio_device )
-        //{
-        //    _audio_device->shutdown();
-        //    _audio_device.clear();
-        //}
-
-        if ( _graph )
-        {
-            _graph.clear();
-        }
-
-        if ( _graphics )
-        {
-            _graphics->shutdown();
-            _graphics.clear();
-        }
-
-        if ( _window )
-        {
-            _window->destroy();
-            _window.clear();
-        }
-    }
-
-    void Engine::render()
-    {
-        if ( _graphics->beginFrame() < 0 )
-        {
-            KEGE_LOG_ERROR << "Failed to begin Frame" <<Log::nl;
-            _running = false;
-        }
-
-        _graph->execute();
-
-        if ( !_graphics->endFrame() )
-        {
-            KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;
-            _running = false;
-        }
-    }
-
-    void Engine::update()
-    {
-        if ( !_scene->ready() )
-        {
-            _scene->initialize();
-        }
-
-        //while ( _lag >= _fixed_delta_time )
-        {
-            for (kege::System* system : _system_updates )
-            {
-                system->update( _fixed_delta_time );
-            }
-            _lag -= _fixed_delta_time;
-        }
-    }
-
-    void Engine::input()
-    {
-        std::vector< kege::Input > inputs;
-        _input_receiver.getInputs( inputs );
-
-        //if ( _gui.process( inputs ) ) return;
-
-        _input_context_manager.process( inputs );
-        Communication::broadcast< const MappedInputs& >( _mapped_inputs );
-//        for ( kege::System* system : _system_inputs )
-//        {
-//            system->input( inputs );
-//        }
+        shutdownCoreSystems();
     }
 
     double Engine::calcDeltaTime()
@@ -267,6 +186,11 @@ namespace kege{
         return dms;
     }
 
+    double Engine::dms()const
+    {
+        return _fixed_delta_time;
+    }
+    
     void Engine::tick()
     {
         _delta_time = calcDeltaTime();
@@ -284,16 +208,40 @@ namespace kege{
         _running = true;
         tick();
 
-        while ( _running && !_window->shouldClose() )
+        while ( _running && !_graphics->windowIsOpen() )
         {
             try
             {
-                _window->pollEvents();
+                _graphics->getWindow()->pollEvents();
 
                 tick();
-                input();
-                update();
-                render();
+                _input.update();
+
+                if ( !_scene->ready() )
+                {
+                    _scene->initialize();
+                }
+                //while ( _lag >= _fixed_delta_time )
+                {
+                    _esm->update( _fixed_delta_time );
+                    _lag -= _fixed_delta_time;
+                }
+
+
+                if ( 0 <= _graphics->beginFrame() )
+                {
+                    _render_graph->execute();
+                    if ( !_graphics->endFrame() )
+                    {
+                        KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;
+                        _running = false;
+                    }
+                }
+                else
+                {
+                    KEGE_LOG_ERROR << "Failed to begin Frame" <<Log::nl;
+                    _running = false;
+                }
             }
             catch ( const std::exception& arg )
             {
@@ -308,21 +256,26 @@ namespace kege{
         return std::chrono::high_resolution_clock::now() - _start_time;
     }
 
-    bool Engine::initalizeAllSystems()
+    bool Engine::initalizeCoreSystems()
     {
-        for (kege::Ref< kege::System >& system : _systems )
+        Log::info << "engine initializing " << Log::nl;
+        for ( kege::System* system : _systems )
         {
+            Log::info << "initializing -> " << system->getName() <<"\n";
             if ( !system->initialize() )
             {
+                Log::info  << system->getName()<< " -> initialization failed\n";
                 return false;
             }
+            Log::info  << system->getName()<< " -> initialization complete \n";
         }
+        Log::info << "engine initialization complete..." << Log::nl;
         return true;
     }
 
-    void Engine::shutdownAllSystems()
+    void Engine::shutdownCoreSystems()
     {
-        std::vector< kege::Ref< kege::System > >::reverse_iterator syst;
+        std::vector<  kege::System* >::reverse_iterator syst;
         for ( syst = _systems.rbegin(); syst != _systems.rend(); syst++ )
         {
             Log::info << "shuting-down -> " << (*syst)->getName() <<"\n";
@@ -344,62 +297,21 @@ namespace kege{
     ,   _max_frame_time( 0.25 )
     ,   _delta_time( 0 )
     ,   _lag( 0 )
+    ,   _ecs( this )
+    ,   _esm( this )
+    ,   _graphics( this )
+    ,   _input( this )
+    ,   _render_graph( this )
+    ,   _vfs( this )
     {
         _start_time = std::chrono::high_resolution_clock::now();
 
-        addSystem( "logging" );
-        addSystem( "graphics" );
-        addSystem( "render-graph" );
-        addSystem( "input" );
-        addSystem( "ecs" );
-
-        addSystem( "camera-controller" );
-        addSystem( "lookat" );
-        addSystem( "follow" );
-        addSystem( "movement-controller" );
-        
-        addSystem( "compute-camera-ray" );
-        addSystem( "entity-selecter" );
-        addSystem( "entity-dragging" );
-
-        addSystem( "particle-emitter-updater" );
-        addSystem( "particle-effect-updater" );
-
-        addSystem( "physics" );
-        addSystem( "rigidbody-to-transform" );
-
-        addSystem( "camera" );
-        addSystem( "mesh-rendering" );
-        
-        addSystem( "entity-factory" );
-
-//
-
-        //_engine.add< kege::SleepSystem >();
-//        addSystem< kege::LoggingSystem >();
-//        addSystem< kege::GraphicsSystem >();
-//        addSystem< kege::RenderingSystem >();
-//        addSystem< kege::MeshRenderingSystem >();
-//        addSystem< kege::DebugLineRenderSystem >();
-//        addSystem< kege::ECSystem >();
-//        addSystem< kege::InputSystem >();
-//        addSystem< kege::CameraSystem >();
-//        addSystem< kege::LookAtSystem >();
-//        addSystem< kege::FollowSystem >();
-//        addSystem< kege::MovementSystem >();
-//        addSystem< kege::ComputeSceneRay >();
-//
-//        addSystem< kege::ParticleEmissionSystem >();
-//        addSystem< kege::ParticleSystem >();
-//        addSystem< kege::BillboardParticleRenderer >();
-//
-//        addSystem< EntityFactory >();
-//        addSystem< kege::EntitySelectionSystem >();
-//        addSystem< kege::EntityDraggingSystem >();
-//
-//        addSystem< kege::UpdateDecayOverTime >();
-//        addSystem< kege::PhysicsSystem >();
-//        //_engine.add< kege::SleepSystem >();
+        addSystem( &_vfs );
+        addSystem( &_graphics );
+        addSystem( &_render_graph );
+        addSystem( &_input );
+        addSystem( &_ecs );
+        addSystem( &_esm );
     }
 
 }

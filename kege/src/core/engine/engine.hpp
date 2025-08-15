@@ -9,17 +9,24 @@
 #define engine_hpp
 
 #include "log.hpp"
-#include "virtual-directory.hpp"
 #include "system.hpp"
 #include "scene.hpp"
 #include "scene-loader.hpp"
 #include "user-input-receiver.hpp"
 
 #include "../../core/container/asset-system.hpp"
-#include "../../core/system/system-factory.hpp"
+#include "../../core/system/entity-system-manager.hpp"
 #include "../../core/graphics/core/graphics.hpp"
 #include "../../core/graphics/graph/render-graph.hpp"
 #include "../../core/input/input-context-manager.hpp"
+
+#include "core-ecs.hpp"
+#include "core-esm.hpp"
+#include "core-vfs.hpp"
+#include "core-input.hpp"
+#include "core-logging.hpp"
+#include "core-graphics.hpp"
+#include "core-render-graph.hpp"
 
 namespace kege{
 
@@ -37,26 +44,27 @@ namespace kege{
             return system;
         }
 
-        void addSystem( const std::string& name );
+        //void addSystem( const std::string& name );
 
         void changeScene( uint32_t scene_id );
         void setScene( kege::Ref< kege::Scene > scene );
         kege::Scene* getScene();
 
-
-
-        kege::InputContextManager& getInputContextManager();
-        kege::UserInputReceiver& getUserInputReceiver();
-        kege::MappedInputs& getMappedInputs();
-        kege::AssetSystem& getAssetSystem();
+        kege::AssetSystem& assetSystem();
 
         kege::VirtualDirectory& getVirtualDirectory();
-        kege::RenderGraph* getRenderGraph();
-        kege::GraphicsWindow* getWindow();
-        kege::Graphics* getGraphics();
+        kege::CoreRenderGraph& renderGraph();
+        kege::CoreGraphics& graphics();
+        kege::CoreInput& input();
+        kege::CoreESM& esm();
+        kege::CoreECS& ecs();
+        kege::CoreVFS& vfs();
 
-        bool initalize();
+        double dms()const;
+
+        bool initialize();
         void shutdown();
+        void tick();
         void run();
 
         ~Engine();
@@ -64,57 +72,27 @@ namespace kege{
 
     private:
 
-        void addSystem( kege::Ref< kege::System > system );
-        void update();
-        void render();
-        void input();
-        void tick();
+        void addSystem( kege::System* system );
 
-
-        bool initalizeAllSystems();
-        void shutdownAllSystems();
+        bool initalizeCoreSystems();
+        void shutdownCoreSystems();
 
         double calcDeltaTime();
         Duration now();
 
     private:
 
-        SystemFactory _system_factory;
-        //kege::Ref< kege::audio::Device > _audio_device;
-
-        kege::Ref< kege::GraphicsWindow > _window;
-        kege::Ref< kege::Graphics > _graphics;
-
-        kege::Ref< kege::RenderGraph > _graph;
-
+        kege::VirtualDirectory _virtual_directory;
+        kege::CoreGraphics _graphics;
+        kege::CoreRenderGraph _render_graph;
+        kege::CoreInput _input;
+        kege::CoreESM _esm;
+        kege::CoreECS _ecs;
+        kege::CoreVFS _vfs;
+        
         kege::AssetSystem _asset_system;
 
-        /**
-         * Store the current input comming in the user. Note: These inputs must me cleared every frame.
-         */
-        kege::UserInputReceiver _input_receiver;
-        kege::InputContextManager _input_context_manager;
-        kege::MappedInputs _mapped_inputs;
-
-        kege::VirtualDirectory _virtual_directory;
-
-
-        std::vector< kege::Ref< kege::System > > _systems;
-
-        /**
-         * systems that require their update function to be called
-         */
-        std::vector< kege::System* > _system_updates;
-
-        /**
-         * systems that requires their render function to be called
-         */
-        std::vector< kege::System* > _system_renders;
-
-        /**
-         * systems that requires their input function to be called
-         */
-        std::vector< kege::System* > _system_inputs;
+        std::vector< kege::System* > _systems;
 
         std::vector< std::string > _scene_files;
         kege::Ref< kege::Scene > _scene;
