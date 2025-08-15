@@ -8,11 +8,10 @@
 #ifndef engine_hpp
 #define engine_hpp
 
-#include "log.hpp"
-#include "system.hpp"
-#include "scene.hpp"
-#include "scene-loader.hpp"
-#include "user-input-receiver.hpp"
+#include "../utils/log.hpp"
+#include "../system/system.hpp"
+#include "../scene/scene.hpp"
+#include "../loader/scene-loader.hpp"
 
 #include "../../core/container/asset-system.hpp"
 #include "../../core/system/entity-system-manager.hpp"

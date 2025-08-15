@@ -8,8 +8,8 @@
 #ifndef logging_system_hpp
 #define logging_system_hpp
 
-#include "system.hpp"
-#include "log.hpp"
+#include "../system/system.hpp"
+#include "../utils/log.hpp"
 
 namespace kege{
 

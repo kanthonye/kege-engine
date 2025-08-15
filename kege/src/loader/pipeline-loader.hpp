@@ -8,12 +8,9 @@
 #ifndef pipeline_loader_hpp
 #define pipeline_loader_hpp
 
-#include "log.hpp"
-#include "graphics-device.hpp"
-#include "string-to-enum-types.hpp"
-
-#include "json-parser.hpp"
-//#include "glsl-parser.hpp"
+#include "../graphics/core/graphics-device.hpp"
+#include "../graphics/core/string-to-enum-types.hpp"
+#include "../utils/json-parser.hpp"
 
 namespace kege{
 

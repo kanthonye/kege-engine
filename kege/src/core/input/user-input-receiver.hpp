@@ -8,9 +8,9 @@
 #ifndef input_handler_hpp
 #define input_handler_hpp
 
-#include "inputs.hpp"
-#include "graphics-window.hpp"
-#include "thread-safe-vector.hpp"
+#include "../input/inputs.hpp"
+#include "../input/thread-safe-vector.hpp"
+#include "../graphics/core/graphics-window.hpp"
 
 namespace kege{
 

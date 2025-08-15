@@ -8,11 +8,10 @@
 #ifndef settings_hpp
 #define settings_hpp
 
-#include "ref.hpp"
 #include <vector>
 #include <map>
 
-#include "system-factory.hpp"
+#include "system.hpp"
 
 namespace kege{
 

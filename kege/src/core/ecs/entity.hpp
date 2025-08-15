@@ -251,7 +251,7 @@ namespace kege{
          * @brief Initializes the entity manager.
          * @return True if initialization was successful, false otherwise.
          */
-        static bool initialize();
+        static bool initialize( kege::EntityManager* mgr );
 
         /**
          * @brief Shuts down the entity manager, releasing all resources.
@@ -285,7 +285,7 @@ namespace kege{
          *
          * This single instance is shared across all `Entity` objects.
          */
-        static kege::EntityManager _mgr;
+        static kege::EntityManager* _mgr;
 
         /**
          * @brief The unique identifier of this entity.
@@ -297,56 +297,56 @@ namespace kege{
     template< typename Component >
     Component* Entity::set( const Component& component )
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.set< Component >( _id, component ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->set< Component >( _id, component ) : nullptr;
     }
 
 
     template< typename Component >
     Component* Entity::add( const Component& component )
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.add< Component >( _id, component ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->add< Component >( _id, component ) : nullptr;
     }
 
     template< typename Component >
     Component* Entity::add()
     {
-        return _mgr.add< Component >( _id );
+        return _mgr->add< Component >( _id );
     }
 
     template< typename Component >
     void Entity::erase()
     {
-        if ( _mgr.isvalid( _id ) ) _mgr.erase< Component >( _id );
+        if ( _mgr->isvalid( _id ) ) _mgr->erase< Component >( _id );
     }
 
     template< typename Component >
     const Component* Entity::get( uint32_t cid ) const
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.get< Component >( _id, cid ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->get< Component >( _id, cid ) : nullptr;
     }
 
     template< typename Component >
     Component* Entity::get( uint32_t cid )
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.get< Component >( _id, cid ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->get< Component >( _id, cid ) : nullptr;
     }
 
     template< typename Component >
     const Component* Entity::get() const
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.get< Component >( _id ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->get< Component >( _id ) : nullptr;
     }
 
     template< typename Component >
     Component* Entity::get()
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.get< Component >( _id ) : nullptr;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->get< Component >( _id ) : nullptr;
     }
 
     template< typename Component >
     bool Entity::has() const
     {
-        return ( _mgr.isvalid( _id ) ) ? _mgr.has< Component >( _id ) : false;
+        return ( _mgr->isvalid( _id ) ) ? _mgr->has< Component >( _id ) : false;
     }
 
 }

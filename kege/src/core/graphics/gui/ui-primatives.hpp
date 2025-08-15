@@ -9,8 +9,8 @@
 #define ui_primitives_hpp
 
 #include <stdlib.h>
-#include "vectors.hpp"
-#include "graphics.hpp"
+#include "../../math/algebra/vectors.hpp"
+#include "../../graphics/core/graphics.hpp"
 
 namespace kege::ui{
 

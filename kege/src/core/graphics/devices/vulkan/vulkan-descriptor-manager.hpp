@@ -12,7 +12,7 @@
 #include <set>
 #include <vector>
 #include "vulkan-resources.hpp"
-#include "resource-recycler.hpp"
+#include "../../core/resource-recycler.hpp"
 
 namespace kege::vk{
 

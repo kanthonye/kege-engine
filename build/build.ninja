@@ -137,6 +137,443 @@ build libvector_math.a: CXX_STATIC_LIBRARY_LINKER__vector_math_Debug CMakeFiles/
   TARGET_PDB = vector_math.a.dbg
 
 # =============================================================================
+# Object build statements for STATIC_LIBRARY target engine
+
+
+#############################################
+# Order-only phony target for engine
+
+build cmake_object_order_depends_target_engine: phony || .
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-ecs.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-ecs.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-ecs.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-esm.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-esm.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-esm.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-graphics.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-graphics.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-graphics.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-input.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-input.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-input.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-logging.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-logging.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-logging.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-render-graph.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-render-graph.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-render-graph.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/core-vfs.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-vfs.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/core-vfs.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+build CMakeFiles/engine.dir/kege/src/core/engine/engine.cpp.o: CXX_COMPILER__engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/engine.cpp || cmake_object_order_depends_target_engine
+  DEP_FILE = CMakeFiles/engine.dir/kege/src/core/engine/engine.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/engine.dir
+  OBJECT_FILE_DIR = CMakeFiles/engine.dir/kege/src/core/engine
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target engine
+
+
+#############################################
+# Link the static library libengine.a
+
+build libengine.a: CXX_STATIC_LIBRARY_LINKER__engine_Debug CMakeFiles/engine.dir/kege/src/core/engine/core-ecs.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-esm.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-graphics.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-input.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-logging.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-render-graph.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/core-vfs.cpp.o CMakeFiles/engine.dir/kege/src/core/engine/engine.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/engine.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libengine.a
+  TARGET_PDB = engine.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target graphics
+
+
+#############################################
+# Order-only phony target for graphics
+
+build cmake_object_order_depends_target_graphics: phony || .
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-encoder.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/command-encoder.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-encoder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-recorder.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/command-recorder.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-recorder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/glfw-window.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/glfw-window.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/glfw-window.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-core.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-core.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-core.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-device.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-device.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-device.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-instance.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-instance.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-instance.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-physical-device.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-physical-device.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-physical-device.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-window.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-window.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-window.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/resource-recycler.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/resource-recycler.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/resource-recycler.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-pipeline-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/shader-pipeline-manager.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-pipeline-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-resource-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/shader-resource-manager.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-resource-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/core/string-to-enum-types.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/string-to-enum-types.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/core/string-to-enum-types.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-buffer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-command-buffer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-buffer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-encoder.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-command-encoder.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-encoder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-descriptor-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-descriptor-manager.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-descriptor-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-device.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-device.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-device.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-instance.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-instance.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-instance.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-physical-device.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-physical-device.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-physical-device.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-resources.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-resources.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-resources.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-swapchain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-swapchain.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-swapchain.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-utility.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-utility.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-utility.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/graph
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/graph
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass-context.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-pass-context.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass-context.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/graph
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-pass.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/graph
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/font.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/font.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/font.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-canvas.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-canvas.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-canvas.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-creator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-creator.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-creator.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-loader.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-loader.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-primatives.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-primatives.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-primatives.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-viewer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/material.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/material.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/material.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-capsule.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-capsule.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-capsule.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-circle.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-circle.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-circle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cone.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cone.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cuboid.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cuboid.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cuboid.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cylinder.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cylinder.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-grid.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-grid.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-grid.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-icosahedron.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-icosahedron.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-icosahedron.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rect.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-rect.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rect.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/mesh
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target graphics
+
+
+#############################################
+# Link the static library libgraphics.a
+
+build libgraphics.a: CXX_STATIC_LIBRARY_LINKER__graphics_Debug CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/command-recorder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/glfw-window.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-core.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics-window.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/graphics.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/resource-recycler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-pipeline-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/shader-resource-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/core/string-to-enum-types.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-descriptor-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-resources.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-swapchain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/devices/vulkan/vulkan-utility.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass-context.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-pass.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/font.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-canvas.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-creator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-primatives.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/material.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-capsule.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-circle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cone.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cuboid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cylinder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-grid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-icosahedron.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rect.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libgraphics.a
+  TARGET_PDB = graphics.a.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target kege-engine
 
 
@@ -196,6 +633,10 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build engine: phony libengine.a
+
+build graphics: phony libgraphics.a
+
 build vector_math: phony libvector_math.a
 
 # =============================================================================
@@ -206,7 +647,7 @@ build vector_math: phony libvector_math.a
 #############################################
 # Folder: /Users/kae/Developer/vscode/kege-engine/build
 
-build all: phony libvector_math.a kege-engine
+build all: phony libvector_math.a libengine.a libgraphics.a kege-engine
 
 # =============================================================================
 # Built-in targets

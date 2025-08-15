@@ -8,10 +8,10 @@
 #ifndef input_context_loader_hpp
 #define input_context_loader_hpp
 
-#include "hashmap.hpp"
-#include "json-parser.hpp"
-#include "input-actions.hpp"
-#include "input-context.hpp"
+#include "../container/hashmap.hpp"
+#include "../utils/json-parser.hpp"
+#include "../input/input-actions.hpp"
+#include "../input/input-context.hpp"
 
 namespace kege{
 

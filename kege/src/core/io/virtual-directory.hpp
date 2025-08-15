@@ -12,10 +12,10 @@
 #include <unistd.h>
 #include <vector>
 #include <unordered_map>
-#include "ref.hpp"
-#include "file.hpp"
-#include "hashmap.hpp"
-#include "kege-string.hpp"
+#include "../memory/ref.hpp"
+#include "../io/file.hpp"
+#include "../container/hashmap.hpp"
+#include "../container/kege-string.hpp"
 
 namespace kege{
 

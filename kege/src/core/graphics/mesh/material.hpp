@@ -9,8 +9,8 @@
 #define material_hpp
 
 #include <cstdint>
-#include "ref.hpp"
-#include "graphics.hpp"
+#include "../../memory/ref.hpp"
+#include "../../graphics/core/graphics.hpp"
 
 namespace kege{
 

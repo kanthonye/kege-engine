@@ -8,7 +8,7 @@
 #ifndef kege_file_io_hpp
 #define kege_file_io_hpp
 
-#include "virtual-directory.hpp"
+#include "../io/virtual-directory.hpp"
 
 namespace kege
 {

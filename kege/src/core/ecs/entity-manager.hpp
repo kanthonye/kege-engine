@@ -8,6 +8,7 @@
 #ifndef entity_manager_hpp
 #define entity_manager_hpp
 
+#include "../memory/ref.hpp"
 #include "component-manager.hpp"
 
 namespace kege{
@@ -19,7 +20,7 @@ namespace kege{
      * as well as add, remove, and retrieve components for specific entities.
      * It utilizes a component-based entity system (ECS) architecture.
      */
-    class EntityManager
+    class EntityManager : public kege::RefCounter
     {
     public:
 

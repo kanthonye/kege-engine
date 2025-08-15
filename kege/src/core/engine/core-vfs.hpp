@@ -8,8 +8,8 @@
 #ifndef core_vfs_hpp
 #define core_vfs_hpp
 
-#include "virtual-directory.hpp"
-#include "../../core/system/system.hpp"
+#include "../io/virtual-directory.hpp"
+#include "../system/system.hpp"
 
 namespace kege{
 

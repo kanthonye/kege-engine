@@ -8,22 +8,21 @@
 #ifndef scene_loader_hpp
 #define scene_loader_hpp
 
-#include "log.hpp"
-#include "scene.hpp"
-#include "entity-tag.hpp"
-#include "mesh-cuboid.hpp"
-#include "mesh-cone.hpp"
-#include "mesh-rect.hpp"
-#include "mesh-grid.hpp"
-#include "mesh-circle.hpp"
-#include "mesh-cylinder.hpp"
-#include "mesh-ellipsoid.hpp"
-#include "mesh-capsule.hpp"
-#include "rigidbody.hpp"
-#include "light.hpp"
-#include "camera.hpp"
-#include "atmosphere.hpp"
-#include "particle-effect.hpp"
+#include "../utils/log.hpp"
+#include "../scene/scene.hpp"
+#include "../graphics/mesh/mesh-cuboid.hpp"
+#include "../graphics/mesh/mesh-cone.hpp"
+#include "../graphics/mesh/mesh-rect.hpp"
+#include "../graphics/mesh/mesh-grid.hpp"
+#include "../graphics/mesh/mesh-circle.hpp"
+#include "../graphics/mesh/mesh-cylinder.hpp"
+#include "../graphics/mesh/mesh-ellipsoid.hpp"
+#include "../graphics/mesh/mesh-capsule.hpp"
+// #include "../graphics/mesh/rigidbody.hpp"
+// #include "../graphics/mesh/light.hpp"
+// #include "camera.hpp"
+// #include "atmosphere.hpp"
+// #include "particle-effect.hpp"
 
 namespace kege{
 

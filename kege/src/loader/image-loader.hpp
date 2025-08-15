@@ -10,8 +10,8 @@
 
 #include <string>
 #include <vector>
-#include "log.hpp"
-#include "graphics.hpp"
+#include "../utils/log.hpp"
+#include "../graphics/core/graphics.hpp"
 
 namespace kege{
 

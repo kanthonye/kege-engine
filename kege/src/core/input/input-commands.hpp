@@ -9,11 +9,11 @@
 #define input_commands_hpp
 
 #include <unordered_map>
-#include "ref.hpp"
-#include "vectors.hpp"
-#include "kege-string.hpp"
-#include "keycodes.hpp"
-#include "input-actions.hpp"
+#include "../memory/ref.hpp"
+#include "../math/algebra/vectors.hpp"
+#include "../container/kege-string.hpp"
+#include "../input/keycodes.hpp"
+#include "../input/input-actions.hpp"
 
 namespace kege{
 

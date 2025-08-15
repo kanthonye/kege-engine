@@ -9,10 +9,10 @@
 #define kege_input_context_hpp
 
 #include <unordered_map>
-#include "ref.hpp"
-#include "kege-string.hpp"
-#include "keycodes.hpp"
-#include "input-commands.hpp"
+#include "../memory/ref.hpp"
+#include "../container/kege-string.hpp"
+#include "../input/keycodes.hpp"
+#include "../input/input-commands.hpp"
 
 namespace kege{
 

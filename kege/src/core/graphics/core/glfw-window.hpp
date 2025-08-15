@@ -17,7 +17,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #pragma clang diagnostic ignored "-Wnullability-completeness"
-#include "glfw3.h"
+#include <GLFW/glfw3.h>
 #pragma clang diagnostic pop
 
 #include "../../graphics/core/graphics-window.hpp" // your abstract interface

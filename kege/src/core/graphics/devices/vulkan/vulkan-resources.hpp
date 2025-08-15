@@ -30,9 +30,9 @@
 //#include <vk_mem_alloc.h>  // Include Vulkan Memory Allocator (VMA)
 //#pragma clang diagnostic pop
 
-#include "graphics-device.hpp"
-#include "graphics-window.hpp"
-#include "graphics-physical-device.hpp"
+#include "../../core/graphics-device.hpp"
+#include "../../core/graphics-window.hpp"
+#include "../../core/graphics-physical-device.hpp"
 
 namespace kege::vk{
     class Device;

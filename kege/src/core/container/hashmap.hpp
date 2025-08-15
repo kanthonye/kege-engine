@@ -11,8 +11,8 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
-#include "ref.hpp"
-#include "kege-string.hpp"
+#include "../memory/ref.hpp"
+#include "../container/kege-string.hpp"
 
 namespace kege{
 

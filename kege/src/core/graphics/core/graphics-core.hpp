@@ -26,10 +26,10 @@
 #include <functional>
 #include <stdexcept>
 
-#include "ref.hpp"
-#include "log.hpp"
-#include "vectors.hpp"
-#include "matrices.hpp"
+#include "../../memory/ref.hpp"
+#include "../../utils/log.hpp"
+#include "../../math/algebra/vectors.hpp"
+#include "../../math/algebra/matrices.hpp"
 
 namespace kege{
 
@@ -3078,12 +3078,12 @@ namespace kege{
 
     inline bool isWriteAccess(AccessFlags access)
     {
-        return (access & AccessFlags::MemoryWrite) != 0;
+        return (access & AccessFlags::MemoryWrite) != AccessFlags::None;
     }
 
     inline bool isReadAccess(AccessFlags access)
     {
-        return (access & AccessFlags::MemoryRead ) != 0;
+        return (access & AccessFlags::MemoryRead ) != AccessFlags::None;
     }
 
 

@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 4/27/25.
 //
 
-#include "vulkan-instance.hpp"
+#include "../devices/vulkan/vulkan-instance.hpp"
 #include "../../graphics/core/glfw-window.hpp"
 
 namespace kege{

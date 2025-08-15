@@ -9,12 +9,11 @@
 #define graphics_hpp
 
 
-#include "log.hpp"
-#include "vulkan-instance.hpp"
-#include "vulkan-device.hpp"
+#include "../devices/vulkan/vulkan-instance.hpp"
+#include "../devices/vulkan/vulkan-device.hpp"
 
 #include "../../graphics/core/glfw-window.hpp"
-#include "pipeline-loader.hpp"
+#include "../../loader/pipeline-loader.hpp"
 #include "../../graphics/core/shader-resource-manager.hpp"
 #include "../../graphics/core/shader-pipeline-manager.hpp"
 
