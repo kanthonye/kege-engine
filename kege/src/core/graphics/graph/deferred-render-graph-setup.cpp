@@ -6,8 +6,7 @@
 //
 
 #include "../../graphics/graph/deferred-render-graph-setup.hpp"
-
-#include "communication.hpp"
+#include "../../utils/communication.hpp"
 
 
 void addDeferredGeometryRenderPass( uint32_t width, uint32_t height, uint32_t frames_in_flight, kege::RenderGraph* graph )

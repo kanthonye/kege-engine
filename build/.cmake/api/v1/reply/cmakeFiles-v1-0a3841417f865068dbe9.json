@@ -1,0 +1,325 @@
+{
+	"globsDependent" : 
+	[
+		{
+			"expression" : "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/*.cpp",
+			"paths" : 
+			[
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-ecs.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-esm.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-graphics.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-input.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-logging.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-render-graph.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-vfs.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/engine.cpp"
+			],
+			"recurse" : true
+		},
+		{
+			"expression" : "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/*.cpp",
+			"paths" : 
+			[
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/command-encoder.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/command-recorder.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/glfw-window.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-core.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-device.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-instance.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-physical-device.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics-window.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/graphics.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/resource-recycler.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/shader-pipeline-manager.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/shader-resource-manager.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/core/string-to-enum-types.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-command-buffer.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-command-encoder.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-descriptor-manager.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-device.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-instance.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-physical-device.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-resources.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-swapchain.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/devices/vulkan/vulkan-utility.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-pass-context.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-pass.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/font.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-canvas.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-creator.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-loader.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-primatives.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-viewer.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/material.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-capsule.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-circle.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cone.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cuboid.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-cylinder.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-grid.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-icosahedron.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh-rect.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/mesh/mesh.cpp"
+			],
+			"recurse" : true
+		},
+		{
+			"expression" : "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/*.cpp",
+			"paths" : 
+			[
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/random.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/transform.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/vectors.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-2D-shapes.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-3D-shapes.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-2D-shapes.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-3D-shapes.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/perlin-noise.cpp",
+				"/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/simplex-noise.cpp"
+			],
+			"recurse" : true
+		}
+	],
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/3.31.6/CMakeSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Darwin-Initialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/3.31.6/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/3.31.6/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Darwin.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/UnixPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-Clang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Internal/CMakeCLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Linker/AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Linker/AppleClang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Linker/Apple-AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Linker/Apple-AppleClang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-Clang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Apple-Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Linker/AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Linker/AppleClang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Linker/Apple-AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/Platform/Linker/Apple-AppleClang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/FindVulkan.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/usr/local/share/cmake/Modules/FindPackageMessage.cmake"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "/Users/kae/Developer/vscode/kege-engine/build",
+		"source" : "/Users/kae/Developer/vscode/kege-engine"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 1
+	}
+}

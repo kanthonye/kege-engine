@@ -8,7 +8,7 @@
 #ifndef vulkan_command_recorder_hpp
 #define vulkan_command_recorder_hpp
 
-#include "command-recorder.hpp"
+#include "../../core/command-recorder.hpp"
 #include "vulkan-command-encoder.hpp"
 
 namespace kege::vk{

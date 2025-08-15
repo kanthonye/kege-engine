@@ -5,7 +5,8 @@
 //  Created by Kenneth Esdaile on 8/14/25.
 //
 
-#include "core-esm.hpp"
+#include "../engine/core-esm.hpp"
+
 
 namespace kege{
 

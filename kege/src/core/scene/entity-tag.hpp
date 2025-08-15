@@ -10,8 +10,8 @@
 
 #include <string>
 #include "scene.hpp"
-#include "log.hpp"
-#include "kege-string.hpp"
+#include "../utils/log.hpp"
+#include "../container/kege-string.hpp"
 
 namespace kege{
 

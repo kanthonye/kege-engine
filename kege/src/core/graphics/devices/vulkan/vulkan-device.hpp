@@ -10,7 +10,7 @@
 #ifndef vulkan_device_hpp
 #define vulkan_device_hpp
 
-#include "resource-recycler.hpp"
+#include "../../core/resource-recycler.hpp"
 #include "vulkan-resources.hpp"
 #include "vulkan-physical-device.hpp"
 #include "vulkan-command-buffer.hpp"

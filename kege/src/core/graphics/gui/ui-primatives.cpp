@@ -86,7 +86,7 @@ namespace kege::ui{
       float g = ((hex_color >> 8) & 0xFF) / 255.0;
       float b = (hex_color & 0xFF) / 255.0;
       float a = 1.0; // Default alpha is 1.0 (fully opaque)
-      return ui::Color(r, g, b, a);
+      return ui::Color{r, g, b, a};
     }
 
     // To handle alpha in the hex code (e.g., 0x800080FF for purple with full alpha):

@@ -8,11 +8,12 @@
 #ifndef scene_hpp
 #define scene_hpp
 
-#include "ref.hpp"
-#include "vectors.hpp"
-#include "entity.hpp"
-#include "entity-registry.hpp"
-#include "asset-system.hpp"
+#include "../memory/ref.hpp"
+#include "../math/algebra/vectors.hpp"
+#include "../ecs/entity.hpp"
+#include "../ecs/entity-registry.hpp"
+#include "../container/asset-system.hpp"
+#include "entity-tag.hpp"
 
 namespace kege{
 

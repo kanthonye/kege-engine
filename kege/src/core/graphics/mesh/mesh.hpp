@@ -8,11 +8,10 @@
 #ifndef mesh_hpp
 #define mesh_hpp
 
-#include "vectors.hpp"
+#include "../../math/algebra/vectors.hpp"
+#include "../../math/algebra/quaternion.hpp"
+#include "../../math/algebra/transform.hpp"
 #include "material.hpp"
-#include "quaternion.hpp"
-#include "quaternion.hpp"
-#include "transform.hpp"
 
 namespace kege{
 

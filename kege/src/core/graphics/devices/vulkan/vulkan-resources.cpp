@@ -1173,23 +1173,23 @@ namespace kege::vk{
     {
         VkAccessFlags vk_flags = 0;
 
-        if ((access & AccessFlags::IndirectCommandRead) != 0) vk_flags |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-        if ((access & AccessFlags::IndexRead) != 0) vk_flags |= VK_ACCESS_INDEX_READ_BIT;
-        if ((access & AccessFlags::VertexBufferRead) != 0) vk_flags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
-        if ((access & AccessFlags::UniformRead) != 0) vk_flags |= VK_ACCESS_UNIFORM_READ_BIT;
-        if ((access & AccessFlags::InputAttachmentRead) != 0) vk_flags |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT; // Subpass specific
-        if ((access & AccessFlags::ShaderRead) != 0) vk_flags |= VK_ACCESS_SHADER_READ_BIT;
-        if ((access & AccessFlags::ShaderWrite) != 0) vk_flags |= VK_ACCESS_SHADER_WRITE_BIT;
-        if ((access & AccessFlags::ColorAttachmentRead) != 0) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        if ((access & AccessFlags::ColorAttachmentWrite) != 0) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        if ((access & AccessFlags::DepthStencilAttachmentRead) != 0) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
-        if ((access & AccessFlags::DepthStencilAttachmentWrite) != 0) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-        if ((access & AccessFlags::TransferRead) != 0) vk_flags |= VK_ACCESS_TRANSFER_READ_BIT;
-        if ((access & AccessFlags::TransferWrite) != 0) vk_flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
-        if ((access & AccessFlags::HostRead) != 0) vk_flags |= VK_ACCESS_HOST_READ_BIT;
-        if ((access & AccessFlags::HostWrite) != 0) vk_flags |= VK_ACCESS_HOST_WRITE_BIT;
-        if ((access & AccessFlags::MemoryRead) != 0) vk_flags |= VK_ACCESS_MEMORY_READ_BIT;
-        if ((access & AccessFlags::MemoryWrite) != 0) vk_flags |= VK_ACCESS_MEMORY_WRITE_BIT;
+        if ((access & AccessFlags::IndirectCommandRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+        if ((access & AccessFlags::IndexRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INDEX_READ_BIT;
+        if ((access & AccessFlags::VertexBufferRead) != AccessFlags::None) vk_flags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+        if ((access & AccessFlags::UniformRead) != AccessFlags::None) vk_flags |= VK_ACCESS_UNIFORM_READ_BIT;
+        if ((access & AccessFlags::InputAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT; // Subpass specific
+        if ((access & AccessFlags::ShaderRead) != AccessFlags::None) vk_flags |= VK_ACCESS_SHADER_READ_BIT;
+        if ((access & AccessFlags::ShaderWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_SHADER_WRITE_BIT;
+        if ((access & AccessFlags::ColorAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+        if ((access & AccessFlags::ColorAttachmentWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        if ((access & AccessFlags::DepthStencilAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+        if ((access & AccessFlags::DepthStencilAttachmentWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        if ((access & AccessFlags::TransferRead) != AccessFlags::None) vk_flags |= VK_ACCESS_TRANSFER_READ_BIT;
+        if ((access & AccessFlags::TransferWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
+        if ((access & AccessFlags::HostRead) != AccessFlags::None) vk_flags |= VK_ACCESS_HOST_READ_BIT;
+        if ((access & AccessFlags::HostWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_HOST_WRITE_BIT;
+        if ((access & AccessFlags::MemoryRead) != AccessFlags::None) vk_flags |= VK_ACCESS_MEMORY_READ_BIT;
+        if ((access & AccessFlags::MemoryWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_MEMORY_WRITE_BIT;
         // Add Acceleration Structure flags if needed (VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR, etc.)
 
         // Note: VK_ACCESS_NONE is 0, so if 'access' is None, vk_flags will correctly be 0.

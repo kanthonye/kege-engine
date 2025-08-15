@@ -8,9 +8,7 @@
 #ifndef File_hpp
 #define File_hpp
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "kege-string.hpp"
+#include "../container/kege-string.hpp"
 
 namespace kege
 {

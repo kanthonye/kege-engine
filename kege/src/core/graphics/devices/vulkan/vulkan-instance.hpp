@@ -8,8 +8,7 @@
 #ifndef vulkan_instance_hpp
 #define vulkan_instance_hpp
 
-#include "resource-recycler.hpp"
-#include "graphics-instance.hpp"
+#include "../../core/graphics-instance.hpp"
 #include "vulkan-device.hpp"
 #include "vulkan-physical-device.hpp"
 

@@ -5,10 +5,10 @@
 //  Created by Kenneth Esdaile on 4/17/24.
 //
 
-#include "hashmap.hpp"
-#include "json-parser.hpp"
-#include "input-actions.hpp"
-#include "input-context.hpp"
+#include "../container/hashmap.hpp"
+#include "../utils/json-parser.hpp"
+#include "../input/input-actions.hpp"
+#include "../input/input-context.hpp"
 namespace kege{
 
     void InputContext::map( uint16_t keycode, const kege::InputCommand& info )

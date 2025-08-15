@@ -9,16 +9,16 @@
 
 namespace kege{
 
-    kege::EntityManager Entity::_mgr;
+    kege::EntityManager* Entity::_mgr;
 
     kege::EntityManager& Entity::getManager()
     {
-        return _mgr;
+        return *_mgr;
     }
 
     std::ostream& operator <<(std::ostream& os, const Entity& entity)
     {
-        return entity._mgr.print( os, entity._id );
+        return entity._mgr->print( os, entity._id );
     }
 
     bool operator ==( const Entity& a, const Entity& b )
@@ -43,88 +43,89 @@ namespace kege{
 
     const EntitySignature& Entity::signature() const
     {
-        return _mgr.signature( _id );
+        return _mgr->signature( _id );
     }
 
     void Entity::attach( const Entity& child )
     {
-        return _mgr.attach( _id, child._id );
+        return _mgr->attach( _id, child._id );
     }
 
     void Entity::detach()
     {
-        return _mgr.detach( _id );
+        return _mgr->detach( _id );
     }
 
     Entity Entity::getParent() const
     {
-        return Entity( _mgr.getParent( _id ) );
+        return Entity( _mgr->getParent( _id ) );
     }
 
     Entity Entity::getRoot() const
     {
-        return Entity( _mgr.getRoot( _id ) );
+        return Entity( _mgr->getRoot( _id ) );
     }
 
     bool Entity::isParent() const
     {
-        return _mgr.isParent( _id );
+        return _mgr->isParent( _id );
     }
 
     bool Entity::isChild() const
     {
-        return _mgr.isChild( _id );
+        return _mgr->isChild( _id );
     }
 
     Entity Entity::begin() const
     {
-        return Entity( _mgr.begin( _id ) );
+        return Entity( _mgr->begin( _id ) );
     }
 
     Entity Entity::end() const
     {
-        return Entity( _mgr.end( _id ) );
+        return Entity( _mgr->end( _id ) );
     }
 
     Entity Entity::next() const
     {
-        return Entity( _mgr.next( _id ) );
+        return Entity( _mgr->next( _id ) );
     }
 
     Entity Entity::prev() const
     {
-        return Entity( _mgr.prev( _id ) );
+        return Entity( _mgr->prev( _id ) );
     }
 
     Entity::operator bool()const
     {
-        return _mgr.isvalid( _id );
+        return _mgr->isvalid( _id );
     }
 
     bool Entity::isvalid() const
     {
-        return _mgr.isvalid( _id );
+        return _mgr->isvalid( _id );
     }
 
     void Entity::destroy()
     {
-        _mgr.destroy( _id );
+        _mgr->destroy( _id );
         _id = 0;
     }
 
     Entity Entity::create()
     {
-        return Entity( _mgr.create() );
+        return Entity( _mgr->create() );
     }
 
-    bool Entity::initialize()
+    bool Entity::initialize( kege::EntityManager* mgr )
     {
-        return _mgr.initialize();
+        _mgr = mgr;
+        return _mgr != nullptr;
     }
 
     void Entity::shutdown()
     {
-        _mgr.shutdown();
+        _mgr->shutdown();
     }
 
     Entity::~Entity(){}

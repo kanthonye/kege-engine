@@ -5,8 +5,8 @@
 //  Created by Kenneth Esdaile on 7/29/25.
 //
 
-#include "log.hpp"
-#include "image-loader.hpp"
+#include "../../utils/log.hpp"
+#include "../../loader/image-loader.hpp"
 #include "ui-font-loader.hpp"
 
 namespace kege::ui{

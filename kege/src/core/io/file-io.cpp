@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include "file-io.hpp"
-#include "log.hpp"
+#include "../utils/log.hpp"
 
 namespace kege{
 

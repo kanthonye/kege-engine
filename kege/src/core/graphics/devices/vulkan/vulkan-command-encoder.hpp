@@ -11,7 +11,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#include "command-encoder.hpp"
+#include "../../core/command-encoder.hpp"
 #include "vulkan-resources.hpp"
 #include "vulkan-descriptor-manager.hpp"
 

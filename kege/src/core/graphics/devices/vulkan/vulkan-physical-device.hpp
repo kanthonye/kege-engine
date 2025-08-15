@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "vulkan-resources.hpp"
-#include "graphics-physical-device.hpp"
+#include "../../core/graphics-physical-device.hpp"
 
 namespace kege::vk{
 

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "../../kege/src/core/math/algebra/vmath.hpp"
+#include "../../kege/src/core/engine/engine.hpp"
 
 int main() 
 {

@@ -8,8 +8,8 @@
 #ifndef ui_input_hpp
 #define ui_input_hpp
 
-#include "vectors.hpp"
-#include "inputs.hpp"
+#include "../../math/algebra/vectors.hpp"
+#include "../../input/inputs.hpp"
 #include "ui-layout.hpp"
 #include "ui-primatives.hpp"
 

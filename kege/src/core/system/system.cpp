@@ -10,27 +10,6 @@
 
 namespace kege{
 
-    bool System::checkFlag( StateBitFlag flag )
-    {
-        return (_requirements & flag) == flag;
-    }
-
-    void System::input( const std::vector< Input >& inputs )
-    {
-    }
-
-    void System::update( double dms )
-    {
-    }
-
-    void System::render( double dms )
-    {
-    }
-
-    void System::onSceneChange()
-    {
-    }
-
     bool System::initialize()
     {
         return true;
@@ -40,30 +19,14 @@ namespace kege{
     {
     }
 
-    void System::setRenderGraph( kege::Ref< kege::RenderGraph > graph )
-    {
-        _engine->_graph = graph;
-    }
-    
-    void System::setWindow( kege::Ref< kege::GraphicsWindow > window )
-    {
-        _engine->_window = window;
-    }
-    
-    void System::setGraphics( kege::Ref< kege::Graphics > graphics )
-    {
-        _engine->_graphics = graphics;
-    }
-
     const std::string& System::getName() const
     {
         return _name;
     }
 
-    System::System( kege::Engine* engine, const std::string& name, uint32_t requirements )
+    System::System( kege::Engine* engine, const std::string& name )
     :   _engine( engine )
     ,   _name( name )
-    ,   _requirements( requirements )
     {
     }
 
@@ -71,5 +34,33 @@ namespace kege{
     {
     }
 
+
+}
+
+
+
+
+namespace kege{
+
+    void SystemFactory::registerSystem( const std::string& name, SystemFactory::CreateFunc func )
+    {
+        registry[ name ] = std::move( func );
+    }
+
+    kege::Ref< kege::System > SystemFactory::create( const std::string& name, kege::Engine* engine ) const
+    {
+        auto it = registry.find(name);
+        if ( it != registry.end() )
+        {
+            return it->second( engine );
+        }
+        return nullptr;
+    }
+
+    SystemFactory& SystemFactory::instance()
+    {
+        static SystemFactory factory;
+        return factory;
+    }
 
 }

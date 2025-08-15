@@ -5,12 +5,12 @@
 //  Created by Kenneth Esdaile on 4/25/25.
 //
 
-#include "vulkan-device.hpp"
-#include "vulkan-command-buffer.hpp"
 #include <stdexcept> // For potential exceptions
 #include <iostream>  // For errors/warnings
 #include <vector>
 #include <assert.h>
+#include "vulkan-device.hpp"
+#include "vulkan-command-buffer.hpp"
 
 namespace kege::vk{
 
