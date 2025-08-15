@@ -1,0 +1,136 @@
+
+{
+    "meta":
+    {
+        "pipeline": "graphics",
+        "name": "basic-shader"
+    },
+
+    "shaders":
+    [
+        {
+            "stage": "vertex",
+            "file":  "basic.vert"
+        },
+        {
+            "stage": "fragment",
+            "file":  "basic.frag"
+        }
+    ],
+
+    "attribute_inputs":
+    [
+        {
+            "name": "in_position",
+            "location": 0,
+            "format": "vec3",
+            "binding": 0,
+            "offset": 0
+        },
+        {
+            "name": "in_normal",
+            "location": 1,
+            "format": "vec3",
+            "binding": 12,
+            "offset": 0
+        },
+        {
+            "name": "in_texcoord",
+            "location":2,
+            "format": "vec2",
+            "binding": 24,
+            "offset": 0
+        },
+        {
+            "name": "in_tangent",
+            "location": 3,
+            "format": "vec3",
+            "binding": 30,
+            "offset": 0
+        },
+        {
+            "name": "in_bitangent",
+            "location": 4,
+            "format": "vec3",
+            "binding": 42,
+            "offset": 0
+        },
+        {
+            "name": "in_color",
+            "location": 5,
+            "format": "vec4",
+            "binding": 54,
+            "offset": 0
+        }
+    ],
+
+    "attribute_bindings":
+    [
+        {
+            "binding": 0,
+            "attributes":
+            [
+                "in_position",
+                "in_normal",
+                "in_texcoord",
+                "in_tangent",
+                "in_bitangent"
+            ],
+            "input_rate": "per-vertex"
+        },
+        {
+            "binding": 1,
+            "attributes":
+            [
+                "in_color"
+            ],
+            "input_rate": "per-instance"
+        }
+    ],
+
+    "rasterization":
+    {
+        "primative_topology": "triangle-list",
+        "polygon_modes": ["fill"],
+        "cull_mode": "cull_none"
+    },
+
+    "descriptors":
+    [
+        {
+            "name": "ObjectMatrices",
+            "count": "1",
+            "binding": "0",
+            "type": "storage-buffer",
+            "stages": ["vertex"]
+        }
+    ],
+
+    "push_constants":
+    [
+        {
+            "size": 128,
+            "offset": 0,
+            "stages": ["vertex"]
+        }
+    ],
+
+    "renderpass":
+    {
+        "name": "main",
+        "attachments": 
+        [
+            { 
+                "format":           "rgba_8_unorm",
+                "image_aspect":     "aspect_color",
+                "load_op":          "load_op_clear",
+                "store_op":         "store_op_dont_care",
+                "stencil_load_op":  "load_op_dont_care",
+                "stencil_store_op": "store_op_dont_care",
+                "initial_layout":   "layout_undefined",
+                "final_layout":     "layout_present_src_optimal"
+            }
+        ]
+    }
+
+}

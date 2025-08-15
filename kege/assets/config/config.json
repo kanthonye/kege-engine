@@ -1,0 +1,16 @@
+{
+    "window":
+    {
+        "width": 1024,
+        "height": 512,
+        "title": "KEGE",
+        "mode": "windowed"
+    },
+
+    "shader-library" : "/Users/kae/Projects/game-engine-projects/kege/kege/src/game/assets/shaders/shader-library.json",
+    "scene" : "/Users/kae/Projects/game-engine-projects/kege/kege/src/game/assets/scene/scene.json",
+}
+
+
+
+

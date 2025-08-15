@@ -1,0 +1,21 @@
+# ninja log v5
+1	809	1755201074442157278	CMakeFiles/kege-engine.dir/kege/src/main.cpp.o	3bb580d83361ed5d
+813	896	1755201074533821872	kege-engine	e68b9b56f3236eac
+2	29	0	/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs	687e08f2b381d130
+37	1220	1755201520075004220	CMakeFiles/vector_math.dir/kege/src/core/math/algebra/transform.cpp.o	bb252759a1511ef8
+37	1250	1755201520102417248	CMakeFiles/vector_math.dir/kege/src/core/math/algebra/vectors.cpp.o	e9bc550cfe5fbd7b
+36	1256	1755201520110455634	CMakeFiles/vector_math.dir/kege/src/core/math/algebra/quaternion.cpp.o	ca124f03011b183b
+36	1302	1755201520158017563	CMakeFiles/vector_math.dir/kege/src/core/math/algebra/random.cpp.o	68cf12f512580a95
+2	25	0	/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs	687e08f2b381d130
+33	1194	1755201625784928170	CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-2D-shapes.cpp.o	dc8125dc2aa280ff
+32	1203	1755201625792594469	CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-2D-shapes.cpp.o	7ef251e0385be8cd
+33	1233	1755201625823887870	CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-3D-shapes.cpp.o	4be807b0f339838d
+33	1320	1755201625913862005	CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-3D-shapes.cpp.o	c4a12f5cf7efde6d
+2	25	0	/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs	687e08f2b381d130
+32	1034	1755201640520118191	CMakeFiles/vector_math.dir/kege/src/core/math/noise/perlin-noise.cpp.o	dac4ed589f9bdcbf
+32	1103	1755201640589918215	CMakeFiles/vector_math.dir/kege/src/core/math/noise/simplex-noise.cpp.o	f955acea0f4fb83a
+3	26	0	/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs	687e08f2b381d130
+35	874	1755201724782349577	CMakeFiles/kege-engine.dir/kege/src/main.cpp.o	3bb580d83361ed5d
+875	960	1755201724872385847	kege-engine	e68b9b56f3236eac
+34	1931	1755201725846562000	libvector_math.a	7ba693f4bd577f56
+12	39	0	/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs	687e08f2b381d130

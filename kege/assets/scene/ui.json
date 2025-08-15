@@ -1,0 +1,26 @@
+[
+    "styles":
+    [
+        "canvas":
+        {
+            "width": "vw",
+            "height": "vh",
+            "background": 0x141223FF,
+            "padding": [5,5,5,5],
+            "gap":[0,0],
+            "alignment":
+            {
+                "position": "top-center",
+                "direction": "vertically",
+                "wrap_around": false
+            }
+        }
+    ],
+
+    "layouts":
+    [
+        {
+            "style" : "canvas"
+        }
+    ]
+]

@@ -1,0 +1,48 @@
+{
+    "name": "PBR_Master",
+
+    "passes":
+    {
+        {
+            "pass": "main",
+            "shader": "shaders/pbr.json",
+        },
+        {
+            "pass": "shadow",
+            "shader": "shaders/shadow.json",
+        },
+    },
+
+    "properties":
+    [
+        {
+            "name": "baseColor",
+            "type": "vec4",
+            "value": [1, 1, 1, 1]
+        },
+        {
+            "name": "mainTex",
+            "type": "texture2D",
+            "value": "textures/default_white.png"
+        },
+        {
+            "name": "roughness",
+            "type": "float",
+            "value": 0.5
+        },
+        {
+            "name": "metallic",
+            "type": "float",
+            "value": 0.0
+        }
+    ],
+
+    "shader_defines":
+    [
+        "HAS_BASE_COLOR_MAP",
+        "HAS_ROUGHNESS_PARAM",
+        "USE_FOG",
+        "HAS_SPECULAR"
+        // etc.
+    ]
+}

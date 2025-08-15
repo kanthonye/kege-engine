@@ -1,0 +1,63 @@
+{
+    "name": "copy-color-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-strip"],
+    "polygon-modes": ["fill"],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file": "copy-color-depth.frag",
+            "debug-name": "copy-color-depth-fs",
+            "entry-point": "main"
+        },
+        {
+            "type": "vertex",
+            "file": "copy-color-depth.vert",
+            "debug-name": "copy-color-depth-vs",
+            "entry-point": "main"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "src_color",
+            "type": "combined-image-sampler",
+            "binding": 0,
+            "count": 1,
+            "set": 0,
+            "stages": [ "fragment" ]
+        },
+        {
+            "name": "src_depth",
+            "type": "combined-image-sampler",
+            "binding": 1,
+            "count": 1,
+            "set": 0,
+            "stages": [ "fragment" ]
+        }
+    ],
+
+
+    "rasterization_state",
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "fill",
+        "cull_mode": "back",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "rendering_output":
+    {
+        "color_output_formats":[ "bgra_u8_norm" ],
+        "depth_output_format": "depth_32"
+    },
+}

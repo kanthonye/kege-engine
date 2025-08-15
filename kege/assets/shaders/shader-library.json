@@ -1,0 +1,22 @@
+{
+    "asset-directory": "/Users/kae/Developer/xcode/KE-GE/kege/assets/shaders/",
+
+    "glsl":
+    [
+        {
+            "id" : 1,
+            "name": "basic-shader",
+            "file" : "glsl/graphics/basic/shader.json"
+        },
+        {
+            "id" : 2,
+            "name": "particle-effect-shader",
+            "file" : "glsl/graphics/particle-effect/shader.json"
+        },
+        {
+            "id" : 3,
+            "name": "line-shader",
+            "file" : "glsl/graphics/debug/line/shader.json"
+        }
+    ]
+}

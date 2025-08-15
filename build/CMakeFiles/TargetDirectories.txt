@@ -1,0 +1,4 @@
+/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/vector_math.dir
+/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/kege-engine.dir
+/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/edit_cache.dir
+/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/rebuild_cache.dir

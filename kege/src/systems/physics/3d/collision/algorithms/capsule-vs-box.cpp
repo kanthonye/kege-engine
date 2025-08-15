@@ -1,0 +1,90 @@
+//
+//  capsule-vs-box.cpp
+//  flat-landscape
+//
+//  Created by Kenneth Esdaile on 4/15/25.
+//
+
+#include "capsule-vs-box.hpp"
+
+namespace kege::algo{
+
+    bool capsuleBoxCollision( Rigidbody* a, Rigidbody* b, kege::CollisionRegistry& collisions )
+    {
+        const Capsule* capsule = a->collider->getCapsule();
+        const OBB* obb = b->collider->getBox();
+
+        // Define the axes to test
+        vec3 capsuleAxis = capsule->axes[0];
+        vec3 axesToTest[7] =
+        {
+            obb->axes[0],
+            obb->axes[1],
+            obb->axes[2], // OBB axes
+            capsuleAxis,                           // Capsule axis
+            cross(obb->axes[0], capsuleAxis),        // Cross products
+            cross(obb->axes[1], capsuleAxis),
+            cross(obb->axes[2], capsuleAxis)
+        };
+
+        float minPenetrationDepth = std::numeric_limits<float>::max();
+        vec3 collisionNormal;
+
+        // Check for overlap on each axis
+        for (const vec3& axis : axesToTest)
+        {
+            if ( magnSq( axis ) < 1e-6) continue; // Skip near-zero length axes
+
+            Interval interval[2];
+
+            // Project OBB onto the axis
+            projectOBB(obb, axis, interval[0]);
+
+            // Project Capsule onto the axis
+            projectCapsule(capsule, axis, interval[1]);
+
+            // Check for overlap
+            if (interval[0].max < interval[1].min || interval[1].max < interval[0].min)
+            {
+                return false; // No collision
+            }
+
+            // Calculate penetration depth
+            float penetrationDepth = std::min(interval[0].max, interval[1].max) - std::max(interval[0].min, interval[1].min);
+            if (penetrationDepth < minPenetrationDepth)
+            {
+                minPenetrationDepth = penetrationDepth;
+                collisionNormal = axis;
+            }
+        }
+
+        // If all axes overlap, there is a collision
+        // CollisionManifold detected
+        CollisionManifold* collision = collisions.generate();
+        collision->objects[0] = a;
+        collision->objects[1] = b;
+        collision->normal = normalize( collisionNormal );
+        collision->contacts[0].depth = minPenetrationDepth;
+        collision->contact_count = 1;
+
+        // Calculate contact points (simplified for demonstration)
+        vec3 contactPoint = obb->center - collisionNormal * (minPenetrationDepth / 2);
+        collision->contacts[0].point = contactPoint;
+
+        return true;
+    }
+
+    bool boxCapsuleCollision( Rigidbody* a, Rigidbody* b, kege::CollisionRegistry& collisions )
+    {
+        uint32_t index = collisions.count();
+        if( capsuleBoxCollision( b, a, collisions ) )
+        {
+            collisions[index]->objects[0] = b;
+            collisions[index]->objects[1] = a;
+            return true;
+        }
+        return false;
+    }
+
+}
+

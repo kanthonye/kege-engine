@@ -1,0 +1,58 @@
+
+{
+    "type": "graphics_pipeline",
+    "name": "draw-lights-shader",
+
+    "shaders":
+    [
+        {
+            "stage": "vertex",
+            "file":  "point-sprite-3D.vert"
+        },
+        {
+            "stage": "fragment",
+            "file":  "point-sprite-3D.frag"
+        }
+    ],
+
+    "attribute_inputs":
+    [],
+
+    "attribute_bindings":
+    [],
+
+    "rasterization":
+    {
+        "primative_topology": "triangle-strip",
+        "polygon_modes": ["fill"],
+        "cull_mode": "cull_none",
+        "depth_test": "depth_op_always",
+    },
+
+    "descriptor_sets":
+    [
+        {
+            "name": "CameraBlock",
+            "set": "0",
+            "count": "1",
+            "binding": "0",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+        },
+        {
+            "name": "PointBuffer",
+            "set": "1",
+            "count": "1",
+            "binding": "0",
+            "type": "storage-buffer",
+            "stages": ["vertex"]
+        }
+    ],
+
+    "renderpass":
+    {
+        "name": "swapchain-renderpass",
+        "attachments":
+        []
+    }
+}

@@ -1,0 +1,763 @@
+[
+    {
+        "type": "meta",
+        "meta":
+        {
+            "type": "meta",
+            "formatVersion": "1.0",
+            "generator": "YourEngine",
+            "defaultUnits": "meters"
+        }
+    },
+
+    {
+        "type": "cameras",
+        "cameras":
+        [
+            {
+                "id":"persp-camera",
+                "data":
+                {
+                    "type": "perspective",
+                    "perspective":
+                    {
+                        "aspect_ratio": 1.3,
+                        "fov": 45,
+                        "znear": 0.1,
+                        "zfar": 10000.0
+                    }
+                }
+            },
+            {
+                "id":"ortho-camera",
+                "data":
+                {
+                    "type": "orthographic",
+                    "orthographic":
+                    {
+                        "left": -200,
+                        "right": 200,
+                        "bottom": -200,
+                        "top": 200,
+                        "znear": 0.1,
+                        "zfar": 10000.0
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "lights",
+        "lights":
+        [
+            {
+                "id":"sun-light",
+                "data":
+                {
+                    "type": "directional",
+                    "directional":
+                    {
+                        "color": [1.0, 0.9, 0.8],
+                        "direction":[1.0, 0.9, 0.8]
+                    }
+                }
+            },
+            {
+                "id":"candle-light",
+                "data":
+                {
+                    "type": "point",
+                    "point":
+                    {
+                        "color": [1.0, 0.9, 0.8],
+                        "cconstant_attenuation": 1.0,
+                        "linear_attenuation": 0.20,
+                        "quadratic_attenuation": 0.125
+                    }
+                }
+            },
+            {
+                "id":"flash-light",
+                "data":
+                {
+                    "type": "spot",
+                    "spot":
+                    {
+                        "color": [1.0, 0.9, 0.8],
+                        "direction":[1.0, 0.9, 0.8],
+                        "exponent":4,
+                        "cutoff": 1,
+                        "cconstant_attenuation": 1.0,
+                        "linear_attenuation": 0.20,
+                        "quadratic_attenuation": 0.125
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "materials",
+        "materials":
+        [
+            {
+                "id":"rusty_metal",
+                "data":
+                {
+                    "type": "PBR",
+                    "PBR":
+                    {
+                        "properties":
+                        {
+                            "albedo": [1, 1, 1, 1],
+                            "roughness": 0.7,
+                            "metallic": 1.0
+                        },
+                        "textures":
+                        {
+                            "albedo_map":
+                            {
+                                "type": "source-texture",
+                                "source-texture":
+                                {
+                                    "target": "textures",
+                                    "id": "rusty_metal"
+                                }
+                            },
+                            "normal_map":
+                            {
+                                "type": "source-texture",
+                                "source-texture":
+                                {
+                                    "target": "textures",
+                                    "id": "rusty_metal"
+                                }
+                            }
+                        },
+                        "passes":
+                        [
+                            {
+                                "pass": "main",
+                                "shader": "shaders/pbr.json"
+                            },
+                            {
+                                "pass": "shadow",
+                                "shader": "shaders/shadow.json"
+                            }
+                        ],
+                        "shader_defines":
+                        [
+                            "HAS_BASE_COLOR_MAP",
+                            "HAS_ROUGHNESS_PARAM",
+                            "USE_FOG",
+                            "HAS_SPECULAR"
+                        ]
+                    }
+                }
+            },
+            {
+                "id":"glowing_orb",
+                "data":
+                {
+                    "type": "EmissivePBR",
+                    "EmissivePBR":
+                    {
+                        "name": "glowing_orb",
+                        "properties":
+                        [
+                            {
+                                "type": "vec4",
+                                "emissive": [0.9, 0.2, 0.1]
+                            },
+                            {
+                                "type": "float",
+                                "intensity": 5.0
+                            }
+                        ],
+                        "passes":
+                        [
+                            {
+                                "pass": "main",
+                                "shader": "shaders/pbr.json"
+                            }
+                        ],
+                        "shader_defines":
+                        [
+                            "USE_FOG"
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "textures",
+        "textures":
+        [
+            {
+                "id": "rusty_metal",
+                "data": 
+                {
+                    "type": "image_file",
+                    "image_file":
+                    {
+                        "path": "textures/rusty_metal.png",
+                        "wrap_mode": "clamp",
+                        "filter": "linear"
+                    }
+                }
+            },
+            {
+                "id": "metal",
+                "data": 
+                {
+                    "type": "image_data",
+                    "texture_data":
+                    {
+                        "data": "base64encodeddata...",
+                        "format": "png",
+                        "width": 64,
+                        "height": 64,
+                        "mip_levels": 1,
+                        "wrap_mode": "clamp",
+                        "filter": "linear"
+                    }
+                }
+            },
+            {
+                "id": "procedural_noise",
+                "data": 
+                {
+                    "type": "procedural_noise_pattern",
+                    "procedural_noise_pattern":
+                    {
+                        "parameters":
+                        {
+                            "size":
+                            {
+                                "width": 256,
+                                "height": 256
+                            },
+                            "planes":
+                            [
+                                {
+                                    "id": "front",
+                                    "type": "axes",
+                                    "axes":
+                                    [
+                                        [1,0,0],
+                                        [0,1,0]
+                                    ]
+                                }
+                            ],
+                            "layers":
+                            [
+                                {
+                                    "name": "base",
+                                    "noise": "ridged_multifractal_noise",
+                                    "seed": 42,
+                                    "frequency": 0.01,
+                                    "amplitude": 1.0,
+                                    "octaves": 4,
+                                    "lacunarity": 2.0,
+                                    "persistence": 0.5,
+                                    "offset": [0,5,79],
+                                    "seamless": true
+                                },
+                                {
+                                    "name": "mountains",
+                                    "noise": "ridged_multifractal_noise",
+                                    "seed": 42,
+                                    "frequency": 0.01,
+                                    "amplitude": 1.0,
+                                    "octaves": 4,
+                                    "lacunarity": 2.0,
+                                    "persistence": 0.5,
+                                    "offset": [0,5,79],
+                                    "seamless": true
+                                }
+                            ]
+                        },
+                        "post_processing":
+                        {
+                            "smoothingPasses": 1,
+                            "clamp":
+                            {
+                                "min": 0.0,
+                                "max": 1.0
+                            }
+                        },
+                        "output":
+                        {
+                            "mip_levels": 1,
+                            "format": "rgb_i8",
+                            "wrap_mode": "clamp",
+                            "filter": "linear"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "meshs",
+        "meshs":
+        [
+            {
+                "id": "orb",
+                "data":
+                {
+                    "type": "mesh-path",
+                    "mesh-path": "models/spaceship.glb"
+                }
+            },
+            {
+                "id": "orb",
+                "data":
+                {
+                    "type": "mesh",
+                    "mesh": 
+                    {
+                        "vertices":
+                        {
+                            "data": [1.23, 4.56, 7.89, 10.11, 1.23, 4.56, 7.89, 10.11],
+                            "attribute":
+                            [
+                                {
+                                    "name": "positions",
+                                    "components": 3,
+                                    "location": 0,
+                                    "offset": 0,
+                                    "binding": 0
+                                },
+                                {
+                                    "name": "normals",
+                                    "components": 3,
+                                    "location": 1,
+                                    "offset": 12,
+                                    "binding": 0
+                                },
+                                {
+                                    "name": "texcoord",
+                                    "components": 2,
+                                    "location": 2,
+                                    "offset": 24,
+                                    "binding": 0
+                                },
+                                {
+                                    "name": "tangents",
+                                    "components": 3,
+                                    "location": 3,
+                                    "offset": 32,
+                                    "binding": 0
+                                },
+                                {
+                                    "name": "weights",
+                                    "components": 4,
+                                    "location": 4,
+                                    "offset": 24,
+                                    "binding": 0
+                                },
+                                {
+                                    "name": "joints",
+                                    "components": 4,
+                                    "location": 4,
+                                    "offset": 24,
+                                    "binding": 0
+                                }
+                            ],
+                            "bindings":
+                            [
+                                {
+                                    "stride": 48,
+                                    "binding": 0,
+                                    "input_rate": "vertex"
+                                }
+                            ]
+                        },
+                        "indices": [1,2,4,3,5,6,7,8,9,10],
+                        "draw-operation":
+                        {
+                            "type": "draw-indices",
+                            "draw-indices":
+                            [
+                                {
+                                    "source-material": 
+                                    {
+                                        "target": "materials",
+                                        "id": "rusty_metal"
+                                    },
+                                    "draw-params": 
+                                    {
+                                        "first-index": 0,
+                                        "index-count": 234,
+                                        "first-instance": 0,
+                                        "instance-count": 1,
+                                        "vertex-offset": 0
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                "id": "sky",
+                "data":
+                {
+                    "type": "mesh-sphere",
+                    "mesh-sphere":
+                    {
+                        "center": [0,0,0],
+                        "radius": 2
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "effects",
+        "effects":
+        [
+            {
+                "id": "fire",
+                "data":
+                {
+                    "type": "particle_effect",
+                    "particle_effect":
+                    {
+                        "name": "fire_jet",
+                        "max_particles": 512,
+                        "rate_of_deterioration": 1.0,
+                        "duration": 5.0,
+                        "looping": true,
+                        "emitter":
+                        {
+                            "type": "emitter-cone",
+                            "burst": false,
+                            "second": 1.0,
+                            "emissions": 5.0,
+                            "cone": {}
+                        },
+                        "initial":
+                        {
+                            "lifetime": { "min": 0.5, "max": 1.5 },
+                            "speed": { "min": 4.0, "max": 8.0 },
+                            "size": { "min": 0.2, "max": 0.6 },
+                            "mass": { "min": 0.2, "max": 0.6 },
+                            "rotation": { "min": 0.0, "max": 360.0 },
+                            "saturation":v{ "min": 0.0, "max": 1.0 },
+                            "velocity":
+                            {
+                                "start": [1.0, 0.6, 0.1],
+                                "end": [0.6, 0.0, 0.0]
+                            },
+                            "color":
+                            {
+                                "start": [1.0, 0.6, 0.1, 1.0],
+                                "end": [0.6, 0.0, 0.0, 0.0]
+                            }
+                        },
+                        "behaviors":
+                        [
+                            {
+                                "type": "directional_gravity",
+                                "force": [0.0, -9.8, 0.0]
+                            },
+                            {
+                                "type": "drag",
+                                "drag": 0.2
+                            },
+                            {
+                                "type": "velocity_vver_lifetime",
+                                "enabled": true,
+                                "curve": [1.0, 0.8, 0.5, 0.0]
+                            },
+                            {
+                                "type": "size_over_lifetime",
+                                "enabled": true,
+                                "curve": [1.0, 1.2, 1.5]
+                            },
+                            {
+                                "type": "color_over_lifetime",
+                                "enabled": true,
+                                "gradient": [
+                                    { "t": 0.0, "color": [1.0, 0.6, 0.1, 1.0] },
+                                    { "t": 0.5, "color": [0.8, 0.2, 0.0, 0.5] },
+                                    { "t": 1.0, "color": [0.0, 0.0, 0.0, 0.0] }
+                                ]
+                            }
+                        ],
+                        "rendering":
+                        {
+                            "texture": "textures/fire_sprite.png",
+                            "blending": "additive",
+                            "sortMode": "byDistance",
+                            "billboard": true,
+                            "softParticles": true,
+                            "depthFade": 0.1
+                        }
+                    }
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "animations",
+        "animations":
+        [
+        ]
+    },
+
+    {
+        "type": "entities",
+        "entities":
+        [
+            {
+                "id": "entity-1",
+                "data":
+                {
+                    "type": "components",
+                    "components":
+                    [
+                        {
+                            "type": "transform-component",
+                            "transform-component":
+                            {
+                                "type": "transform",
+                                "transform":
+                                {
+                                    "position": [0, 10, 0],
+                                    "rotation": [0, 45, 0],
+                                    "scale": [1, 1, 1]
+                                }
+                            }
+                        },
+                        {
+                            "type": "camera-component",
+                            "camera-component":
+                            {
+                                "type": "perspective",
+                                "perspective":
+                                {
+                                    "aspect_ratio": 1.3,
+                                    "fov": 45,
+                                    "znear": 0.1,
+                                    "zfar": 10000.0
+                                }
+                            }
+                        },
+                        {
+                            "type": "rigidbody-component",
+                            "rigidbody-component":
+                            {
+                                "type": "rigidbody",
+                                "rigidbody":
+                                {
+                                    "body": "dynamic",
+                                    "linear":
+                                    {
+                                        "velocity": [0.0, 0.0, 0.0],
+                                        "mass": 10.0,
+                                        "damping": 0.01
+                                    },
+                                    "angular":
+                                    {
+                                        "velocity": [0.0, 0.0, 0.0],
+                                        "inertia": [2.1, 2.1, 2.1],
+                                        "damping": 0.05
+                                    },
+
+                                    "position": [0.0, 2.0, 0.0],
+                                    "orientation": [0.0, 0.0, 0.0, 1.0],
+
+                                    "sleeping": false,
+                                    "gravityScale": 1.0,
+
+                                    "collider":
+                                    {
+                                        "shape":
+                                        {
+                                            "type": "collider-box",
+                                            "collider-box":
+                                            {
+                                                "center": [0,0,0],
+                                                "extents": [1,1,1],
+                                                "axes": 
+                                                [
+                                                    [1,0,0],
+                                                    [0,1,0],
+                                                    [0,0,1]
+                                                ]
+                                            }
+                                        },
+
+                                        "offset":
+                                        {
+                                            "position": [0.0, 0.0, 0.0],
+                                            "orientation": [0.0, 0.0, 0.0, 1.0]
+                                        },
+
+                                        "friction": 0.6,
+                                        "restitution": 0.2,
+                                        "is_trigger": false
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "collider-component",
+                            "collider-component":
+                            {
+                                "type": "collider",
+                                "collider":
+                                {
+                                    "shape":
+                                    {
+                                        "type": "collider-box",
+                                        "collider-box":
+                                        {
+                                            "center": [0,0,0],
+                                            "extents": [1,1,1],
+                                            "axes": 
+                                            [
+                                                [1,0,0],
+                                                [0,1,0],
+                                                [0,0,1]
+                                            ]
+                                        }
+                                    },
+
+                                    "offset":
+                                    {
+                                        "position": [0.0, 0.0, 0.0],
+                                        "orientation": [0.0, 0.0, 0.0, 1.0]
+                                    },
+
+                                    "friction": 0.6,
+                                    "restitution": 0.2,
+                                    "isTrigger": false
+                                }
+                            }
+                        },
+                        {
+                            "type": "atmosphere-component",
+                            "atmosphere-component":
+                            {
+                                "type": "atmosphere",
+                                "atmosphere":
+                                {
+                                    "inner_radius": 6371.0,
+                                    "outer_radius": 6471.0,
+                                    "rayleigh":
+                                    {
+                                        "scattering_coefficient": [5.8e-6, 13.5e-6, 33.1e-6],
+                                        "scale_height": 8.0
+                                    },
+                                    "mie":
+                                    {
+                                        "scattering_coefficient": [21e-6, 21e-6, 21e-6],
+                                        "scale_height": 1.2,
+                                        "anisotropy": 0.76
+                                    },
+                                    "absorption":
+                                    {
+                                        "ozone_center_height": 25.0,
+                                        "absorption_coefficient": [0.65e-6, 1.881e-6, 0.085e-6]
+                                    },
+                                    "sun":
+                                    {
+                                        "intensity": 20.0,
+                                        "direction": [0.0, 1.0, 0.0]
+                                    },
+                                    "rendering":
+                                    {
+                                        "ground_color": [0.02, 0.07, 0.15],
+                                        "sky_color": [0.5, 0.7, 1.0],
+                                        "enable_multiple_scattering": true,
+                                        "samples": 32
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "type": "mesh-component",
+                            "mesh-component":
+                            {
+                                "type": "source-mesh",
+                                "source-mesh": 
+                                {
+                                    "target": "meshs",
+                                    "id": "KeplerX"
+                                }
+                            }
+                        },
+                        {
+                            "type": "material-component",
+                            "material-component":
+                            {
+                                "type": "source-material",
+                                "source-material": 
+                                {
+                                    "target": "materials",
+                                    "id": "rusty_metal"
+                                }
+                            }
+                        },
+                        {
+                            "type": "light-component",
+                            "light-component":
+                            {
+                                "type": "source-light",
+                                "source-light": 
+                                {
+                                    "target": "lights",
+                                    "id": "my-light"
+                                }
+                            }
+                        },
+                        {
+                            "type": "effect-component",
+                            "effect-component":
+                            {
+                                "type": "source-effect",
+                                "effect-light": 
+                                {
+                                    "target": "effects",
+                                    "id": "fire"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+
+    {
+        "type": "lighting",
+        "lighting":
+        {
+            "skybox": "textures/sky.hdr",
+            "ambient": [0.1, 0.1, 0.1],
+            "directionalLights":
+            [
+                {
+                    "direction": [-0.5, -1.0, -0.5],
+                    "color": [1.0, 0.9, 0.8],
+                    "intensity": 2.0
+                }
+            ],
+            "volumetric":
+            {
+                "fogDensity": 0.01,
+                "scattering": [0.8, 0.5, 0.3]
+            }
+        }
+    }
+]

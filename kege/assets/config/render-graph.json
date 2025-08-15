@@ -1,0 +1,295 @@
+{
+    "resources":
+    [
+        {
+            "type": "sampler",
+            "sampler":
+            {
+                "id": "sampler-nearest-norep",
+                "info":
+                {
+                    "mag_filter": "Nearest",
+                    "min_filter": "Nearest",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "ClampToEdge",
+                    "address_mode_v": "ClampToEdge",
+                    "address_mode_w": "ClampToEdge"
+                }
+            }
+        },
+
+        {
+            "type": "sampler",
+            "sampler":
+            {
+                "id": "sampler-nearest-rep",
+                "info":
+                {
+                    "mag_filter": "Nearest",
+                    "min_filter": "Nearest",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "Repeat",
+                    "address_mode_v": "Repeat",
+                    "address_mode_w": "Repeat"
+                }
+            }
+        },
+
+        {
+            "type": "sampler",
+            "sampler":
+            {
+                "id": "sampler-linear-norep",
+                "info":
+                {
+                    "mag_filter": "Nearest",
+                    "min_filter": "Nearest",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "ClampToEdge",
+                    "address_mode_v": "ClampToEdge",
+                    "address_mode_w": "ClampToEdge"
+                }
+            }
+        },
+
+        {
+            "type": "sampler",
+            "sampler":
+            {
+                "id": "sampler-linear-rep",
+                "info":
+                {
+                    "mag_filter": "Nearest",
+                    "min_filter": "Nearest",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "Repeat",
+                    "address_mode_v": "Repeat",
+                    "address_mode_w": "Repeat"
+                }
+            }
+        },
+
+
+        {
+            "type": "image",
+            "image":
+            {
+                "frames_in_flight": "getSwapchainImageCount()",
+                "name": "swapchain_color_output",
+
+                "info":
+                {
+                    "format": "getSwapchainColorFormat()",
+                    "width":  "getSwapchainExtentWidth()",
+                    "height": "getSwapchainExtentHeight()",
+                    "depth":  1,
+                    "type":   "Type2D"
+                },
+
+                "usages": [ "ColorAttachment", "ShaderResource" ],
+                "physical_handle": "getSwapchainColorImages()",
+            }
+        },
+
+        {
+            "type": "image",
+            "image":
+            {
+                "frames_in_flight": "getSwapchainImageCount()",
+                "name": "swapchain_depth_output",
+
+                "info":
+                {
+                    "type":   "Type2D",
+                    "format": "getSwapchainDepthFormat()",
+                    "width":  "getSwapchainExtentWidth()",
+                    "height": "getSwapchainExtentHeight()",
+                    "depth":  1,
+                },
+
+                "usages": [ "ColorAttachment", "ShaderResource" ],
+                "physical_handle": "getSwapchainDepthImages()",
+            }
+        },
+
+
+        {
+            "type": "image",
+            "image":
+            {
+                "frames_in_flight": "FRAMES_IN_FLIGHT",
+                "name": "scene_depth",
+
+                "info":
+                {
+                    "type":   "Type2D",
+                    "format": "depth_32",
+                    "width":  "getSwapchainExtentWidth()",
+                    "height": "getSwapchainExtentHeight()",
+                    "depth":  1,
+                },
+
+                "usages": [ "ColorAttachment", "ShaderResource" ],
+            }
+        },
+
+
+        {
+            "type": "buffer",
+            "buffer":
+            {
+                "frames_in_flight": "FRAMES_IN_FLIGHT",
+                "name": "camera-buffer",
+
+                "info":
+                {
+                    "size": 128,
+                    "data": "nullptr",
+                    "usage": "uniform-buffer",
+                    "memory_usage": "CpuToGpu",
+                }
+            }
+        },
+        {
+            "type": "buffer",
+            "buffer":
+            {
+                "frames_in_flight": "FRAMES_IN_FLIGHT",
+                "name": "light-buffer",
+
+                "info":
+                {
+                    "size": 65536,
+                    "data": "nullptr",
+                    "usage": "storage-buffer",
+                    "memory_usage": "CpuToGpu",
+                }
+            }
+        },
+
+
+
+
+        {
+            "type": "shader_resource",
+            "shader_resource":
+            {
+                "frames_in_flight": "FRAMES_IN_FLIGHT",
+                "id": "shader_resource_camera",
+
+                "bindings":
+                [
+                    {
+                        "name": "Camera",
+                        "binding": 0,
+                        "count": 1,
+                        "set": 0,
+                        "descriptor_type": "uniform-buffer",
+                        "stage_flags": [ "vertex" ]
+                    }
+                ],
+
+                "targets":
+                [
+                    {
+                        "type": "buffers",
+                        "buffers":
+                        [
+                            {
+                                "offset": 0,
+                                "range": 128,
+                                "resource-target": "camera-buffer",
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "type": "shader_resource",
+            "shader_resource":
+            {
+                "frames_in_flight": "FRAMES_IN_FLIGHT",
+                "id": "shader_resource_lights",
+
+                "bindings":
+                [
+                    {
+                        "name": "Lights",
+                        "binding": 0,
+                        "set": 1,
+                        "count": 10,
+                        "descriptor_type": "storage-buffer",
+                        "stage_flags": [ "fragment" ]
+                    }
+                ],
+
+                "targets":
+                [
+                    {
+                        "type": "buffers",
+                        "buffers":
+                        [
+                            {
+                                "offset": 0,
+                                "range": 65536,
+                                "resource-target": "light-buffer",
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+    ],
+
+    "passes":
+    [
+        {
+            "type": "graphics",
+
+            "id": "render-scene",
+
+            "reads":
+            [
+                {
+                    "name":   "scene_color",
+                    "type":   "image",
+                    "access": "ShaderRead",
+                    "stage":  "fragment",
+                },
+                {
+                    "name":   "scene_depth",
+                    "type":   "Image",
+                    "access": "ShaderRead",
+                    "stage":  "fragment",
+                }
+            ],
+
+            "writes":
+            [
+                {
+                    "type": "image",
+                    "name": "scene_color",
+                    "access": "ColorAttachmentWrite",
+                    "stage": "ColorAttachmentOutput",
+                    "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
+                },
+                {
+                    "name": "scene_depth",
+                    "type": "Image",
+                    "access": "DepthStencilAttachmentWrite",
+                    "stage": "ColorAttachmentOutput",
+                    "clear_depth": 1.0,
+                }
+            ]
+        },
+
+        {
+            "type": "compute",
+            "name": "compute",
+            "reads":{},
+            "writes":{},
+            "compute":{},
+        }
+    ],
+}

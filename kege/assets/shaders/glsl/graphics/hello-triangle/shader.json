@@ -1,0 +1,62 @@
+{
+    "name": "hello-triangle-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-strip"],
+    "polygon-modes": ["fill"],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file": "triangle.frag",
+            "entry-point" : "main",
+            "debug-name":"hello-triangle-shader"
+        },
+        {
+            "type": "vertex",
+            "file": "triangle.vert",
+            "entry-point" : "main",
+            "debug-name":"hello-triangle-shader"
+        }
+    ],
+
+    "rasterization_state",
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "fill",
+        "cull_mode": "back",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "color_blend_state":
+    {
+        "logic_op_enable": "false"
+        "logic_op": "copy";
+        "color_blend_attachments":
+        [
+            {
+                "blend_enable": "true",
+
+                "color_blend_op": "add",
+                "src_color_blend_factor": "src-alpha",
+                "dst_color_blend_factor": "one-minus-src-alpha",
+
+                "alpha_blend_op": "add"
+                "src_alpha_blend_factor": "one",
+                "dst_alpha_blend_factor": "zero",
+            }
+        ],
+    },
+    
+    "rendering_output":
+    {
+        "color_output_formats":[ "bgra_u8_norm" ],
+        "depth_output_format": "depth_32"
+    }
+}

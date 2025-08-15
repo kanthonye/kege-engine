@@ -1,0 +1,68 @@
+[
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/algebra/quaternion.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/algebra/quaternion.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/algebra/random.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/random.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/random.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/algebra/random.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/algebra/transform.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/transform.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/transform.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/algebra/transform.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/algebra/vectors.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/vectors.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/vectors.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/algebra/vectors.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-2D-shapes.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-2D-shapes.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-2D-shapes.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-2D-shapes.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-3D-shapes.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-3D-shapes.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/collisions-3D-shapes.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/geometry/collisions-3D-shapes.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-2D-shapes.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-2D-shapes.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-2D-shapes.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-2D-shapes.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-3D-shapes.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-3D-shapes.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/geometry/primitive-3D-shapes.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/geometry/primitive-3D-shapes.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/noise/perlin-noise.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/perlin-noise.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/perlin-noise.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/noise/perlin-noise.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/noise/simplex-noise.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/simplex-noise.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/noise/simplex-noise.cpp",
+  "output": "CMakeFiles/vector_math.dir/kege/src/core/math/noise/simplex-noise.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/kege-engine.dir/kege/src/main.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp",
+  "output": "CMakeFiles/kege-engine.dir/kege/src/main.cpp.o"
+}
+]

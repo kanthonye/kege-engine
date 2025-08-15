@@ -1,0 +1,27 @@
+{
+    "name": "object-pbr-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-list"],
+    "polygon-modes": ["fill"],
+    
+    "attribute-bindings":
+    [
+        {
+            "binding": 0,
+            "stride": 56,
+            "input-rate": "per-vertex",
+        }
+    ],
+
+    "stages":
+    [
+        {
+            "type": "vertex",
+            "file":  "basic.vert"
+        },
+        {
+            "type": "fragment",
+            "file":  "basic.frag"
+        }
+    ]
+}

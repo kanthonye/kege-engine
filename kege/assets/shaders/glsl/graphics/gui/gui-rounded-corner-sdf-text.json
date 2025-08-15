@@ -1,0 +1,109 @@
+{
+    "name": "gui-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-strip"],
+
+    "vertex_bindings":
+    [],
+
+    "vertex_inputs":
+    [],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file":  "gui-rounded-corner-sdf-text.frag",
+            "entry-point": "main",
+            "debug-name": "gui.frag"
+        },
+        {
+            "type": "vertex",
+            "file": "gui-rounded-corner-sdf-text.vert",
+            "entry-point": "main",
+            "debug-name": "gui.frag"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "UIViewBuffer",
+            "type": "storage-buffer",
+            "binding" : 0,
+            "count" : 1,
+            "set" : 0,
+            "stages": [ "vertex" ]
+        },
+        {
+            "name": "sdfFontTexture",
+            "type": "combined-image-sampler",
+            "binding" : 0,
+            "count" : 1,
+            "set" : 1,
+            "stages": [ "fragment" ]
+        }
+    ],
+
+    "push_constants_ranges":
+    [
+        {
+            "sid": "Camera2D",
+            "offset": 0,
+            "size": 80,
+            "stages": [ "vertex", "fragment" ]
+        },
+    ],
+
+    "rasterization_state":
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "fill",
+        "cull_mode": "none",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "rendering_output":
+    {
+        "color_output_formats":[ "bgra_u8_norm" ],
+        "depth_output_format": "depth_32"
+    },
+
+
+    "depth_stencil_state":
+    {
+        "depth_test_enable":  "false",
+        "depth_write_enable": "true",
+        "depth_compare_op": "less",
+        "depth_bounds_test_enable": "false",
+        "stencil_test_enable": "false",
+        "front_op":
+        {
+            "fail_op": "keep",
+            "depth_fail_op": :"keep",
+            "pass_op": "keep",
+            "compare_op": "always",
+            "compare_mask": "0xFFFFFFFF",
+            "write_mask": "0xFFFFFFFF",
+            "reference": 0,
+        },
+        "back_op":
+        {
+            "fail_op": "keep",
+            "depth_fail_op": :"keep",
+            "pass_op": "keep",
+            "compare_op": "always",
+            "compare_mask": "0xFFFFFFFF",
+            "write_mask": "0xFFFFFFFF",
+            "reference": 0,
+        },,
+        "min_depth_bounds": 0.0f,
+        "max_depth_bounds": 1.0f
+    },
+}

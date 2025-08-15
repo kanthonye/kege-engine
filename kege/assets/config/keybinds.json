@@ -1,0 +1,140 @@
+{
+    "keybinds":
+    [
+        {
+            "key":   "BUTTON_0",
+            "action": "CAST_RAY",
+            "sensitivity": 1.0,
+            "type": "STATE"
+        },
+        {
+            "key":   "BUTTON_1",
+            "action": "CONTROL_CAMERA",
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_UP",              
+            "action": "MOVE_FORWARD",   
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_DOWN",            
+            "action": "MOVE_BACKWARD",  
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_LEFT",            
+            "action": "MOVE_LEFTWARD",  
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_RIGHT",           
+            "action": "MOVE_RIGHTWARD", 
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_ENTER",           
+            "action": "MOVE_UPWARD",    
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "KEY_APOSTROPHE",      
+            "action": "MOVE_DOWNWARD",  
+            "sensitivity": 1.0, 
+            "type": "STATE"
+        },
+        {
+            "key": "POINTER_Y_POSITIVE",
+            "action": "LOOK_UP",
+            "sensitivity": 1.0,
+            "type": "RANGE"
+        },
+        {
+            "key": "POINTER_Y_NEGATIVE",  
+            "action": "LOOK_DOWN",      
+            "sensitivity": 1.0, 
+            "type": "RANGE"
+        },
+        {
+            "key": "POINTER_X_POSITIVE",
+            "action": "LOOK_RIGHT",     
+            "sensitivity": 1.0, 
+            "type": "RANGE"
+        },
+        {
+            "key": "POINTER_X_NEGATIVE",  
+            "action": "LOOK_LEFT",      
+            "sensitivity": 1.0, 
+            "type": "RANGE"
+        },
+        {
+            "key": "KEY_SPACE",           
+            "action": "JUMP",           
+            "sensitivity": 1.0, 
+            "type": "ACTION"
+        },
+
+
+        {
+            "key": "BUTTON_2",
+            "action": "ACTION_1",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_2",
+            "action": "ACTION_2",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_3",
+            "action": "ACTION_3",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_4",
+            "action": "ACTION_4",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_5",
+            "action": "ACTION_5",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_6",
+            "action": "ACTION_6",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_7",
+            "action": "ACTION_7",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_8",
+            "action": "ACTION_8",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        },
+        {
+            "key": "KEY_9",
+            "action": "ACTION_9",
+            "sensitivity": 1.0,
+            "type": "ACTION"
+        }
+    ],
+}
+

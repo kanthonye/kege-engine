@@ -1,0 +1,46 @@
+{
+    "name": "basic-shader",
+    "pipeline": "compute",
+
+    "stages":
+    [
+        {
+            "type": "compute",
+            "file":  "basic.frag",
+            "entry-point" : "main",
+            "debug-name":"fs-basic-shader"
+        },
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "src_color",
+            "type": "combined-image-sampler",
+            "binding" : 0,
+            "count" : 1,
+            "stages": [ "compute" ]
+        },
+        {
+            "name": "src_depth",
+            "type": "combined-image-sampler",
+            "binding" : 1,
+            "count" : 1,
+            "stages": [ "compute" ]
+        },
+        {
+            "name": "dst_color",
+            "type": "combined-image-sampler",
+            "binding" : 2,
+            "count" : 1,
+            "stages": [ "compute" ]
+        },
+        {
+            "name": "dst_depth",
+            "type": "combined-image-sampler",
+            "binding" : 3,
+            "count" : 1,
+            "stages": [ "compute" ]
+        }
+    ],
+}

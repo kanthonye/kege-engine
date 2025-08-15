@@ -1,0 +1,82 @@
+
+{
+    "type": "graphics_pipeline",
+    "name": "cube-sphere-quatree-terrain-shader",
+
+    "shaders":
+    [
+        {
+            "stage": "vertex",
+            "file":  "shader.vert"
+        },
+        {
+            "stage": "fragment",
+            "file":  "shader.frag"
+        }
+    ],
+
+    "attribute_inputs":[],
+
+    "attribute_bindings":[],
+
+    "rasterization":
+    {
+        "depth_test": "depth_op_less",
+        "primative_topology": "triangle-list",
+        "polygon_modes": ["line"],
+        "cull_mode": "cull_cw"
+    },
+
+    "descriptor_sets":
+    [
+        {
+            "name": "CameraBlock",
+            "set": "0",
+            "count": "1",
+            "binding": "0",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+        },
+        {
+            "name": "PatchVertexBuffer",
+            "set": "1",
+            "count": "1",
+            "binding": "0",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+        },
+        {
+            "name": "PatchIndexBuffer",
+            "set": "1",
+            "count": "1",
+            "binding": "1",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+        },
+        {
+            "name": "PatchDataBuffer",
+            "set": "2",
+            "count": "1",
+            "binding": "0",
+            "type": "storage-buffer",
+            "stages": ["vertex"]
+        }
+    ],
+
+    "push_constants":
+    [
+        {
+            "name": "ObjectMatrices",
+            "size": 128,
+            "offset": 0,
+            "stages": ["vertex"]
+        }
+    ],
+
+    "renderpass":
+    {
+        "name": "swapchain-renderpass",
+        "attachments":
+        []
+    },
+}

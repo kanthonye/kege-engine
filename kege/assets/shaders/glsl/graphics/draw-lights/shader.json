@@ -1,0 +1,58 @@
+
+{
+    "type": "graphics_pipeline",
+    "name": "draw-lights-shader",
+
+    "shaders":
+    [
+        {
+            "stage": "vertex",
+            "file":  "light.vert"
+        },
+        {
+            "stage": "fragment",
+            "file":  "light.frag"
+        }
+    ],
+
+    "attribute_inputs":
+    [],
+
+    "attribute_bindings":
+    [],
+
+    "rasterization":
+    {
+        "primative_topology": "triangle-strip",
+        "polygon_modes": ["fill"],
+        "cull_mode": "cull_none"
+    },
+
+    "descriptor_sets":
+    [
+        {
+            "name": "CameraBlock",
+            "set": "0",
+            "count": "1",
+            "binding": "0",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+        }
+    ],
+
+    "push_constants":
+    [
+        {
+            "size": 128,
+            "offset": 0,
+            "stages": ["vertex"]
+        }
+    ],
+
+    "renderpass":
+    {
+        "name": "swapchain-renderpass",
+        "attachments":
+        []
+    }
+}

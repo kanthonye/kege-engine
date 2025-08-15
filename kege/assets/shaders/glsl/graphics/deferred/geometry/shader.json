@@ -1,0 +1,179 @@
+
+{
+    "type": "graphics-pipeline",
+    "name": "point-particle-shader",
+
+    "shaders":
+    [
+        {
+            "stage": "vertex",
+            "file":  "point-particle.vert"
+        },
+        {
+            "stage": "fragment",
+            "file":  "point-particle.frag"
+        }
+    ],
+
+    "attribute_inputs":
+    [
+        {
+            "name": "in_position",
+            "location": 0,
+            "format": "vec3",
+            "binding": 0,
+            "offset": 0
+        },
+        {
+            "name": "in_normal",
+            "location": 1,
+            "format": "vec3",
+            "binding": 12,
+            "offset": 0
+        },
+    ],
+
+    "attribute_bindings":
+    [
+        {
+            "attributes":
+            [
+                "in_position",
+                "in_normal",
+                "in_texcoord",
+                "in_tangent",
+                "in_bitangent"
+            ],
+            "stride": 56,
+            "binding": 0,
+            "input_rate": "per-vertex"
+        },
+        {
+            "binding": 1,
+            "attributes":
+            [
+                "in_color"
+            ],
+            "input_rate": "per-instance"
+        }
+    ],
+
+    "rasterization":
+    {
+        "depth_test": "depth_op_less",
+        "primative_topology": "triangle-list",
+        "polygon_modes": ["fill"],
+        "cull_mode": "cull_ccw"
+    },
+
+    "descriptor_sets":
+    [
+        {
+            "set": 0,
+            "binding": 0,
+            "name": "CameraBlock",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+            "members":
+            [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "count": 1,
+                    "offset": 0,
+                    "size": 64,
+                },
+                {
+                    "name": "transform",
+                    "type": "mat4",
+                    "count": 1,
+                    "offset": 64,
+                    "size": 64,
+                },
+                {
+                    "name": "position",
+                    "type": "vec3",
+                    "count": 1,
+                    "offset": 128,
+                    "size": 12,
+                }
+            ]
+        },
+        {
+            "set": 0,
+            "binding": 0,
+            "name": "LightBlock",
+            "type": "uniform-buffer",
+            "stages": ["vertex"]
+            "members":
+            [
+                {
+                    "name": "ligths",
+                    "type": "struct",
+                    "count": 100,
+                    "offset": 16,
+                    "size": 16,
+                }
+            ]
+        },
+        {
+            "set": 2,
+            "binding": 0,
+            "name": "MaterialBlock",
+            "type": "uniform-buffer",
+            "stages": ["fragment"]
+            "members":
+            [
+                {
+                    "name": "diffuse_color",
+                    "type": "vec3",
+                    "count": 1,
+                    "offset": 0,
+                    "size": 12,
+                },
+                {
+                    "name": "padding",
+                    "type": "float",
+                    "count": 1,
+                    "offset": 12,
+                    "size": 4,
+                },
+                {
+                    "name": "metallic",
+                    "type": "float",
+                    "count": 1,
+                    "offset": 16,
+                    "size": 4,
+                }
+            ]
+        },
+    ],
+
+    "push_constants":
+    [
+        {
+            "size": 128,
+            "offset": 0,
+            "stages": ["vertex"]
+        }
+    ],
+
+    "renderpass":
+    {
+        "id": "main",
+        "attachments":
+        [
+            {
+                "format":           "rgba_8_unorm",
+                "image_aspect":     "aspect_color",
+                "load_op":          "load_op_clear",
+                "store_op":         "store_op_dont_care",
+                "stencil_load_op":  "load_op_dont_care",
+                "stencil_store_op": "store_op_dont_care",
+                "initial_layout":   "layout_undefined",
+                "final_layout":     "layout_present_src_optimal"
+            }
+        ]
+    },
+
+}

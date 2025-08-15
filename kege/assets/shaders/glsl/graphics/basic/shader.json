@@ -1,0 +1,91 @@
+{
+    "name": "basic-shader",
+    "pipeline": "graphics",
+
+    "primatives": ["triangle-list"],
+
+    "vertex_bindings":
+    [
+        {
+            "binding": 0,
+            "stride": 56,
+            "input_rate": "vertex",
+            "attributes": [ "in_position", "in_normal" ]
+        }
+    ],
+
+    "vertex_inputs":
+    [
+        {
+            "name": "in_position",
+            "format": "vec3",
+            "location": 0,
+            "binding": 0,
+            "offset": 0
+        },
+        {
+            "name": "in_normal",
+            "format": "vec3",
+            "location": 1,
+            "binding": 0,
+            "offset": 12
+        }
+    ],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file":  "basic.frag",
+            "entry-point" : "main",
+            "debug-name":"fs-basic-shader"
+        },
+        {
+            "type": "vertex",
+            "file":  "basic.vert",
+            "entry-point" : "main",
+            "debug-name":"vs-basic-shader"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "CameraBlock",
+            "type": "uniform-buffer",
+            "binding" : 0,
+            "count" : 1,
+            "stages": [ "vertex" ]
+        }
+    ],
+
+    "push_constants_ranges":
+    [
+        {
+            "sid": "ObjectMatrices",
+            "offset": 0,
+            "size": 128,
+            "stages": [ "vertex" ]
+        },
+    ],
+
+    "rasterization_state":
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "line",
+        "cull_mode": "none",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "rendering_output":
+    {
+        "color_output_formats": [ "bgra_u8_norm" ],
+        "depth_output_format": "depth_32"
+    }
+}

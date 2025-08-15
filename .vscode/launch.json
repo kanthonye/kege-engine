@@ -1,0 +1,23 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug kege-engine",
+            "type": "lldb",
+            "request": "launch",
+            // This is the important part! It points to your executable.
+            // Replace "VulkanProject" with your actual project name from CMakeLists.txt.
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            // The directory where your executable is located.
+            "cwd": "${command:cmake.launchTargetDirectory}",
+            // This tells VSCode to run our build task before trying to launch.
+            // The name must exactly match the "label" in tasks.json.
+            "preLaunchTask": "CMake: build",
+            "stopOnEntry": false
+        }
+    ]
+}

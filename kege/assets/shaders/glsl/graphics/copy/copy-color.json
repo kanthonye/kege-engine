@@ -1,0 +1,54 @@
+{
+    "name": "copy-color-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-strip"],
+    "polygon-modes": ["fill"],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file":  "copy-color.frag",
+            "entry-point" : "main",
+            "debug-name":"copy-color-fs"
+        },
+        {
+            "type": "vertex",
+            "file":  "copy-color.vert",
+            "entry-point" : "main",
+            "debug-name":"copy-color-vs"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "src_color",
+            "type": "combind_image_sampler",
+            "binding" : 0,
+            "count" : 1,
+            "stages": [ "fragment" ]
+        }
+    ],
+
+
+    "rasterization_state",
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "fill",
+        "cull_mode": "back",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "rendering_output":
+    {
+        "color_output_formats":[ "bgra_u8_norm" ],
+        "depth_output_format": "undefined"
+    },
+}

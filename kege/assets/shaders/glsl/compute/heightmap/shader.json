@@ -1,0 +1,43 @@
+
+{
+    "type": "compute_pipeline",
+    "name": "heightmap-generator-compute-shader",
+
+    "shaders":
+    [
+        {
+            "stage": "compute",
+            "file":  "shader.glsl"
+        }
+    ],
+
+    "descriptor_sets":
+    [
+        {
+            "name": "Heightmap",
+            "set": "0",
+            "count": "1",
+            "binding": "0",
+            "type": "image2D",
+            "stages": ["compute"]
+        },
+        {
+            "name": "CubeFacePoints",
+            "set": "1",
+            "count": "1",
+            "binding": "0",
+            "type": "storage-buffer",
+            "stages": ["compute"]
+        }
+    ],
+
+    "push_constants":
+    [
+        {
+            "name": "HeightmapParameters",
+            "size": 128,
+            "offset": 0,
+            "stages": ["compute"]
+        }
+    ]
+}

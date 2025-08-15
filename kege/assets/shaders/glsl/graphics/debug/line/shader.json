@@ -1,0 +1,28 @@
+{
+    "name": "line-shader",
+    "pipeline": "graphics",
+    "primatives": ["line-strip"],
+    "polygon-modes": ["line"],
+
+    "attribute-bindings":
+    [
+        {
+            "binding": 0,
+            "stride": 12,
+            "input-rate": "per-vertex",
+            "attributes": [ "_position" ]
+        }
+    ],
+
+    "stages":
+    [
+        {
+            "type": "vertex",
+            "file":  "line.vert"
+        },
+        {
+            "type": "fragment",
+            "file":  "line.frag"
+        }
+    ]
+}

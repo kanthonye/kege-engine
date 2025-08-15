@@ -1,0 +1,27 @@
+
+{
+    "name": "particle-effect-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-strip"],
+    "polygon-modes": ["fill"],
+    "attribute-bindings":
+    [
+        {
+            "binding": 0,
+            "stride": 52,
+            "input-rate": "per-instance",
+            "attributes": [ "in_Position", "in_Color", "in_Sprite", "in_Size", "in_Rotation" ]
+        }
+    ],
+    "stages":
+    [
+        {
+            "type": "vertex",
+            "file":  "shader.vert"
+        },
+        {
+            "type": "fragment",
+            "file":  "shader.frag"
+        }
+    ]
+}

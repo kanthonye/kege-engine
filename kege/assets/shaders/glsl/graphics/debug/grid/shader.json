@@ -1,0 +1,56 @@
+{
+    "name": "basic-shader",
+    "pipeline": "graphics",
+    "primatives": ["triangle-list"],
+    "polygon-modes": ["line"],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file":  "grid.frag",
+            "entry-point" : "main",
+            "debug-name":"fs-grid-shader"
+        },
+        {
+            "type": "vertex",
+            "file":  "grid.vert",
+            "entry-point" : "main",
+            "debug-name":"vs-grid-shader"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "CameraData",
+            "type": "uniform-buffer",
+            "binding" : 0,
+            "count" : 1,
+            "stages": [ "fragment" ]
+        }
+    ],
+
+    "push_constants_ranges":
+    [
+        {
+            "sid": "ObjectMatrices",
+            "offset": 0,
+            "size": 128,
+        },
+    ],
+
+    "rasterization_state",
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "fill",
+        "cull_mode": "back",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+}

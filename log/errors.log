@@ -1,0 +1,140 @@
+2025-04-18 22:58:47 [ DEBUGG ]: successfully initialized -> logging-system
+
+2025-04-18 22:58:47 [ DEBUGG ]: initializing -> graphics-system
+2025-04-18 22:58:48 [ DEBUGG ]: Searching for ICD drivers named ../../../lib/libMoltenVK.dylib
+2025-04-18 22:58:48 [ DEBUGG ]: Loading layer library /Applications/Developer/VulkanSDK/1.3.236.0/macOS/share/vulkan/explicit_layer.d/../../../lib/libVkLayer_khronos_validation.dylib
+2025-04-18 22:58:48 [ INFO ]: 
+
+2025-04-18 22:58:48 [ INFO ]: GPU Drive Version: 0 2 2019
+2025-04-18 22:58:48 [ INFO ]: Vulkan API Version: 1 2 296
+2025-04-18 22:58:48 [ INFO ]: max-storage-buffer-size: 3208642560
+2025-04-18 22:58:48 [ INFO ]: max-uniform-buffer-size: 65536
+2025-04-18 22:58:48 [ INFO ]: max-push-constants-size: 4096
+2025-04-18 22:58:48 [ INFO ]: max-image-array-layers: 2048
+2025-04-18 22:58:48 [ INFO ]: max-framebuffer-width: 16384
+2025-04-18 22:58:48 [ INFO ]: max-framebuffer-height: 16384
+2025-04-18 22:58:48 [ INFO ]: max-framebuffer-layers: 2048
+2025-04-18 22:58:48 [ INFO ]: max-clip-distances: 8
+2025-04-18 22:58:48 [ INFO ]: max-cull-distances: 0
+2025-04-18 22:58:48 [ INFO ]: 
+
+2025-04-18 22:58:48 [ INFO ]: Local GPU Memory: 3.98438GiB
+2025-04-18 22:58:48 [ INFO ]: Shared System Memory: 64GiB
+2025-04-18 22:58:48 [ INFO ]: shader Float64 is NOT supported.
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> graphics-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> rendering-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> rendering-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> mesh-rendering-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> mesh-rendering-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> line-renderer
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> line-renderer
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> entity-component-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> entity-component-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> input-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> input-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> camera-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> camera-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> lookat-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> lookat-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> follow-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> follow-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> player-movement-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> player-movement-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> compute-scene-ray
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> compute-scene-ray
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> particle-emission-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> particle-emission-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> particle-effect-update-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> particle-effect-update-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> particle-effect-render-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> particle-effect-render-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> entity-factory
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> entity-factory
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> entity-selection-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> entity-selection-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> entity-dragging-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> entity-dragging-system
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> decay-overtime
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> decay-overtime
+
+2025-04-18 22:58:48 [ DEBUGG ]: initializing -> physics-system
+2025-04-18 22:58:48 [ DEBUGG ]: successfully initialized -> physics-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> physics-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> physics-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> decay-overtime
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> decay-overtime
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> entity-dragging-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> entity-dragging-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> entity-selection-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> entity-selection-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> entity-factory
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> entity-factory
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> particle-effect-render-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> particle-effect-render-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> particle-effect-update-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> particle-effect-update-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> particle-emission-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> particle-emission-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> compute-scene-ray
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> compute-scene-ray
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> player-movement-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> player-movement-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> follow-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> follow-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> lookat-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> lookat-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> camera-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> camera-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> input-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> input-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> entity-component-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> entity-component-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> line-renderer
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> line-renderer
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> mesh-rendering-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> mesh-rendering-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> rendering-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> rendering-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> graphics-system
+2025-04-18 23:00:40 [ DEBUGG ]: Unloading layer library /Applications/Developer/VulkanSDK/1.3.236.0/macOS/share/vulkan/explicit_layer.d/../../../lib/libVkLayer_khronos_validation.dylib
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> graphics-system
+
+2025-04-18 23:00:40 [ DEBUGG ]: shuting-down -> logging-system
+2025-04-18 23:00:40 [ DEBUGG ]: successfully shutdown -> logging-system
+
