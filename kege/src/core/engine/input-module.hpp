@@ -22,11 +22,11 @@ namespace kege{
 
         const kege::Ref< kege::InputContextManager > operator ->() const { return _module; }
         kege::Ref< kege::InputContextManager > operator ->() { return _module; }
-        operator bool()const{ return _module != nullptr; }
+        operator bool()const override{ return _module != nullptr; }
 
-        bool initialize();
-        void shutdown();
-        void add();
+        bool initialize()override;
+        void shutdown()override;
+        void add()override;
 
     private:
 

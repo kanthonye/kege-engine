@@ -1685,12 +1685,12 @@ namespace kege{
         /**
          * @brief Source color blend factor.
          */
-        BlendFactor src_color_blend_factor = BlendFactor::One;
+        BlendFactor src_color_blend_factor = BlendFactor::SrcAlpha;
 
         /**
          * @brief Destination color blend factor.
          */
-        BlendFactor dst_color_blend_factor = BlendFactor::Zero;
+        BlendFactor dst_color_blend_factor = BlendFactor::OneMinusSrcAlpha;
 
         /**
          * @brief Color blend operation.

@@ -144,9 +144,9 @@ namespace kege::ui{
             .mag_filter = Filter::Linear,
             .min_filter = Filter::Linear,
             .mipmap_mode = MipmapMode::Linear,
-            .address_mode_u = AddressMode::Repeat,
-            .address_mode_v = AddressMode::Repeat,
-            .address_mode_w = AddressMode::Repeat
+            .address_mode_u = AddressMode::ClampToEdge,
+            .address_mode_v = AddressMode::ClampToEdge,
+            .address_mode_w = AddressMode::ClampToEdge
         });
 
         return new ui::Font( glyphs, image, sampler );

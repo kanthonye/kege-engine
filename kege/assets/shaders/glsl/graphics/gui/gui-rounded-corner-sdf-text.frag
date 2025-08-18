@@ -55,8 +55,6 @@ void main() {
     // Compute alpha for rounded rectangle
     float rect_alpha = smoothstep(0.0, 1.0, -sdf);
 
-
-
     float width       = 0.05;
     float edge        = 0.07;
 
@@ -64,7 +62,7 @@ void main() {
     float text_alpha = 1 - texture(sdfFontTexture, text_uv).r;
 
     // Apply smoothstep for anti-aliased text
-    text_alpha = 1 - smoothstep(width, width + edge, text_alpha);//0.05, 0.07, 0.08, 0.1
+    text_alpha = 1 - smoothstep(width, width + edge, text_alpha);
 
     // Blend text with rectangle if enabled
     float alpha = rect_alpha;
@@ -76,7 +74,4 @@ void main() {
 
     // Output final color
     final_color = vec4(color.rgb, color.a * alpha);
-
-
-    //final_color = vec4(texture(sdfFontTexture, text_uv).rgb, 1.0);
 }

@@ -22,13 +22,13 @@ namespace kege{
 
         VirtualDirectoryModule( kege::Engine* engine );
 
-        operator bool()const{ return _module != nullptr; }
+        operator bool()const override{ return _module != nullptr; }
         const kege::VirtualDirectory* operator ->()const;
         kege::VirtualDirectory* operator ->();
 
-        bool initialize();
-        void shutdown();
-        void add();
+        bool initialize()override;
+        void shutdown()override;
+        void add()override;
 
     private:
 

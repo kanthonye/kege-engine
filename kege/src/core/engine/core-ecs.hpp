@@ -22,11 +22,11 @@ namespace kege{
 
         kege::Ref< kege::EntityManager > operator ->() { return _module; }
         const kege::Ref< kege::EntityManager > operator ->() const { return _module; }
-        operator bool()const{ return _module != nullptr; }
+        operator bool()const override{ return _module != nullptr; }
 
-        bool initialize();
-        void shutdown();
-        void add();
+        bool initialize()override;
+        void shutdown()override;
+        void add()override;
 
         ECSModule( kege::Engine* engine );
 

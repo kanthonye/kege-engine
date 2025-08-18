@@ -17,7 +17,7 @@ namespace kege{
     {
     public:
 
-        operator bool()const{ return true; }
+        operator bool()const override{ return true; }
         bool initialize()override;
         void shutdown()override;
         void add()override;

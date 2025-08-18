@@ -19,7 +19,7 @@ namespace kege{
 
         const kege::Scene* operator ->()const;
         kege::Scene* operator ->();
-        operator bool()const;
+        operator bool()const override;
 
         void setScene( kege::Ref< kege::Scene > scene );
         void changeScene( uint32_t scene_id );

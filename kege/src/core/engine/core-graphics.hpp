@@ -19,12 +19,12 @@ namespace kege{
 
         kege::Ref< kege::Graphics > operator ->() { return _module; }
         const kege::Ref< kege::Graphics > operator ->() const { return _module; }
-        operator bool()const{ return _module != nullptr; }
+        operator bool()const override{ return _module != nullptr; }
 
         kege::Graphics* get();
-        bool initialize();
-        void shutdown();
-        void add();
+        bool initialize()override;
+        void shutdown()override;
+        void add()override;
 
         GraphicsModule( kege::Engine* engine );
 

@@ -305,58 +305,58 @@ namespace kege{
                     {
                         Communication::broadcast< kege::RenderPassContext* >( context );
 
-                        kege::ShaderPipelineManager* pipelines = graph->getGraphics()->getShaderPipelineManager();
-                        kege::PipelineHandle pipeline = pipelines->get( "copy-shader" );
-                        if ( !pipeline )
-                        {
-                            KEGE_LOG_ERROR << "copy-shader not found." <<Log::nl;
-                            return;
-                        }
-
-                        kege::DescriptorSetHandle descriptor_set = context->getPhysicalDescriptorSet( "scene-frame-descriptor" );
-                        if ( !descriptor_set )
-                        {
-                            KEGE_LOG_ERROR << "descriptor_set not found." <<Log::nl;
-                            return;
-                        }
-
-                        kege::CommandEncoder* encoder = context->getCommandEncoder();
-                        encoder->bindGraphicsPipeline( pipeline );
-                        encoder->bindDescriptorSets( descriptor_set );
-                        encoder->draw( 4, 1, 0, 0 );
+//                        kege::ShaderPipelineManager* pipelines = graph->getGraphics()->getShaderPipelineManager();
+//                        kege::PipelineHandle pipeline = pipelines->get( "copy-shader" );
+//                        if ( !pipeline )
+//                        {
+//                            KEGE_LOG_ERROR << "copy-shader not found." <<Log::nl;
+//                            return;
+//                        }
+//
+//                        kege::DescriptorSetHandle descriptor_set = context->getPhysicalDescriptorSet( "scene-frame-descriptor" );
+//                        if ( !descriptor_set )
+//                        {
+//                            KEGE_LOG_ERROR << "descriptor_set not found." <<Log::nl;
+//                            return;
+//                        }
+//
+//                        kege::CommandEncoder* encoder = context->getCommandEncoder();
+//                        encoder->bindGraphicsPipeline( pipeline );
+//                        encoder->bindDescriptorSets( descriptor_set );
+//                        encoder->draw( 4, 1, 0, 0 );
                     }
                 });
 
-                graph->addGraphicsPass
-                ({
-                    "scene-output",
-                    .reads =
-                    {
-                    },
-                    .writes =
-                    {
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "scene_color",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::ColorAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
-                        },
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "scene_depth",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
-                        }
-                    },
-                    .execute = []( kege::RenderPassContext* context )
-                    {
-                        Communication::broadcast< kege::RenderPassContext* >( context );
-                    }
-                });
+//                graph->addGraphicsPass
+//                ({
+//                    "scene-output",
+//                    .reads =
+//                    {
+//                    },
+//                    .writes =
+//                    {
+//                        kege::RgWriteResrcDesc
+//                        {
+//                            .name = "scene_color",
+//                            .type = kege::RgResrcType::Image,
+//                            .access = kege::AccessFlags::ColorAttachmentWrite,
+//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+//                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
+//                        },
+//                        kege::RgWriteResrcDesc
+//                        {
+//                            .name = "scene_depth",
+//                            .type = kege::RgResrcType::Image,
+//                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
+//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+//                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
+//                        }
+//                    },
+//                    .execute = []( kege::RenderPassContext* context )
+//                    {
+//                        Communication::broadcast< kege::RenderPassContext* >( context );
+//                    }
+//                });
             }
         });
 

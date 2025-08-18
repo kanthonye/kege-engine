@@ -1253,14 +1253,25 @@ namespace kege::vk{
         for ( int i=0; i<desc.color_blend_state.attachments.size(); i++ )
         {
             VkPipelineColorBlendAttachmentState state = {};
-            state.blendEnable         = desc.color_blend_state.attachments[i].blend_enable;
-            state.alphaBlendOp        = convertBlendOp( desc.color_blend_state.attachments[i].alpha_blend_op );
-            state.dstAlphaBlendFactor = convertBlendFactor( desc.color_blend_state.attachments[i].dst_alpha_blend_factor );
-            state.dstColorBlendFactor = convertBlendFactor( desc.color_blend_state.attachments[i].dst_color_blend_factor );
-            state.srcAlphaBlendFactor = convertBlendFactor( desc.color_blend_state.attachments[i].src_alpha_blend_factor );
-            state.srcColorBlendFactor = convertBlendFactor( desc.color_blend_state.attachments[i].src_color_blend_factor );
+            VkPipelineColorBlendAttachmentState blendAttachment = {};
+            blendAttachment.blendEnable = VK_TRUE;
+            blendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+            blendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            blendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+            blendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+            blendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+            blendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+            blendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+            state.blendEnable         = VK_TRUE;//desc.color_blend_state.attachments[i].blend_enable;
+            state.colorBlendOp        = VK_BLEND_OP_ADD;
+            state.alphaBlendOp        = VK_BLEND_OP_ADD;//convertBlendOp( desc.color_blend_state.attachments[i].alpha_blend_op );
+            state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;//convertBlendFactor( desc.color_blend_state.attachments[i].dst_alpha_blend_factor );
+            state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;//convertBlendFactor( desc.color_blend_state.attachments[i].dst_color_blend_factor );
+            state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;//convertBlendFactor( desc.color_blend_state.attachments[i].src_alpha_blend_factor );
+            state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;//convertBlendFactor( desc.color_blend_state.attachments[i].src_color_blend_factor );
             state.colorWriteMask      = convertColorComponentMask( desc.color_blend_state.attachments[i].color_write_mask );
-            color_blend_attachment_states.push_back( state );
+            color_blend_attachment_states.push_back( blendAttachment );
         }
         VkPipelineColorBlendStateCreateInfo color_blend_info = { VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };
         color_blend_info.attachmentCount = static_cast< int >( color_blend_attachment_states.size() );

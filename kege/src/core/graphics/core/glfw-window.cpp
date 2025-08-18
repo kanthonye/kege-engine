@@ -88,11 +88,6 @@ namespace kege{
         glfwSetMouseButtonCallback( _window, mouseButtonCallback );
         glfwSetScrollCallback( _window, scrollCallback );
 
-        int width, height;
-        glfwGetFramebufferSize( _window, &width, &height );
-        _create_info.height = height;
-        _create_info.width = width;
-
         global_window_ptr = this;
         return true;
     }
