@@ -5,8 +5,8 @@
 //  Created by Kenneth Esdaile on 6/28/25.
 //
 
-#include "physics-simulation.hpp"
 #include "motion-dampener.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 

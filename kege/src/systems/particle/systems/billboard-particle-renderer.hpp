@@ -8,8 +8,8 @@
 #ifndef render_particle_system_hpp
 #define render_particle_system_hpp
 
-#include "particle-effect.hpp"
-#include "entity-system.hpp"
+#include "../effect/particle-effect.hpp"
+#include "../../-/system-dependencies.hpp"
 
 namespace kege{
 
@@ -21,7 +21,6 @@ namespace kege{
         float size;
         float rotation;
     };
-
 
     enum class BillboardType
     {

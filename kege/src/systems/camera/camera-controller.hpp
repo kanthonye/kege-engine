@@ -8,10 +8,7 @@
 #ifndef kege_camera_controller_hpp
 #define kege_camera_controller_hpp
 
-#include "transform.hpp"
-#include "../../core/system/entity-system.hpp"
-#include "../../core/input/input-commands.hpp"
-#include "../../core/graphics/core/graphics.hpp"
+#include "../-/system-dependencies.hpp"
 
 namespace kege{
 
@@ -28,6 +25,5 @@ namespace kege{
     };
 
 }
-
 
 #endif /* kege_camera_controller_hpp */

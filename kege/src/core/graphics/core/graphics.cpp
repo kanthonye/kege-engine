@@ -103,6 +103,11 @@ namespace kege{
         _device->destroySampler( handle );
     }
 
+    void Graphics::insertPipeline( const std::string& name, const PipelineHandle& pipeline )
+    {
+        _shader_pipeline_manager.set( name, pipeline );
+    }
+    
     ShaderHandle Graphics::createShader(const ShaderDesc& desc)
     {
         return _device->createShader( desc );
@@ -111,16 +116,6 @@ namespace kege{
     void Graphics::destroyShader(ShaderHandle handle)
     {
         _device->destroyShader( handle );
-    }
-
-    kege::PipelineHandle Graphics::loadGraphicsPipeline( kege::Json json, const std::string& path )
-    {
-        return createPipelineFromFile( _device, json, path );
-    }
-
-    kege::PipelineHandle Graphics::loadGraphicsPipeline( const std::string& filename, std::string* name )
-    {
-        return createPipelineFromFile( _device, filename );
     }
 
     PipelineLayoutHandle Graphics::createPipelineLayout(const PipelineLayoutDesc& desc)
@@ -213,7 +208,10 @@ namespace kege{
 
     void Graphics::freeDescriptorSet(DescriptorSetHandle handle)
     {
-        _device->freeDescriptorSet( handle );
+        if ( handle )
+        {
+            _device->freeDescriptorSet( handle );
+        }
     }
 
     DescriptorSetHandle Graphics::allocateDescriptorSet(DescriptorSetLayoutHandle layout)
@@ -303,12 +301,12 @@ namespace kege{
 
     int32_t Graphics::windowHeight()const
     {
-        return _info.height;
+        return _window->getHeight();
     }
     
     int32_t Graphics::windowWidth()const
     {
-        return _info.width;
+        return _window->getWidth();
     }
 
     void Graphics::pollWindowEvents()
@@ -493,46 +491,47 @@ namespace kege{
 
     bool Graphics::initalize()
     {
-        kege::WindowCreateInfo create_window_info = {};
-        create_window_info.title = _info.title;
-        create_window_info.width = _info.width;
-        create_window_info.height = _info.height;
-        create_window_info.visible = true;
-        create_window_info.resizable = true;
-        create_window_info.fullscreen = _info.fullscreen;
-        create_window_info.maximized = false;
-        create_window_info.decorated = true;
-        create_window_info.vsync = _info.vsync;
-
-        kege::Ref< kege::GraphicsWindow > window = new kege::GlfwWindow();
-        if ( !window->create( create_window_info ) )
-        {
-            KEGE_LOG_ERROR << "Failed to initialize GraphicsWindow."<<Log::nl;
-            return 0;
-        }
-
-        kege::DeviceInitializationInfo device_init_info = {};
-        device_init_info.window = window.ref();
-        device_init_info.preferred_API = _info.api;
-        device_init_info.enable_raytracing = _info.enable_raytracing;
-        device_init_info.prefer_discrete_gpu = true;
-        device_init_info.prefer_higher_api_version = true;
-        device_init_info.require_shader_float64 = _info.require_shader_float64;
-        device_init_info.engine = "KEGE";
-        device_init_info.name = _info.title;
-
-        kege::SwapchainDesc swapchain_create_info = {};
-        swapchain_create_info.debug_name = "swapchain";
-        swapchain_create_info.width = _info.width;
-        swapchain_create_info.height = _info.height;
-        swapchain_create_info.image_count = _info.frames_in_flight;
-        swapchain_create_info.color_format = _info.color_format;
-        swapchain_create_info.depth_format = _info.depth_format;
-        swapchain_create_info.present_mode = kege::PresentMode::Fifo;
-        swapchain_create_info.present_queue_type = kege::QueueType::Graphics;
-        swapchain_create_info.image_usage = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::CopyDst;
-
-        return initalize( window, device_init_info, swapchain_create_info );
+//        kege::WindowCreateInfo create_window_info = {};
+//        create_window_info.title = _info.title;
+//        create_window_info.width = _info.width;
+//        create_window_info.height = _info.height;
+//        create_window_info.visible = true;
+//        create_window_info.resizable = true;
+//        create_window_info.fullscreen = _info.fullscreen;
+//        create_window_info.maximized = false;
+//        create_window_info.decorated = true;
+//        create_window_info.vsync = _info.vsync;
+//
+//        kege::Ref< kege::GraphicsWindow > window = new kege::GlfwWindow();
+//        if ( !window->create( create_window_info ) )
+//        {
+//            KEGE_LOG_ERROR << "Failed to initialize GraphicsWindow."<<Log::nl;
+//            return 0;
+//        }
+//
+//        kege::DeviceInitializationInfo device_init_info = {};
+//        device_init_info.window = window.ref();
+//        device_init_info.preferred_API = _info.api;
+//        device_init_info.enable_raytracing = _info.enable_raytracing;
+//        device_init_info.prefer_discrete_gpu = true;
+//        device_init_info.prefer_higher_api_version = true;
+//        device_init_info.require_shader_float64 = _info.require_shader_float64;
+//        device_init_info.engine = "KEGE";
+//        device_init_info.name = _info.title;
+//
+//        kege::SwapchainDesc swapchain_create_info = {};
+//        swapchain_create_info.debug_name = "swapchain";
+//        swapchain_create_info.width = _info.width;
+//        swapchain_create_info.height = _info.height;
+//        swapchain_create_info.image_count = _info.frames_in_flight;
+//        swapchain_create_info.color_format = _info.color_format;
+//        swapchain_create_info.depth_format = _info.depth_format;
+//        swapchain_create_info.present_mode = kege::PresentMode::Fifo;
+//        swapchain_create_info.present_queue_type = kege::QueueType::Graphics;
+//        swapchain_create_info.image_usage = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::CopyDst;
+//
+//        return initalize( window, device_init_info, swapchain_create_info );
+        return false;
     }
 
     void Graphics::shutdown()
@@ -576,14 +575,14 @@ namespace kege{
         }
     }
 
-    Graphics::Graphics( GraphicsAPIInfo info )
-    :   _info( info )
-    ,   _device()
-    ,   _window()
-    ,   _cmb_submit_count( 0 )
-    ,   _initial_submits_per_frame( 5 )
-    ,   _current_frame( 0 )
-    {}
+//    Graphics::Graphics( GraphicsAPIInfo info )
+//    :   _info( info )
+//    ,   _device()
+//    ,   _window()
+//    ,   _cmb_submit_count( 0 )
+//    ,   _initial_submits_per_frame( 5 )
+//    ,   _current_frame( 0 )
+//    {}
 
     Graphics::Graphics()
     :   _device()

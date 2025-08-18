@@ -11,7 +11,7 @@ namespace kege{
 
     void MeshRenderingSystem::operator()( kege::RenderPassContext* context )
     {
-//        kege::PipelineHandle pipeline = context->getGraphics()->getShaderPipelineManager()->get( "triangle-shader" );
+//        kege::PipelineHandle pipeline = context->graphics()->getShaderPipelineManager()->get( "triangle-shader" );
 //        if ( pipeline )
 //        {
 //            kege::CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
@@ -54,7 +54,7 @@ namespace kege{
         DescriptorSetHandle camera_descriptor = context->getPhysicalDescriptorSet( "camera-descriptor" );
         if( !camera_descriptor ) return;
 
-        kege::AssetSystem* assets = &_engine->getScene()->getAssetSystem();
+        kege::AssetSystem* assets = &_engine->scene()->getAssetSystem();
 
         encoder->bindGraphicsPipeline( pipeline );
         encoder->bindDescriptorSets( camera_descriptor );

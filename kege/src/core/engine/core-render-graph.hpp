@@ -9,17 +9,28 @@
 #define kege_render_graph_system_hpp
 
 #include "../../core/graphics/graph/render-graph.hpp"
-#include "../../core/system/system.hpp"
+#include "../graphics/loaders/pipeline-loader.hpp"
+#include "module.hpp"
 
 namespace kege{
 
-    class CoreRenderGraph : public CoreSystem< kege::RenderGraph >
+    class CoreRenderGraph : public Module
     {
     public:
 
         CoreRenderGraph( kege::Engine* engine );
+
+        operator bool()const{ return _module != nullptr; }
         bool initialize();
         void shutdown();
+        void add();
+
+        kege::Ref< kege::RenderGraph > operator ->() { return _module; }
+        const kege::Ref< kege::RenderGraph > operator ->() const { return _module; }    
+
+    private:
+
+        kege::Ref< kege::RenderGraph > _module;
     };
 
 }

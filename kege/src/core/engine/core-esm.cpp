@@ -5,16 +5,17 @@
 //  Created by Kenneth Esdaile on 8/14/25.
 //
 
+#include "engine.hpp"
 #include "../engine/core-esm.hpp"
 
 
 namespace kege{
 
-    CoreESM::CoreESM( kege::Engine* engine )
-    :   kege::CoreSystem< kege::EntitySystemManager >( engine, "core-esm" )
+    EntitySystemManagerModule::EntitySystemManagerModule( kege::Engine* engine )
+    :   Module( engine, "EntitySystemManagerModule" )
     {}
 
-    bool CoreESM::initialize()
+    bool EntitySystemManagerModule::initialize()
     {
         _module = new kege::EntitySystemManager( _engine );
 
@@ -45,7 +46,7 @@ namespace kege{
         return true;
     }
 
-    void CoreESM::shutdown()
+    void EntitySystemManagerModule::shutdown()
     {
         if ( _module )
         {
@@ -54,5 +55,10 @@ namespace kege{
         }
     }
 
-    //KEGE_REGISTER_SYSTEM( CoreECS, "ecs" );
+    void EntitySystemManagerModule::add()
+    {
+        _engine->addModule( this );
+        kege::Log::info << "EntitySystemManagerModule module added to engine" << Log::nl;
+    }
+
 }

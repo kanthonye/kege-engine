@@ -8,9 +8,7 @@
 #ifndef lookat_system_hpp
 #define lookat_system_hpp
 
-#include "scene.hpp"
-#include "camera.hpp"
-#include "entity-system.hpp"
+#include "../-/system-dependencies.hpp"
 
 namespace kege{
 

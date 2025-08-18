@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 3/10/25.
 //
 
-#include "al-audio-listener.hpp"
+#include "../../audio/open-al/al-audio-listener.hpp"
 
 namespace kege::audio{
 //

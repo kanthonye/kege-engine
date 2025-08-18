@@ -190,7 +190,7 @@ namespace kege{
 //        command_buffers.resize( MAX_FRAMES_IN_FLIGHT );
 //        for (int i=0; i<command_buffers.size(); ++i)
 //        {
-//            command_buffers[ i ] = graph->getGraphics()->createCommandBuffer( type );
+//            command_buffers[ i ] = graph->graphics()->createCommandBuffer( type );
 //        }
 //    }
 //

@@ -8,8 +8,7 @@
 #ifndef collision_detector_hpp
 #define collision_detector_hpp
 
-#include "contact.hpp"
-#include "simulator.hpp"
+#include "../simulators/simulator.hpp"
 
 namespace kege::physics{
 

@@ -27,7 +27,7 @@ namespace kege{
 
     void MovementSystem::operator()( const MappedInputs& input_commands )
     {
-        Entity entity = _engine->getScene()->getPlayer();
+        Entity entity = _engine->scene()->getPlayer();
         if( !entity ) return;
 
         kege::Rigidbody* body = entity.get< Rigidbody >();

@@ -8,20 +8,20 @@
 #ifndef update_light_shader_resource_hpp
 #define update_light_shader_resource_hpp
 
-#include "entity-components.hpp"
+#include "../../core/system/entity-system.hpp"
 
 namespace kege{
 
-    class UpdateLightShaderResource : public kege::System
-    {
-    public:
+    // class UpdateLightShaderResource : public kege::System
+    // {
+    // public:
 
 
-        UpdateLightShaderResource( kege::Engine* engine );
-        //void render( core::HierarchicalRenderList& render_objects );
-        bool initialize();
-        void shutdown();
-    };
+    //     UpdateLightShaderResource( kege::Engine* engine );
+    //     //void render( core::HierarchicalRenderList& render_objects );
+    //     bool initialize();
+    //     void shutdown();
+    // };
 
 }
 #endif /* update_light_shader_resource_hpp */

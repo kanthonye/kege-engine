@@ -8,10 +8,8 @@
 #ifndef camera_hpp
 #define camera_hpp
 
-#include "ref.hpp"
-#include "matrices.hpp"
-#include "quaternion.hpp"
-#include "transform.hpp"
+#include "../../core/memory/ref.hpp"
+#include "../../core/math/algebra/vmath.hpp"
 
 namespace kege{
 

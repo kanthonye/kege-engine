@@ -5,8 +5,8 @@
 //  Created by Kenneth Esdaile on 8/13/25.
 //
 
-#ifndef entity_system_manager_hpp
-#define entity_system_manager_hpp
+#ifndef kege_entity_system_manager_hpp
+#define kege_entity_system_manager_hpp
 
 #include "../../core/system/system.hpp"
 

@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 3/23/25.
 //
 
-#include "rigidbody.hpp"
+#include "../../dynamics/rigidbody.hpp"
 #include "rigid-shapes.hpp"
 namespace kege{
 

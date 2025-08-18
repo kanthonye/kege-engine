@@ -1,29 +1,14 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <iostream>
+//
+//  main.cpp
+//  ui
+//
+//  Created by Kenneth Esdaile on 3/5/25.
+//
 
-#include "../../kege/src/core/math/algebra/vmath.hpp"
-#include "../../kege/src/core/engine/engine.hpp"
+#include "../src/editor/editor.hpp"
 
-int main() 
+int main(int argc, const char * argv[])
 {
-    if (!glfwInit()) {
-        std::cerr << "Failed to init GLFW\n";
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* window = glfwCreateWindow(1536, 896, "Vulkan Window", nullptr, nullptr);
-
-    uint32_t extensionCount = 0;
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-    std::cout << extensionCount << " Vulkan extensions supported\n";
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-    }
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    return 0;
+    kege::Editor editor;
+    return editor.run();
 }

@@ -52,6 +52,24 @@ namespace kege{
         :  kege::ImageHandle{ -1 };
     }
 
+    CommandEncoder* RenderPassContext::getCommandEncoder()
+    {
+        kege::CommandEncoder* encoder = _command_buffer->createCommandEncoder();
+        encoder->setScissor
+        ({
+            0, 0,
+            _render_area.extent.width,
+            _render_area.extent.height
+        });
+        encoder->setViewport
+        ({
+            0, 0,
+            static_cast<float>( _render_area.extent.width ),
+            static_cast<float>( _render_area.extent.height )
+        });
+        return encoder;
+    }
+
     CommandBuffer* RenderPassContext::getCommandBuffer()
     {
         return _command_buffer;

@@ -45,7 +45,7 @@
 #include "../../../physics/3d/collision/algorithms/circle-vs-circle.hpp"
 #include "../../../physics/3d/collision/algorithms/plane-vs-circle.hpp"
 
-#include "physics-simulation.hpp"
+#include "../simulation/physics-simulation.hpp"
 #include "collision-detector.hpp"
 
 namespace kege::physics{

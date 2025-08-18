@@ -5,14 +5,13 @@
 //  Created by Kenneth Esdaile on 7/3/25.
 //
 
-#include "rigidbody.hpp"
 #include "camera-controller.hpp"
 
 namespace kege{
 
     void CameraControlSystem::operator()( const MappedInputs& inputs )
     {
-        Entity entity = _engine->getScene()->getCameraEntity();
+        Entity entity = _engine->scene()->getCameraEntity();
         if( !entity ) return;
 
         CameraControls* controls = entity.get< CameraControls >();

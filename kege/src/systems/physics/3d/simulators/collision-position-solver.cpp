@@ -6,13 +6,8 @@
 //
 
 #include <set>
-#include "collider.hpp"
 #include "collision-position-solver.hpp"
-
-#include "physics-simulation.hpp"
-
-#include "draw-commands.hpp"
-#include "communication.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 

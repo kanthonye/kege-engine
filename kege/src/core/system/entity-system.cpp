@@ -34,9 +34,9 @@ namespace kege{
 
     void EntitySystem::onSceneChange()
     {
-        if ( _signature.any() && _engine->getScene() )
+        if ( _signature.any() && _engine->scene() )
         {
-            _entities = _engine->getScene()->getEntityRegistry().getEntityView( _signature );
+            _entities = _engine->scene()->getEntityRegistry().getEntityView( _signature );
         }
     }
     

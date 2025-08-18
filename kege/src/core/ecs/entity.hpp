@@ -26,6 +26,41 @@ namespace kege{
 
         friend std::ostream& operator <<(std::ostream& os, const Entity& entity);
 
+        
+        friend bool operator ==( const Entity& a, const Entity& b )
+        {
+            return a._id == b._id;
+        }
+        
+        friend bool operator !=( const Entity& a, const Entity& b )
+        {
+            return a._id != b._id;
+        }
+
+        // This operator allows implicit conversion of the Entity to its ID, enabling comparisons with integers.
+        friend bool operator ==( const Entity& entity, int32_t id )
+        {
+            return entity._id == id;
+        }
+
+        // This operator allows implicit conversion of the Entity to its ID, enabling comparisons with integers.
+        friend bool operator ==( int32_t id, const Entity& entity )
+        {
+            return entity._id == id;
+        }
+
+        // This operator allows implicit conversion of the Entity to its ID, enabling comparisons with integers.
+        friend bool operator !=( const Entity& entity, int32_t id )
+        {
+            return entity._id != id;
+        }
+        
+        // This operator allows implicit conversion of the Entity to its ID, enabling comparisons with integers.
+        friend bool operator !=( int32_t id, const Entity& entity )
+        {
+            return entity._id != id;
+        }
+
         static kege::EntityManager& getManager();
 
         /**
@@ -136,11 +171,6 @@ namespace kege{
          */
         template< typename Component > bool has() const;
 
-        friend bool operator ==( const Entity& a, const Entity& b );
-        friend bool operator !=( const Entity& a, const Entity& b );
-        friend bool operator ==( const Entity& a, int32_t i );
-        friend bool operator !=( int32_t i, const Entity& b );
-
         /**
          * @brief Gets the component signature of this entity.
          *
@@ -226,10 +256,22 @@ namespace kege{
         bool isvalid() const;
 
         /**
+         * @brief Gets the unique identifier of this entity.
+         * @return The unique ID of the entity, which is managed by the `EntityManager`.
+         */
+        uint32_t getID() const;
+
+        /**
+         * @brief Gets the unique identifier of this entity.
+         * @return The unique ID of the entity, which is managed by the `EntityManager`.
+         */
+        operator uint32_t()const;
+
+        /**
          * @brief Checks if this entity's ID is valid and if the entity is currently active in the system.
          * @return `true` if the entity is valid, `false` otherwise.
          */
-        operator bool()const;
+        explicit operator bool()const;
 
         /**
          * @brief Removes all components from this entity and detaches it from its parent in the hierarchy.

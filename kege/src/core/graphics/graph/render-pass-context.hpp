@@ -337,6 +337,7 @@ namespace kege{
         kege::BufferHandle getBuffer( const std::string& name );
         kege::ImageHandle getImage( const std::string& name );
 
+        CommandEncoder* getCommandEncoder();
         CommandBuffer* getCommandBuffer();
         Rect2D getRenderArea()const;
 

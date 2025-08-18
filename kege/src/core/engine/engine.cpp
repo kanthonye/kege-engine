@@ -6,7 +6,6 @@
 //
 
 #include "../../core/engine/engine.hpp"
-#include "deferred-render-graph-setup.hpp"
 
 namespace kege{
 
@@ -23,44 +22,10 @@ namespace kege{
 //        }
 //    }
 
-    void Engine::changeScene( uint32_t scene_id )
+
+    void Engine::addModule( kege::Module* module )
     {
-        if ( _scene_files.size() <= scene_id )
-        {
-            KEGE_LOG_ERROR << "INVALID_SCENE_INDEX : scene index out of bound." <<Log::nl;
-            return;
-        }
-
-        kege::Ref< kege::Scene > scene = SceneLoader::load( _scene_files[ scene_id ] );
-        if ( scene == nullptr )
-        {
-            KEGE_LOG_ERROR << "LOADING_FAILED : loadScene -> " << _scene_files[ scene_id ] <<Log::nl;
-            return;
-        }
-
-        setScene( scene );
-    }
-
-    void Engine::setScene( kege::Ref< kege::Scene > scene )
-    {
-        if ( _scene )
-        {
-            _scene->shutdown();
-        }
-        _scene = scene;
-
-        // alert systems of the scene change
-        _esm->onSceneChange();
-    }
-
-    kege::Scene* Engine::getScene()
-    {
-        return _scene.ref();
-    }
-
-    void Engine::addSystem( kege::System* system )
-    {
-        _systems.push_back( system );
+        _modules.push_back( module );
     }
 
 //    kege::InputContextManager& Engine::getInputContextManager()
@@ -83,36 +48,45 @@ namespace kege{
         return _asset_system;
     }
 
-    kege::VirtualDirectory& Engine::getVirtualDirectory()
-    {
-        return _virtual_directory;
-    }
-
     kege::CoreRenderGraph& Engine::renderGraph()
     {
         return _render_graph;
     }
-    kege::CoreGraphics& Engine::graphics()
+    
+    kege::GraphicsModule& Engine::graphics()
     {
         return _graphics;
     }
-    kege::CoreInput& Engine::input()
+
+    kege::InputModule& Engine::input()
     {
         return _input;
     }
-    kege::CoreESM& Engine::esm()
+
+    kege::EntitySystemManagerModule& Engine::esm()
     {
         return _esm;
     }
-    kege::CoreECS& Engine::ecs()
+
+    kege::ECSModule& Engine::ecs()
     {
         return _ecs;
     }
-    kege::CoreVFS& Engine::vfs()
+
+    kege::VirtualDirectoryModule& Engine::vfs()
     {
         return _vfs;
     }
 
+    kege::LoggerModule& Engine::logger()
+    {
+        return _logger;
+    }
+
+    kege::SceneModule& Engine::scene()
+    {
+        return _scene;
+    }
 //    kege::RenderGraph* Engine::getRenderGraph()
 //
 //    kege::GraphicsWindow* Engine::getWindow()
@@ -134,46 +108,12 @@ namespace kege{
             return false;
         }
 
-        // 10. Load Initial Scene
-        // Example: Load the first scene file path if available
-        if ( !_scene_files.empty() )
-        {
-            _scene = SceneLoader::load( _scene_files[0] );
-        }
-        else
-        {
-             _scene = kege::Ref< kege::Scene >( new kege::Scene() );
-        }
-        if ( _scene ) _scene->initialize(); // Initialize the newly created scene
-        if ( !_scene || !_scene->ready() )
-        {
-            KEGE_LOG_ERROR << "Failed to load or initialize initial scene." << kege::Log::nl;
-            return false;
-        }
-        Log::info << "- Scene initalized...\n";
-
-
-        // alert systems of the scene change
-        _esm->onSceneChange();
-
-        // 12. Final Preparations
-        _previous_time = Duration::zero(); // Reset for first delta time calculation in loop()
-        _lag = 0.0;
-
         return true;
     }
 
     void Engine::shutdown()
     {
-        if ( _scene )
-        {
-            _scene->shutdown();
-            _scene.clear();
-        }
-        _scene_files.clear();
-
         _asset_system.shutdown();
-
         shutdownCoreSystems();
     }
 
@@ -215,7 +155,7 @@ namespace kege{
                 _graphics->getWindow()->pollEvents();
 
                 tick();
-                _input.update();
+                _input->updateCurrentInputs();
 
                 if ( !_scene->ready() )
                 {
@@ -258,13 +198,16 @@ namespace kege{
 
     bool Engine::initalizeCoreSystems()
     {
+        _previous_time = Duration::zero(); // Reset for first delta time calculation in loop()
+        _lag = 0.0;
+
         Log::info << "engine initializing " << Log::nl;
-        for ( kege::System* system : _systems )
+        for ( kege::Module* system : _modules )
         {
             Log::info << "initializing -> " << system->getName() <<"\n";
             if ( !system->initialize() )
             {
-                Log::info  << system->getName()<< " -> initialization failed\n";
+                Log::error  << system->getName()<< " -> initialization failed" <<Log::nl;
                 return false;
             }
             Log::info  << system->getName()<< " -> initialization complete \n";
@@ -275,14 +218,14 @@ namespace kege{
 
     void Engine::shutdownCoreSystems()
     {
-        std::vector<  kege::System* >::reverse_iterator syst;
-        for ( syst = _systems.rbegin(); syst != _systems.rend(); syst++ )
+        std::vector< kege::Module* >::reverse_iterator syst;
+        for ( syst = _modules.rbegin(); syst != _modules.rend(); syst++ )
         {
             Log::info << "shuting-down -> " << (*syst)->getName() <<"\n";
             (*syst)->shutdown();
             Log::info  << "successfully shutdown -> " << (*syst)->getName() <<"\n";
         }
-        _systems.clear();
+        _modules.clear();
     }
 
     Engine::~Engine()
@@ -291,27 +234,25 @@ namespace kege{
     }
 
     Engine::Engine()
-    :   _scene( nullptr )
-    ,   _previous_time( 0 )
+    :   _previous_time( Duration::zero() )
     ,   _fixed_delta_time(  1.0 / 60.0  )
     ,   _max_frame_time( 0.25 )
     ,   _delta_time( 0 )
     ,   _lag( 0 )
-    ,   _ecs( this )
-    ,   _esm( this )
+    ,   _running( false )
+    ,   _start_time( std::chrono::high_resolution_clock::now() )
     ,   _graphics( this )
-    ,   _input( this )
     ,   _render_graph( this )
+    ,   _input( this )
+    ,   _esm( this )
+    ,   _ecs( this )
     ,   _vfs( this )
+    ,   _logger( this )
+    ,   _scene( this )
+    ,   _modules()
+    ,   _root_directory( "" )
     {
         _start_time = std::chrono::high_resolution_clock::now();
-
-        addSystem( &_vfs );
-        addSystem( &_graphics );
-        addSystem( &_render_graph );
-        addSystem( &_input );
-        addSystem( &_ecs );
-        addSystem( &_esm );
     }
 
 }

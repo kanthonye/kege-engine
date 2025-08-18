@@ -8,8 +8,12 @@
 #ifndef kege_physics_simulator_hpp
 #define kege_physics_simulator_hpp
 
-#include "ref.hpp"
-#include "contact.hpp"
+#include "../../../-/component-dependencies.hpp"
+#include "../../debug/draw-commands.hpp"
+#include "../collision/collider/collider.hpp"
+#include "../collision/contact/contact.hpp"
+#include "../collision/rayhit/rayhit.hpp"
+#include "../collision/contact/contact.hpp"
 
 namespace kege::physics{
 

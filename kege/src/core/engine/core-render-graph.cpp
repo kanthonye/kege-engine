@@ -7,21 +7,59 @@
 
 #include "engine.hpp"
 #include "core-render-graph.hpp"
-#include "render-graph-loader.hpp"
 
 namespace kege{
 
     CoreRenderGraph::CoreRenderGraph( kege::Engine* engine )
-    :   CoreSystem< kege::RenderGraph >( engine, "core-render-graph" )
+    :   Module( engine, "RenderGraph" )
     {}
+//
+//    PipelineHandle CoreRenderGraph::loadPipeline( const std::string& name, const std::string& filename )
+//    {
+//        kege::ShaderPipelineManager* pipeline_manager = _engine->graphics()->getShaderPipelineManager();
+//        pipeline_manager->set( "copy-shader", pipeline );
+//    }
 
-    bool CoreRenderGraph::initialize()
+    void addFinalRenderPass( kege::RenderGraph* graph )
     {
-        uint32_t frames_in_flight = 2;
-        CoreGraphics& graphics = _engine->graphics();
-        _module = new kege::RenderGraph( &(*graphics) );
+        // ------- Deferred Geometry Render Targets -------
 
-        // ------- Image Samplers -------
+        // ------- Deferred Lighting Render Targets -------
+
+        // ------- Deferred Geometry Render Pass -------
+
+        // ------- Deferred Lighting Render Pass -------
+
+        // ------- Final Render Pass -------
+
+    }
+    
+    bool CoreRenderGraph::initialize( )
+    {
+        if ( _module != nullptr )
+        {
+            kege::Log::error << "CoreRenderGraph already initialized!" << Log::nl;
+            return false;
+        }
+        kege::Log::info << "initializing -> RenderGraph" << Log::nl;
+
+
+        kege::string shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
+        if( !_engine->graphics()->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
+        {
+            KEGE_LOG_ERROR << "Failed to load pipeline -> " << shader_file << Log::nl;
+            return false;
+        }
+
+        // Create the render graph with the graphics system
+        // Use the graphics system to get the swapchain and other graphics resources
+        // This will allow the render graph to manage rendering operations
+        // across multiple frames and handle resources efficiently.
+        uint32_t frames_in_flight = 2;
+        kege::Graphics* graphics = _engine->graphics().get();
+        _module = new kege::RenderGraph( graphics );
+
+        // ------- Setup Image Sampler Resources -------
 
         kege::SamplerDesc desc = {};
         desc.mag_filter = kege::Filter::Nearest;
@@ -56,7 +94,7 @@ namespace kege{
         desc.address_mode_w = kege::AddressMode::Repeat;
         _module->defineSampler( "sampler-linear-rep", desc );
 
-        // ------- Swapchain Render Targets -------
+        // ------- Setup Swapchain Render Targets -------
 
         _module->defineImage
         ({
@@ -116,16 +154,7 @@ namespace kege{
             },
         });
 
-        // ------- Deferred Geometry Render Targets -------
-
-        // ------- Deferred Lighting Render Targets -------
-
-        // ------- Deferred Geometry Render Pass -------
-
-        // ------- Deferred Lighting Render Pass -------
-
-        // ------- Final Render Pass -------
-
+        // ------- Define Camera Buffer Resource -------
 
         uint32_t buffer_size = 2 * sizeof( kege::mat44 ) + sizeof( kege::vec4 );
         RgResrcHandle camera_buffer_resource = _module->defineBuffer
@@ -140,6 +169,9 @@ namespace kege{
                 .memory_usage = MemoryUsage::CpuToGpu,
             }
         });
+
+        // ------- Define Camera Shader Resource -------
+
         kege::RgResrcHandle camera_descriptor_resource = _module->defineShaderResource
         (
             "camera-descriptor",
@@ -172,6 +204,8 @@ namespace kege{
             }
         );
 
+        // ------- Add Render Passes -------
+
         _module->add
         ({
             .add_resources = []( kege::RenderGraph* graph )
@@ -198,7 +232,7 @@ namespace kege{
                             .descriptor_type = kege::DescriptorType::CombinedImageSampler,
                             .stage_flags = kege::ShaderStage::Fragment
                         }
-                    } 
+                    }
                 );
                 graph->updateShaderResource
                 (
@@ -270,8 +304,6 @@ namespace kege{
                     .execute = [ graph ]( kege::RenderPassContext* context )
                     {
                         Communication::broadcast< kege::RenderPassContext* >( context );
-                        //Graphics* graphics = context->getGraphics();
-                        //const int FRAME_INDEX = graphics->getCurrFrameIndex();
 
                         kege::ShaderPipelineManager* pipelines = graph->getGraphics()->getShaderPipelineManager();
                         kege::PipelineHandle pipeline = pipelines->get( "copy-shader" );
@@ -295,38 +327,39 @@ namespace kege{
                     }
                 });
 
-//                graph->addGraphicsPass
-//                ({
-//                    "scene-output",
-//                    .reads =
-//                    {
-//                    },
-//                    .writes =
-//                    {
-//                        kege::RgWriteResrcDesc
-//                        {
-//                            .name = "scene_color",
-//                            .type = kege::RgResrcType::Image,
-//                            .access = kege::AccessFlags::ColorAttachmentWrite,
-//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-//                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
-//                        },
-//                        kege::RgWriteResrcDesc
-//                        {
-//                            .name = "scene_depth",
-//                            .type = kege::RgResrcType::Image,
-//                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-//                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
-//                        }
-//                    },
-//                    .execute = []( kege::RenderPassContext* context )
-//                    {
-//                        Communication::broadcast< kege::RenderPassContext* >( context );
-//                    }
-//                });
+                graph->addGraphicsPass
+                ({
+                    "scene-output",
+                    .reads =
+                    {
+                    },
+                    .writes =
+                    {
+                        kege::RgWriteResrcDesc
+                        {
+                            .name = "scene_color",
+                            .type = kege::RgResrcType::Image,
+                            .access = kege::AccessFlags::ColorAttachmentWrite,
+                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
+                        },
+                        kege::RgWriteResrcDesc
+                        {
+                            .name = "scene_depth",
+                            .type = kege::RgResrcType::Image,
+                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
+                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
+                        }
+                    },
+                    .execute = []( kege::RenderPassContext* context )
+                    {
+                        Communication::broadcast< kege::RenderPassContext* >( context );
+                    }
+                });
             }
         });
+
 
         if( !_module->compile() )
         {
@@ -342,6 +375,12 @@ namespace kege{
         {
             _module.clear();
         }
+    }
+
+    void CoreRenderGraph::add()
+    {
+        _engine->addModule( this );
+        kege::Log::info << "CoreRenderGraph module added to engine" << Log::nl;
     }
 
 //    KEGE_REGISTER_SYSTEM( RenderGraphSystem, "render-graph" );

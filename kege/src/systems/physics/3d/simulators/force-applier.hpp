@@ -8,8 +8,8 @@
 #ifndef force_applier_hpp
 #define force_applier_hpp
 
-#include "rigidbody.hpp"
-#include "simulator.hpp"
+#include "../dynamics/rigidbody.hpp"
+#include "../simulators/simulator.hpp"
 
 namespace kege::physics{
 

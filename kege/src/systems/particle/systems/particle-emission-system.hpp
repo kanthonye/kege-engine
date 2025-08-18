@@ -8,8 +8,8 @@
 #ifndef particle_emission_system_hpp
 #define particle_emission_system_hpp
 
-#include "entity-system.hpp"
-#include "particle-effect.hpp"
+#include "../effect/particle-effect.hpp"
+#include "../../-/system-dependencies.hpp"
 
 namespace kege{
 

@@ -14,14 +14,14 @@ namespace kege{
 
     void ComputeCameraRaySystem::operator()( const MappedInputs& inputs )
     {
-        Entity entity = _engine->getScene()->getPlayer();
+        Entity entity = _engine->scene()->getPlayer();
         if( !entity ) return;
 
         Transform* transform = entity.get< Transform >();
         Camera* camera = entity.get< Camera >();
 
-        float window_height = _engine->getWindow()->getHeight();
-        float window_width = _engine->getWindow()->getWidth();
+        float window_height = _engine->graphics()->windowHeight();
+        float window_width = _engine->graphics()->windowWidth();
 
         pointer.x = inputs.coordX();
         pointer.y = inputs.coordY();
@@ -39,7 +39,7 @@ namespace kege{
         mat44 viewmatrix = viewMatrix( transform->orientation, transform->position );
         vec4 ray_world = kege::inverse( viewmatrix ) * ray_eye;
 
-        _engine->getScene()->setSceneRay( kege::normalize( ray_world.xyz ) );
+        _engine->scene()->setSceneRay( kege::normalize( ray_world.xyz ) );
     }
 
     bool ComputeCameraRaySystem::initialize()

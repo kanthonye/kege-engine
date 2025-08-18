@@ -8,7 +8,6 @@
 #define OPENAL_DEPRECATED
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-
 #include "al-audio-stream.hpp"
 
 namespace kege::audio::al{

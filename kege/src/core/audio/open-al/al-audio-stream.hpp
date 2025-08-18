@@ -8,6 +8,7 @@
 #ifndef open_al_audio_stream_hpp
 #define open_al_audio_stream_hpp
 
+#include <sndfile.h>
 #include "../core/audio-stream.hpp"
 
 namespace kege::audio::al{

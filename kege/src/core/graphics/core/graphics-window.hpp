@@ -96,7 +96,7 @@ namespace kege{
 
 
 
-    class WindowListener
+    class WindowListener : public RefCounter
     {
     public:
 

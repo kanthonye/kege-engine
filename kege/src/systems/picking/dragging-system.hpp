@@ -8,6 +8,8 @@
 #ifndef dragging_system_hpp
 #define dragging_system_hpp
 
+#include "../-/system-dependencies.hpp"
+
 #include "rigidbody.hpp"
 #include "collider.hpp"
 #include "entity-system.hpp"

@@ -22,10 +22,10 @@ namespace kege{
 
         typedef std::pair< std::string,T > Item;
         typedef std::vector< Item > VectorPair;
-        typedef std::vector< Item >::iterator ListIterator;
+        typedef typename std::vector< Item >::iterator ListIterator;
         typedef std::unordered_map< std::string, VectorPair > HashTable;
-        typedef HashTable::const_iterator ConstIterator;
-        typedef HashTable::iterator Iterator;
+        typedef typename HashTable::const_iterator ConstIterator;
+        typedef typename HashTable::iterator Iterator;
 
         const T& operator[](const std::string& name)const
         {

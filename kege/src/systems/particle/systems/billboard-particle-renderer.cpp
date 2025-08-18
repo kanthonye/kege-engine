@@ -77,7 +77,7 @@ namespace kege{
 
     bool BillboardParticleRenderer::initialize()
     {
-        _pipeline = _engine->getGraphics()->getShaderPipelineManager()->get( "billboard-particle-shader" );
+        _pipeline = _engine->graphics()->getShaderPipelineManager()->get( "billboard-particle-shader" );
         if( !_pipeline )
         {
             KEGE_LOG_ERROR << "billboard-particle-shader not loaded.";

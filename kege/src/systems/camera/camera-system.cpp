@@ -5,8 +5,6 @@
 //  Created by Kenneth Esdaile on 2/17/25.
 //
 
-#include "camera.hpp"
-#include "rigidbody.hpp"
 #include "camera-system.hpp"
 
 namespace kege{
@@ -30,14 +28,14 @@ namespace kege{
 
             if ( !_camera_buffer_resource )
             {
-                _camera_buffer_resource = _engine->getRenderGraph()->getBufferRgResrc( "camera-buffer" );
+                _camera_buffer_resource = _engine->renderGraph()->getBufferRgResrc( "camera-buffer" );
                 if ( !_camera_buffer_resource ) return;
             }
 
-            kege::BufferHandle camera_buffer = _engine->getRenderGraph()->getPhysicalBuffer( _camera_buffer_resource );
+            kege::BufferHandle camera_buffer = _engine->renderGraph()->getPhysicalBuffer( _camera_buffer_resource );
             if ( !camera_buffer ) return;
             
-            _engine->getGraphics()->updateBuffer( camera_buffer, 0, sizeof( CameraData ), &camera->matrices );
+            _engine->graphics()->updateBuffer( camera_buffer, 0, sizeof( CameraData ), &camera->matrices );
         }
     }
 

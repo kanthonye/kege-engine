@@ -165,7 +165,7 @@ namespace kege {
     {
         if ( _vsize + size < _vbo_capacity )
         {
-            _engine->getGraphics()->updateBuffer( _vbo, _isize, size, data );
+            _engine->graphics()->updateBuffer( _vbo, _isize, size, data );
             //_vbo->writeBufferData( _vsize, size, data );
             _vsize += size;
             _vcount += count;
@@ -175,7 +175,7 @@ namespace kege {
     {
         if ( _isize + size < _ibo_capacity )
         {
-            _engine->getGraphics()->updateBuffer( _ibo, _isize, size, data );
+            _engine->graphics()->updateBuffer( _ibo, _isize, size, data );
             //_ibo->writeBufferData( _isize, size, data );
             _isize += size;
             _icount += count;
@@ -193,14 +193,14 @@ namespace kege {
         _vbo_capacity = MAX_VERTEX_COUNT * sizeof( vec3 );
         _ibo_capacity = MAX_VERTEX_COUNT * sizeof( uint32_t );
 
-        _vbo = _engine->getGraphics()->createBuffer
+        _vbo = _engine->graphics()->createBuffer
         ({
             .size = _vbo_capacity,
             .data = nullptr,
             .usage = kege::BufferUsage::VertexBuffer,
             .memory_usage = kege::MemoryUsage::CpuToGpu
         });
-        _ibo = _engine->getGraphics()->createBuffer
+        _ibo = _engine->graphics()->createBuffer
         ({
             .size = _vbo_capacity,
             .data = nullptr,
@@ -218,8 +218,8 @@ namespace kege {
         Communication::remove< const MsgDrawLine&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawAABB&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawOBB&,  DebugLineRenderSystem >( this );
-        _engine->getGraphics()->destroyBuffer( _vbo );
-        _engine->getGraphics()->destroyBuffer( _ibo );
+        _engine->graphics()->destroyBuffer( _vbo );
+        _engine->graphics()->destroyBuffer( _ibo );
     }
 
     void DebugLineRenderSystem::render()
@@ -234,7 +234,7 @@ namespace kege {
     }
 
     DebugLineRenderSystem::DebugLineRenderSystem( kege::Engine* engine )
-    :   kege::System( engine, "line-renderer", 0 )
+    :   kege::System( engine, "line-renderer" )
     ,   _vcount( 0 )
     ,   _vsize( 0 )
     ,   _icount( 0 )

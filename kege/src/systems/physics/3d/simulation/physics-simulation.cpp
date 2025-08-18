@@ -5,14 +5,14 @@
 //  Created by Kenneth Esdaile on 6/28/25.
 //
 
-#include "force-applier.hpp"
-#include "force-integrator.hpp"
-#include "motion-dampener.hpp"
-#include "net-force-zeroer.hpp"
-#include "grounded-detector.hpp"
-#include "collision-detector.hpp"
-#include "contact-impulse-solver.hpp"
-#include "collision-position-solver.hpp"
+#include "../simulators/force-applier.hpp"
+#include "../simulators/force-integrator.hpp"
+#include "../simulators/collision-detector.hpp"
+#include "../simulators/net-force-zeroer.hpp"
+#include "../simulators/motion-dampener.hpp"
+#include "../simulators/grounded-detector.hpp"
+#include "../simulators/contact-impulse-solver.hpp"
+#include "../simulators/collision-position-solver.hpp"
 
 #include "physics-simulation.hpp"
 

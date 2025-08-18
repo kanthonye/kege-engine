@@ -8,17 +8,32 @@
 #ifndef core_esm_hpp
 #define core_esm_hpp
 
-#include "../../core/system/entity-system-manager.hpp"
+#include "module.hpp"
+#include "../system/entity-system-manager.hpp"
 
 namespace kege{
 
-    class CoreESM : public CoreSystem< kege::EntitySystemManager >
+    class EntitySystemManagerModule : public Module
     {
     public:
 
-        CoreESM( kege::Engine* engine );
+        kege::Ref< kege::EntitySystemManager > operator ->() { return _module; }
+        const kege::Ref< kege::EntitySystemManager > operator ->() const { return _module; }
+        operator bool()const{ return _module != nullptr; }
+
         bool initialize();
         void shutdown();
+        void add();
+
+        EntitySystemManagerModule( kege::Engine* engine );
+
+    private:
+
+        kege::Ref< kege::EntitySystemManager > _module;
+        // This is the Entity System Manager that will be used to manage entity systems
+        // It will be used to add, remove and update entity systems across multiple frames
+        // It will also be used to handle entity creation and destruction.
+        // The Entity System Manager will be used to manage entity systems efficiently and handle resources efficiently.            
     };
 
 }

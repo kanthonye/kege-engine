@@ -76,7 +76,7 @@ namespace kege{
 
                     default:
                     {
-                        KEGE_LOG_ERROR << "Invalid DescriptorType in RenderGraph::defineShaderResource";
+                        KEGE_LOG_ERROR << "Invalid DescriptorType at DescriptorSetLayoutBinding -> " << i <<"\n";
                         return {};
                     }
                 }

@@ -8,10 +8,7 @@
 #ifndef camera_system_hpp
 #define camera_system_hpp
 
-#include "transform.hpp"
-#include "../../core/system/entity-system.hpp"
-#include "../../core/input/input-commands.hpp"
-#include "../../core/graphics/core/graphics.hpp"
+#include "../-/system-dependencies.hpp"
 
 namespace kege{
 

@@ -8,6 +8,7 @@
 #ifndef shader_pipeline_manager_hpp
 #define shader_pipeline_manager_hpp
 
+#include "../loaders/pipeline-loader.hpp"
 #include "../../graphics/core/graphics-core.hpp"
 
 namespace kege{
@@ -18,8 +19,7 @@ namespace kege{
     {
     public:
 
-        kege::PipelineHandle load( const std::string& name_id, const std::string& filename );
-        kege::PipelineHandle load( const std::string& filename );
+        PipelineHandle load( const std::string& name, const std::string& filename );
 
         void set( const std::string& name_id, kege::PipelineHandle pipeline );
 

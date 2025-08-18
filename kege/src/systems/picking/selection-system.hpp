@@ -8,14 +8,8 @@
 #ifndef selection_system_hpp
 #define selection_system_hpp
 
-#include <utility>
-#include <vector>
-#include <algorithm>
-#include "rayhit.hpp"
-
-#include "rigidbody.hpp"
-#include "collider.hpp"
-#include "entity-system.hpp"
+#include "../-/system-dependencies.hpp"
+#include "../physics/3d/collision/rayhit/rayhit.hpp"
 
 namespace kege{
 

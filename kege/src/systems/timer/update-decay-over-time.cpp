@@ -23,7 +23,7 @@ namespace kege{
         }
         for ( kege::Entity& entity : dead_entities )
         {
-            _engine->getScene()->remove( entity );
+            _engine->scene()->remove( entity );
         }
     }
     bool UpdateDecayOverTime::initialize()
