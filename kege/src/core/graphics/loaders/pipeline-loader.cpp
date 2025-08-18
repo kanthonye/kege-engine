@@ -452,6 +452,7 @@ namespace kege{
         kege::GraphicsPipelineDesc info = {};
         info.debug_name = json[ "name" ].value();
 
+        info.color_blend_state = getColorBlendState( json[ "color_blend_state" ] );
         info.depth_stencil_state = getDepthStencilState( json[ "depth_stencil_state" ] );
         info.color_blend_state = getColorBlendState( json[ "color_blend_state" ] );
         info.rasterization_state = getRasterizationState( json[ "rasterization_state" ] );

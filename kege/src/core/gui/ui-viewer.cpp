@@ -68,7 +68,7 @@ namespace kege::ui{
                     _drawbuffer[ _count ].rect.width    = w;
                     _drawbuffer[ _count ].rect.height   = h;
 
-                    _drawbuffer[ _count ].color         = {1,1,1,1};
+                    _drawbuffer[ _count ].color         = node.elem.style.color;
                     _drawbuffer[ _count ].rect.x        = cursor.x - font_size * g.bearing_x;
                     _drawbuffer[ _count ].rect.y        = cursor.y + font_size * g.bearing_y;
                     _drawbuffer[ _count ].texel.x       = g.x;

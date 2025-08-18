@@ -14,6 +14,9 @@
 #include "../core/gui/ui-layout.hpp"
 #include "../core/gui/ui-font-creator.hpp"
 
+#include "hierarchy-panel.hpp"
+#include "inspector-panel.hpp"
+
 namespace kege{
 
     class Editor
@@ -48,6 +51,9 @@ namespace kege{
         void shutdown();
         void loop();
 
+        HierarchyPanel _hierarchy_panel;
+        InspectorPanel _inspector_panel;
+
         ui::Layout _layout;
         ui::Viewer _viewer;
         ui::Input _input;
@@ -56,7 +62,6 @@ namespace kege{
         bool _paused;
 
         ui::EID navbar_panel;
-        ui::EID hierarchy_panel;
         ui::EID inspector_panel;
         ui::EID asset_browser;
         ui::EID viewport_panel;

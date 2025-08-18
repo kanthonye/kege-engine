@@ -79,18 +79,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/core-input.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-input.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-input.cpp",
-  "output": "CMakeFiles/engine.dir/kege/src/core/engine/core-input.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/core-logging.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-logging.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-logging.cpp",
-  "output": "CMakeFiles/engine.dir/kege/src/core/engine/core-logging.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/core-render-graph.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-render-graph.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/core-render-graph.cpp",
   "output": "CMakeFiles/engine.dir/kege/src/core/engine/core-render-graph.cpp.o"
@@ -106,6 +94,30 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/engine.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/engine.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/engine.cpp",
   "output": "CMakeFiles/engine.dir/kege/src/core/engine/engine.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/input-module.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/input-module.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/input-module.cpp",
+  "output": "CMakeFiles/engine.dir/kege/src/core/engine/input-module.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/logger-module.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/logger-module.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/logger-module.cpp",
+  "output": "CMakeFiles/engine.dir/kege/src/core/engine/logger-module.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/module.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/module.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/module.cpp",
+  "output": "CMakeFiles/engine.dir/kege/src/core/engine/module.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/engine.dir/kege/src/core/engine/scene-module.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/scene-module.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine/scene-module.cpp",
+  "output": "CMakeFiles/engine.dir/kege/src/core/engine/scene-module.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -241,12 +253,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/graph/deferred-render-graph-setup.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o"
@@ -265,63 +271,39 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/font.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/font.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/font.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/font.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/light/light.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/light/light.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/light/light.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/light/light.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/image-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/image-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/image-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/image-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/material-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/material-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/material-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/material-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-canvas.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-canvas.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-canvas.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-canvas.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/mesh-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/mesh-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/mesh-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/mesh-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-creator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-creator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-creator.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-creator.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/pipeline-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/pipeline-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/pipeline-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/pipeline-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-loader.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-font-loader.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-font-loader.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-primatives.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-primatives.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-primatives.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-primatives.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-viewer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-viewer.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/render-graph-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/render-graph-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/loaders/render-graph-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/loaders/render-graph-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",

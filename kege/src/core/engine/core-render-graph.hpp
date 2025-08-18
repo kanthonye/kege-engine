@@ -20,10 +20,10 @@ namespace kege{
 
         CoreRenderGraph( kege::Engine* engine );
 
-        operator bool()const{ return _module != nullptr; }
-        bool initialize();
-        void shutdown();
-        void add();
+        operator bool()const override{ return _module != nullptr; }
+        bool initialize()override;
+        void shutdown()override;
+        void add()override;
 
         kege::Ref< kege::RenderGraph > operator ->() { return _module; }
         const kege::Ref< kege::RenderGraph > operator ->() const { return _module; }    

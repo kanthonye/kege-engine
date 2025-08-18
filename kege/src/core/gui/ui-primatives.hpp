@@ -277,8 +277,8 @@ namespace kege::ui{
     ui::Sizing flexible();
     ui::Sizing percent(float percent);
 
-    ui::Color hexToRGB(uint32_t hex_color);
-    ui::Color hexToRGBA(uint32_t hex_color);
+    ui::Color rgb(uint32_t hex_color);
+    ui::Color rgba(uint32_t hex_color);
 
     ui::Background bgImage(const ui::Rect2D& texel);
     ui::Background bgColor(const ui::Color& color);

@@ -256,9 +256,8 @@ namespace kege::ui{
         int32_t _recycled_node_head;
         int32_t _recycled_node_tail;
         int32_t _recycled_node_count;
-        int32_t _freed_id;
-        int32_t _id_head;
-        int32_t _id_count;
+        int32_t _recycled_id;
+        int32_t _available_id;
     };
 
 

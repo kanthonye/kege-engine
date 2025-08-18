@@ -76,11 +76,11 @@ namespace kege::ui{
         return ui::Background
         {
             .type = ui::BACKGROUND_COLOR,
-            .color = hexToRGBA(color)
+            .color = rgba(color)
         };
     }
 
-    ui::Color hexToRGB(uint32_t hex_color)
+    ui::Color rgb(uint32_t hex_color)
     {
       float r = ((hex_color >> 16) & 0xFF) / 255.0;
       float g = ((hex_color >> 8) & 0xFF) / 255.0;
@@ -90,7 +90,7 @@ namespace kege::ui{
     }
 
     // To handle alpha in the hex code (e.g., 0x800080FF for purple with full alpha):
-    ui::Color hexToRGBA(uint32_t hex_color)
+    ui::Color rgba(uint32_t hex_color)
     {
       float r = ((hex_color >> 24) & 0xFF) / 255.0; // Changed bit shifts for RGBA order
       float g = ((hex_color >> 16) & 0xFF) / 255.0;
@@ -98,4 +98,5 @@ namespace kege::ui{
       float a = (hex_color & 0xFF)         / 255.0;
       return ui::Color{r, g, b, a};
     }
+
 }

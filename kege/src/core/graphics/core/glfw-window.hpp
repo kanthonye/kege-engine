@@ -76,6 +76,7 @@ namespace kege{
 
         GLFWwindow* _window = nullptr;
         WindowCreateInfo _create_info;
+        Extent2D _framebuffer_extent;
         bool _is_fullscreen = false;
         bool _vsync_enabled = false;
     };
