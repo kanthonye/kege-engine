@@ -73,7 +73,7 @@ namespace kege{
         _selected_entity = msg.entity;
 
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
-        kege::vec3 origin = _engine->getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
 
         _distance = kege::magn( body->center - origin );
         _comm.broadcast< const MsgEntitySelectionDistance& >({ _distance });
@@ -84,8 +84,8 @@ namespace kege{
         if ( !_drag_entity || !_selected_entity ) return;
 
         _drag_entity = false;
-        kege::vec3 ray = _engine->getScene()->getSceneRay();
-        kege::vec3 origin = _engine->getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = _engine->scene()->getSceneRay();
+        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
 
         if ( body == nullptr ) return;

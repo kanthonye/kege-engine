@@ -18,7 +18,7 @@ namespace kege{
     }
     void EntitySelectionSystem::update( double dms )
     {
-        if ( !_engine->getScene()->getCameraEntity() )
+        if ( !_engine->scene()->getCameraEntity() )
         {
             return;
         }
@@ -29,8 +29,8 @@ namespace kege{
         }
 
         _make_selection = false;
-        kege::vec3 ray = _engine->getScene()->getSceneRay();
-        kege::vec3 origin = _engine->getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = _engine->scene()->getSceneRay();
+        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
 
         std::vector< std::pair< kege::Entity, double > > selections;
 

@@ -13,7 +13,8 @@
 #include <OpenAL/alc.h>
 #include <iostream>
 
-#include "ref.hpp"
+#include "../../memory/ref.hpp"
+#include "../../math/algebra/vmath.hpp"
 
 namespace kege::audio{
 

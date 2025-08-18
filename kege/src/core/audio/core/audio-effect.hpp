@@ -8,9 +8,8 @@
 #ifndef audio_effect_hpp
 #define audio_effect_hpp
 
-#include "ref.hpp"
-#include "ref.hpp"
-#include "vectors.hpp"
+#include "../../memory/ref.hpp"
+#include "../../math/algebra/vmath.hpp"
 #include "audio-buffer.hpp"
 
 namespace kege::audio{

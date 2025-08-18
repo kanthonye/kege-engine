@@ -8,9 +8,9 @@
 #ifndef draw_commands_hpp
 #define draw_commands_hpp
 
-#include "vectors.hpp"
-#include "communication.hpp"
-#include "primitive-3D-shapes.hpp"
+#include "../../../core/utils/communication.hpp"
+#include "../../../core/math/algebra/vmath.hpp"
+#include "../../../core/math/geometry/primitive-3D-shapes.hpp"
 
 namespace kege{
 

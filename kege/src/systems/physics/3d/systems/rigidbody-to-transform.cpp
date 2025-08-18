@@ -6,7 +6,6 @@
 //
 
 #include "rigidbody-to-transform.hpp"
-#include "physics-simulation.hpp"
 
 namespace kege{
 

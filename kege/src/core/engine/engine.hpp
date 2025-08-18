@@ -11,21 +11,16 @@
 #include "../utils/log.hpp"
 #include "../system/system.hpp"
 #include "../scene/scene.hpp"
-#include "../loader/scene-loader.hpp"
-
-#include "../../core/container/asset-system.hpp"
-#include "../../core/system/entity-system-manager.hpp"
-#include "../../core/graphics/core/graphics.hpp"
-#include "../../core/graphics/graph/render-graph.hpp"
-#include "../../core/input/input-context-manager.hpp"
+#include "../scene/scene-loader.hpp"
 
 #include "core-ecs.hpp"
 #include "core-esm.hpp"
 #include "core-vfs.hpp"
-#include "core-input.hpp"
-#include "core-logging.hpp"
+#include "input-module.hpp"
+#include "scene-module.hpp"
 #include "core-graphics.hpp"
 #include "core-render-graph.hpp"
+#include "logger-module.hpp"
 
 namespace kege{
 
@@ -36,28 +31,19 @@ namespace kege{
     {
     public:
 
-        template< typename SystemT > SystemT* addSystem()
-        {
-            SystemT* system = new SystemT( this );
-            insert( system );
-            return system;
-        }
+        void addModule( kege::Module* module );
 
-        //void addSystem( const std::string& name );
-
-        void changeScene( uint32_t scene_id );
-        void setScene( kege::Ref< kege::Scene > scene );
-        kege::Scene* getScene();
 
         kege::AssetSystem& assetSystem();
 
-        kege::VirtualDirectory& getVirtualDirectory();
         kege::CoreRenderGraph& renderGraph();
-        kege::CoreGraphics& graphics();
-        kege::CoreInput& input();
-        kege::CoreESM& esm();
-        kege::CoreECS& ecs();
-        kege::CoreVFS& vfs();
+        kege::GraphicsModule& graphics();
+        kege::InputModule& input();
+        kege::EntitySystemManagerModule& esm();
+        kege::ECSModule& ecs();
+        kege::VirtualDirectoryModule& vfs();
+        kege::LoggerModule& logger();
+        kege::SceneModule& scene();
 
         double dms()const;
 
@@ -81,20 +67,18 @@ namespace kege{
 
     private:
 
-        kege::VirtualDirectory _virtual_directory;
-        kege::CoreGraphics _graphics;
+        kege::LoggerModule _logger;
+        kege::GraphicsModule _graphics;
         kege::CoreRenderGraph _render_graph;
-        kege::CoreInput _input;
-        kege::CoreESM _esm;
-        kege::CoreECS _ecs;
-        kege::CoreVFS _vfs;
-        
+        kege::InputModule _input;
+        kege::EntitySystemManagerModule _esm;
+        kege::ECSModule _ecs;
+        kege::VirtualDirectoryModule _vfs;
+        kege::SceneModule _scene;
+
         kege::AssetSystem _asset_system;
 
-        std::vector< kege::System* > _systems;
-
-        std::vector< std::string > _scene_files;
-        kege::Ref< kege::Scene > _scene;
+        std::vector< kege::Module* > _modules;
 
         std::string _root_directory;
 

@@ -8,9 +8,7 @@
 #ifndef control_camera_movement_hpp
 #define control_camera_movement_hpp
 
-#include "rigidbody.hpp"
-#include "input-system.hpp"
-#include "entity-system.hpp"
+#include "../-/system-dependencies.hpp"
 
 namespace kege{
 
@@ -20,13 +18,9 @@ namespace kege{
 
         void operator()( const MappedInputs& input_commands );
         MovementSystem( kege::Engine* engine );
-        bool initialize()override;
-        void shutdown()override;
+        bool initialize();
+        void shutdown();
     };
 
-    struct MovementControl
-    {
-        kege::vec3 speed =  {0.1, 0.1, 0.1};
-    };
 }
 #endif /* control_camera_movement_hpp */

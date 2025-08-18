@@ -10,48 +10,17 @@
 
 namespace kege{
 
-    kege::PipelineHandle ShaderPipelineManager::load( const std::string& name_id, const std::string& filename )
+    PipelineHandle ShaderPipelineManager::load( const std::string& name, const std::string& filename )
     {
-        if ( _graphics == nullptr )
+        PipelineHandle pipeline = PipelineLoader::load( _graphics, filename.c_str() );
+        if( !pipeline )
         {
-            return {-1};
-        }
-
-        auto itr = _name_index_map.find( name_id );
-        if ( itr != _name_index_map.end() )
-        {
-            return _pipelines[ itr->second ];
-        }
-
-        kege::PipelineHandle pipeline = _graphics->loadGraphicsPipeline( filename );
-        set( name_id, pipeline );
-        return pipeline;
-    }
-    kege::PipelineHandle ShaderPipelineManager::load( const std::string& filename )
-    {
-        if ( _graphics == nullptr )
-        {
-            return {-1};
-        }
-
-        kege::Json json = kege::JsonParser::load( filename.data() );
-        if ( !json )
-        {
-            KEGE_LOG_ERROR <<"fail to open file -> " << filename;
             return {};
         }
-        std::string path = kege::getFilePath( filename );
-        std::string name_id = json[ "name" ].value();
-        auto itr = _name_index_map.find( name_id );
-        if ( itr != _name_index_map.end() )
-        {
-            return _pipelines[ itr->second ];
-        }
-
-        kege::PipelineHandle pipeline = _graphics->loadGraphicsPipeline( filename, &name_id );
-        set( name_id, pipeline );
+        this->set( name, pipeline );
         return pipeline;
     }
+
     void ShaderPipelineManager::set( const std::string& name_id, kege::PipelineHandle pipeline )
     {
         if ( !pipeline )

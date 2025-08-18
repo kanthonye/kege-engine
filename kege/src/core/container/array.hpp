@@ -116,7 +116,7 @@ namespace kege{
             if ( _data != nullptr )
             {
                 size_t min_size = (size < _size)? size : _size;
-                std::memcpy( data, _data, sizeof(T) * min_size );
+                std::copy(_data, _data + min_size, data);
                 delete[] _data;
             }
             _data = data;

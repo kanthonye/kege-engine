@@ -9,7 +9,8 @@
 #define render_pass_hpp
 
 #include <unordered_set>
-#include "../core/graphics-device.hpp"
+#include "../../graphics/core/graphics.hpp"
+#include "../../utils/communication.hpp"
 #include "render-pass-context.hpp"
 
 namespace kege{

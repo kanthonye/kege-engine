@@ -15,8 +15,6 @@
 #include <string>
 //#include <sndfile.h>
 
-#include "ref.hpp"
-#include "vectors.hpp"
 #include "audio-buffer.hpp"
 
 namespace kege::audio{

@@ -8,7 +8,9 @@
 #ifndef kege_resource_manager_hpp
 #define kege_resource_manager_hpp
 
-#include "ref.hpp"
+#include "../memory/ref.hpp"
+#include "../utils/log.hpp"
+#include "../utils/communication.hpp"
 #include "hashmap.hpp"
 
 namespace kege{

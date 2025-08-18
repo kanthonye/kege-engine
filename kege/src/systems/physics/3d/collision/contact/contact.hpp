@@ -8,9 +8,9 @@
 #ifndef collision_manager_hpp
 #define collision_manager_hpp
 
-#include "vectors.hpp"
-#include "collider.hpp"
-#include "rigidbody.hpp"
+#include "../../../../-/component-dependencies.hpp"
+#include "../collider/collider.hpp"
+#include "../../dynamics/rigidbody.hpp"
 
 namespace kege
 {

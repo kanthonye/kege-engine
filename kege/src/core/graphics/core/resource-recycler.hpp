@@ -22,8 +22,8 @@ public:
         bool freed;
     };
 
-    typedef std::vector< Asset >::const_iterator const_iterator;
-    typedef std::vector< Asset >::iterator iterator;
+    typedef typename std::vector< Asset >::const_iterator const_iterator;
+    typedef typename std::vector< Asset >::iterator iterator;
 
     inline const T* get( uint32_t index )const
     {

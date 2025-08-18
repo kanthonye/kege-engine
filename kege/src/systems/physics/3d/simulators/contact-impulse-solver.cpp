@@ -5,11 +5,8 @@
 //  Created by Kenneth Esdaile on 10/27/24.
 //
 
-#include "collider.hpp"
-#include "draw-commands.hpp"
 #include "contact-impulse-solver.hpp"
-
-#include "physics-simulation.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 

@@ -56,7 +56,6 @@ namespace kege{
 
 namespace kege{
 
-    class EntitySystem;
     class EntitySystemFactory
     {
     public:

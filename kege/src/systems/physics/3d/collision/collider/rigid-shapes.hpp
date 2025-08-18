@@ -9,7 +9,7 @@
 #define rigid_shapes_hpp
 
 #include "collider.hpp"
-#include "primitive-3D-shapes.hpp"
+#include "../../../../-/component-dependencies.hpp"
 
 namespace kege{
 

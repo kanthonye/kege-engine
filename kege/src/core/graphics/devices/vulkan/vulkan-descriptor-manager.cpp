@@ -253,7 +253,7 @@ namespace kege::vk{
 
     kege::DescriptorSetHandle DescriptorManager::allocateDescriptorSet( const std::vector< kege::DescriptorSetLayoutBinding >& bindings )
     {
-        kege::DescriptorSetLayoutHandle layout_handle = getDescriptorSetLayout( bindings, false );
+        kege::DescriptorSetLayoutHandle layout_handle = getDescriptorSetLayout( bindings, true );
         return allocateDescriptorSet( layout_handle );
     }
 
@@ -261,7 +261,7 @@ namespace kege::vk{
     {
         if ( layout_handle.id < 0 )
         {
-            KEGE_LOG_ERROR << "Invalid DescriptorSetLayoutHandle" << Log::nl;
+            KEGE_LOG_ERROR << "Invalid DescriptorSetLayoutHandle parameter" << Log::nl;
             return {};
         }
 
@@ -337,6 +337,12 @@ namespace kege::vk{
 
     kege::DescriptorSetLayoutHandle DescriptorManager::createDescriptorSetLayout( const std::vector< kege::DescriptorSetLayoutBinding >& bindings )
     {
+        auto i = _descriptor_set_layout_cache.find( bindings );
+        if ( i != _descriptor_set_layout_cache.end() )
+        {
+            return {int( i->second )};
+        }
+
         std::vector< VkDescriptorSetLayoutBinding > vk_bindings;
         std::string debug_name;
         // ... Translate bindings to VkDescriptorSetLayoutBinding ...

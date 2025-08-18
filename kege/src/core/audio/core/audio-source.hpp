@@ -8,8 +8,6 @@
 #ifndef audio_source_hpp
 #define audio_source_hpp
 
-#include "ref.hpp"
-#include "vectors.hpp"
 #include "audio-buffer.hpp"
 #include "audio-stream.hpp"
 

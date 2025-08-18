@@ -11,9 +11,7 @@
 
 #include "../devices/vulkan/vulkan-instance.hpp"
 #include "../devices/vulkan/vulkan-device.hpp"
-
 #include "../../graphics/core/glfw-window.hpp"
-#include "../../loader/pipeline-loader.hpp"
 #include "../../graphics/core/shader-resource-manager.hpp"
 #include "../../graphics/core/shader-pipeline-manager.hpp"
 
@@ -105,6 +103,8 @@ namespace kege{
          */
         void destroySampler(SamplerHandle handle);
 
+        void insertPipeline(const std::string& name, const PipelineHandle& handle);
+
         /**
          * @brief Creates a shader module from source or bytecode.
          * @param desc Shader description including code and entry point.
@@ -118,9 +118,6 @@ namespace kege{
          * @warning Ensure no pipelines are using this shader.
          */
         void destroyShader(ShaderHandle handle);
-
-        kege::PipelineHandle loadGraphicsPipeline( const std::string& filename, std::string* name = nullptr );
-        kege::PipelineHandle loadGraphicsPipeline( kege::Json json, const std::string& path );
 
         /**
          * @brief Creates a pipeline layout defining resource bindings.
@@ -271,7 +268,7 @@ namespace kege{
         void shutdown();
 
 
-        Graphics( GraphicsAPIInfo info );
+        //Graphics( GraphicsAPIInfo info );
         Graphics();
 
         ~Graphics();
@@ -318,7 +315,7 @@ namespace kege{
         kege::ShaderResourceManager _shader_resource_manager;
         kege::ShaderPipelineManager _shader_pipeline_manager;
 
-        GraphicsAPIInfo _info;
+        //GraphicsAPIInfo _info;
     };
     
 }

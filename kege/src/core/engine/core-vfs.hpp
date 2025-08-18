@@ -9,20 +9,30 @@
 #define core_vfs_hpp
 
 #include "../io/virtual-directory.hpp"
-#include "../system/system.hpp"
+#include "module.hpp"
 
 namespace kege{
 
     /**
      * System use to initialize and shutdown the ECS (Entity Component System)
      */
-    class CoreVFS : public CoreSystem< kege::VirtualDirectory >
+    class VirtualDirectoryModule : public Module
     {
     public:
 
-        CoreVFS( kege::Engine* engine );
+        VirtualDirectoryModule( kege::Engine* engine );
+
+        operator bool()const{ return _module != nullptr; }
+        const kege::VirtualDirectory* operator ->()const;
+        kege::VirtualDirectory* operator ->();
+
         bool initialize();
         void shutdown();
+        void add();
+
+    private:
+
+        kege::Ref< kege::VirtualDirectory > _module;
     };
 
 }

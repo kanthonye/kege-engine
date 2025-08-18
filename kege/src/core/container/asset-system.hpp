@@ -75,8 +75,8 @@ namespace kege{
             T resource;
         };
 
-        typedef std::vector< T >::reverse_iterator ReverseIterator;
-        typedef std::vector< T >::iterator Iterator;
+        typedef typename std::vector< T >::reverse_iterator ReverseIterator;
+        typedef typename std::vector< T >::iterator Iterator;
 
         Resource add( const std::string& name, T res );
         Resource getHandle( const std::string& name );
@@ -196,22 +196,22 @@ namespace kege{
         return _type;
     }
 
-    template< typename T > ResrcMngrT< T >::ReverseIterator ResrcMngrT< T >::rbegin()
+    template< typename T > typename ResrcMngrT< T >::ReverseIterator ResrcMngrT< T >::rbegin()
     {
         return _resources.rbegin();
     }
 
-    template< typename T > ResrcMngrT< T >::ReverseIterator ResrcMngrT< T >::rend()
+    template< typename T > typename ResrcMngrT< T >::ReverseIterator ResrcMngrT< T >::rend()
     {
         return _resources.rend();
     }
 
-    template< typename T > ResrcMngrT< T >::Iterator ResrcMngrT< T >::begin()
+    template< typename T > typename ResrcMngrT< T >::Iterator ResrcMngrT< T >::begin()
     {
         return _resources.begin();
     }
 
-    template< typename T > ResrcMngrT< T >::Iterator ResrcMngrT< T >::end()
+    template< typename T > typename ResrcMngrT< T >::Iterator ResrcMngrT< T >::end()
     {
         return _resources.end();
     }
@@ -260,22 +260,22 @@ namespace kege{
             return getManager< T >()->clear();
         }
 
-        template< typename T > ResrcMngrT< T >::ReverseIterator rbegin()
+        template< typename T > typename ResrcMngrT< T >::ReverseIterator rbegin()
         {
             return getManager< T >()->rbegin();
         }
 
-        template< typename T > ResrcMngrT< T >::ReverseIterator rend()
+        template< typename T > typename ResrcMngrT< T >::ReverseIterator rend()
         {
             return getManager< T >()->rend();
         }
 
-        template< typename T > ResrcMngrT< T >::Iterator begin()
+        template< typename T > typename ResrcMngrT< T >::Iterator begin()
         {
             return getManager< T >()->begin();
         }
 
-        template< typename T > ResrcMngrT< T >::Iterator end()
+        template< typename T > typename ResrcMngrT< T >::Iterator end()
         {
             return getManager< T >()->end();
         }

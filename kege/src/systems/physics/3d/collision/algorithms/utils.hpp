@@ -10,10 +10,10 @@
 
 #define KEGE_DEBUG_CONTACT_GENERATION
 
-#include "draw-commands.hpp"
-#include "rigidbody.hpp"
-#include "collider.hpp"
-#include "contact.hpp"
+#include "../../../debug/draw-commands.hpp"
+#include "../../dynamics/rigidbody.hpp"
+#include "../collider/collider.hpp"
+#include "../contact/contact.hpp"
 
 namespace kege::algo{
 

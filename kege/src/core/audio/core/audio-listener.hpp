@@ -8,7 +8,7 @@
 #ifndef audio_listener_hpp
 #define audio_listener_hpp
 
-#include "vectors.hpp"
+#include "../../math/algebra/vmath.hpp"
 
 namespace kege::audio{
 

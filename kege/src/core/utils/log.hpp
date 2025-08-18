@@ -110,7 +110,7 @@ namespace kege{
             if ( logs.empty() )
             {
                 logs.push_back( new Entry );
-                std::cout <<"\n" << name <<": ";
+                std::cout <<"\n" << name <<":\n";
             }
             logs.back()->push_back( msg );
             std::cout << msg;

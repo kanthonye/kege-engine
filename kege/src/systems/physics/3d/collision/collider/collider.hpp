@@ -8,9 +8,7 @@
 #ifndef kege_collider_hpp
 #define kege_collider_hpp
 
-#include "ref.hpp"
-#include "primitive-3D-shapes.hpp"
-#include "collisions-3D-shapes.hpp"
+#include "../../../../-/component-dependencies.hpp"
 
 namespace kege{
 

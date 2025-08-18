@@ -9,7 +9,7 @@
 #define frustum_hpp
 
 #include "camera.hpp"
-#include "collisions-3D-shapes.hpp"
+#include "../../core/math/geometry/collisions-3D-shapes.hpp"
 
 namespace kege{
 

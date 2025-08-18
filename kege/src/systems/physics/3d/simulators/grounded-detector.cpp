@@ -5,9 +5,8 @@
 //  Created by Kenneth Esdaile on 6/28/25.
 //
 
-#include "rayhit.hpp"
-#include "physics-simulation.hpp"
 #include "grounded-detector.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 

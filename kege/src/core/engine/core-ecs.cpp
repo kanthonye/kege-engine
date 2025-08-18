@@ -5,15 +5,23 @@
 //  Created by Kenneth Esdaile on 4/19/25.
 //
 
+#include "engine.hpp"
 #include "core-ecs.hpp"
+
 namespace kege{
 
-    CoreECS::CoreECS( kege::Engine* engine )
-    :   kege::CoreSystem< kege::EntityManager >( engine, "ecs" )
+    ECSModule::ECSModule( kege::Engine* engine )
+    :   kege::Module( engine, "ECSModule" )
     {}
 
-    bool CoreECS::initialize()
+    bool ECSModule::initialize()
     {
+        if ( _module != nullptr )
+        {
+            kege::Log::error << "ECS-Module already initialized!" << Log::nl;
+            return false;
+        }
+
         _module = new kege::EntityManager;
         if ( !Entity::initialize( _module.ref() ) )
         {
@@ -22,7 +30,7 @@ namespace kege{
         return true;
     }
 
-    void CoreECS::shutdown()
+    void ECSModule::shutdown()
     {
         if ( _module )
         {
@@ -31,5 +39,10 @@ namespace kege{
         }
     }
 
-    KEGE_REGISTER_SYSTEM( CoreECS, "ecs" );
+    void ECSModule::add()
+    {
+        _engine->addModule( this );
+        kege::Log::info << "ECS-Module module added to engine" << Log::nl;
+    }
+
 }

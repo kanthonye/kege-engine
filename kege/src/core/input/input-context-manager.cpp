@@ -22,16 +22,16 @@ namespace kege{
 
     void InputContextManager::process( const std::vector< Input >& inputs )
     {
-        _mapped_inputs->clear();
+        _mapped_inputs.clear();
         for (const kege::Input& input : inputs )
         {
             kege::Coord2d d;
             if ( input.type == kege::Input::POINTER )
             {
-                d.x = input.coord.x - _mapped_inputs->_pointer.x;
-                d.y = input.coord.y - _mapped_inputs->_pointer.y;
-                _mapped_inputs->_pointer.x = input.coord.x;
-                _mapped_inputs->_pointer.y = input.coord.y;
+                d.x = input.coord.x - _mapped_inputs._pointer.x;
+                d.y = input.coord.y - _mapped_inputs._pointer.y;
+                _mapped_inputs._pointer.x = input.coord.x;
+                _mapped_inputs._pointer.y = input.coord.y;
 
                 if ( d.x > 0 )
                 {
@@ -86,25 +86,41 @@ namespace kege{
             if ( input != nullptr )
             {
                 input->amount = value;
-                _mapped_inputs->insert( input );
+                _mapped_inputs.insert( input );
                 break;
             }
         }
     }
 
-    void InputContextManager::setMappedInputs( MappedInputs* inputs )
+    bool InputContextManager::initialize( GraphicsWindow* window )
     {
-        _mapped_inputs = inputs;
+        return _user_input_receiver.initialize( window );
     }
 
     void InputContextManager::shutdown()
     {
-        _mapped_inputs = nullptr;
+        _mapped_inputs.clear();
         _contexts.clear();
         _active_contexts.clear();
     }
 
+    std::vector< kege::Input >& InputContextManager::getCurrentInputs()
+    {
+        return _current_inputs;
+    }
+
+    MappedInputs& InputContextManager::getMappedInputs()
+    {
+        return _mapped_inputs;
+    }
+
+    void InputContextManager::updateCurrentInputs()
+    {
+        _current_inputs.clear();
+        _user_input_receiver.getInputs( _current_inputs );
+        process( _current_inputs );
+    }
+
     InputContextManager::InputContextManager()
-    :   _mapped_inputs( nullptr )
     {}
 }

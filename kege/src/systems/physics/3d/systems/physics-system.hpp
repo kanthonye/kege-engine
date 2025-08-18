@@ -8,8 +8,8 @@
 #ifndef physics_system_hpp
 #define physics_system_hpp
 
-#include "entity-system.hpp"
-#include "physics-simulation.hpp"
+#include "../../../-/system-dependencies.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege{
 

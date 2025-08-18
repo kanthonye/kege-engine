@@ -8,9 +8,9 @@
 #ifndef simulation_hpp
 #define simulation_hpp
 
-#include "simulator.hpp"
-#include "rigidbody.hpp"
-#include "component-cache.hpp"
+#include "../simulators/simulator.hpp"
+#include "../dynamics/rigidbody.hpp"
+#include "../../../../core/ecs/component-cache.hpp"
 
 namespace kege::physics{
 

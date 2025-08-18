@@ -149,36 +149,36 @@ namespace kege{
 //        return state->j * state->normal;
 //    }
 
-    vec3 FrictionSolver::computeImpulse( Rigidbody* a, Rigidbody* b, CollisionManifold* collision )
-    {
-        kege::vec3 tangent = collision->relative_velocity - (collision->normal * collision->v_dot_n);
-        float tangent_speed = magn( tangent );
-        if (tangent_speed < 1e-4) return vec3{0,0,0};
+    // vec3 FrictionSolver::computeImpulse( Rigidbody* a, Rigidbody* b, CollisionManifold* collision )
+    // {
+    //     kege::vec3 tangent = collision->relative_velocity - (collision->normal * collision->v_dot_n);
+    //     float tangent_speed = magn( tangent );
+    //     if (tangent_speed < 1e-4) return vec3{0,0,0};
 
-        float static_threshold = collision->j * collision->static_friction;
+    //     float static_threshold = collision->j * collision->static_friction;
 
-        // Check for static vs. kinetic friction
-        if (tangent_speed < static_threshold)
-        {
-            // Apply full static friction to zero out tangent speed
-            return -tangent / float( collision->contact_count );
-        }
-        else // kinetic friction
-        {
-            tangent = tangent / tangent_speed; // normalize tangent
-            float numerator = -dot( state->relative_velocity, tangent);
-            vec3 p0 = cross( a->angular.inertia_inverse * cross( collision->relative_position[0], tangent), collision->relative_position[0] );
-            vec3 p1 = cross( a->angular.inertia_inverse * cross( collision->relative_position[1], tangent), collision->relative_position[1] );
-            float denominator = state->inv_mass_sum + dot(tangent, p0 + p1);
-            float jt = (CMP(denominator, 0.0f)) ? 0.0f : numerator / denominator;
+    //     // Check for static vs. kinetic friction
+    //     if (tangent_speed < static_threshold)
+    //     {
+    //         // Apply full static friction to zero out tangent speed
+    //         return -tangent / float( collision->contact_count );
+    //     }
+    //     else // kinetic friction
+    //     {
+    //         tangent = tangent / tangent_speed; // normalize tangent
+    //         float numerator = -dot( state->relative_velocity, tangent);
+    //         vec3 p0 = cross( a->angular.inertia_inverse * cross( collision->relative_position[0], tangent), collision->relative_position[0] );
+    //         vec3 p1 = cross( a->angular.inertia_inverse * cross( collision->relative_position[1], tangent), collision->relative_position[1] );
+    //         float denominator = state->inv_mass_sum + dot(tangent, p0 + p1);
+    //         float jt = (CMP(denominator, 0.0f)) ? 0.0f : numerator / denominator;
 
-            jt = clamp(jt, -state->j * state->friction, state->j * state->friction);
-            jt /= float( state->contact_count );
+    //         jt = clamp(jt, -state->j * state->friction, state->j * state->friction);
+    //         jt /= float( state->contact_count );
 
-            // the friction impulse
-            return tangent * jt;
-        }
-    }
+    //         // the friction impulse
+    //         return tangent * jt;
+    //     }
+    // }
 //
 //    void FrictionSolver::update( double dms, CollisionRegistry& collision_manager )
 //    {
@@ -188,8 +188,8 @@ namespace kege{
 //        }
 //    }
 //
-    FrictionSolver::FrictionSolver( PhysicsSystem* system )
-    :   PhysicsSolver( system )
-    ,   _iterations( 1 )
-    {}
+    // FrictionSolver::FrictionSolver( PhysicsSystem* system )
+    // :   PhysicsSolver( system )
+    // ,   _iterations( 1 )
+    // {}
 }

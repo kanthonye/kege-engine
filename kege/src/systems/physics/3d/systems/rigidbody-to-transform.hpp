@@ -8,8 +8,8 @@
 #ifndef rigidbody_to_transform_hpp
 #define rigidbody_to_transform_hpp
 
-#include "entity-system.hpp"
-#include "physics-simulation.hpp"
+#include "../../../-/system-dependencies.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege{
 

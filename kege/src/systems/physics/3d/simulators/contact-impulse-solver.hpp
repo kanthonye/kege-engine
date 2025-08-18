@@ -9,7 +9,6 @@
 #define kege_contact_impulse_solver_hpp
 
 #include "simulator.hpp"
-#include "contact.hpp"
 
 namespace kege::physics{
 

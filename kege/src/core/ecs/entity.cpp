@@ -21,26 +21,6 @@ namespace kege{
         return entity._mgr->print( os, entity._id );
     }
 
-    bool operator ==( const Entity& a, const Entity& b )
-    {
-        return a._id == b._id;
-    }
-
-    bool operator !=( const Entity& a, const Entity& b )
-    {
-        return a._id != b._id;
-    }
-
-    bool operator ==( const Entity& a, int32_t i )
-    {
-        return a._id == i;
-    }
-
-    bool operator !=( int32_t i, const Entity& b )
-    {
-        return b._id != i;
-    }
-
     const EntitySignature& Entity::signature() const
     {
         return _mgr->signature( _id );

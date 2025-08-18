@@ -8,8 +8,7 @@
 #ifndef compute_camera_ray_hpp
 #define compute_camera_ray_hpp
 
-#include "input-system.hpp"
-#include "entity-system.hpp"
+#include "../-/system-dependencies.hpp"
 
 namespace kege{
 
