@@ -1,0 +1,31 @@
+# Build directories
+/build/
+/bin/
+/obj/
+
+# Compiled libraries
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# IDE/project files
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.xcodeproj
+*.xcworkspace
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
