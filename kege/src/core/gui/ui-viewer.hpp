@@ -79,8 +79,11 @@ namespace kege::ui{
         BufferHandle _gpu_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
         DescriptorSetHandle _shader_resource_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
         DescriptorSetHandle _shader_resource_font;
-        DescriptorSetHandle _ui_texture;
+        DescriptorSetHandle _descriptor_ui_texture;
         kege::PipelineHandle _pipeline;
+
+        kege::ImageHandle _default_ui_texture;
+
         Graphics* _graphics;
 
         PushConstant _push_constant;

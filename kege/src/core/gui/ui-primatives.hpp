@@ -266,7 +266,8 @@ namespace kege::ui{
         {
             float border_radius;
             float isfont;
-            float pad[2];
+            float texture_id;
+            float pad;
         };
     };
     typedef std::vector< ui::DrawElem > RenderData;

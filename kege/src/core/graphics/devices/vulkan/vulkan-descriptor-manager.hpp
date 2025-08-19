@@ -43,8 +43,6 @@ namespace kege::vk{
         bool linked = false;
     };
 
-   struct PipelineLayout;
-
     /**
      * @brief Wrapper for Vulkan descriptor set layout resources
      *
@@ -58,7 +56,7 @@ namespace kege::vk{
         /** @brief Original layout creation parameters for reference/recreation */
         std::vector< DescriptorSetLayoutBinding > bindings;
 
-        std::set< PipelineLayout* > pipeline_layout_sets;
+        std::set< PipelineLayoutHandle > pipeline_layout_sets;
         std::string name;
         int32_t binding_location = -1;
         int32_t allocator_id = -1;
@@ -79,10 +77,11 @@ namespace kege::vk{
         kege::PipelineLayoutDesc desc;
 
         /** @brief Cached native descriptor set layouts for pipeline creation */
-        std::vector< DescriptorSetLayout* > descriptor_set_layouts;
+        std::vector< DescriptorSetLayoutHandle > descriptor_set_layouts;
 
         std::unordered_map< uint32_t, uint32_t > binding_locations;
         VkPipelineBindPoint pipeline_bind_point;
+        std::string debug_name;
     };
 
     /**

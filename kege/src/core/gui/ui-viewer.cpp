@@ -19,6 +19,7 @@ namespace kege::ui{
             _drawbuffer[ _count ].rect.y        = node.elem.rect.y;
             _drawbuffer[ _count ].border_radius = node.elem.style.border_radius;
             _drawbuffer[ _count ].isfont        = 0.0f;
+            _drawbuffer[ _count ].texture_id    = 0.0f;
             _drawbuffer[ _count ].clip_rect     = clip_rect;
             _count++;
 
@@ -76,6 +77,7 @@ namespace kege::ui{
                     _drawbuffer[ _count ].texel.width   = g.width;
                     _drawbuffer[ _count ].texel.height  = g.height;
                     _drawbuffer[ _count ].isfont        = 1.0f;
+                    _drawbuffer[ _count ].texture_id    = 0.0f;
                     _drawbuffer[ _count ].border_radius = 0.0f;
                     _drawbuffer[ _count ].clip_rect     = clip_rect;
                     _count++;
@@ -175,7 +177,7 @@ namespace kege::ui{
                 .binding = 0,
                 .descriptor_type = DescriptorType::CombinedImageSampler,
                 .image_info = image_info,
-                .set = _ui_texture
+                .set = _descriptor_ui_texture
             }
         });
         if ( result == false )
@@ -191,7 +193,7 @@ namespace kege::ui{
         encoder->bindGraphicsPipeline( _pipeline );
         encoder->bindDescriptorSets( _shader_resource_draw_buffer[ _graphics->getCurrFrameIndex() ], false );
         encoder->bindDescriptorSets( _shader_resource_font, false );
-        encoder->bindDescriptorSets( _ui_texture, false );
+        encoder->bindDescriptorSets( _descriptor_ui_texture, false );
         encoder->setPushConstants( ShaderStage::Vertex | ShaderStage::Fragment, 0, sizeof( _push_constant ), &_push_constant );
         encoder->draw( 4, _count, 0, 0 );
         _count = 0;
@@ -271,9 +273,9 @@ namespace kege::ui{
         _shader_resource_font = _graphics->allocateDescriptorSet({ DescriptorSetLayoutBinding{
             .name = "sdf_font_texture",
             .descriptor_type = DescriptorType::CombinedImageSampler,
+            .stage_flags = ShaderStage::Fragment,
             .binding = 0,
             .count = 1,
-            .stage_flags = ShaderStage::Fragment,
         }});
         _graphics->updateDescriptorSets({ kege::WriteDescriptorSet{
             .array_element = 0,
@@ -289,13 +291,38 @@ namespace kege::ui{
         } });
 
 
-        _ui_texture = _graphics->allocateDescriptorSet({ DescriptorSetLayoutBinding{
+        uint32_t color[] = {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF};
+        _default_ui_texture = _graphics->createImage( ImageDesc{
+            .width  = 2,
+            .height = 2,
+            .depth  = 1,
+            .mip_levels = 1,
+            .memory_usage = MemoryUsage::GpuOnly,
+            .sample_count = SampleCount::Count1,
+            .format = Format::rgba_u8_norm,
+            .data = &color
+        });
+        
+        _descriptor_ui_texture = _graphics->allocateDescriptorSet({ DescriptorSetLayoutBinding{
             .name = "ui_texture",
             .descriptor_type = DescriptorType::CombinedImageSampler,
-            .binding = 1,
-            .count = 16,
             .stage_flags = ShaderStage::Fragment,
+            .binding = 0,
+            .count = 16,
         }});
+        _graphics->updateDescriptorSets({ kege::WriteDescriptorSet{
+            .array_element = 0,
+            .binding = 0,
+            .descriptor_type = DescriptorType::CombinedImageSampler,
+            .image_info =
+            {{
+                .image = _default_ui_texture,
+                .sampler = _font->getSampler(),
+                .layout = ImageLayout::ShaderReadOnly
+            }},
+            .set = _descriptor_ui_texture
+        } });
+
 
 //        _shader_resource_font = _graphics->allocateDescriptorSet
 //        ({
@@ -304,13 +331,13 @@ namespace kege::ui{
 //            {
 //                DescriptorSetBindingInfo
 //                {
-//                    .name = "sdfFontTexture",
+//                    .name = "ui_texture",
 //                    .descriptor_type = DescriptorType::CombinedImageSampler,
-//                    .binding = 0,
+//                    .binding = 1,
 //                    .array_element = 0,
 //                    .image_info =
 //                    {{
-//                        .image = _font->getImage(),
+//                        .image = _default_ui_texture,
 //                        .sampler = _font->getSampler(),
 //                        .layout = ImageLayout::ShaderReadOnly
 //                    }}
@@ -325,6 +352,8 @@ namespace kege::ui{
     {
         if ( _graphics )
         {
+            _graphics->destroyImage( _default_ui_texture );
+
             if( _shader_resource_font )
                 _graphics->freeDescriptorSet( _shader_resource_font );
             for (int i = 0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)

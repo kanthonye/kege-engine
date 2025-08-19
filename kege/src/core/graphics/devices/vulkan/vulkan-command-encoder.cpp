@@ -20,7 +20,7 @@ namespace kege::vk{
     ,   _handle( VK_NULL_HANDLE )
     {}
 
-    void CommandEncoder::bindDescriptorSets( DescriptorSetHandle handle, bool globally )
+    bool CommandEncoder::bindDescriptorSets( DescriptorSetHandle handle, bool globally )
     {
         const DescriptorSet* set = _command_buffer->_device->getDescriptorSet( handle );
         const DescriptorSetLayout* dsl = _command_buffer->_device->getDescriptorSetLayout( set->layout );
@@ -28,20 +28,33 @@ namespace kege::vk{
 
         if ( globally )
         {
-            for (const kege::PipelineLayoutHandle& layout : dsl->pipeline_layout_sets )
+            for (const PipelineLayoutHandle& layout : dsl->pipeline_layout_sets )
             {
                 const PipelineLayout* vkpl = _command_buffer->_device->getPipelineLayout( layout );
+
                 auto i = vkpl->binding_locations.find( dsl->binding_location );
+                if ( i == _current_pipeline_layout->binding_locations.end() )
+                {
+                    Log::error << "DescriptorSet -> " << dsl->name
+                    << " does not have an binding_locations binding_index associated with the pipeline layout -> "
+                    << vkpl->debug_name << Log::nl;
+                    return false;
+                }
+
                 vkCmdBindDescriptorSets( _handle, vkpl->pipeline_bind_point, vkpl->layout, i->second, 1, sets, 0, nullptr );
             }
         }
         else if( _current_pipeline_layout != nullptr )
         {
-            if ( dsl->binding_location < 0 )
-            {
-                <#statements#>
-            }
             auto i = _current_pipeline_layout->binding_locations.find( dsl->binding_location );
+
+            if ( i == _current_pipeline_layout->binding_locations.end() )
+            {
+                Log::error << "DescriptorSet -> " << dsl->name
+                << " does not have an binding_locations binding_index associated with the currently bound pipeline."
+                << Log::nl;
+                return false;
+            }
             vkCmdBindDescriptorSets
             (
                 _handle,
@@ -50,6 +63,7 @@ namespace kege::vk{
                 i->second, 1, sets, 0, nullptr
             );
         }
+        return true;
     }
 
     void CommandEncoder::bindGraphicsPipeline( kege::PipelineHandle pipeline_handle )
