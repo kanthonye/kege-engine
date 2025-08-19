@@ -16,6 +16,8 @@
 
 #include "hierarchy-panel.hpp"
 #include "inspector-panel.hpp"
+#include "viewport-panel.hpp"
+#include "navbar-panel.hpp"
 
 namespace kege{
 
@@ -41,10 +43,6 @@ namespace kege{
 
         void operator()( kege::RenderPassContext* context );
 
-        void drawHierarchyPanel();
-        void drawInspectorPanel();
-        void drawAssetBrowser();
-        void drawViewportPanel();
         void buildEditorPanels();
         void initLayout();
         bool initalize();
@@ -53,6 +51,8 @@ namespace kege{
 
         HierarchyPanel _hierarchy_panel;
         InspectorPanel _inspector_panel;
+        ViewportPanel _viewport_panel;
+        NavbarPanel _navbar_panel;
 
         ui::Layout _layout;
         ui::Viewer _viewer;
@@ -61,10 +61,6 @@ namespace kege{
         kege::Engine _engine;
         bool _paused;
 
-        ui::EID navbar_panel;
-        ui::EID inspector_panel;
-        ui::EID asset_browser;
-        ui::EID viewport_panel;
         ui::EID main_panel;
     };
 }

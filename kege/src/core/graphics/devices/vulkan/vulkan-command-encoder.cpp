@@ -37,6 +37,10 @@ namespace kege::vk{
         }
         else if( _current_pipeline_layout != nullptr )
         {
+            if ( dsl->binding_location < 0 )
+            {
+                <#statements#>
+            }
             auto i = _current_pipeline_layout->binding_locations.find( dsl->binding_location );
             vkCmdBindDescriptorSets
             (

@@ -343,9 +343,14 @@ namespace kege::vk{
             return {int( i->second )};
         }
 
-        std::vector< VkDescriptorSetLayoutBinding > vk_bindings;
         std::string debug_name;
-        // ... Translate bindings to VkDescriptorSetLayoutBinding ...
+        
+        /**
+         * @brief Create a vector of VkDescriptorSetLayoutBinding from the bindings.
+         * This is used to create the VkDescriptorSetLayout handle.
+         * Each binding corresponds to a resource in the shader and its properties.
+         */
+        std::vector< VkDescriptorSetLayoutBinding > vk_bindings;
         for ( const kege::DescriptorSetLayoutBinding& binding : bindings )
         {
             VkDescriptorSetLayoutBinding dslb = {};
@@ -358,13 +363,20 @@ namespace kege::vk{
             debug_name += (debug_name.empty()) ? binding.name : "-" + binding.name;
         }
 
-        // ... Create VkDescriptorSetLayoutCreateInfo ...
+        /**
+         * @brief Create the VkDescriptorSetLayoutCreateInfo structure.
+         * This structure is used to create the VkDescriptorSetLayout handle.
+         * It contains the bindings, flags, and other properties of the descriptor set layout.
+         */
         VkDescriptorSetLayoutCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         create_info.bindingCount = static_cast<int>( bindings.size() );
         create_info.pBindings = vk_bindings.data();
 
-        // ... vkCreateDescriptorSetLayout ...
+        /**
+         * @brief Create the VkDescriptorSetLayout.
+         * This is the Vulkan handle that represents the descriptor set layout.
+         */
         VkDescriptorSetLayout layout = VK_NULL_HANDLE;
         VkResult result = _device->createDescriptorSetLayout( &create_info, nullptr, &layout );
 
@@ -382,12 +394,52 @@ namespace kege::vk{
         // ... Store handle ...
         int32_t id = _descriptor_set_layouts.gen();
         vk::DescriptorSetLayout* dsl = _descriptor_set_layouts.get( id );
+        if ( dsl == nullptr )
+        {
+            KEGE_LOG_ERROR << "Failed to create DescriptorSetLayoutHandle!";
+            return {-1};
+        }
+        /** 
+         * @brief Assign a binding location to the descriptor set layout.
+         * The binding location is an index associated with the descriptor set layout's name.
+         */
+        dsl->binding_location = getBindingKey( dsl->name );
+
+        /**
+         * @brief Set the allocator_id to -1, indicating that this descriptor set layout is not yet assigned
+         * a descriptot set allocator.
+         */
         dsl->allocator_id = -1;
+
+        /**
+         * @brief Set the descriptor set layout binding information.
+         * This includes the bindings, layout, name, and id.
+         */
         dsl->bindings = bindings;
+
+        /**
+         * @brief Assign the descriptor set layout its VkDescriptorSetLayout handle.
+         */
         dsl->layout = layout;
+
+        /**
+         * @brief Assign the descriptor set layout its assigned debug name.
+         * This is used for debugging purposes and can be set to an empty string if not needed.
+         */
         dsl->name = debug_name;
+
+        /**
+         * @brief Assign the descriptor set layout its id.
+         * This id is used to uniquely identify the descriptor set layout in the descriptor set layout cache.
+         */
         dsl->id = id;
 
+        /**
+         * @brief Associate the descriptor set layout binding info to the descriptor set layout id.
+         * This allows us to quickly retrieve the descriptor set layout by its bindings.
+         * The bindings are hashed to create a unique key for the descriptor set layout.
+         * This is useful for caching and reusing descriptor set layouts.
+         */
         _descriptor_set_layout_cache[ bindings ] = id;
         return { id };
     }
@@ -424,36 +476,69 @@ namespace kege::vk{
         if ( _device == VK_NULL_HANDLE ) return {-1};
 
         kege::PipelineLayoutHandle handle = { _pipeline_layouts.gen() };
-        vk::PipelineLayout* layout;
+        vk::PipelineLayout* pipeline_layout;
         {
             std::lock_guard<std::mutex> lock(_resource_mutex); // Assuming layouts might be shared/cached
-            layout = _pipeline_layouts.get( handle.id );
+            pipeline_layout = _pipeline_layouts.get( handle.id );
         }
 
-        layout->desc = desc;
-        layout->descriptor_set_layouts.reserve( desc.descriptor_set_layouts.size() );
+        pipeline_layout->desc = desc;
+        pipeline_layout->descriptor_set_layouts.reserve( desc.descriptor_set_layouts.size() );
 
-        int binding_location = 0;
-        // Translate abstract DescriptorSetLayoutHandles to native VkDescriptorSetLayouts
+        int binding_index = 0;
+
+        std::vector< VkDescriptorSetLayout > vk_descriptor_set_layouts;
         for (const auto& descriptor_set_layout : desc.descriptor_set_layouts)
         {
+            /**
+             * @brief Get the descriptor set layout from the cache.
+             * If the descriptor set layout is not found, log an error and return an invalid handle
+             */
             vk::DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor_set_layout.id );
             if ( dsl == nullptr )
             {
-                KEGE_LOG_ERROR << "Invalid kege::DescriptorSetLayoutHandle provided in createPipelineLayout!";
+                KEGE_LOG_ERROR << "Invalid kege::DescriptorSetLayoutHandle provided!";
                  return {-1};
             }
-            layout->descriptor_set_layouts.push_back( dsl->layout );
 
+            /**
+             * @brief Add the descriptor set layout to the pipeline layout list.
+             */
+            pipeline_layout->descriptor_set_layouts.push_back( dsl );
+
+            /**
+             * @brief Add the descriptor set layout to the list of vk_descriptor_set_layouts.
+             * This is necessary for creating the vk pipeline layout handle
+             */
+            vk_descriptor_set_layouts.push_back( dsl->layout );
+
+            /**
+             * @brief Assign a binding location to the descriptor set layout if it doesn't already have one.
+             *
+             * The binding location is an index associated with the descriptor set layout's name.
+             * This index is used to map descriptor set layouts to their binding points in the pipeline.
+             * When binding descriptor sets using vkCmdBindDescriptorSets(), the 'firstSet' parameter
+             * corresponds to this binding index. Any descriptor set allocated from a descriptor set layout
+             * will use its associated binding location to determine where it should be bound in the pipeline.
+             * This ensures consistent mapping between descriptor set layouts and their binding indices.
+             */
             if ( dsl->binding_location < 0 )
             {
                 dsl->binding_location = getBindingKey( dsl->name );
             }
-            layout->binding_locations[ dsl->binding_location ] = binding_location;
-            binding_location += 1;
+
+            /**
+             * @brief If the descriptor set layout already has a binding location.
+             * assign a binding index to that location.
+             */
+            pipeline_layout->binding_locations[ dsl->binding_location ] = binding_index;
+            binding_index += 1;
         }
 
-        // Translate PushConstantRanges
+        /**
+         * @brief Create a vector of VkPushConstantRange from the push constant ranges in the descriptor layout.
+         * This is used to specify the push constants that can be used in the pipeline.
+         */
         std::vector<VkPushConstantRange> push_constant_ranges;
         push_constant_ranges.reserve(desc.push_constant_ranges.size());
         for (const auto& range : desc.push_constant_ranges)
@@ -465,15 +550,23 @@ namespace kege::vk{
             push_constant_ranges.push_back(vkRange);
         }
 
+        /**
+         * @brief Create the VkPipelineLayoutCreateInfo structure.
+         * This structure is used to create the pipeline layout handle.
+         */
         VkPipelineLayoutCreateInfo info = {};
         info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        info.setLayoutCount = static_cast<uint32_t>( layout->descriptor_set_layouts.size() );
-        info.pSetLayouts = layout->descriptor_set_layouts.data();
+        info.setLayoutCount = static_cast<uint32_t>( vk_descriptor_set_layouts.size() );
+        info.pSetLayouts = vk_descriptor_set_layouts.data();
         info.pushConstantRangeCount = static_cast<uint32_t>( push_constant_ranges.size() );
         info.pPushConstantRanges = push_constant_ranges.data();
 
+        /**
+         * @brief Create the pipeline layout handle.
+         * This handle is used to bind descriptor sets to the pipeline.
+         */
         VkResult result;
-        if (( result = _device->createPipelineLayout( &info, nullptr, &layout->layout ) ) != VK_SUCCESS )
+        if (( result = _device->createPipelineLayout( &info, nullptr, &pipeline_layout->layout ) ) != VK_SUCCESS )
         {
             logVkError( result, "vulkan-device.hpp", "createPipelineLayout" );
             return {-1};
@@ -481,7 +574,20 @@ namespace kege::vk{
 
         if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
         {
-            _device->debugSetObjectName( (uint64_t)layout->layout, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+        }
+
+        /**
+         * @brief Store a reference to the pipeline layout in each descriptor set layout.
+         *
+         * This allows descriptor sets to be associated with all pipeline layouts that use them.
+         * By keeping track of these relationships, you can bind a descriptor set globally to any pipeline
+         * it is linked with, even before binding a specific pipeline. This enables flexible and efficient
+         * descriptor set management and retrieval across multiple pipelines.
+         */
+        for (const auto& descriptor_set_layout : pipeline_layout->descriptor_set_layouts )
+        {
+            descriptor_set_layout->pipeline_layout_sets.insert( pipeline_layout );
         }
         return handle;
     }

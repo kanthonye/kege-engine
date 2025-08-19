@@ -35,7 +35,8 @@ layout(location = 2) out vec2  size;       // Size of the rectangle
 layout(location = 3) out float border_radius; // border radius size
 layout(location = 4) out vec4  clip_rect;
 layout(location = 5) out vec2  text_uv;  // UV coordinates for text rendering
-layout(location = 6) out float use_text; // Flag to determine if text should render
+layout(location = 6) out float render_text; // Flag to determine if text should render
+layout(location = 7) out float texture_id;   // Texture array index
 
 void main()
 {
@@ -51,9 +52,10 @@ void main()
     gl_Position.y = -gl_Position.y;
 
     vec4 texel = instances[ gl_InstanceIndex ].texel;
-    use_text = instances[ gl_InstanceIndex ].combo.y;
+    border_radius = instances[ gl_InstanceIndex ].combo.x;
+    render_text = instances[ gl_InstanceIndex ].combo.y;
+    texture_id = instances[ gl_InstanceIndex ].combo.z;
     text_uv = vertex_position[ gl_VertexIndex ] * vec2(1.f,-1.f);
     text_uv = texel.xy + texel.zw * text_uv;
 
-    border_radius = instances[ gl_InstanceIndex ].combo.x;
 }

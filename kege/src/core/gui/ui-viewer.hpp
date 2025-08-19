@@ -57,6 +57,11 @@ namespace kege::ui{
         /**
          * Uninitializes the Core object, releasing any allocated resources.
          */
+        void setUiImages( SamplerHandle sampler, std::vector< kege::ImageHandle > images );
+
+        /**
+         * Uninitializes the Core object, releasing any allocated resources.
+         */
         void shutdow();
 
         void flush( kege::CommandEncoder* encoder );
@@ -74,6 +79,7 @@ namespace kege::ui{
         BufferHandle _gpu_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
         DescriptorSetHandle _shader_resource_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
         DescriptorSetHandle _shader_resource_font;
+        DescriptorSetHandle _ui_texture;
         kege::PipelineHandle _pipeline;
         Graphics* _graphics;
 
