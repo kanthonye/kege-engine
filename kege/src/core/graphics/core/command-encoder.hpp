@@ -97,7 +97,7 @@ namespace kege{
          */
         virtual void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) = 0;
 
-        virtual void bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) = 0;
+        virtual bool bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) = 0;
 
         virtual void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data ) = 0;
 

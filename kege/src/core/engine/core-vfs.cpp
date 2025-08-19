@@ -32,7 +32,6 @@ namespace kege{
             return false;
         }
         
-
         _module = new VirtualDirectory();
         _module->add( "assets", "/Users/kae/Developer/vscode/kege-engine/kege/assets" );
         _module->add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );

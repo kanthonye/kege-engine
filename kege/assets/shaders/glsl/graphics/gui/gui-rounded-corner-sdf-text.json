@@ -46,9 +46,9 @@
         {
             "name": "ui_textures",
             "type": "combined-image-sampler",
-            "binding" : 1,
+            "binding" : 0,
             "count" : 16,
-            "set" : 1,
+            "set" : 2,
             "stages": [ "fragment" ]
         }
     ],

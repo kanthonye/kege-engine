@@ -93,7 +93,7 @@ namespace kege::vk{
          */
         void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) override;
 
-        void bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) override;
+        bool bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) override;
 
         void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data )override;
 

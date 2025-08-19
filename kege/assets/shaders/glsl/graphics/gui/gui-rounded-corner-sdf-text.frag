@@ -17,7 +17,7 @@ layout(set = 1, binding = 0) uniform sampler2D sdf_font_texture;
 #define MAX_TEXTURES 16 // Define a maximum number of textures
 
 // New texture sampler for UI textures
-layout(set = 1, binding = 1) uniform sampler2D ui_textures[MAX_TEXTURES]; // Define MAX_TEXTURES as needed
+layout(set = 2, binding = 0) uniform sampler2D ui_textures[MAX_TEXTURES]; // Define MAX_TEXTURES as needed
 
 // Camera uniform for 2D rendering
 layout(push_constant) uniform Camera2D {
@@ -49,55 +49,33 @@ void main() {
     vec2 center = position + half_size;
     vec2 rect_space = frag_coord * resolution.xy - center;
     float sdf = roundedBoxSDF(rect_space, half_size, border_radius);
-    float rect_alpha = smoothstep(0.0, 1.0, -sdf);
+    float alpha = smoothstep(0.0, 1.0, -sdf);
 
-    vec4 text = vec4(0.0);
+    vec4 final;
     if ( texture_id >= 0 && texture_id <= 15 )
     {
         // Could use texture arrays or switch-case for multiple textures
-        text = texture( ui_textures[ int( texture_id) ], text_uv );
+        final = color * texture( ui_textures[ int( texture_id) ], text_uv );
+    }
+    else
+    {
+        final = color;
     }
 
     if ( render_text >= 1.0 )
     {
         float width = 0.05;
         float edge  = 0.07;
-        rect_alpha = 1 - smoothstep(width, width + edge, 1.0 - text.r);
+
+        // Text rendering: Sample from the SDF font texture
+        float text_alpha = 1 - texture(sdf_font_texture, text_uv).r;
+
+        // Apply smoothstep for anti-aliased text
+        alpha = 1 - smoothstep(width, width + edge, text_alpha);
     }
 
-
-
-
-//    // Texture rendering
-//    vec4 tex_color = vec4(0.0);
-//    if (use_texture > 0.5) 
-//    {
-//        // Could use texture arrays or switch-case for multiple textures
-//        tex_color = texture( ui_textures[ int(texture_id) ], text_uv );
-//
-//        // Optional: Apply color tint
-//        tex_color.rgb *= color.rgb;
-//    }
-//
-//    // Text rendering (existing)
-//    float text_alpha = 1 - texture(sdf_font_texture, text_uv).r;
-//    text_alpha = 1 - smoothstep(width, width + edge, text_alpha);
-//
-//    // Composite all elements
-//    float alpha = rect_alpha;
-//    vec4 final = color;
-//
-//    if (use_texture > 0.5) {
-//        final = tex_color;
-//        alpha = tex_color.a; // Or some other blending
-//    }
-//    else if (use_text > 0.5) {
-//        final.a *= text_alpha;
-//    }
-
-    final_color = vec4(color.rgb, color.a * rect_alpha);
+    final_color = vec4( final.rgb, final.a * alpha );
 }
-
 
 
 //#version 450

@@ -44,7 +44,7 @@ namespace kege{
         }
         else
         {
-            Log::error << "system create function for -> "<< name <<" dont exist." <<Log::nl;
+            Log::error << "system create function for -> " << name <<" dont exist." <<Log::nl;
         }
     }
     

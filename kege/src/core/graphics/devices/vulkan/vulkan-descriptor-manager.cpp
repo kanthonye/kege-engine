@@ -399,11 +399,12 @@ namespace kege::vk{
             KEGE_LOG_ERROR << "Failed to create DescriptorSetLayoutHandle!";
             return {-1};
         }
-        /** 
+        
+        /**
          * @brief Assign a binding location to the descriptor set layout.
          * The binding location is an index associated with the descriptor set layout's name.
          */
-        dsl->binding_location = getBindingKey( dsl->name );
+        dsl->binding_location = getBindingKey( bindings[0].name );
 
         /**
          * @brief Set the allocator_id to -1, indicating that this descriptor set layout is not yet assigned
@@ -504,7 +505,7 @@ namespace kege::vk{
             /**
              * @brief Add the descriptor set layout to the pipeline layout list.
              */
-            pipeline_layout->descriptor_set_layouts.push_back( dsl );
+            pipeline_layout->descriptor_set_layouts.push_back( descriptor_set_layout );
 
             /**
              * @brief Add the descriptor set layout to the list of vk_descriptor_set_layouts.
@@ -532,6 +533,7 @@ namespace kege::vk{
              * assign a binding index to that location.
              */
             pipeline_layout->binding_locations[ dsl->binding_location ] = binding_index;
+            Log::error << dsl->name << " [binding_location: " <<dsl->binding_location <<"] [ binding_index: " << binding_index <<"]" << Log::nl;
             binding_index += 1;
         }
 
@@ -587,7 +589,8 @@ namespace kege::vk{
          */
         for (const auto& descriptor_set_layout : pipeline_layout->descriptor_set_layouts )
         {
-            descriptor_set_layout->pipeline_layout_sets.insert( pipeline_layout );
+            vk::DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor_set_layout.id );
+            dsl->pipeline_layout_sets.insert( handle );
         }
         return handle;
     }
