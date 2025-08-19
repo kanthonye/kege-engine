@@ -75,36 +75,8 @@ namespace kege{
         });
         _hierarchy_panel.init( &_engine, _layout );
         _inspector_panel.init( &_engine, _layout );
-        navbar_panel = _layout.make
-        ({
-            .style =
-            {
-                .background = ui::bgColor(0x171717FF),
-                .width = ui::extend(),
-                .height = ui::fixed( 30 ),
-                .border_radius = 8,
-                .padding = {},
-                .gap = {2,2},
-                .align =
-                {
-                    .origin = ui::ALIGN_TOP_CENTER,
-                    .direction = ui::HORIZONTALLY,
-                    .wrap_around = false
-                },
-            }
-        });
-        viewport_panel = _layout.make
-        ({
-            .style =
-            {
-                .background = ui::bgColor(0x171717FF),
-                .width = ui::extend(),
-                .height = ui::extend(),
-                .border_radius = 8,
-                .padding = {},
-                .gap = {2,2},
-            }
-        });
+        _viewport_panel.init( &_engine, _layout );
+        _navbar_panel.init( &_engine, _layout );
         return true;
     }
 
@@ -169,7 +141,7 @@ namespace kege{
     {
         _layout.push( main_panel );
         {
-            _layout.put( navbar_panel );
+            _navbar_panel.put( _layout );
 
             _layout.push(_layout.make
              ({
@@ -189,7 +161,7 @@ namespace kege{
                  }
              }));
             {
-                _layout.put( viewport_panel );
+                _viewport_panel.put( _layout );
 
                 _layout.push(_layout.make
                  ({
@@ -229,18 +201,6 @@ namespace kege{
          kege::CommandEncoder* encoder = context->getCommandEncoder();
          _viewer.view( encoder, _layout );
     }
-
-    void Editor::drawHierarchyPanel()
-    {}
-    
-    void Editor::drawInspectorPanel()
-    {}
-
-    void Editor::drawAssetBrowser()
-    {}
-
-    void Editor::drawViewportPanel()
-    {}
 
     Editor::Editor()
     :   _paused( false )

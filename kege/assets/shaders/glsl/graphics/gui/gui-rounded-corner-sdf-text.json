@@ -36,10 +36,18 @@
             "stages": [ "vertex" ]
         },
         {
-            "name": "sdfFontTexture",
+            "name": "sdf_font_texture",
             "type": "combined-image-sampler",
             "binding" : 0,
             "count" : 1,
+            "set" : 1,
+            "stages": [ "fragment" ]
+        },
+        {
+            "name": "ui_textures",
+            "type": "combined-image-sampler",
+            "binding" : 1,
+            "count" : 16,
             "set" : 1,
             "stages": [ "fragment" ]
         }
