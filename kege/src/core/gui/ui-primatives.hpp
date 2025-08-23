@@ -22,8 +22,6 @@ namespace kege::ui{
 
     typedef const char* chrstr;
 
-    class Core;
-
     enum struct AlignText : uint8_t
     {
         Center, Left, Right,
@@ -34,12 +32,6 @@ namespace kege::ui{
         Relative,
         Absolute,
     };
-
-    typedef enum : uint8_t
-    {
-        NONE, VERTICALLY, HORIZONTALLY,
-    }
-    Direction;
 
     typedef enum : uint8_t
     {
@@ -55,12 +47,20 @@ namespace kege::ui{
     }
     AlignOrigin;
 
+    typedef enum : uint8_t
+    {
+        DIRECTION_LEFT_TO_RIGHT,
+        DIRECTION_RIGHT_TO_LEFT,
+        DIRECTION_TOP_TO_BOTTOM,
+        DIRECTION_BOTTOM_TO_TOP,
+    } Direction;
+
     struct Alignment
     {
         AlignText text = AlignText::Left;
         AlignSelf self = AlignSelf::Relative;
         AlignOrigin origin = ALIGN_TOP_LEFT;
-        Direction direction = HORIZONTALLY;
+        Direction direction = DIRECTION_LEFT_TO_RIGHT;
         bool wrap_around = false;
         bool immovable = false;
     };
@@ -82,15 +82,18 @@ namespace kege::ui{
 
     struct Padding
     {
-        int left;
-        int above;
-        int right;
-        int below;
+        float left;
+        float above;
+        float right;
+        float below;
     };
 
     struct Color
     {
-        float r,g,b,a;
+        float r = 1.f;
+        float g = 1.f;
+        float b = 1.f;
+        float a = 1.f;
     };
 
     struct Range
@@ -185,6 +188,7 @@ namespace kege::ui{
         int border_radius = 0;
         int font_size = 20;
 
+        bool visible = true;
         bool mouseover = true;
         bool clip_overflow = false;
         ClickTrigger click_trigger = ui::ClickTrigger::Disable;
@@ -197,6 +201,7 @@ namespace kege::ui{
         float x = 0.f;
         float y = 0.f;
         float width = 0.f;
+        float height = 0.f;
     };
 
     struct Info

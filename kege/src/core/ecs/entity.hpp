@@ -171,6 +171,8 @@ namespace kege{
          */
         template< typename Component > bool has() const;
 
+        const EntityComponentMap& getEntityComponents()const;
+
         /**
          * @brief Gets the component signature of this entity.
          *
@@ -290,15 +292,10 @@ namespace kege{
         static Entity create();
 
         /**
-         * @brief Initializes the entity manager.
-         * @return True if initialization was successful, false otherwise.
+         * @brief Sets the global `EntityManager` instance that all `Entity` objects will use to manage their data.
+         * @param mgr A pointer to the `EntityManager` instance to be used globally.
          */
-        static bool initialize( kege::EntityManager* mgr );
-
-        /**
-         * @brief Shuts down the entity manager, releasing all resources.
-         */
-        static void shutdown();
+        static void setManager( kege::EntityManager* mgr );
 
         /**
          * @brief Virtual destructor for the `Entity` class.

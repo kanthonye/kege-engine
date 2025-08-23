@@ -9,6 +9,11 @@
 
 namespace kege{
 
+    const EntityComponentMap& ComponentManager::getEntityComponents( uint32_t entity )const
+    {
+        return _component_containers[ entity ].components;
+    }
+
     const EntitySignature& ComponentManager::signature( uint32_t entity )const
     {
         return _component_containers[ entity ].signature;

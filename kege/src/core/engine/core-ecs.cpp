@@ -23,10 +23,12 @@ namespace kege{
         }
 
         _module = new kege::EntityManager;
-        if ( !Entity::initialize( _module.ref() ) )
+        if ( !_module->initialize() )
         {
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> EntityManager" << Log::nl;
             return false;
         }
+        Entity::setManager( _module.ref() );
         return true;
     }
 

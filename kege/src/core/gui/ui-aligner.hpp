@@ -62,13 +62,11 @@ namespace kege::ui{
         Extent2D getRowExtent( Layout& layout, uint32_t curr_index, uint32_t pid );
         void alignHorizontally( Layout& layout, uint32_t pid );
         void alignVertically( Layout& layout, uint32_t pid );
+
+        
         void align( Layout& layout, uint32_t eid );
 
         Aligner();
-
-    public:
-
-        friend ui::Core;
     };
 
 }

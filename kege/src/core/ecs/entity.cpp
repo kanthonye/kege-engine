@@ -21,6 +21,11 @@ namespace kege{
         return entity._mgr->print( os, entity._id );
     }
 
+    const EntityComponentMap& Entity::getEntityComponents()const
+    {
+        return _mgr->getEntityComponents( _id );
+    }
+
     const EntitySignature& Entity::signature() const
     {
         return _mgr->signature( _id );
@@ -86,6 +91,11 @@ namespace kege{
         return _mgr->isvalid( _id );
     }
 
+    uint32_t Entity::getID() const
+    {
+        return _id;
+    }
+    
     void Entity::destroy()
     {
         _mgr->destroy( _id );
@@ -97,15 +107,9 @@ namespace kege{
         return Entity( _mgr->create() );
     }
 
-    bool Entity::initialize( kege::EntityManager* mgr )
+    void Entity::setManager( kege::EntityManager* mgr )
     {
         _mgr = mgr;
-        return _mgr != nullptr;
-    }
-
-    void Entity::shutdown()
-    {
-        _mgr->shutdown();
     }
 
     Entity::~Entity(){}

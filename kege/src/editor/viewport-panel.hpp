@@ -21,6 +21,7 @@ namespace kege{
     public:
 
         ViewportPanel& init( Engine* engine, ui::Layout& layout );
+        void operator()( kege::RenderPassContext* context );
         void put( ui::Layout& layout );
         ViewportPanel();
 

@@ -13,6 +13,8 @@
 
 namespace kege{
 
+    typedef std::unordered_map< ComponentType, ComponentID > EntityComponentMap;
+
     /**
      * @brief Internal structure representing an component object in the game world.
      */
@@ -23,7 +25,7 @@ namespace kege{
          *
          * The key is the ComponentType, and the value is the ComponentID within the respective ComponentManager.
          */
-        std::unordered_map< ComponentType, ComponentID > components;
+        EntityComponentMap components;
 
         /**
          * @brief Bitset representing the signature of components this container possesses.
@@ -204,6 +206,8 @@ namespace kege{
             return _component_containers[ container ].signature.test( TYPE );
         }
 
+        const EntityComponentMap& getEntityComponents( uint32_t entity )const;
+
         /**
          * @brief Gets the component signature of an container.
          *
@@ -251,16 +255,16 @@ namespace kege{
     private:
 
         /**
+         * @brief Vector to store the container data.
+         */
+        std::vector< ComponentContainer > _component_containers;
+
+        /**
          * @brief Vector to store pointers to the ComponentManager instances for each component type.
          *
          * The index of the vector corresponds to the ComponentType.
          */
         std::vector< ComponentCache* > _component_caches;
-
-        /**
-         * @brief Vector to store the container data.
-         */
-        std::vector< ComponentContainer > _component_containers;
 
         /**
          * @brief Counter for the total number of entities currently alive.
