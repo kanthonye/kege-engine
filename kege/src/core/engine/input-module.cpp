@@ -23,7 +23,7 @@ namespace kege{
         _module = new kege::InputContextManager;
         if( !_module->initialize( _engine->graphics()->getWindow() ) )
         {
-            KEGE_LOG_ERROR << getName() << " initialization Failed.";
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> InputContextManager" << Log::nl;
             return false;
         }
 
@@ -31,7 +31,7 @@ namespace kege{
         kege::Ref< kege::InputContext > context = kege::InputContextLoader::load( input_file );
         if ( !context )
         {
-            KEGE_LOG_ERROR << getName() << " failed to load input config -> " << input_file <<"\n";
+            kege::Log::error << "( LOADING_FAILED ) -> assets/config/keybinds.json" << Log::nl;
             return false;
         }
 

@@ -42,29 +42,29 @@ namespace kege::ui{
         );
     }
 
-    bool Layout::mouseover( uint32_t id )const
+    bool Layout::mouseover( ui::EID& id )const
     {
-        return _mouseover_elem.id == id;
+        return _prev_hot_elem.id == _nodes[ id.index ].id;
     }
 
-    bool Layout::doubleClick( uint32_t id )const
+    bool Layout::doubleClick( ui::EID& id )const
     {
-        return _clicked.id == id && _clicked.clicks == 2;
+        return _prev_active_elem.id == _nodes[ id.index ].id && _prev_active_elem.clicks == 2;
     }
 
-    bool Layout::click( uint32_t id )const
+    bool Layout::click( ui::EID& id )const
     {
-        return _clicked.id == id && _clicked.clicks == 1;
+        return _prev_active_elem.id == _nodes[ id.index ].id && _prev_active_elem.clicks == 1;
     }
 
-    bool Layout::hasFocus( uint32_t id )const
+    bool Layout::hasFocus( ui::EID& id )const
     {
-        return _focus_id == id;
+        return _focus_id == _nodes[ id.index ].id;
     }
 
-    void Layout::setFocus( uint32_t id )
+    void Layout::setFocus( ui::EID& id )
     {
-        _focus_id = id;
+        _focus_id = _nodes[ id.index ].id;
     }
 
     EID Layout::make( const Info& info )
@@ -78,7 +78,7 @@ namespace kege::ui{
         }
 
         //_count += 1;
-        //_nodes[ id ] = {};
+        _nodes[ id ].elem.rect = {};
         _nodes[ id ].elem.style = info.style;
         _nodes[ id ].elem.on_click = info.on_click;
         _nodes[ id ].elem.on_scroll = info.on_scroll;
@@ -87,7 +87,8 @@ namespace kege::ui{
         _nodes[ id ].elem.on_mouse_enter = info.on_mouse_enter;
         _nodes[ id ].elem.click_trigger = info.click_trigger;
         _nodes[ id ].elem.text.data = info.text;
-        _count++;
+        _nodes[ id ].level = 0;
+        //_count++;
         return {id, this};
     }
 
@@ -111,9 +112,10 @@ namespace kege::ui{
         _nodes[ id.index ].tail = 0;
         _nodes[ id.index ].next = 0;
         _nodes[ id.index ].index = id.index;
-        _nodes[ id.index ].id = id.index;
         _nodes[ id.index ].next_free = 0;
         _nodes[ id.index ].freed = false;
+        _nodes[ id.index ].id = _count;
+        _count += 1;
 
         // if style width and height is fixed, set the rect width and height of the ui element
         if ( _nodes[ id.index ].elem.style.height.type == kege::ui::SIZE_FIXED )
@@ -162,16 +164,16 @@ namespace kege::ui{
         if ( 0 != _parent )
         {
             _parent = _nodes[ _parent ].parent;
-            if ( _aligner.shouldPreCalcFlexibleSize( *this, pid ) )
-            /**
-             * We only need to compute the lengths for elements with flexible lengths. This
-             * is best done when popping a parent element from the stack. for onter lengths
-             * types like percentage and extend, these length are computed at the end of
-             * building the interface.
-             */
-            {
-                _aligner.computeFlexibleLengths( *this, pid );
-            }
+//            if ( _aligner.shouldPreCalcFlexibleSize( *this, pid ) )
+//            /**
+//             * We only need to compute the lengths for elements with flexible lengths. This
+//             * is best done when popping a parent element from the stack. for onter lengths
+//             * types like percentage and extend, these length are computed at the end of
+//             * building the interface.
+//             */
+//            {
+//                _aligner.computeFlexibleLengths( *this, pid );
+//            }
         }
         return pid;
     }
@@ -226,22 +228,67 @@ namespace kege::ui{
 
     void Layout::handleMouseOverEvents( uint32_t root )
     {
-        if ( _focus.id == 0 && _focus_id != 0 )
+        // Reset current hot element at start of frame
+        _curr_hot_elem = {0, 0, 0};
+
+        // First, check if previous hot element is still valid and under mouse
+        if (_prev_hot_elem.index != 0)
         {
-            if ( _focus_id == _nodes[ root ].id )
+            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot_elem.index ].elem.rect ) )
             {
-                _focus.id = _nodes[ root ].id;
-                _focus.index = _nodes[ root ].index;
-                _focus.level = _nodes[ root ].level;
+                // If previous hot element has children, there is a possibility that the mouse
+                // is over its child element. So, we need to account for those child elements.
+                if ( _nodes[ _prev_hot_elem.index ].count )
+                {
+                    findNewHotElement( _prev_hot_elem.index );
+                }
+                else // If the previous hot element has no children then it is still under mouse - keep it hot
+                {
+                    _curr_hot_elem = _prev_hot_elem;
+                }
             }
+        }
+
+        // If we didn't find a persistent hot element, search for a new one
+        if (_curr_hot_elem.id == 0)
+        {
+            findNewHotElement(root);
+        }
+
+        // Handle mouse enter/leave events
+        if (_curr_hot_elem.id != _prev_hot_elem.id)
+        {
+            if (_prev_hot_elem.id != 0)
+            {
+                std::cout  <<"mouse exit: " << _prev_hot_elem.id <<"\n";
+            }
+
+            if (_curr_hot_elem.id != 0)
+            {
+                std::cout  <<"mouse enter: " << _curr_hot_elem.id <<"\n";
+            }
+        }
+
+        // Handle focus logic (separate from mouseover)
+        //handleFocusLogic(root);
+
+        // Store current hot for next frame
+        _prev_hot_elem = _curr_hot_elem;
+    }
+
+
+    void Layout::findNewHotElement( uint32_t root )
+    {
+        if ( _curr_hot_elem.id != 0) {
+            return;
         }
 
         for (uint32_t ui_index = _nodes[ root ].head; ui_index != 0 ; ui_index = _nodes[ ui_index ].next )
         {
-            handleMouseOverEvents( ui_index );
+            findNewHotElement( ui_index );
         }
 
-        if ( _nodes[ root ].elem.style.mouseover )
+        if ( _nodes[ root ].elem.style.mouseover && _nodes[ root ].elem.style.visible )
         {
             if ( testPointVsRect( _input->currentPosition(), _nodes[ root ].elem.rect ) )
             {
@@ -255,94 +302,151 @@ namespace kege::ui{
         }
     }
 
-    void Layout::handleMouseOver()
+    void Layout::handleButtonUpEvents()
     {
-        handleMouseOverEvents( 1 );
-        if ( _curr_hot_elem.id != 0 && _curr_hot_elem.id != _mouseover_elem.id )
+        if ( _input->buttonDown() ) return;
+
+        if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
         {
-            _mouseover_elem = _curr_hot_elem;
-            std::cout  <<"hot_elem" << _curr_hot_elem.id <<"\n";
+            if ( _nodes[ _prev_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnRelease )
+            {
+                if ( _prev_hot_elem.id == _prev_active_elem.id )
+                {
+                    _clicked = _prev_active_elem;
+                    _focus = _prev_active_elem;
+                    std::cout  <<"fire on release: " << _prev_active_elem.id <<"\n";
+                }
+//                if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_active_elem.index ].elem.rect ) )
+//                {
+//                }
+            }
+            std::cout  <<"release : " << _prev_active_elem.id <<"\n";
+            _prev_active_elem = {};
         }
     }
 
+
     void Layout::handleButtonDownEvents()
     {
+        _curr_active_elem = {};
         if ( _input->buttonDown() )
         {
-            if ( _input->doubleClick() )
+            if ( _prev_active_elem.id != 0 )
             {
-                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 2 )
-                {
-                    _curr_active_elem.id = _prev_active_elem.id;
-                    //std::cout  <<"double-clicking : " << _curr_active_elem.id <<"\n";
-                    return;
-                }
-
-                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
-                {
-                    if ( _mouseover_elem.index != 0 && _mouseover_elem.index < _nodes.size() )
-                    {
-                        _curr_active_elem = _mouseover_elem;
-                        _curr_active_elem.clicks = 2;
-
-                        if ( _nodes[ _mouseover_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
-                        {
-                            _clicked = _curr_active_elem;
-                            _focus = _curr_active_elem;
-                            //std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
-                        }
-                        return;
-                    }
-                }
+                _curr_active_elem = _prev_active_elem;
+                //std::cout  <<"clicking : " << _curr_active_elem.id <<"\n";
             }
 
-            else if ( _input->primaryClick() )
+            if ( _curr_active_elem.id == 0 )
             {
-                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 1 )
+                if ( _input->doubleClick() )
                 {
-                    _curr_active_elem = _prev_active_elem;
-                    //std::cout  <<"single-clicking : " << _prev_active_elem.id <<"\n";
-                }
+                    _curr_active_elem = _curr_hot_elem;
+                    _curr_active_elem.clicks = 2;
+                    std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
 
-                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
-                {
-                    if ( _mouseover_elem.index != 0 && _mouseover_elem.index < _nodes.size() )
+                    if ( _nodes[ _curr_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
                     {
-                        _curr_active_elem = _mouseover_elem;
-                        _curr_active_elem.clicks = 1;
-
-                        if ( _nodes[ _mouseover_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
-                        {
-                            _clicked = _curr_active_elem;
-                            _focus = _curr_active_elem;
-                            std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
-                        }
-                        return;
+                        _clicked = _curr_active_elem;
+                        _focus = _curr_active_elem;
                     }
                 }
+                else if ( _input->primaryClick() )
+                {
+                    _curr_active_elem = _curr_hot_elem;
+                    _curr_active_elem.clicks = 1;
+                    std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
+
+                    if ( _nodes[ _curr_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
+                    {
+                        _clicked = _curr_active_elem;
+                        _focus = _curr_active_elem;
+                    }
+                }
+                _prev_active_elem = _curr_active_elem;
             }
         }
 
-        else
-        {
-            if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
-            {
-                if ( _nodes[ _prev_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnRelease )
-                {
-                    if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_active_elem.index ].elem.rect ) )
-                    {
-                        _clicked = _prev_active_elem;
-                        _focus = _prev_active_elem;
-                        std::cout  <<"fire on release: " << _prev_active_elem.id <<"\n";
-                    }
-                }
-                _prev_active_elem = {};
-            }
-        }
+
+
+//        if ( _input->buttonDown() )
+//        {
+//            if ( _input->doubleClick() )
+//            {
+//                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 2 )
+//                {
+//                    _curr_active_elem = _prev_active_elem;
+//                    //std::cout  <<"double-clicking : " << _curr_active_elem.id <<"\n";
+//                    return;
+//                }
+//
+//                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
+//                {
+//                    if ( _prev_hot_elem.index != 0 && _prev_hot_elem.index < _nodes.size() )
+//                    {
+//                        _curr_active_elem = _prev_hot_elem;
+//                        _curr_active_elem.clicks = 2;
+//
+//                        if ( _nodes[ _prev_hot_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
+//                        {
+//                            _clicked = _curr_active_elem;
+//                            _focus = _curr_active_elem;
+//                            //std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
+//                        }
+//                        return;
+//                    }
+//                }
+//            }
+//
+//            else if ( _input->primaryClick() )
+//            {
+//                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 1 )
+//                {
+//                    _curr_active_elem = _prev_active_elem;
+//                    //std::cout  <<"single-clicking : " << _prev_active_elem.id <<"\n";
+//                }
+//
+//                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
+//                {
+//                    if ( _prev_hot_elem.index != 0 && _prev_hot_elem.index < _nodes.size() )
+//                    {
+//                        _curr_active_elem = _prev_hot_elem;
+//                        _curr_active_elem.clicks = 1;
+//
+//                        if ( _nodes[ _prev_hot_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
+//                        {
+//                            _clicked = _curr_active_elem;
+//                            _focus = _curr_active_elem;
+//                            std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
+//                        }
+//                        return;
+//                    }
+//                }
+//            }
+//        }
+//
+//        else
+//        {
+//            if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
+//            {
+//                if ( _nodes[ _prev_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnRelease )
+//                {
+//                    if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_active_elem.index ].elem.rect ) )
+//                    {
+//                        _clicked = _prev_active_elem;
+//                        _focus = _prev_active_elem;
+//                        std::cout  <<"fire on release: " << _prev_active_elem.id <<"\n";
+//                    }
+//                }
+//                _prev_active_elem = {};
+//            }
+//        }
     }
 
     void Layout::begin( ui::Input* input )
     {
+        _count = 1;
+
         _root = 0;
         _level = 0;
         _parent = 0;
@@ -371,6 +475,7 @@ namespace kege::ui{
         _recycled_node_head = -1;
         _recycled_node_tail = -1;
         _recycled_node_count = 0;
+
     }
 
     void Layout::end()
@@ -387,29 +492,29 @@ namespace kege::ui{
          * If the mouse button is down, we keep the previous active element as the current active element.
          * This is to ensure that the active element remains the same until the button is released.
          */
-        if ( _input->buttonDown() )
-        {
-            if ( _prev_active_elem.id != 0 )
-            {
-                _curr_active_elem = _prev_active_elem;
-            }
-            else
-            {
-                _prev_active_elem = _curr_active_elem;
-                _curr_active_elem = {};
-            }
-        }
-        else
-        {
-            _prev_active_elem = _curr_active_elem;
-            _curr_active_elem = {};
-        }
-        
-        _curr_hot_elem = {};
-        _clicked = {};
+//        if ( _input->buttonDown() )
+//        {
+//            if ( _prev_active_elem.id != 0 )
+//            {
+//                _curr_active_elem = _prev_active_elem;
+//            }
+//            else
+//            {
+//                _prev_active_elem = _curr_active_elem;
+//                _curr_active_elem = {};
+//            }
+//        }
+//        else
+//        {
+//            _prev_active_elem = _curr_active_elem;
+//            _curr_active_elem = {};
+//        }
 
-        handleMouseOver();
+        handleMouseOverEvents( _root );
+
+        _clicked = {};
         handleButtonDownEvents();
+        handleButtonUpEvents();
     }
 
     ui::Input* Layout::input()
@@ -508,7 +613,6 @@ namespace kege::ui{
     Layout::Layout()
     :   _level( 0 )
     ,   _parent( 0 )
-    ,   _mouseover_elem{}
     ,   _curr_hot_elem{}
     ,   _prev_active_elem{}
     ,   _curr_active_elem{}

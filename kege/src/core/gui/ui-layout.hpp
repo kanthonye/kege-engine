@@ -50,45 +50,45 @@ namespace kege::ui{
         /**
          * Checks if mouse pointer is over ui element.
          *
-         * @param id The ui element layout.
+         * @param eid The ui element layout.
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool mouseover( uint32_t id ) const;
+        bool mouseover( ui::EID& eid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was double clicked on.
          *
-         * @param id The given id.
+         * @param eid The given id.
          *
          * @return true if the element was double clicked on, false otherwise.
          */
-        bool doubleClick( uint32_t id ) const;
+        bool doubleClick( ui::EID& eid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was single clicked on.
          *
-         * @param id The given id.
+         * @param eid The given id.
          *
          * @return true if the ui-element was single clicked on, false otherwise.
          */
-        bool click( uint32_t id ) const;
+        bool click( ui::EID& id ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id has focus.
          *
-         * @param id The given id.
+         * @param eid The given id.
          *
          * @return true if the ui-element has focus, false otherwise.
          */
-        bool hasFocus( uint32_t id )const;
+        bool hasFocus( ui::EID& eid )const;
 
         /**
          * Set the id of the ui-element to focus on.
          *
          * @param id The given id.
          */
-        void setFocus( uint32_t id );
+        void setFocus( ui::EID& eid );
 
         /**
          * Creates a UI element with the give info.
@@ -203,8 +203,9 @@ namespace kege::ui{
     private:
 
         void handleButtonDownEvents();
+        void handleButtonUpEvents();
         void handleMouseOverEvents( uint32_t root );
-        void handleMouseOver();
+        void findNewHotElement( uint32_t root );
         void handleEvents( uint32_t root = 1 );
 
         void dupId( uint32_t src_index, uint32_t* dst_index );
@@ -229,7 +230,7 @@ namespace kege::ui{
         mutable IndexID _prev_active_elem;
 
         mutable IndexID _curr_hot_elem;
-        mutable IndexID _mouseover_elem;
+        mutable IndexID _prev_hot_elem;
 
         mutable IndexID _focus;
         mutable uint32_t _focus_id;
@@ -294,6 +295,11 @@ namespace kege::ui{
         }
 
         operator uint32_t()const
+        {
+            return index;
+        }
+
+        operator int32_t()const
         {
             return index;
         }

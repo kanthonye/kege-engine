@@ -39,6 +39,8 @@ namespace kege{
         EntityGroup* getEntities( int index );
         void insert( Entity& entity );
         void remove( Entity& entity );
+
+        int getCount()const;
         void clear();
         ~EntityRegistry();
 

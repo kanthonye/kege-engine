@@ -60,7 +60,7 @@ namespace kege{
         _module = new kege::Graphics();
         if( !_module->initalize( window, device_init_info, swapchain_create_info ) )
         {
-            KEGE_LOG_ERROR << "Failed to initialize Graphics." <<Log::nl;
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> Graphics" << Log::nl;
             return false;
         }
         //System::setGraphics( graphics );

@@ -77,6 +77,7 @@ namespace kege{
             _module = SceneLoader::load( _scene_files[0] );
             if ( _module )
             {
+                kege::Log::error << "( LOADING_FAILED ) -> " << _scene_files[0] << Log::nl;
                 KEGE_LOG_ERROR << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;
                 return false;
             }
@@ -89,7 +90,7 @@ namespace kege{
         _module->initialize(); // Initialize the newly created scene
         if ( !_module->ready() )
         {
-            KEGE_LOG_ERROR << "Failed to load or initialize initial scene." << kege::Log::nl;
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> Scene" << Log::nl;
             return false;
         }
         return true;

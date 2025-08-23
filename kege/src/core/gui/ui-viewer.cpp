@@ -10,6 +10,11 @@ namespace kege::ui{
 
     void Viewer::view( kege::CommandEncoder* encoder, ui::Layout& layout, Node& node, const Rect2D& clip_rect )
     {
+        if ( !node.elem.style.visible )
+        {
+            return;
+        }
+        
         if ( node.elem.style.background.color.a > 0.001f)
         {
             _drawbuffer[ _count ].color         = node.elem.style.background.color;
@@ -31,11 +36,42 @@ namespace kege::ui{
 
         if ( node.elem.text.data && _font )
         {
-            const kege::vec2 start = // Tracks position for each character
+            kege::vec2 start;
+
+            switch ( node.elem.style.align.text )
             {
-                node.elem.rect.x + node.elem.text.x + node.elem.style.padding.left,
-                node.elem.rect.y + node.elem.text.y + node.elem.style.padding.right
-            };
+                case AlignText::Center:
+                {
+                    start.x = (node.elem.rect.width - node.elem.text.width) * 0.5;
+                    start.y = (node.elem.rect.height - node.elem.text.height) * 0.5;
+                    break;
+                }
+                case AlignText::Right:
+                {
+                    if ( node.elem.text.width != 0 )
+                    {
+                        start.x = node.elem.rect.x + (node.elem.rect.width - node.elem.text.width - node.elem.style.padding.right);
+                    }
+                    if ( node.elem.text.height != 0 )
+                    {
+                        start.y = node.elem.rect.y + node.elem.text.y + node.elem.style.padding.above;
+                    }
+                    break;
+                }
+                case AlignText::Left:
+                default:
+                {
+                    if ( node.elem.text.width != 0 )
+                    {
+                        start.x = node.elem.rect.x + node.elem.text.x + node.elem.style.padding.left;
+                    }
+                    if ( node.elem.text.height != 0 )
+                    {
+                        start.y = node.elem.rect.y + node.elem.text.y + node.elem.style.padding.above;
+                    }
+                    break;
+                };
+            }
 
             const float font_size = node.elem.style.font_size;
             //const int text_index = node.text_id;
@@ -93,20 +129,8 @@ namespace kege::ui{
                 cursor.x = start.x + sum_w; // Move cursor for next glyph
             }
             node.elem.text.width = sum_w;
-            switch ( node.elem.style.align.text )
-            {
-                case AlignText::Center:
-                {
-                    node.elem.text.x = (node.elem.rect.width - node.elem.text.width) * 0.5;
-                    break;
-                }
-                case AlignText::Right:
-                {
-                    node.elem.text.x = (node.elem.rect.width - node.elem.text.width);
-                    break;
-                }
-                default: break;
-            }
+            node.elem.text.height = max_h;
+
         }
         if ( node.elem.style.clip_overflow )
         {

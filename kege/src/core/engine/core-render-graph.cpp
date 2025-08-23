@@ -38,7 +38,7 @@ namespace kege{
     {
         if ( _module != nullptr )
         {
-            kege::Log::error << "CoreRenderGraph already initialized!" << Log::nl;
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> RenderGraph" << Log::nl;
             return false;
         }
         kege::Log::info << "initializing -> RenderGraph" << Log::nl;
@@ -47,7 +47,7 @@ namespace kege{
         kege::string shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
         if( !_engine->graphics()->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
         {
-            KEGE_LOG_ERROR << "Failed to load pipeline -> " << shader_file << Log::nl;
+            kege::Log::error << "( LOADING_FAILED ) -> graphics-shaders/copy/copy-color-depth.json" << Log::nl;
             return false;
         }
 

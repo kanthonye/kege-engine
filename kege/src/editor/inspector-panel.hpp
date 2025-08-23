@@ -14,6 +14,8 @@
 #include "../core/gui/ui-layout.hpp"
 #include "../core/gui/ui-font-creator.hpp"
 
+#include "droplist.hpp"
+
 namespace kege{
 
     class InspectorPanel
@@ -26,6 +28,8 @@ namespace kege{
 
     public:
 
+        Vec3Input transform[3];
+        Entity _selected_entity;
         Engine* _engine;
         ui::EID _main;
     };

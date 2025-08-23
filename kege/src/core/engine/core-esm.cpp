@@ -41,6 +41,7 @@ namespace kege{
 
         if ( !_module->initialize() )
         {
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> EntitySystemManager" << Log::nl;
             return false;
         }
         return true;

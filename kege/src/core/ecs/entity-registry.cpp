@@ -141,6 +141,11 @@ namespace kege{
         }
     }
 
+    int EntityRegistry::getCount()const
+    {
+        return (int)_entities.size();
+    }
+
     void EntityRegistry::clear()
     {
         for ( auto& [signature, view] : _entity_views )

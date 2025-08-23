@@ -149,6 +149,11 @@ namespace kege{
             return _component_manager.has< Component >( _entities[ entity ].id );
         }
 
+        const EntityComponentMap& getEntityComponents( uint32_t entity )const
+        {
+            return _component_manager.getEntityComponents( _entities[ entity ].id );
+        }
+
         /**
          * @brief Gets the component signature of an entity.
          *

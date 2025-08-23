@@ -9,28 +9,36 @@
 
 namespace kege{
 
-    void ViewportPanel::put( ui::Layout& layout )
-    {
-        layout.push( _main );
-        layout.pop();
-    }
-
     ViewportPanel& ViewportPanel::init( Engine* engine, ui::Layout& layout )
     {
         _engine = engine;
+
         _main = layout.make
         ({
             .style =
             {
-                .background = ui::bgColor(0x171717FF),
+                .background = ui::bgColor(0xFFFFFF18),
                 .width = ui::extend(),
                 .height = ui::extend(),
-                .border_radius = 8,
-                .padding = {},
-                .gap = {2,2},
-            }
+            },
         });
+
+        Communication::add< kege::RenderPassContext*, ViewportPanel >( this );
         return *this;
+    }
+
+    void ViewportPanel::operator()( kege::RenderPassContext* context )
+    {
+        if( context->name() != "scene-pass" )
+        {
+            return;
+        }
+    }
+
+    void ViewportPanel::put( ui::Layout& layout )
+    {
+        layout.push( _main );
+        layout.pop();
     }
 
     ViewportPanel::ViewportPanel()

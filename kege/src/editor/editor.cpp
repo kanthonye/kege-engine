@@ -63,14 +63,15 @@ namespace kege{
                 .background = ui::bgColor(0x000000FF),
                 .width = ui::fixed( _engine.graphics()->windowWidth() ),
                 .height = ui::fixed( _engine.graphics()->windowHeight() ),
-                .padding = {8,8,8,8},
+                .padding = {4,4,4,4},
                 .gap = {2,2},
                 .align =
                 {
                     .origin = ui::ALIGN_TOP_CENTER,
-                    .direction = ui::VERTICALLY,
+                    .direction = ui::DIRECTION_TOP_TO_BOTTOM,
                     .wrap_around = false
                 },
+                .mouseover = false,
             }
         });
         _hierarchy_panel.init( &_engine, _layout );
@@ -94,7 +95,8 @@ namespace kege{
             _engine.tick();
             _engine.input()->updateCurrentInputs();
 
-            // 2. Build UI layout for editor panels
+            _input.processInputs( _engine.input()->getCurrentInputs() );
+
             _layout.begin( &_input );
             buildEditorPanels();
             _layout.end();
@@ -147,15 +149,16 @@ namespace kege{
              ({
                  .style =
                  {
-                     .background = ui::bgColor(0x1B1A1700),
+                     .background = ui::bgColor(0xFFFFFF00),
                      .width = ui::extend(),
                      .height = ui::extend(),
-                     .padding = {},
+                     //.padding = {},
                      .gap = {2,2},
                      .align =
                      {
+                         .self = ui::AlignSelf::Relative,
                          .origin = ui::ALIGN_TOP_CENTER,
-                         .direction = ui::HORIZONTALLY,
+                         .direction = ui::DIRECTION_LEFT_TO_RIGHT,
                          .wrap_around = false
                      },
                  }
@@ -167,15 +170,15 @@ namespace kege{
                  ({
                      .style =
                      {
-                         .background = ui::bgColor(0x1B1A1700),
+                         .background = ui::bgColor(0xFFFFFF00),
                          .width = ui::fixed( 350 ),
                          .height = ui::extend(),
-                         .padding = {},
                          .gap = {2,2},
                          .align =
                          {
+                             .self = ui::AlignSelf::Relative,
                              .origin = ui::ALIGN_TOP_CENTER,
-                             .direction = ui::VERTICALLY,
+                             .direction = ui::DIRECTION_TOP_TO_BOTTOM,
                              .wrap_around = false
                          },
                      }
