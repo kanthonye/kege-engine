@@ -8,10 +8,10 @@
 #ifndef entity_system_hpp
 #define entity_system_hpp
 
-#include "../../core/engine/engine.hpp"
-#include "../../core/ecs/entity.hpp"
-#include "../../core/ecs/entity-registry.hpp"
-#include "../../core/system/system.hpp"
+#include "../engine/engine.hpp"
+#include "../ecs/entity.hpp"
+#include "../ecs/entity-registry.hpp"
+#include "../system/system.hpp"
 
 namespace kege{
 

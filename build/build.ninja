@@ -41,6 +41,156 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /Users/kae/Developer/vscode/kege-engine/build/
 # =============================================================================
+# Object build statements for STATIC_LIBRARY target utils
+
+
+#############################################
+# Order-only phony target for utils
+
+build cmake_object_order_depends_target_utils: phony || .
+
+build CMakeFiles/utils.dir/kege/src/core/utils/asset-system.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/asset-system.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/asset-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/bitvec.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/bitvec.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/bitvec.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/communication.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/communication.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/communication.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/json-lexer.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-lexer.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/json-lexer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/json-parser.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-parser.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/json-parser.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/kege-string.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/kege-string.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/kege-string.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/lexer.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/lexer.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/lexer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/log.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/log.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/log.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/resource-manager.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/resource-manager.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/resource-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+build CMakeFiles/utils.dir/kege/src/core/utils/time.cpp.o: CXX_COMPILER__utils_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/time.cpp || cmake_object_order_depends_target_utils
+  DEP_FILE = CMakeFiles/utils.dir/kege/src/core/utils/time.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/utils.dir
+  OBJECT_FILE_DIR = CMakeFiles/utils.dir/kege/src/core/utils
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target utils
+
+
+#############################################
+# Link the static library libutils.a
+
+build libutils.a: CXX_STATIC_LIBRARY_LINKER__utils_Debug CMakeFiles/utils.dir/kege/src/core/utils/asset-system.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/bitvec.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/communication.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/json-lexer.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/json-parser.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/kege-string.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/lexer.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/log.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/resource-manager.cpp.o CMakeFiles/utils.dir/kege/src/core/utils/time.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/utils.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libutils.a
+  TARGET_PDB = utils.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target io
+
+
+#############################################
+# Order-only phony target for io
+
+build cmake_object_order_depends_target_io: phony || .
+
+build CMakeFiles/io.dir/kege/src/core/io/file-io.cpp.o: CXX_COMPILER__io_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-io.cpp || cmake_object_order_depends_target_io
+  DEP_FILE = CMakeFiles/io.dir/kege/src/core/io/file-io.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/io.dir
+  OBJECT_FILE_DIR = CMakeFiles/io.dir/kege/src/core/io
+
+build CMakeFiles/io.dir/kege/src/core/io/file-watcher.cpp.o: CXX_COMPILER__io_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-watcher.cpp || cmake_object_order_depends_target_io
+  DEP_FILE = CMakeFiles/io.dir/kege/src/core/io/file-watcher.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/io.dir
+  OBJECT_FILE_DIR = CMakeFiles/io.dir/kege/src/core/io
+
+build CMakeFiles/io.dir/kege/src/core/io/file.cpp.o: CXX_COMPILER__io_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file.cpp || cmake_object_order_depends_target_io
+  DEP_FILE = CMakeFiles/io.dir/kege/src/core/io/file.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/io.dir
+  OBJECT_FILE_DIR = CMakeFiles/io.dir/kege/src/core/io
+
+build CMakeFiles/io.dir/kege/src/core/io/virtual-directory.cpp.o: CXX_COMPILER__io_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/virtual-directory.cpp || cmake_object_order_depends_target_io
+  DEP_FILE = CMakeFiles/io.dir/kege/src/core/io/virtual-directory.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/io.dir
+  OBJECT_FILE_DIR = CMakeFiles/io.dir/kege/src/core/io
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target io
+
+
+#############################################
+# Link the static library libio.a
+
+build libio.a: CXX_STATIC_LIBRARY_LINKER__io_Debug CMakeFiles/io.dir/kege/src/core/io/file-io.cpp.o CMakeFiles/io.dir/kege/src/core/io/file-watcher.cpp.o CMakeFiles/io.dir/kege/src/core/io/file.cpp.o CMakeFiles/io.dir/kege/src/core/io/virtual-directory.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/io.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libio.a
+  TARGET_PDB = io.a.dbg
+
+# =============================================================================
 # Object build statements for STATIC_LIBRARY target vector_math
 
 
@@ -553,18 +703,1291 @@ build libgraphics.a: CXX_STATIC_LIBRARY_LINKER__graphics_Debug CMakeFiles/graphi
   TARGET_PDB = graphics.a.dbg
 
 # =============================================================================
+# Object build statements for STATIC_LIBRARY target input
+
+
+#############################################
+# Order-only phony target for input
+
+build cmake_object_order_depends_target_input: phony || .
+
+build CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-actions.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-commands.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/input-context-loader.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-loader.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-context-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-manager.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/thread-safe-vector.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/user-input-receiver.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target input
+
+
+#############################################
+# Link the static library libinput.a
+
+build libinput.a: CXX_STATIC_LIBRARY_LINKER__input_Debug CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context-loader.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/input.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libinput.a
+  TARGET_PDB = input.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target ecs
+
+
+#############################################
+# Order-only phony target for ecs
+
+build cmake_object_order_depends_target_ecs: phony || .
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+build CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp || cmake_object_order_depends_target_ecs
+  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target ecs
+
+
+#############################################
+# Link the static library libecs.a
+
+build libecs.a: CXX_STATIC_LIBRARY_LINKER__ecs_Debug CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/ecs.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libecs.a
+  TARGET_PDB = ecs.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target system
+
+
+#############################################
+# Order-only phony target for system
+
+build cmake_object_order_depends_target_system: phony || .
+
+build CMakeFiles/system.dir/kege/src/core/system/settings.cpp.o: CXX_COMPILER__system_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/system/settings.cpp || cmake_object_order_depends_target_system
+  DEP_FILE = CMakeFiles/system.dir/kege/src/core/system/settings.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/system.dir
+  OBJECT_FILE_DIR = CMakeFiles/system.dir/kege/src/core/system
+
+build CMakeFiles/system.dir/kege/src/core/system/system.cpp.o: CXX_COMPILER__system_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/system/system.cpp || cmake_object_order_depends_target_system
+  DEP_FILE = CMakeFiles/system.dir/kege/src/core/system/system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/system.dir
+  OBJECT_FILE_DIR = CMakeFiles/system.dir/kege/src/core/system
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target system
+
+
+#############################################
+# Link the static library libsystem.a
+
+build libsystem.a: CXX_STATIC_LIBRARY_LINKER__system_Debug CMakeFiles/system.dir/kege/src/core/system/settings.cpp.o CMakeFiles/system.dir/kege/src/core/system/system.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/system.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libsystem.a
+  TARGET_PDB = system.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target esm
+
+
+#############################################
+# Order-only phony target for esm
+
+build cmake_object_order_depends_target_esm: phony || .
+
+build CMakeFiles/esm.dir/kege/src/core/esm/entity-system-manager.cpp.o: CXX_COMPILER__esm_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system-manager.cpp || cmake_object_order_depends_target_esm
+  DEP_FILE = CMakeFiles/esm.dir/kege/src/core/esm/entity-system-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/esm.dir
+  OBJECT_FILE_DIR = CMakeFiles/esm.dir/kege/src/core/esm
+
+build CMakeFiles/esm.dir/kege/src/core/esm/entity-system.cpp.o: CXX_COMPILER__esm_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system.cpp || cmake_object_order_depends_target_esm
+  DEP_FILE = CMakeFiles/esm.dir/kege/src/core/esm/entity-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/esm.dir
+  OBJECT_FILE_DIR = CMakeFiles/esm.dir/kege/src/core/esm
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target esm
+
+
+#############################################
+# Link the static library libesm.a
+
+build libesm.a: CXX_STATIC_LIBRARY_LINKER__esm_Debug CMakeFiles/esm.dir/kege/src/core/esm/entity-system-manager.cpp.o CMakeFiles/esm.dir/kege/src/core/esm/entity-system.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/esm.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libesm.a
+  TARGET_PDB = esm.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target scene
+
+
+#############################################
+# Order-only phony target for scene
+
+build cmake_object_order_depends_target_scene: phony || .
+
+build CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene-loader.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target scene
+
+
+#############################################
+# Link the static library libscene.a
+
+build libscene.a: CXX_STATIC_LIBRARY_LINKER__scene_Debug CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/scene.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libscene.a
+  TARGET_PDB = scene.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target gui
+
+
+#############################################
+# Order-only phony target for gui
+
+build cmake_object_order_depends_target_gui: phony || .
+
+build CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-aligner.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-input.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-layout.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target gui
+
+
+#############################################
+# Link the static library libgui.a
+
+build libgui.a: CXX_STATIC_LIBRARY_LINKER__gui_Debug CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/gui.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libgui.a
+  TARGET_PDB = gui.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target editor
+
+
+#############################################
+# Order-only phony target for editor
+
+build cmake_object_order_depends_target_editor: phony || .
+
+build CMakeFiles/editor.dir/kege/src/editor/editor.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/editor.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
+build CMakeFiles/editor.dir/kege/src/editor/hierarchy-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/hierarchy-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/hierarchy-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
+build CMakeFiles/editor.dir/kege/src/editor/inspector-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/inspector-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/inspector-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
+build CMakeFiles/editor.dir/kege/src/editor/navbar-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/navbar-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/navbar-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/droplist.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/droplist.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/droplist.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/hierarchy-droplist.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/hierarchy-droplist.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/hierarchy-droplist.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-button.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-button.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-button.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-menu.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-menu.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-menu.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric3.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric3.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric3.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric4.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric4.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric4.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-options.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-options.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-options.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/ui-elements
+
+build CMakeFiles/editor.dir/kege/src/editor/viewport-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/viewport-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/viewport-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target editor
+
+
+#############################################
+# Link the static library libeditor.a
+
+build libeditor.a: CXX_STATIC_LIBRARY_LINKER__editor_Debug CMakeFiles/editor.dir/kege/src/editor/editor.cpp.o CMakeFiles/editor.dir/kege/src/editor/hierarchy-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/inspector-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/navbar-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/droplist.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/hierarchy-droplist.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-button.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-menu.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric3.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric4.cpp.o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-options.cpp.o CMakeFiles/editor.dir/kege/src/editor/viewport-panel.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/editor.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libeditor.a
+  TARGET_PDB = editor.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target camera
+
+
+#############################################
+# Order-only phony target for camera
+
+build cmake_object_order_depends_target_camera: phony || .
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/camera-controller.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-controller.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/camera-controller.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/camera-system.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-system.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/camera-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/camera.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/camera.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/follow-system.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/follow-system.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/follow-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/frustum.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/frustum.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/frustum.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/lookat-system.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/lookat-system.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/lookat-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+build CMakeFiles/camera.dir/kege/src/systems/camera/movement-system.cpp.o: CXX_COMPILER__camera_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/movement-system.cpp || cmake_object_order_depends_target_camera
+  DEP_FILE = CMakeFiles/camera.dir/kege/src/systems/camera/movement-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/camera.dir
+  OBJECT_FILE_DIR = CMakeFiles/camera.dir/kege/src/systems/camera
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target camera
+
+
+#############################################
+# Link the static library libcamera.a
+
+build libcamera.a: CXX_STATIC_LIBRARY_LINKER__camera_Debug CMakeFiles/camera.dir/kege/src/systems/camera/camera-controller.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/camera-system.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/camera.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/follow-system.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/frustum.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/lookat-system.cpp.o CMakeFiles/camera.dir/kege/src/systems/camera/movement-system.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/camera.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libcamera.a
+  TARGET_PDB = camera.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target physics
+
+
+#############################################
+# Order-only phony target for physics
+
+build cmake_object_order_depends_target_physics: phony || .
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/utils.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/utils.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/utils.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/collider.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/collider.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/collider.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact/contact.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/contact/contact.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact/contact.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/cloth.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/cloth.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/cloth.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/rigidbody.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/rigidbody.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/rigidbody.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation/physics-simulation.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulation/physics-simulation.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation/physics-simulation.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-detector.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-detector.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-detector.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-applier.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-applier.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-applier.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-integrator.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-integrator.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-integrator.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/friction-solver.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/friction-solver.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/friction-solver.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/grounded-detector.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/grounded-detector.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/grounded-detector.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/motion-dampener.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/motion-dampener.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/motion-dampener.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/simulator.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/simulator.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/simulator.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/sleep-system.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/sleep-system.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/sleep-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/physics-system.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/physics-system.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/physics-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/debug/debug-renderer.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/debug-renderer.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/debug/debug-renderer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/debug
+
+build CMakeFiles/physics.dir/kege/src/systems/physics/debug/draw-commands.cpp.o: CXX_COMPILER__physics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/draw-commands.cpp || cmake_object_order_depends_target_physics
+  DEP_FILE = CMakeFiles/physics.dir/kege/src/systems/physics/debug/draw-commands.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/physics.dir
+  OBJECT_FILE_DIR = CMakeFiles/physics.dir/kege/src/systems/physics/debug
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target physics
+
+
+#############################################
+# Link the static library libphysics.a
+
+build libphysics.a: CXX_STATIC_LIBRARY_LINKER__physics_Debug CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/utils.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/collider.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact/contact.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/cloth.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/rigidbody.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation/physics-simulation.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-detector.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-applier.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-integrator.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/friction-solver.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/grounded-detector.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/motion-dampener.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/simulator.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/sleep-system.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/physics-system.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/debug/debug-renderer.cpp.o CMakeFiles/physics.dir/kege/src/systems/physics/debug/draw-commands.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/physics.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libphysics.a
+  TARGET_PDB = physics.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target particle
+
+
+#############################################
+# Order-only phony target for particle
+
+build cmake_object_order_depends_target_particle: phony || .
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/air-resistance.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/air-resistance.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/air-resistance.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/behavior.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/behavior.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/behavior.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/color-over-lifetime.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/color-over-lifetime.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/color-over-lifetime.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/gravity-behavior.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/gravity-behavior.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/gravity-behavior.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/size-over-lifetime.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/size-over-lifetime.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/size-over-lifetime.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/wind-behavior.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/wind-behavior.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/wind-behavior.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/behaviors
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle-effect.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle-effect.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle-effect.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/effect
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/effect
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-circle.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-circle.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-circle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cone.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cone.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cone.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cube.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cube.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cube.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cylinder.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cylinder.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cylinder.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-line.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-line.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-line.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-plane.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-plane.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-plane.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-pyrimid.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-pyrimid.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-pyrimid.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-sphere.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-sphere.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-sphere.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-triangle.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-triangle.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-triangle.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/emitter
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/systems/billboard-particle-renderer.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/billboard-particle-renderer.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/systems/billboard-particle-renderer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/systems
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-effect-system.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-effect-system.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-effect-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/systems
+
+build CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-emission-system.cpp.o: CXX_COMPILER__particle_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-emission-system.cpp || cmake_object_order_depends_target_particle
+  DEP_FILE = CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-emission-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/particle.dir
+  OBJECT_FILE_DIR = CMakeFiles/particle.dir/kege/src/systems/particle/systems
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target particle
+
+
+#############################################
+# Link the static library libparticle.a
+
+build libparticle.a: CXX_STATIC_LIBRARY_LINKER__particle_Debug CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/air-resistance.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/behavior.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/color-over-lifetime.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/gravity-behavior.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/size-over-lifetime.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/wind-behavior.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle-effect.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-circle.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cone.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cube.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cylinder.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-line.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-plane.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-pyrimid.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-sphere.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-triangle.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/systems/billboard-particle-renderer.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-effect-system.cpp.o CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-emission-system.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/particle.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libparticle.a
+  TARGET_PDB = particle.a.dbg
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target picking_systems
+
+
+#############################################
+# Order-only phony target for picking_systems
+
+build cmake_object_order_depends_target_picking_systems: phony || .
+
+build CMakeFiles/picking_systems.dir/kege/src/systems/picking/compute-scene-ray.cpp.o: CXX_COMPILER__picking_systems_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/compute-scene-ray.cpp || cmake_object_order_depends_target_picking_systems
+  DEP_FILE = CMakeFiles/picking_systems.dir/kege/src/systems/picking/compute-scene-ray.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/picking_systems.dir
+  OBJECT_FILE_DIR = CMakeFiles/picking_systems.dir/kege/src/systems/picking
+
+build CMakeFiles/picking_systems.dir/kege/src/systems/picking/dragging-system.cpp.o: CXX_COMPILER__picking_systems_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/dragging-system.cpp || cmake_object_order_depends_target_picking_systems
+  DEP_FILE = CMakeFiles/picking_systems.dir/kege/src/systems/picking/dragging-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/picking_systems.dir
+  OBJECT_FILE_DIR = CMakeFiles/picking_systems.dir/kege/src/systems/picking
+
+build CMakeFiles/picking_systems.dir/kege/src/systems/picking/selection-system.cpp.o: CXX_COMPILER__picking_systems_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/selection-system.cpp || cmake_object_order_depends_target_picking_systems
+  DEP_FILE = CMakeFiles/picking_systems.dir/kege/src/systems/picking/selection-system.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/picking_systems.dir
+  OBJECT_FILE_DIR = CMakeFiles/picking_systems.dir/kege/src/systems/picking
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target picking_systems
+
+
+#############################################
+# Link the static library libpicking_systems.a
+
+build libpicking_systems.a: CXX_STATIC_LIBRARY_LINKER__picking_systems_Debug CMakeFiles/picking_systems.dir/kege/src/systems/picking/compute-scene-ray.cpp.o CMakeFiles/picking_systems.dir/kege/src/systems/picking/dragging-system.cpp.o CMakeFiles/picking_systems.dir/kege/src/systems/picking/selection-system.cpp.o
+  ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles/picking_systems.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = libpicking_systems.a
+  TARGET_PDB = picking_systems.a.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target kege-engine
 
 
 #############################################
 # Order-only phony target for kege-engine
 
-build cmake_object_order_depends_target_kege-engine: phony || .
+build cmake_object_order_depends_target_kege-engine: phony || cmake_object_order_depends_target_camera cmake_object_order_depends_target_ecs cmake_object_order_depends_target_editor cmake_object_order_depends_target_engine cmake_object_order_depends_target_esm cmake_object_order_depends_target_graphics cmake_object_order_depends_target_gui cmake_object_order_depends_target_input cmake_object_order_depends_target_io cmake_object_order_depends_target_particle cmake_object_order_depends_target_physics cmake_object_order_depends_target_picking_systems cmake_object_order_depends_target_scene cmake_object_order_depends_target_system cmake_object_order_depends_target_utils cmake_object_order_depends_target_vector_math
 
 build CMakeFiles/kege-engine.dir/kege/src/main.cpp.o: CXX_COMPILER__kege-engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp || cmake_object_order_depends_target_kege-engine
   DEP_FILE = CMakeFiles/kege-engine.dir/kege/src/main.cpp.o.d
   FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
-  INCLUDES = -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include
+  INCLUDES = -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/system -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking
   OBJECT_DIR = CMakeFiles/kege-engine.dir
   OBJECT_FILE_DIR = CMakeFiles/kege-engine.dir/kege/src
 
@@ -576,9 +1999,9 @@ build CMakeFiles/kege-engine.dir/kege/src/main.cpp.o: CXX_COMPILER__kege-engine_
 #############################################
 # Link the executable kege-engine
 
-build kege-engine: CXX_EXECUTABLE_LINKER__kege-engine_Debug CMakeFiles/kege-engine.dir/kege/src/main.cpp.o | /usr/local/lib/libvulkan.dylib /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib
+build kege-engine: CXX_EXECUTABLE_LINKER__kege-engine_Debug CMakeFiles/kege-engine.dir/kege/src/main.cpp.o | libutils.a libio.a libgraphics.a libinput.a libengine.a libvector_math.a libsystem.a libecs.a libesm.a libscene.a libgui.a libeditor.a libparticle.a libcamera.a libphysics.a libpicking_systems.a /usr/local/lib/libvulkan.dylib /usr/local/lib/libshaderc_combined.a /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib || libcamera.a libecs.a libeditor.a libengine.a libesm.a libgraphics.a libgui.a libinput.a libio.a libparticle.a libphysics.a libpicking_systems.a libscene.a libsystem.a libutils.a libvector_math.a
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
-  LINK_LIBRARIES = -Wl,-rpath,/usr/local/glfw/3.3.8/lib-x86_64 -Wl,-rpath,/usr/local/lib  /usr/local/lib/libvulkan.dylib  /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib  -framework CoreFoundation
+  LINK_LIBRARIES = -Wl,-rpath,/usr/local/glfw/3.3.8/lib-x86_64 -Wl,-rpath,/usr/local/lib  libutils.a  libio.a  libgraphics.a  libinput.a  libengine.a  libvector_math.a  libsystem.a  libecs.a  libesm.a  libscene.a  libgui.a  libeditor.a  libparticle.a  libcamera.a  libphysics.a  libpicking_systems.a  /usr/local/lib/libvulkan.dylib  /usr/local/lib/libshaderc_combined.a  /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib  -framework CoreFoundation
   OBJECT_DIR = CMakeFiles/kege-engine.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -612,9 +2035,35 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build camera: phony libcamera.a
+
+build ecs: phony libecs.a
+
+build editor: phony libeditor.a
+
 build engine: phony libengine.a
 
+build esm: phony libesm.a
+
 build graphics: phony libgraphics.a
+
+build gui: phony libgui.a
+
+build input: phony libinput.a
+
+build io: phony libio.a
+
+build particle: phony libparticle.a
+
+build physics: phony libphysics.a
+
+build picking_systems: phony libpicking_systems.a
+
+build scene: phony libscene.a
+
+build system: phony libsystem.a
+
+build utils: phony libutils.a
 
 build vector_math: phony libvector_math.a
 
@@ -626,7 +2075,7 @@ build vector_math: phony libvector_math.a
 #############################################
 # Folder: /Users/kae/Developer/vscode/kege-engine/build
 
-build all: phony libvector_math.a libengine.a libgraphics.a kege-engine
+build all: phony libutils.a libio.a libvector_math.a libengine.a libgraphics.a libinput.a libecs.a libsystem.a libesm.a libscene.a libgui.a libeditor.a libcamera.a libphysics.a libparticle.a libpicking_systems.a kege-engine
 
 # =============================================================================
 # Built-in targets

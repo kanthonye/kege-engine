@@ -10,9 +10,8 @@
 
 #include "../-/system-dependencies.hpp"
 
-#include "rigidbody.hpp"
-#include "collider.hpp"
-#include "entity-system.hpp"
+#include "../physics/3d/dynamics/rigidbody.hpp"
+#include "../physics/3d/collision/collider/collider.hpp"
 #include "selection-system.hpp"
 
 namespace kege{

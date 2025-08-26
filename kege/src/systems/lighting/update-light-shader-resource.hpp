@@ -8,7 +8,7 @@
 #ifndef update_light_shader_resource_hpp
 #define update_light_shader_resource_hpp
 
-#include "../../core/system/entity-system.hpp"
+#include "../../core/esm/entity-system.hpp"
 
 namespace kege{
 

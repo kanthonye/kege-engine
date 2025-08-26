@@ -8,7 +8,7 @@
 #ifndef particle_hpp
 #define particle_hpp
 
-#include "../../../core/container/array.hpp"
+#include "../../../core/utils/array.hpp"
 #include "../../../core/graphics/core/graphics.hpp"
 #include "../../../core/math/algebra/vmath.hpp"
 

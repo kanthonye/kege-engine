@@ -13,7 +13,7 @@
 #include "../core/gui/ui-viewer.hpp"
 #include "../core/gui/ui-layout.hpp"
 #include "../core/gui/ui-font-creator.hpp"
-#include "hierarchy-droplist.hpp"
+#include "ui-elements/hierarchy-droplist.hpp"
 
 namespace kege{
 

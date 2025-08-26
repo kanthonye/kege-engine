@@ -8,10 +8,7 @@
 #ifndef normal_map_generator_hpp
 #define normal_map_generator_hpp
 
-#include "ref.hpp"
-#include "vectors.hpp"
-#include "perlin-noise.hpp"
-#include "simplex-noise.hpp"
+#include "../../-/system-dependencies.hpp"
 #include "topographic-layer-generator.hpp"
 
 namespace kege{

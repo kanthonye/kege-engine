@@ -8,9 +8,9 @@
 #ifndef navbar_panel_hpp
 #define navbar_panel_hpp
 
-#include "ui-menu.hpp"
-#include "ui-options.hpp"
-#include "ui-button.hpp"
+#include "ui-elements/ui-menu.hpp"
+#include "ui-elements/ui-options.hpp"
+#include "ui-elements/ui-button.hpp"
 
 namespace kege{
 

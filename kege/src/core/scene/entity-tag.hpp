@@ -11,7 +11,7 @@
 #include <string>
 #include "scene.hpp"
 #include "../utils/log.hpp"
-#include "../container/kege-string.hpp"
+#include "../utils/kege-string.hpp"
 
 namespace kege{
 

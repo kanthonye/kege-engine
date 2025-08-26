@@ -9,8 +9,7 @@
 #define quad_mesh_index_buffers_hpp
 
 #include <list>
-#include "vmath.hpp"
-#include "graphics.h"
+#include "../../-/system-dependencies.hpp"
 
 namespace kege{
 

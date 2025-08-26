@@ -9,8 +9,8 @@
 #define kege_resource_manager_hpp
 
 #include "../memory/ref.hpp"
-#include "../utils/log.hpp"
-#include "../utils/communication.hpp"
+#include "log.hpp"
+#include "communication.hpp"
 #include "hashmap.hpp"
 
 namespace kege{
