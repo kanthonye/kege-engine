@@ -27,15 +27,6 @@ namespace kege::ui{
         };
     }
 
-    ui::Sizing extend(float percent)
-    {
-        return ui::Sizing
-        {
-            .type = ui::SIZE_EXTEND,
-            .size = (percent / 100.0f)
-        };
-    }
-
     ui::Sizing flexible()
     {
         return ui::Sizing
@@ -54,7 +45,7 @@ namespace kege::ui{
         };
     }
 
-    ui::Background bgImage(const ui::Rect2D& texel)
+    ui::Background bgImage(const ui::Rect& texel)
     {
         return ui::Background
         {

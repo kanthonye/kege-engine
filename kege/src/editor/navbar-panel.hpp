@@ -8,11 +8,9 @@
 #ifndef navbar_panel_hpp
 #define navbar_panel_hpp
 
-#include "../core/engine/engine.hpp"
-#include "../core/gui/ui-input.hpp"
-#include "../core/gui/ui-viewer.hpp"
-#include "../core/gui/ui-layout.hpp"
-#include "../core/gui/ui-font-creator.hpp"
+#include "ui-menu.hpp"
+#include "ui-options.hpp"
+#include "ui-button.hpp"
 
 namespace kege{
 
@@ -26,6 +24,7 @@ namespace kege{
 
     public:
 
+        ui::Options file;
         Engine* _engine;
         ui::EID _main;
     };

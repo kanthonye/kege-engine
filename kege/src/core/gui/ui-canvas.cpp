@@ -30,7 +30,7 @@
 //        }
 //    }
 //
-//    const UIElem* Canvas::operator[]( const EID& id )const
+//    const Elem* Canvas::operator[]( const EID& id )const
 //    {
 //        if ( id.index >= _layout->_nodes.size() )
 //        {
@@ -40,7 +40,7 @@
 //        return &_layout->_nodes[ id.index ].elem;
 //    }
 //
-//    UIElem* Canvas::operator[]( const EID& id )
+//    Elem* Canvas::operator[]( const EID& id )
 //    {
 //        if ( id.index >= _layout->_nodes.size() )
 //        {

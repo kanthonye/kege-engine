@@ -19,6 +19,7 @@ namespace kege::ui{
 
     class Input;
     class Layout;
+    typedef uint32_t NodeIndex;
 
     typedef const char* chrstr;
 
@@ -27,7 +28,7 @@ namespace kege::ui{
         Center, Left, Right,
     };
 
-    enum struct AlignSelf : uint8_t
+    enum struct Positioning : uint8_t
     {
         Relative,
         Absolute,
@@ -57,12 +58,8 @@ namespace kege::ui{
 
     struct Alignment
     {
-        AlignText text = AlignText::Left;
-        AlignSelf self = AlignSelf::Relative;
         AlignOrigin origin = ALIGN_TOP_LEFT;
         Direction direction = DIRECTION_LEFT_TO_RIGHT;
-        bool wrap_around = false;
-        bool immovable = false;
     };
 
     typedef enum : uint8_t
@@ -160,113 +157,104 @@ namespace kege::ui{
 
     typedef std::function< void( kege::ui::Layout&, uint32_t ) > Callback;
 
-    struct BorderRadius
+    struct Text
     {
-        float top_left;
-        float top_right;
-        float bottom_right;
-        float bottom_left;
+        const char* text = nullptr;
+        float x, y;
+        float width;
+        float height;
     };
 
-    struct Rect2D
+    struct Rect
     {
         float x, y;
         float width;
         float height;
     };
 
+    struct Corners
+    {
+        float top_left = 0;
+        float top_right = 0;
+        float bottom_left = 0;
+        float bottom_right = 0;
+    };
+
+
+    // shareable style that can be shared across many ui-content
     struct Style
     {
-        Background background;
-        Color color;
-        Padding padding;
-        Sizing width;
-        Sizing height;
-        Alignment align;
-        Extent2D gap;
+        Background  background;
+        Color       color;
+        Padding     padding;
+        Sizing      width;
+        Sizing      height;
+        Alignment   align;
+        Extent2D    gap;
+        Corners     border_radius;
+        Positioning position = Positioning::Relative;
+        AlignText   align_text = AlignText::Left;
+        int         font_size = 20;
+        int32_t     zindex = 0;
+        bool        clip_overflow = false;
+        bool        wrap_around = false;
+    };
 
-        int border_radius = 0;
-        int font_size = 20;
+    // Content contains the widget specific data that specific to a widget
+    struct Content
+    {
+        Style* style = nullptr;
+        uint32_t id = 0;
 
-        bool visible = true;
+        float x = 0.f;
+        float y = 0.f;
+
         bool mouseover = true;
-        bool clip_overflow = false;
-        ClickTrigger click_trigger = ui::ClickTrigger::Disable;
-        HoverTrigger hover_trigger = ui::HoverTrigger::Disable;
-    };
+        bool visible = true;
 
-    struct Text
-    {
-        const char* data = nullptr;
-        float x = 0.f;
-        float y = 0.f;
-        float width = 0.f;
-        float height = 0.f;
-    };
+        ClickTrigger trigger = ui::ClickTrigger::Disable;
 
-    struct Info
-    {
-        Style style = {};
-
-        Callback on_mouse_enter;
-        Callback on_mouse_exit;
         Callback on_release;
-        Callback on_click;
         Callback on_scroll;
+        Callback on_click;
+        Callback on_enter;
+        Callback on_exit;
 
-        const char* text = nullptr;
-        int style_index = 0;
-        int id = 0;
-        
-        ClickTrigger click_trigger = ui::ClickTrigger::Disable;
-        HoverTrigger hover_trigger = ui::HoverTrigger::Disable;
+        /**
+         * note rect is recomputed every frame, rect is the visual shape of the gui shape
+         */
+        Rect rect = {};
+
+        /**
+         * text is the xy position of a text and the width and height that text span
+         */
+        mutable Text text = {};
     };
 
-    struct UIElem
-    {
-        Style style = {};
-        Rect2D rect = {};
-        Text text;
-
-        ClickTrigger click_trigger = ui::ClickTrigger::Disable;
-        HoverTrigger hover_trigger = ui::HoverTrigger::Disable;
-
-        // the local x and y position
-        float x = 0.f;
-        float y = 0.f;
-
-        Callback on_mouse_enter;
-        Callback on_mouse_exit;
-        Callback on_release;
-        Callback on_click;
-        Callback on_scroll;
-    };
-
+    // Node contains the widget specific data that specific to a widget
     struct Node
     {
-        UIElem  elem = {};
+        Content* content    = nullptr;
+        uint32_t depth      = 0;
+        uint32_t index      = 0;
+        uint32_t id         = 0;
 
-        // level hold the node depth in the layout tree
-        uint32_t level = 0;
-        int32_t index = 0;
-        int32_t id = 0; // elem id. hold the index of this element
+        int32_t parent      = 0;
+        int32_t head        = 0;
+        int32_t tail        = 0;
+        int32_t next        = 0;
+        int32_t count       = 0;
 
-        int32_t parent = 0; // the parent node index
-        int32_t head = 0;
-        int32_t tail = 0;
-        int32_t next = 0;
-        int32_t count = 0;
-
-        int32_t next_free = 0;
-        bool freed = false;
+        int32_t next_free   = 0;
+        bool    freed       = false;
     };
 
     struct DrawElem
     {
-        Rect2D rect;
-        Color  color;
-        Rect2D texel;
-        Rect2D clip_rect;
+        ui::Rect rect;
+        ui::Color  color;
+        ui::Rect texel;
+        ui::Rect clip_rect;
         struct
         {
             float border_radius;
@@ -279,14 +267,13 @@ namespace kege::ui{
 
     ui::Sizing fixed(float size);
     ui::Sizing extend();
-    ui::Sizing extend(float percent);
     ui::Sizing flexible();
     ui::Sizing percent(float percent);
 
     ui::Color rgb(uint32_t hex_color);
     ui::Color rgba(uint32_t hex_color);
 
-    ui::Background bgImage(const ui::Rect2D& texel);
+    ui::Background bgImage(const ui::Rect& texel);
     ui::Background bgColor(const ui::Color& color);
     ui::Background bgColor(uint32_t color);
 }

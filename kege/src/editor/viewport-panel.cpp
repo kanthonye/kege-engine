@@ -13,15 +13,7 @@ namespace kege{
     {
         _engine = engine;
 
-        _main = layout.make
-        ({
-            .style =
-            {
-                .background = ui::bgColor(0xFFFFFF18),
-                .width = ui::extend(),
-                .height = ui::extend(),
-            },
-        });
+        _main = layout.make({ .style = layout.getStyleByName( "viewport" ) });
 
         Communication::add< kege::RenderPassContext*, ViewportPanel >( this );
         return *this;

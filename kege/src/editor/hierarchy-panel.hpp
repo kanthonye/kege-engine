@@ -13,7 +13,7 @@
 #include "../core/gui/ui-viewer.hpp"
 #include "../core/gui/ui-layout.hpp"
 #include "../core/gui/ui-font-creator.hpp"
-#include "droplist.hpp"
+#include "hierarchy-droplist.hpp"
 
 namespace kege{
 
@@ -30,8 +30,8 @@ namespace kege{
 
     public:
 
-        std::map< uint32_t, Droplist > _open_states;
-        
+        std::map< uint32_t, ui::HierarchyDroplist > _open_states;
+
         Engine* _engine;
         Entity _selected_entity;
         ui::EID _main;
