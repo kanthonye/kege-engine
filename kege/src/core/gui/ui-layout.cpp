@@ -16,7 +16,7 @@ namespace kege::ui{
 
         *cursor = 0;
         float char_width;
-        float max_length = _input->clickPosition().x - _nodes[ id ].elem.x;
+        float max_length = _input->clickPosition().x - _nodes[ id ].content->x;
         for ( const char* s = text.data(); *s != 0; ++s )
         {
             char_width = font->getCharWidth( font_size, *s );
@@ -31,7 +31,7 @@ namespace kege::ui{
         return length;
     }
 
-    bool Layout::testPointVsRect( const kege::dvec2& p, const ui::Rect2D& rect )const
+    bool Layout::testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const
     {
         return
         (
@@ -42,89 +42,87 @@ namespace kege::ui{
         );
     }
 
-    bool Layout::mouseover( ui::EID& id )const
+    bool Layout::mouseover( const ui::EID& id )const
     {
-        return _prev_hot_elem.id == _nodes[ id.index ].id;
+        return _prev_hot_elem.id == _nodes[ _id_pool[ id.index ].node ].id;
     }
 
-    bool Layout::doubleClick( ui::EID& id )const
+    bool Layout::doubleClick( const ui::EID& id )const
     {
-        return _prev_active_elem.id == _nodes[ id.index ].id && _prev_active_elem.clicks == 2;
+        return _clicked.id == _nodes[ _id_pool[ id.index ].node ].id && _clicked.clicks == 2;
     }
 
-    bool Layout::click( ui::EID& id )const
+    bool Layout::click( const ui::EID& id )const
     {
-        return _prev_active_elem.id == _nodes[ id.index ].id && _prev_active_elem.clicks == 1;
+        return _clicked.id == _nodes[ _id_pool[ id.index ].node ].id && _clicked.clicks == 1;
     }
 
-    bool Layout::hasFocus( ui::EID& id )const
+    bool Layout::hasFocus( const ui::EID& id )const
     {
-        return _focus_id == _nodes[ id.index ].id;
+        return _focus_id == _nodes[ _id_pool[ id.index ].node ].id;
     }
 
-    void Layout::setFocus( ui::EID& id )
+    void Layout::setFocus( const ui::EID& id )
     {
-        _focus_id = _nodes[ id.index ].id;
+        _focus_id = _nodes[ _id_pool[ id.index ].node ].id;
     }
 
-    EID Layout::make( const Info& info )
+    EID Layout::make( const Content& content )
     {
         uint32_t id = genId();
         if( id <= 0 || id >= _nodes.size() )
-        //if ( _count + 1 >= _nodes.size() )
+        //if ( _node_counter + 1 >= _nodes.size() )
         {
-            KEGE_LOG_ERROR << "Reached Maximum amount of UI UIElems -> " << _count + 1 << Log::nl;
+            KEGE_LOG_ERROR << "Reached Maximum amount of UI Elems -> " << _node_counter + 1 << Log::nl;
             return {};
         }
 
-        //_count += 1;
-        _nodes[ id ].elem.rect = {};
-        _nodes[ id ].elem.style = info.style;
-        _nodes[ id ].elem.on_click = info.on_click;
-        _nodes[ id ].elem.on_scroll = info.on_scroll;
-        _nodes[ id ].elem.on_release = info.on_release;
-        _nodes[ id ].elem.on_mouse_exit = info.on_mouse_exit;
-        _nodes[ id ].elem.on_mouse_enter = info.on_mouse_enter;
-        _nodes[ id ].elem.click_trigger = info.click_trigger;
-        _nodes[ id ].elem.text.data = info.text;
-        _nodes[ id ].level = 0;
-        //_count++;
+        _contents[ id ] = content;
         return {id, this};
     }
 
-    UIElem& Layout::put( const EID& id )
+    uint32_t Layout::put( const EID& id )
     {
-        if ( id.index >= _nodes.size() )
+        _node_counter += 1;
+        if ( _node_counter >= _nodes.size() )
         {
-            // TODO: LOG_ERROR << "Reached Maximum amount of UI UIElems";
-            return _nodes[ 0 ].elem;
+            KEGE_LOG_ERROR << "Reached Maximum amount of UI Node";
+            return 0;
         }
 
-        if ( id.index == _parent )
+        if ( id.index == 0 )
+        {
+            KEGE_LOG_ERROR << "Invalid UI index"<<Log::nl;
+            return 0;
+        }
+
+        if ( 0 != _parent && _id_pool[ id.index ].node == _parent )
         {
             KEGE_LOG_ERROR << "Death cycle detected. Attaching child node to its self will cause the program to looping infinetly and become stuck"<<Log::nl;
-            return _nodes[ 0 ].elem;
+            return 0;
         }
 
-        _nodes[ id.index ].parent = _parent;
-        _nodes[ id.index ].count = 0;
-        _nodes[ id.index ].head = 0;
-        _nodes[ id.index ].tail = 0;
-        _nodes[ id.index ].next = 0;
-        _nodes[ id.index ].index = id.index;
-        _nodes[ id.index ].next_free = 0;
-        _nodes[ id.index ].freed = false;
-        _nodes[ id.index ].id = _count;
-        _count += 1;
+        _id_pool[ id.index ].node = _node_counter;
+        
+        _nodes[ _node_counter ].content = &_contents[ id.index ];
+        _nodes[ _node_counter ].parent = _parent;
+        _nodes[ _node_counter ].count = 0;
+        _nodes[ _node_counter ].head = 0;
+        _nodes[ _node_counter ].tail = 0;
+        _nodes[ _node_counter ].next = 0;
+        _nodes[ _node_counter ].next_free = 0;
+        _nodes[ _node_counter ].freed = false;
+        _nodes[ _node_counter ].index = _node_counter;
+        _nodes[ _node_counter ].id = _node_counter;
 
         // if style width and height is fixed, set the rect width and height of the ui element
-        if ( _nodes[ id.index ].elem.style.height.type == kege::ui::SIZE_FIXED )
+        if ( _contents[ id.index ].style->height.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ id.index ].elem.rect.height = _nodes[ id.index ].elem.style.height.size;
+            _nodes[ _node_counter ].content->rect.height = _contents[ id.index ].style->height.size;
         }
-        if ( _nodes[ id.index ].elem.style.width.type == kege::ui::SIZE_FIXED )
+        if ( _contents[ id.index ].style->width.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ id.index ].elem.rect.width = _nodes[ id.index ].elem.style.width.size;
+            _nodes[ _node_counter ].content->rect.width = _contents[ id.index ].style->width.size;
         }
 
         // setup the layout tree hierarchy
@@ -132,30 +130,29 @@ namespace kege::ui{
         {
             if ( _nodes[ _parent ].head == 0 )
             {
-                _nodes[ _parent ].tail = _nodes[ _parent ].head = id.index;
+                _nodes[ _parent ].tail = _nodes[ _parent ].head = _node_counter;
             }
             else
             {
-                _nodes[ _nodes[ _parent ].tail ].next = id.index;
-                _nodes[ _parent ].tail = id.index;
+                _nodes[ _nodes[ _parent ].tail ].next = _node_counter;
+                _nodes[ _parent ].tail = _node_counter;
             }
             _nodes[ _parent ].count++;
 
-            _nodes[ id.index ].level = 1 + _nodes[ _parent ].level;
+            _nodes[ _node_counter ].depth = 1 + _nodes[ _parent ].depth;
         }
 
-        return _nodes[ id.index ].elem;
+        return _node_counter;
     }
 
-    UIElem& Layout::push( const EID& id )
+    uint32_t Layout::push( const EID& id )
     {
-        UIElem& elem = put( id );
-        _parent = id.index;
+        _parent = put( id );
         if ( _root == 0 )
         {
             _root = _parent;
         }
-        return elem;
+        return _parent;
     }
 
     uint32_t Layout::pop()
@@ -178,28 +175,83 @@ namespace kege::ui{
         return pid;
     }
 
-    const UIElem& Layout::operator[]( uint32_t node_id )const
+    const Content* Layout::operator[]( NodeIndex node_id )const
     {
-        return _nodes[ node_id ].elem;
+        return _nodes[ node_id ].content;
     }
 
-    UIElem& Layout::operator[]( uint32_t index )
+    Content* Layout::operator[]( NodeIndex index )
     {
-        return _nodes[ index ].elem;
+        return _nodes[ index ].content;
     }
 
-    const kege::ui::Node& Layout::nodes( uint32_t index ) const
+//    const kege::ui::Node& Layout::nodes( uint32_t index ) const
+//    {
+//        return _nodes[ index ];
+//    }
+//
+//    kege::ui::Node& Layout::nodes( uint32_t index )
+//    {
+//        return _nodes[ index ];
+//    }
+
+    uint32_t Layout::addStyle( const AddStyle& as )
     {
-        return _nodes[ index ];
+        auto itr = _style_index_map.find( as.name_id );
+        if ( itr == _style_index_map.end() )
+        {
+            _style_index_map[ as.name_id ] = _style_indexer;
+            _styles[ _style_indexer ] = as.style;
+            uint32_t index = _style_indexer++;
+            return  index;
+        }
+        return itr->second;
     }
 
-    kege::ui::Node& Layout::nodes( uint32_t index )
+    ui::Style* Layout::getStyleByName( const std::string& name_id )
     {
-        return _nodes[ index ];
+        auto itr = _style_index_map.find( name_id );
+        if ( itr == _style_index_map.end() )
+        {
+            return nullptr;
+        }
+        return &_styles[ itr->second ];
+    }
+
+    ui::Style* Layout::getStyleByID( int index )
+    {
+        return &_styles[ index ];
+    }
+
+    NodeIndex Layout::parent( NodeIndex index )const
+    {
+        return _nodes[ index ].parent;
+    }
+    
+    NodeIndex Layout::head( NodeIndex index )const
+    {
+        return _nodes[ index ].head;
+    }
+
+    NodeIndex Layout::tail( NodeIndex index )const
+    {
+        return _nodes[ index ].tail;
+    }
+
+    NodeIndex Layout::next( NodeIndex index )const
+    {
+        return _nodes[ index ].next;
+    }
+
+    uint32_t Layout::count( NodeIndex index )const
+    {
+        return _nodes[ index ].count;
     }
 
     void Layout::resize( uint32_t max_nodes )
     {
+        _contents.resize( max_nodes );
+        _styles.resize( max_nodes );
         _nodes.resize( max_nodes );
 
         _id_pool.resize( max_nodes );
@@ -207,8 +259,8 @@ namespace kege::ui{
         // Initialize the free list: each node points to the next.
         for (int32_t i = 0; i < max_nodes - 1; ++i)
         {
+            _id_pool[i].node = 0;
             _id_pool[i].prev  = i - 1;
-            _id_pool[i].index = i;
             _id_pool[i].next  = i + 1;
             _id_pool[i].duplicates  = 0;
         }
@@ -216,17 +268,22 @@ namespace kege::ui{
         _available_id = 1;
     }
 
+    uint32_t Layout::count()const
+    {
+        return _node_counter;
+    }
+
     bool Layout::validate( uint32_t node_id )const
     {
         return node_id > 0 && node_id < _nodes.size();
     }
 
-    bool Layout::parent( uint32_t node_id )const
-    {
-        return validate( _nodes[ node_id ].head );
-    }
+//    bool Layout::parent( uint32_t node_id )const
+//    {
+//        return validate( _nodes[ node_id ].head );
+//    }
 
-    void Layout::handleMouseOverEvents( uint32_t root )
+    void Layout::handleMouseOverEvents()
     {
         // Reset current hot element at start of frame
         _curr_hot_elem = {0, 0, 0};
@@ -234,7 +291,7 @@ namespace kege::ui{
         // First, check if previous hot element is still valid and under mouse
         if (_prev_hot_elem.index != 0)
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot_elem.index ].elem.rect ) )
+            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot_elem.index ].content->rect ) )
             {
                 // If previous hot element has children, there is a possibility that the mouse
                 // is over its child element. So, we need to account for those child elements.
@@ -242,17 +299,20 @@ namespace kege::ui{
                 {
                     findNewHotElement( _prev_hot_elem.index );
                 }
-                else // If the previous hot element has no children then it is still under mouse - keep it hot
+
+                // If the previous hot element has no children then it is still under mouse - keep it hot
+                if (_curr_hot_elem.id == 0)
                 {
                     _curr_hot_elem = _prev_hot_elem;
                 }
+
             }
         }
 
         // If we didn't find a persistent hot element, search for a new one
         if (_curr_hot_elem.id == 0)
         {
-            findNewHotElement(root);
+            findNewHotElement(1);
         }
 
         // Handle mouse enter/leave events
@@ -260,12 +320,12 @@ namespace kege::ui{
         {
             if (_prev_hot_elem.id != 0)
             {
-                std::cout  <<"mouse exit: " << _prev_hot_elem.id <<"\n";
+                std::cout  <<"mouse exit: " << _prev_hot_elem.index <<"\n";
             }
 
             if (_curr_hot_elem.id != 0)
             {
-                std::cout  <<"mouse enter: " << _curr_hot_elem.id <<"\n";
+                std::cout  <<"mouse enter: " << _curr_hot_elem.index <<"\n";
             }
         }
 
@@ -288,15 +348,27 @@ namespace kege::ui{
             findNewHotElement( ui_index );
         }
 
-        if ( _nodes[ root ].elem.style.mouseover && _nodes[ root ].elem.style.visible )
+        if ( _nodes[ root ].content->mouseover && _nodes[ root ].content->visible )
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ root ].elem.rect ) )
+            if ( testPointVsRect( _input->currentPosition(), _nodes[ root ].content->rect ) )
             {
-                if ( _curr_hot_elem.level < _nodes[ root ].level )
+                if ( _curr_hot_elem.depth < _nodes[ root ].depth  )
                 {
-                    _curr_hot_elem.id    = _nodes[ root ].id;
-                    _curr_hot_elem.index = _nodes[ root ].index;
-                    _curr_hot_elem.level = _nodes[ root ].level;
+                    if ( _curr_hot_elem.index == 0 )
+                    {
+                        _curr_hot_elem.id    = _nodes[ root ].id;
+                        _curr_hot_elem.index = _nodes[ root ].index;
+                        _curr_hot_elem.depth = _nodes[ root ].depth;
+                    }
+                    else if ( _nodes[ _curr_hot_elem.index ].content->style->zindex <= _nodes[ root ].content->style->zindex  )
+                    {
+                        _curr_hot_elem.id    = _nodes[ root ].id;
+                        _curr_hot_elem.index = _nodes[ root ].index;
+                        _curr_hot_elem.depth = _nodes[ root ].depth;
+                    }
+//                    _curr_hot_elem.id    = _nodes[ root ].id;
+//                    _curr_hot_elem.index = _nodes[ root ].index;
+//                    _curr_hot_elem.depth = _nodes[ root ].depth;
                 }
             }
         }
@@ -308,20 +380,18 @@ namespace kege::ui{
 
         if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
         {
-            if ( _nodes[ _prev_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnRelease )
+            if ( _nodes[ _prev_active_elem.index ].content->trigger == ui::ClickTrigger::OnRelease )
             {
+                std::cout  <<"release: " << _prev_active_elem.id <<"| " << _prev_hot_elem.id <<"\n";
                 if ( _prev_hot_elem.id == _prev_active_elem.id )
                 {
+                    std::cout  <<"FIRE ON RELEASE\n";
                     _clicked = _prev_active_elem;
                     _focus = _prev_active_elem;
-                    std::cout  <<"fire on release: " << _prev_active_elem.id <<"\n";
                 }
-//                if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_active_elem.index ].elem.rect ) )
-//                {
-//                }
             }
-            std::cout  <<"release : " << _prev_active_elem.id <<"\n";
             _prev_active_elem = {};
+            //std::cout  <<"release : " << _prev_active_elem.id <<"\n";
         }
     }
 
@@ -334,10 +404,14 @@ namespace kege::ui{
             if ( _prev_active_elem.id != 0 )
             {
                 _curr_active_elem = _prev_active_elem;
+                if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
+                {
+                    _clicked = _curr_active_elem;
+                }
                 //std::cout  <<"clicking : " << _curr_active_elem.id <<"\n";
             }
 
-            if ( _curr_active_elem.id == 0 )
+            if ( _curr_active_elem.id == 0 && _curr_hot_elem.index != 0  )
             {
                 if ( _input->doubleClick() )
                 {
@@ -345,19 +419,19 @@ namespace kege::ui{
                     _curr_active_elem.clicks = 2;
                     std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
 
-                    if ( _nodes[ _curr_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
                     {
                         _clicked = _curr_active_elem;
                         _focus = _curr_active_elem;
                     }
                 }
-                else if ( _input->primaryClick() )
+                else if ( _input->primaryClick() && _curr_hot_elem.index != 0 )
                 {
                     _curr_active_elem = _curr_hot_elem;
                     _curr_active_elem.clicks = 1;
                     std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
 
-                    if ( _nodes[ _curr_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
                     {
                         _clicked = _curr_active_elem;
                         _focus = _curr_active_elem;
@@ -366,86 +440,11 @@ namespace kege::ui{
                 _prev_active_elem = _curr_active_elem;
             }
         }
-
-
-
-//        if ( _input->buttonDown() )
-//        {
-//            if ( _input->doubleClick() )
-//            {
-//                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 2 )
-//                {
-//                    _curr_active_elem = _prev_active_elem;
-//                    //std::cout  <<"double-clicking : " << _curr_active_elem.id <<"\n";
-//                    return;
-//                }
-//
-//                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
-//                {
-//                    if ( _prev_hot_elem.index != 0 && _prev_hot_elem.index < _nodes.size() )
-//                    {
-//                        _curr_active_elem = _prev_hot_elem;
-//                        _curr_active_elem.clicks = 2;
-//
-//                        if ( _nodes[ _prev_hot_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
-//                        {
-//                            _clicked = _curr_active_elem;
-//                            _focus = _curr_active_elem;
-//                            //std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
-//                        }
-//                        return;
-//                    }
-//                }
-//            }
-//
-//            else if ( _input->primaryClick() )
-//            {
-//                if ( _prev_active_elem.id != 0 && _prev_active_elem.clicks == 1 )
-//                {
-//                    _curr_active_elem = _prev_active_elem;
-//                    //std::cout  <<"single-clicking : " << _prev_active_elem.id <<"\n";
-//                }
-//
-//                else if ( _curr_active_elem.id == 0 && _prev_active_elem.id == 0 )
-//                {
-//                    if ( _prev_hot_elem.index != 0 && _prev_hot_elem.index < _nodes.size() )
-//                    {
-//                        _curr_active_elem = _prev_hot_elem;
-//                        _curr_active_elem.clicks = 1;
-//
-//                        if ( _nodes[ _prev_hot_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnClick )
-//                        {
-//                            _clicked = _curr_active_elem;
-//                            _focus = _curr_active_elem;
-//                            std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
-//                        }
-//                        return;
-//                    }
-//                }
-//            }
-//        }
-//
-//        else
-//        {
-//            if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
-//            {
-//                if ( _nodes[ _prev_active_elem.index ].elem.style.click_trigger == ui::ClickTrigger::OnRelease )
-//                {
-//                    if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_active_elem.index ].elem.rect ) )
-//                    {
-//                        _clicked = _prev_active_elem;
-//                        _focus = _prev_active_elem;
-//                        std::cout  <<"fire on release: " << _prev_active_elem.id <<"\n";
-//                    }
-//                }
-//                _prev_active_elem = {};
-//            }
-//        }
     }
 
     void Layout::begin( ui::Input* input )
     {
-        _count = 1;
+        _node_counter = 0;
 
         _root = 0;
         _level = 0;
@@ -510,9 +509,9 @@ namespace kege::ui{
 //            _curr_active_elem = {};
 //        }
 
-        handleMouseOverEvents( _root );
-
         _clicked = {};
+
+        handleMouseOverEvents();
         handleButtonDownEvents();
         handleButtonUpEvents();
     }
@@ -531,6 +530,7 @@ namespace kege::ui{
             //std::cout << "duplicated: " << src->index <<"\n";
         }
     }
+
     void Layout::recycleId( uint32_t index )
     {
         if ( index < 0 || index >= _id_pool.size())
@@ -590,7 +590,7 @@ namespace kege::ui{
          */
         if ( _recycled_id > 0 )
         {
-            index = _id_pool[ _recycled_id ].index;
+            index = _recycled_id;
             _recycled_id = _id_pool[ _recycled_id ].next;
         }
         else
@@ -617,13 +617,14 @@ namespace kege::ui{
     ,   _prev_active_elem{}
     ,   _curr_active_elem{}
     ,   _clicked{}
-    ,   _count( 0 )
+    ,   _node_counter( 0 )
     ,   _recycled_node_tail( -1 )
     ,   _recycled_node_head( -1 )
     ,   _recycled_node_count( -1 )
     ,   _root( 0 )
     ,   _recycled_id( -1 )
     ,   _available_id( -1 )
+    ,   _style_indexer( 0 )
     {
     }
 

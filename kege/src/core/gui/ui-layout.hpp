@@ -18,6 +18,11 @@ namespace kege::ui{
     class Input;
     class Canvas;
 
+    struct AddStyle
+    {
+        std::string name_id;
+        ui::Style style;
+    };
 
     class Layout
     {
@@ -29,8 +34,23 @@ namespace kege::ui{
         {
             uint32_t id = 0;
             uint32_t index = 0;
-            uint32_t level = 0;
+            uint32_t depth = 0;
             uint32_t clicks = 0;
+        };
+
+        struct ID
+        {
+            // the number of duplicates, reference counter
+            int16_t duplicates = 0;
+
+            // the node index
+            int16_t node;
+
+            // next free id
+            int16_t next;
+
+            // previous free id
+            int16_t prev;
         };
 
     public:
@@ -45,7 +65,7 @@ namespace kege::ui{
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool testPointVsRect( const kege::dvec2& p, const ui::Rect2D& rect )const;
+        bool testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const;
 
         /**
          * Checks if mouse pointer is over ui element.
@@ -54,7 +74,7 @@ namespace kege::ui{
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool mouseover( ui::EID& eid ) const;
+        bool mouseover( const ui::EID& eid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was double clicked on.
@@ -63,7 +83,7 @@ namespace kege::ui{
          *
          * @return true if the element was double clicked on, false otherwise.
          */
-        bool doubleClick( ui::EID& eid ) const;
+        bool doubleClick( const ui::EID& eid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was single clicked on.
@@ -72,7 +92,7 @@ namespace kege::ui{
          *
          * @return true if the ui-element was single clicked on, false otherwise.
          */
-        bool click( ui::EID& id ) const;
+        bool click( const ui::EID& eid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id has focus.
@@ -81,14 +101,14 @@ namespace kege::ui{
          *
          * @return true if the ui-element has focus, false otherwise.
          */
-        bool hasFocus( ui::EID& eid )const;
+        bool hasFocus( const ui::EID& eid )const;
 
         /**
          * Set the id of the ui-element to focus on.
          *
-         * @param id The given id.
+         * @param eid The given id.
          */
-        void setFocus( ui::EID& eid );
+        void setFocus( const ui::EID& eid );
 
         /**
          * Creates a UI element with the give info.
@@ -97,7 +117,7 @@ namespace kege::ui{
          *
          * @return The element id.
          */
-        EID make( const Info& info );
+        EID make( const Content& info );
 
         /**
          * Creates a parent UI element with the give info.
@@ -106,7 +126,7 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        UIElem& push( const EID& eid );
+        uint32_t push( const EID& eid );
 
         /**
          * Creates a UI element with the give info.
@@ -115,7 +135,7 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        UIElem& put( const EID& eid );
+        uint32_t put( const EID& eid );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -131,7 +151,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::UIElem& operator[](uint32_t eid) const;
+        const kege::ui::Content* operator[](NodeIndex eid) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
@@ -140,25 +160,59 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::UIElem& operator[](uint32_t eid);
+        kege::ui::Content* operator[](NodeIndex eid);
 
         /**
-         * Retrieves a UI element by its index (const version).
-         *
-         * @param eid The ui element index.
-         *
-         * @return The UI element at the specified index.
+         * Retrieves the parent index of a UI element.
          */
-        const kege::ui::Node& nodes(uint32_t eid) const;
+        NodeIndex parent( NodeIndex eid )const;
 
         /**
-         * Retrieves a UI element by its index (non-const version).
-         *
-         * @param eid The ui element index.
-         *
-         * @return The UI element at the specified index.
+         * Retrieves the head index of a UI element.
          */
-        kege::ui::Node& nodes(uint32_t eid);
+        NodeIndex head( NodeIndex eid )const;
+
+        /**
+         * Retrieves the tail index of a UI element.
+         */
+        NodeIndex tail( NodeIndex eid )const;
+
+        /**
+         * Retrieves the next sibling index of a UI element.
+         */
+        NodeIndex next( NodeIndex eid )const;
+
+        /**
+         * Retrieves the number of children of a UI element.
+         */
+        uint32_t count( NodeIndex eid )const;
+
+        /**
+         * Adds a new style to the layout system.
+         *
+         * @param style The style to add.
+         *
+         * @return The index of the newly added style.
+         */
+        uint32_t addStyle( const AddStyle& style );
+
+        /**
+         * Retrieves a style by its name identifier.
+         *
+         * @param name_id The name identifier of the style.
+         *
+         * @return A pointer to the style if found, nullptr otherwise.
+         */
+        ui::Style* getStyleByName( const std::string& name_id );
+
+        /**
+         * Retrieves a style by its index.
+         *
+         * @param index The index of the style.
+         *
+         * @return A pointer to the style if index is valid, nullptr otherwise.
+         */
+        ui::Style* getStyleByID( int index );
 
         /**
          * Resize total number of layout elements.
@@ -167,6 +221,8 @@ namespace kege::ui{
          */
         void resize( uint32_t max_elements );
 
+        uint32_t count()const;
+        
         /**
          * Check if index, index to a valid element.
          *
@@ -174,14 +230,6 @@ namespace kege::ui{
          * @return True if index is valid, falss otherwise.
          */
         bool validate( uint32_t index )const;
-
-        /**
-         * Check if the element at the given index is a perent.
-         *
-         * @param index The index to check.
-         * @return True if the element at the given index is a parent, falss otherwise.
-         */
-        bool parent( uint32_t index )const;
 
         /**
          * Begins the UI layout construction. Must be called before creating any UI elements.
@@ -193,9 +241,11 @@ namespace kege::ui{
          */
         void end();
 
-        //uint32_t insertStyle( const std::string& sid, const Style& style );
-        //uint32_t getStyleID( const std::string& sid );
-        //Style* getStyle( uint32_t index );
+        /**
+         * Retrieves the input handler associated with the layout.
+         *
+         * @return A pointer to the input handler.
+         */
         ui::Input* input();
 
         Layout();
@@ -204,7 +254,7 @@ namespace kege::ui{
 
         void handleButtonDownEvents();
         void handleButtonUpEvents();
-        void handleMouseOverEvents( uint32_t root );
+        void handleMouseOverEvents();
         void findNewHotElement( uint32_t root );
         void handleEvents( uint32_t root = 1 );
 
@@ -215,8 +265,13 @@ namespace kege::ui{
 
     private:
 
+        std::map< std::string, int > _style_index_map;
+        std::vector< ui::Style > _styles;
+        uint32_t _style_indexer;
+
+        std::vector< kege::ui::Content > _contents;
         std::vector< kege::ui::Node > _nodes;
-        uint32_t _count;
+        uint32_t _node_counter;
 
         ui::Input* _input;
 
@@ -244,15 +299,7 @@ namespace kege::ui{
 
 
 
-        struct ID
-        {
-            int16_t duplicates = 0; // reference counter
-            int16_t index;
-            int16_t next;
-            int16_t prev;
-        };
         std::vector< Layout::ID > _id_pool;
-
 
         int32_t _recycled_node_head;
         int32_t _recycled_node_tail;
@@ -267,9 +314,9 @@ namespace kege::ui{
     {
     public:
 
-        UIElem* operator ->()
+        Content* operator ->()
         {
-            return &layout->operator[]( index );
+            return &layout->_contents[ index ];
         }
 
         // Move assignment operator

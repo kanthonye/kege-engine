@@ -1,0 +1,63 @@
+{
+
+    "spacer":
+    {
+        ."width" = "20",
+        ."height" = "extend",
+    },
+
+    "droplist":
+    {
+        "width": "extend",
+        "height": "flexible",
+        "background": 0xFFFFFF00,
+        "color": 0xFFFFFF83,
+        "align":
+        {
+            "origin": "TOP_LEFT",
+            "direction": "TOP_TO_BOTTOM",
+        },
+        "wrap_around": false
+    },
+
+    "droplist-field":
+    {
+        "font_size": 20,
+        "width": "extend",
+        "height": 20,
+        "background": 0xFFFFFF0B,
+        "color": 0xFFFFFF83,
+        "wrap_around": false,
+        "align":
+        {
+            "origin" = "LEFT_CENTER",
+            "direction" = "LEFT_TO_RIGHT",
+        },
+    },
+
+    "droplist-icon":
+    {
+        "border_radius": 5,
+        "width": 16,
+        "height": "extend",
+        "background": 0xFFFFFF00,
+        "color": 0xFFFFFF83,
+        "padding": [5,0,0,0],
+        "wrap_around": false,
+        "align":
+        {
+            "origin" = "CENTER_CENTER",
+            "direction" = "LEFT_TO_RIGHT",
+        },
+    },
+
+    "droplist-label":
+    {
+        "font_size": 20,
+        "width": "extend",
+        "height": 20,
+        "background": 0xFFFFFF00,
+        "color": 0xFFFFFF83,
+        "padding": [0,0,0,0],
+    },
+}

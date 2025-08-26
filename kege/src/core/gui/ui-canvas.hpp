@@ -26,8 +26,8 @@
 //        inline Layout* operator ->()const { return _layout; }
 //        inline Layout* operator ->() { return _layout; }
 //
-//        const UIElem* operator[]( const EID& id )const;
-//        UIElem* operator[]( const EID& id );
+//        const Elem* operator[]( const EID& id )const;
+//        Elem* operator[]( const EID& id );
 //
 //        void begin( ui::Layout* layout );
 //        void end();

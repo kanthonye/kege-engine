@@ -25,13 +25,32 @@ namespace kege::ui{
             kege::vec4 resolution;
         };
 
-        /**
-         */
-        void view( kege::CommandEncoder* encoder, ui::Layout& layout, Node& node, const Rect2D& clip_rect );
+        kege::vec2 drawText
+        (
+            const kege::vec2& start,
+            float width,
+            float font_size,
+            const ui::Color& color,
+            bool wrap_around,
+            const char* text,
+            const ui::Rect& clip_rect
+        );
+
+        void draw( const ui::Content& content, const ui::Rect& clip_rect );
 
         /**
          */
-        void view( kege::CommandEncoder* command, ui::Layout& layout );
+        void draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect );
+
+        void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Content* > >& nodes, int& count );
+        void insertionSort(std::vector< std::pair< int, ui::Content* > >& arr);
+
+        void drawsort( ui::Layout& layout, int pid );
+
+        /**
+         */
+        void begin( kege::CommandEncoder* command );
+        void end();
 
         /**
          * Sets the current font for rendering text.
@@ -64,7 +83,7 @@ namespace kege::ui{
          */
         void shutdow();
 
-        void flush( kege::CommandEncoder* encoder );
+        void flush();
         
         Viewer();
 
@@ -84,6 +103,7 @@ namespace kege::ui{
 
         kege::ImageHandle _default_ui_texture;
 
+        kege::CommandEncoder* _encoder;
         Graphics* _graphics;
 
         PushConstant _push_constant;
