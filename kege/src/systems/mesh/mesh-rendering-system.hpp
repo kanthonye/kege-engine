@@ -8,7 +8,7 @@
 #ifndef mesh_rendering_system_hpp
 #define mesh_rendering_system_hpp
 
-#include "../../core/system/entity-system.hpp"
+#include "../../core/esm/entity-system.hpp"
 #include "../../core/input/input-commands.hpp"
 #include "../../core/graphics/mesh/mesh.hpp"
 #include "../../core/graphics/core/graphics.hpp"

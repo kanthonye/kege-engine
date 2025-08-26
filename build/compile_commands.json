@@ -1,6 +1,90 @@
 [
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/asset-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/asset-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/asset-system.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/asset-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/bitvec.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/bitvec.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/bitvec.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/bitvec.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/communication.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/communication.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/communication.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/communication.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/json-lexer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-lexer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-lexer.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/json-lexer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/json-parser.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-parser.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-parser.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/json-parser.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/kege-string.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/kege-string.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/kege-string.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/kege-string.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/lexer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/lexer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/lexer.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/lexer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/log.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/log.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/log.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/log.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/resource-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/resource-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/resource-manager.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/resource-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/utils.dir/kege/src/core/utils/time.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/time.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/time.cpp",
+  "output": "CMakeFiles/utils.dir/kege/src/core/utils/time.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/io.dir/kege/src/core/io/file-io.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-io.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-io.cpp",
+  "output": "CMakeFiles/io.dir/kege/src/core/io/file-io.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/io.dir/kege/src/core/io/file-watcher.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-watcher.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-watcher.cpp",
+  "output": "CMakeFiles/io.dir/kege/src/core/io/file-watcher.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/io.dir/kege/src/core/io/file.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file.cpp",
+  "output": "CMakeFiles/io.dir/kege/src/core/io/file.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/io.dir/kege/src/core/io/virtual-directory.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/io/virtual-directory.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/virtual-directory.cpp",
+  "output": "CMakeFiles/io.dir/kege/src/core/io/virtual-directory.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/vector_math.dir/kege/src/core/math/algebra/quaternion.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp",
   "output": "CMakeFiles/vector_math.dir/kege/src/core/math/algebra/quaternion.cpp.o"
@@ -373,7 +457,853 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/kege-engine.dir/kege/src/main.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-actions.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-actions.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-commands.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-commands.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/input-context-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-loader.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-context-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context-manager.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-context.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/thread-safe-vector.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/thread-safe-vector.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/user-input-receiver.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/user-input-receiver.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/system.dir/kege/src/core/system/settings.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/system/settings.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/system/settings.cpp",
+  "output": "CMakeFiles/system.dir/kege/src/core/system/settings.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/system.dir/kege/src/core/system/system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/system/system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/system/system.cpp",
+  "output": "CMakeFiles/system.dir/kege/src/core/system/system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/esm.dir/kege/src/core/esm/entity-system-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system-manager.cpp",
+  "output": "CMakeFiles/esm.dir/kege/src/core/esm/entity-system-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/esm.dir/kege/src/core/esm/entity-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system.cpp",
+  "output": "CMakeFiles/esm.dir/kege/src/core/esm/entity-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene-loader.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-aligner.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-aligner.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-input.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-input.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-layout.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-layout.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/editor.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/editor.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/hierarchy-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/hierarchy-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/hierarchy-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/hierarchy-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/inspector-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/inspector-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/inspector-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/inspector-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/navbar-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/navbar-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/navbar-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/navbar-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/droplist.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/droplist.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/droplist.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/droplist.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/hierarchy-droplist.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/hierarchy-droplist.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/hierarchy-droplist.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/hierarchy-droplist.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-button.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-button.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-button.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-button.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-menu.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-menu.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-menu.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-menu.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric3.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric3.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric3.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric3.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric4.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric4.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-numeric4.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-numeric4.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-options.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-options.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-elements/ui-options.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/ui-elements/ui-options.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/editor.dir/kege/src/editor/viewport-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/viewport-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/viewport-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/viewport-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/camera-controller.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-controller.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-controller.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/camera-controller.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/camera-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera-system.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/camera-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/camera.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/camera.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/camera.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/follow-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/follow-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/follow-system.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/follow-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/frustum.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/frustum.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/frustum.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/frustum.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/lookat-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/lookat-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/lookat-system.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/lookat-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/camera.dir/kege/src/systems/camera/movement-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/movement-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/movement-system.cpp",
+  "output": "CMakeFiles/camera.dir/kege/src/systems/camera/movement-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-box.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/box-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-box.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-capsule.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/capsule-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/circle-vs-circle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cone-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-box.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/cylinder-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-box.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-capsule.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-mesh.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/mesh-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-box.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-capsule.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-circle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-mesh.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-plane.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/plane-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/sphere-vs-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/utils.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/utils.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/algorithms/utils.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/algorithms/utils.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/collider.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/collider.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/collider.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/collider.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/collider/rigid-shapes.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact/contact.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/contact/contact.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/contact/contact.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/contact/contact.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-aabb.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-capsule.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-mesh.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-obb.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-plane.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-pyramid.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-rect.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit-triangle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/collision/rayhit/rayhit.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/cloth.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/cloth.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/cloth.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/cloth.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/rigidbody.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/rigidbody.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/dynamics/rigidbody.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/dynamics/rigidbody.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation/physics-simulation.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulation/physics-simulation.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulation/physics-simulation.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulation/physics-simulation.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-detector.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-detector.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-detector.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-detector.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/collision-position-solver.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/contact-impulse-solver.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-applier.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-applier.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-applier.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-applier.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-integrator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-integrator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/force-integrator.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/force-integrator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/friction-solver.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/friction-solver.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/friction-solver.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/friction-solver.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/grounded-detector.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/grounded-detector.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/grounded-detector.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/grounded-detector.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/motion-dampener.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/motion-dampener.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/motion-dampener.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/motion-dampener.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/net-force-zeroer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/simulator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/simulator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/simulator.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/simulator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/sleep-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/sleep-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/simulators/sleep-system.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/simulators/sleep-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/physics-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/physics-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/physics-system.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/physics-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/3d/systems/rigidbody-to-transform.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/debug/debug-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/debug-renderer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/debug-renderer.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/debug/debug-renderer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/physics.dir/kege/src/systems/physics/debug/draw-commands.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/draw-commands.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/debug/draw-commands.cpp",
+  "output": "CMakeFiles/physics.dir/kege/src/systems/physics/debug/draw-commands.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/air-resistance.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/air-resistance.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/air-resistance.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/air-resistance.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/behavior.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/behavior.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/behavior.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/behavior.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/color-over-lifetime.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/color-over-lifetime.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/color-over-lifetime.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/color-over-lifetime.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/gravity-behavior.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/gravity-behavior.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/gravity-behavior.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/gravity-behavior.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/size-over-lifetime.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/size-over-lifetime.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/size-over-lifetime.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/size-over-lifetime.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/velocity-over-lifetime.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/wind-behavior.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/wind-behavior.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/behaviors/wind-behavior.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/behaviors/wind-behavior.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle-effect.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle-effect.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle-effect.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle-effect.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/effect/particle.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/effect/particle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-circle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-circle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-circle.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-circle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cone.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cone.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cone.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cone.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cube.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cube.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cube.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cube.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cylinder.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cylinder.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-cylinder.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-cylinder.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-line.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-line.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-line.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-line.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-plane.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-plane.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-plane.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-pyrimid.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-pyrimid.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-pyrimid.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-pyrimid.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-sphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-sphere.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-sphere.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-sphere.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-triangle.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-triangle.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter-triangle.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter-triangle.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/emitter/emitter.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/emitter/emitter.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/systems/billboard-particle-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/billboard-particle-renderer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/billboard-particle-renderer.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/systems/billboard-particle-renderer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-effect-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-effect-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-effect-system.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-effect-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-emission-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-emission-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/systems/particle-emission-system.cpp",
+  "output": "CMakeFiles/particle.dir/kege/src/systems/particle/systems/particle-emission-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/picking_systems.dir/kege/src/systems/picking/compute-scene-ray.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/compute-scene-ray.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/compute-scene-ray.cpp",
+  "output": "CMakeFiles/picking_systems.dir/kege/src/systems/picking/compute-scene-ray.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/picking_systems.dir/kege/src/systems/picking/dragging-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/dragging-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/dragging-system.cpp",
+  "output": "CMakeFiles/picking_systems.dir/kege/src/systems/picking/dragging-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/picking_systems.dir/kege/src/systems/picking/selection-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/selection-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/selection-system.cpp",
+  "output": "CMakeFiles/picking_systems.dir/kege/src/systems/picking/selection-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/system -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/engine -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle -I/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/kege-engine.dir/kege/src/main.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/main.cpp",
   "output": "CMakeFiles/kege-engine.dir/kege/src/main.cpp.o"
 }

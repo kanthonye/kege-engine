@@ -14,7 +14,7 @@
 #include "../../core/math/algebra/vmath.hpp"
 #include "../../core/math/geometry/primitive-3D-shapes.hpp"
 #include "../../core/input/input-commands.hpp"
-#include "../../core/system/entity-system.hpp"
+#include "../../core/esm/entity-system.hpp"
 
 #include "../camera/camera.hpp"
 #include "../camera/frustum.hpp"

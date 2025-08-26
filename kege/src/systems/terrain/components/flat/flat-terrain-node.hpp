@@ -8,8 +8,7 @@
 #ifndef flat_terrain_node_hpp
 #define flat_terrain_node_hpp
 
-#include "ref.hpp"
-#include "vectors.hpp"
+#include "../../../-/system-dependencies.hpp"
 #include "landscape-settings.h"
 #include "flat-terrain-renderer.hpp"
 

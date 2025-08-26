@@ -5,8 +5,8 @@
 //  Created by Kenneth Esdaile on 3/16/25.
 //
 
-#include "../../core/scene/scene.hpp"
-#include "../../core/system/entity-system.hpp"
+#include "../scene/scene.hpp"
+#include "entity-system.hpp"
 
 namespace kege{
 

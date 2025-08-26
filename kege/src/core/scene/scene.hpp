@@ -12,7 +12,7 @@
 #include "../math/algebra/vectors.hpp"
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
-#include "../container/asset-system.hpp"
+#include "../utils/asset-system.hpp"
 #include "entity-tag.hpp"
 
 namespace kege{

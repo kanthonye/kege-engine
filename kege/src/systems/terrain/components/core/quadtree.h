@@ -8,7 +8,7 @@
 #ifndef kege_quadtree_h
 #define kege_quadtree_h
 
-#include "vectors.hpp"
+#include "../../../-/system-dependencies.hpp"
 
 namespace kege{
 

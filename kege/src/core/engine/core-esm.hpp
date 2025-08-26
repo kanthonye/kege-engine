@@ -9,7 +9,7 @@
 #define core_esm_hpp
 
 #include "module.hpp"
-#include "../system/entity-system-manager.hpp"
+#include "../esm/entity-system-manager.hpp"
 
 namespace kege{
 

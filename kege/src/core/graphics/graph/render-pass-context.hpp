@@ -9,7 +9,7 @@
 #define render_pass_context_hpp
 
 #include <unordered_set>
-#include "../../container/array.hpp"
+#include "../../utils/array.hpp"
 #include "../../graphics/core/graphics-device.hpp"
 #include "../../graphics/core/graphics.hpp"
 

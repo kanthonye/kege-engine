@@ -14,8 +14,8 @@
 #include <unordered_map>
 #include "../memory/ref.hpp"
 #include "../io/file.hpp"
-#include "../container/hashmap.hpp"
-#include "../container/kege-string.hpp"
+#include "../utils/hashmap.hpp"
+#include "../utils/kege-string.hpp"
 
 namespace kege{
 

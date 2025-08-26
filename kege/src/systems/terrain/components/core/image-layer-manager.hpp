@@ -9,10 +9,8 @@
 #define image_layer_manager_hpp
 
 #include <stdio.h>
-
 #include <list>
-#include "vmath.hpp"
-#include "graphics.h"
+#include "../../../-/system-dependencies.hpp"
 
 namespace kege{
 

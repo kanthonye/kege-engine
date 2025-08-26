@@ -8,10 +8,9 @@
 #ifndef heightmap_layer_hpp
 #define heightmap_layer_hpp
 
-#include "ref.hpp"
 #include <string>
 #include <vector>
-#include "vectors.hpp"
+#include "../../-/system-dependencies.hpp"
 
 namespace kege{
 

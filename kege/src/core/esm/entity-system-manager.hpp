@@ -8,7 +8,7 @@
 #ifndef kege_entity_system_manager_hpp
 #define kege_entity_system_manager_hpp
 
-#include "../../core/system/system.hpp"
+#include "../system/system.hpp"
 
 namespace kege{
 

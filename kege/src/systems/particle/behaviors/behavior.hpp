@@ -9,7 +9,7 @@
 #define behavior_hpp
 
 #include <vector>
-#include "../../../core/container/array.hpp"
+#include "../../../core/utils/array.hpp"
 #include "../effect/particle.hpp"
 
 namespace kege{

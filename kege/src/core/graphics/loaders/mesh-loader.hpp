@@ -9,7 +9,7 @@
 #define mesh_loader_hpp
 
 #include "../../graphics/mesh/mesh.hpp"
-#include "../../container/asset-system.hpp"
+#include "../../utils/asset-system.hpp"
 
 namespace kege{
 

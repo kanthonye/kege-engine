@@ -5,7 +5,6 @@
 //  Created by Kenneth Esdaile on 12/15/24.
 //
 
-#include "vectors.hpp"
 #include "height-map-generator.hpp"
 
 namespace kege{

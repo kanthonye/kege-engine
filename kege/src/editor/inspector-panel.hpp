@@ -8,8 +8,8 @@
 #ifndef inspector_panel_hpp
 #define inspector_panel_hpp
 
-#include "droplist.hpp"
-#include "ui-numeric3.hpp"
+#include "ui-elements/droplist.hpp"
+#include "ui-elements/ui-numeric3.hpp"
 
 namespace kege{
 

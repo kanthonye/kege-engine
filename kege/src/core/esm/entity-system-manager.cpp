@@ -5,8 +5,8 @@
 //  Created by Kenneth Esdaile on 8/13/25.
 //
 
+#include "entity-system.hpp"
 #include "entity-system-manager.hpp"
-#include "../../core/system/entity-system.hpp"
 
 namespace kege{
 

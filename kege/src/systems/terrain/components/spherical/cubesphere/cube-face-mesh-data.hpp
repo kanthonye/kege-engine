@@ -8,8 +8,7 @@
 #ifndef patch_indice_array_hpp
 #define patch_indice_array_hpp
 
-#include "vmath.hpp"
-#include "graphics.h"
+#include "../../../../-/system-dependencies.hpp"
 
 namespace kege{
 

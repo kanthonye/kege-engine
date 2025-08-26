@@ -12,7 +12,7 @@
 #include <vector>
 #include <unordered_map>
 #include "../memory/ref.hpp"
-#include "../container/kege-string.hpp"
+#include "kege-string.hpp"
 
 namespace kege{
 
