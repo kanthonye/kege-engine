@@ -9,7 +9,6 @@
 #define ui_font_creator_hpp
 
 #include "font.hpp"
-#include "../graphics/loaders/image-loader.hpp"
 
 namespace kege::ui{
 

@@ -94,7 +94,7 @@ namespace kege::ui{
             ({
                 .style = layout.getStyleByName( "droplist-content" ),
                 .mouseover = false,
-                .visible = false
+                //.visible = false
             });
         }
         layout.push( content );

@@ -607,12 +607,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp",
-  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
   "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o"
@@ -643,9 +637,21 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-style-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-manager.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-style-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp",
   "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-widget-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-widget-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-widget-manager.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-widget-manager.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",

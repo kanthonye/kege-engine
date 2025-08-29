@@ -30,7 +30,6 @@ namespace kege{
             }
             list.endContent( layout );
         }
-
         if( layout.click( list.field ) )
         {
             if ( int( _highlight ) != int( list.field ) )

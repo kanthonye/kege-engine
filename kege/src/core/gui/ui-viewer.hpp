@@ -10,8 +10,6 @@
 
 #include "font.hpp"
 #include "ui-layout.hpp"
-#include "ui-font-loader.hpp"
-#include "ui-font-creator.hpp"
 
 namespace kege::ui{
 
@@ -36,14 +34,14 @@ namespace kege::ui{
             const ui::Rect& clip_rect
         );
 
-        void draw( const ui::Content& content, const ui::Rect& clip_rect );
+        void draw( const ui::Widget& content, const ui::Rect& clip_rect );
 
         /**
          */
         void draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect );
 
-        void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Content* > >& nodes, int& count );
-        void insertionSort(std::vector< std::pair< int, ui::Content* > >& arr);
+        void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& nodes, int& count );
+        void insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr);
 
         void drawsort( ui::Layout& layout, int pid );
 

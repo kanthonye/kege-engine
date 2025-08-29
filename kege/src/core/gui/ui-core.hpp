@@ -12,7 +12,9 @@
 #include "../input/inputs.hpp"
 #include "../utils/log.hpp"
 #include "../math/algebra/vmath.hpp"
-#include "../graphics/core/graphics.hpp"
+#include "../graphics/font/font.hpp"
+#include "../graphics/font/font-loader.hpp"
+#include "../graphics/font/font-creator.hpp"
 #include "../graphics/loaders/image-loader.hpp"
 
 namespace kege::ui{
@@ -200,8 +202,8 @@ namespace kege::ui{
         bool        wrap_around = false;
     };
 
-    // Content contains the widget specific data that specific to a widget
-    struct Content
+    // Widget contains the widget specific data that specific to a widget
+    struct Widget
     {
         Style* style = nullptr;
         uint32_t id = 0;
@@ -234,7 +236,7 @@ namespace kege::ui{
     // Node contains the widget specific data that specific to a widget
     struct Node
     {
-        Content* content    = nullptr;
+        Widget* content    = nullptr;
         uint32_t depth      = 0;
         uint32_t index      = 0;
         uint32_t id         = 0;

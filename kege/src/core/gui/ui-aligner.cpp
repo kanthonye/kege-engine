@@ -184,7 +184,7 @@ namespace kege::ui{
     float getPercentWidth( Layout& layout, NodeIndex eid )
     {
         const Style* style =layout[ eid ]->style;
-        Content* elem = layout[ eid ];
+        Widget* elem = layout[ eid ];
         elem->rect.width = 0;
         if ( 1 <= layout.parent( eid ) )
         {
@@ -201,7 +201,7 @@ namespace kege::ui{
     float getPercentHeight( Layout& layout, NodeIndex eid )
     {
         const Style* style = layout[ eid ]->style;
-        Content* elem = layout[ eid ];
+        Widget* elem = layout[ eid ];
         elem->rect.height = 0;
 
         if ( 1 <= layout.parent( eid ) )
@@ -219,7 +219,7 @@ namespace kege::ui{
     float getFlexibleWidth( Layout& layout, NodeIndex pid )
     {
         const Style* style = layout[ pid ]->style;
-        Content* elem = layout[ pid ];
+        Widget* elem = layout[ pid ];
 
         elem->rect.width = (style->width.type == ui::SizingType::SIZE_FIXED)
         ? style->width.size
@@ -518,7 +518,8 @@ namespace kege::ui{
                 const Style* s = layout[ eid ]->style;
                 if ( s->height.type == ui::SizingType::SIZE_PERCENT )
                 {
-                    height += height * s->height.size;
+                    layout[ eid ]->rect.height = layout[ pid ]->rect.height * s->height.size;
+                    height += layout[ eid ]->rect.height;
                 }
             }
         }

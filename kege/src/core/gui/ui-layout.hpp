@@ -9,20 +9,17 @@
 #define ui_layout_hpp
 
 #include "font.hpp"
+#include "ui-input.hpp"
 #include "ui-aligner.hpp"
-#include "ui-primatives.hpp"
+#include "ui-core.hpp"
+#include "ui-style-manager.hpp"
+#include "ui-widget-manager.hpp"
 
 namespace kege::ui{
 
     class EID;
     class Input;
-    class Canvas;
 
-    struct AddStyle
-    {
-        std::string name_id;
-        ui::Style style;
-    };
 
     class Layout
     {
@@ -30,27 +27,13 @@ namespace kege::ui{
 
         enum { PREV, CURR, POST };
 
-        struct IndexID
+        struct State
         {
             uint32_t id = 0;
             uint32_t index = 0;
             uint32_t depth = 0;
-            uint32_t clicks = 0;
-        };
-
-        struct ID
-        {
-            // the number of duplicates, reference counter
-            int16_t duplicates = 0;
-
-            // the node index
-            int16_t node;
-
-            // next free id
-            int16_t next;
-
-            // previous free id
-            int16_t prev;
+            uint16_t clicks = 0;
+            bool active;
         };
 
     public:
@@ -117,7 +100,7 @@ namespace kege::ui{
          *
          * @return The element id.
          */
-        EID make( const Content& info );
+        EID make( const Widget& info );
 
         /**
          * Creates a parent UI element with the give info.
@@ -151,7 +134,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Content* operator[](NodeIndex eid) const;
+        const kege::ui::Widget* operator[]( const EID& eid ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
@@ -160,7 +143,25 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Content* operator[](NodeIndex eid);
+        kege::ui::Widget* operator[]( const EID& eid );
+
+        /**
+         * Retrieves a UI element by its index (const version).
+         *
+         * @param eid The ui element index.
+         *
+         * @return The UI element at the specified index.
+         */
+        const kege::ui::Widget* operator[](NodeIndex eid) const;
+
+        /**
+         * Retrieves a UI element by its index (non-const version).
+         *
+         * @param eid The ui element index.
+         *
+         * @return The UI element at the specified index.
+         */
+        kege::ui::Widget* operator[](NodeIndex eid);
 
         /**
          * Retrieves the parent index of a UI element.
@@ -213,6 +214,8 @@ namespace kege::ui{
          * @return A pointer to the style if index is valid, nullptr otherwise.
          */
         ui::Style* getStyleByID( int index );
+        
+        bool loadStyles( const std::string& filename );
 
         /**
          * Resize total number of layout elements.
@@ -220,6 +223,15 @@ namespace kege::ui{
          * @param max_elements The maximum number of UI elements the system can manage.
          */
         void resize( uint32_t max_elements );
+
+        bool buttonDown()const;
+
+        /**
+         * Retrieves the input handler associated with the layout.
+         *
+         * @return A pointer to the input handler.
+         */
+        ui::Input* input();
 
         uint32_t count()const;
         
@@ -241,13 +253,6 @@ namespace kege::ui{
          */
         void end();
 
-        /**
-         * Retrieves the input handler associated with the layout.
-         *
-         * @return A pointer to the input handler.
-         */
-        ui::Input* input();
-
         Layout();
 
     private:
@@ -258,54 +263,36 @@ namespace kege::ui{
         void findNewHotElement( uint32_t root );
         void handleEvents( uint32_t root = 1 );
 
-        void dupId( uint32_t src_index, uint32_t* dst_index );
-        void recycleId( uint32_t index );
-        uint32_t genId();
-
-
     private:
 
-        std::map< std::string, int > _style_index_map;
-        std::vector< ui::Style > _styles;
-        uint32_t _style_indexer;
+        WidgetManager _widget_manager;
+        StyleManager _style_manager;
 
-        std::vector< kege::ui::Content > _contents;
         std::vector< kege::ui::Node > _nodes;
         uint32_t _node_counter;
 
         ui::Input* _input;
 
+        ui::Aligner _aligner; // Handles alignment of UI elements.
+
+        mutable State _curr_active;
+        mutable State _prev_active;
+        mutable State _curr_hot;
+        mutable State _prev_hot;
+        mutable State _focus;
+        
+        mutable uint32_t _focus_id;
+
         uint32_t _parent; // Tracks the current parent element in the UI hierarchy.
 
         uint32_t _level; // Tracks the current level in the UI hierarchy.
 
-        kege::ui::Aligner _aligner; // Handles alignment of UI elements.
-
-        mutable IndexID _curr_active_elem;
-        mutable IndexID _prev_active_elem;
-
-        mutable IndexID _curr_hot_elem;
-        mutable IndexID _prev_hot_elem;
-
-        mutable IndexID _focus;
-        mutable uint32_t _focus_id;
-
-        mutable IndexID _clicked;
-
         int32_t _root;
+
+        bool _button_down;
+
         friend Aligner;
-        friend Canvas;
         friend EID;
-
-
-
-        std::vector< Layout::ID > _id_pool;
-
-        int32_t _recycled_node_head;
-        int32_t _recycled_node_tail;
-        int32_t _recycled_node_count;
-        int32_t _recycled_id;
-        int32_t _available_id;
     };
 
 
@@ -314,25 +301,117 @@ namespace kege::ui{
     {
     public:
 
-        Content* operator ->()
+        /**
+         * Retrieves a UI element by its index (const version).
+         *
+         * @return The UI element at the specified index.
+         */
+        const kege::ui::Widget* operator->() const
         {
-            return &layout->_contents[ index ];
+            return &layout->_widget_manager[ index ];
         }
+
+        /**
+         * Retrieves a UI element by its index (non-const version).
+         *
+         * @return The UI element at the specified index.
+         */
+        kege::ui::Widget* operator->()
+        {
+            return &layout->_widget_manager[ index ];
+        }
+
+        /**
+         * Checks if mouse pointer is over ui element.
+         *
+         * @return true if mouse is over ui element, false otherwise.
+         */
+        //bool mouseover() const;
+
+        /**
+         * Checks if a ui-element that is associated with geven id was double clicked on.
+         *
+         * @return true if the element was double clicked on, false otherwise.
+         */
+        //bool doubleClick() const;
+
+        /**
+         * Checks if a ui-element that is associated with geven id was single clicked on.
+         *
+         * @return true if the ui-element was single clicked on, false otherwise.
+         */
+        //bool click() const;
+
+        /**
+         * Checks if a ui-element that is associated with geven id has focus.
+         *
+         * @return true if the ui-element has focus, false otherwise.
+         */
+        //bool hasFocus()const;
+
+        /**
+         * Set the id of the ui-element to focus on.
+         */
+        //void setFocus();
+
+        /**
+         * Retrieves the parent index of a UI element.
+         */
+        //NodeIndex parent()const;
+
+        /**
+         * Retrieves the head index of a UI element.
+         */
+        //NodeIndex head()const;
+
+        /**
+         * Retrieves the tail index of a UI element.
+         */
+        //NodeIndex tail()const;
+
+        /**
+         * Retrieves the next sibling index of a UI element.
+         */
+        ///NodeIndex next()const;
+
+        /**
+         * Retrieves the number of children of a UI element.
+         */
+        //uint32_t count()const;
+
+        //void push();
+
+        /**
+         * Creates a UI element with the give info.
+         */
+        //void put();
+
+        /**
+         * Pops the current parent UI element from the parent stack.
+         */
+        //void pop();
+
 
         // Move assignment operator
         EID& operator =(EID&& other) noexcept
         {
             index = other.index;
             layout = other.layout;
+            node_index = other.node_index;
+
             other.index = 0;
+            other.node_index = 0;
             other.layout = nullptr;
+
             return *this;
         }
 
         EID& operator =( const EID& other )
         {
+            index = other.index;
             layout = other.layout;
-            layout->dupId( other.index, &index );
+            node_index = other.node_index;
+            layout->_widget_manager.duplicate( other.index, &index );
             return *this;
         }
 
@@ -355,43 +434,50 @@ namespace kege::ui{
         EID( EID&& other ) noexcept
         :   index( other.index )
         ,   layout( other.layout )
+        ,   node_index( other.node_index )
         {
             other.index = 0;
+            other.node_index = 0;
             other.layout = nullptr;
         }
 
         EID( uint32_t index, Layout* layout )
         :   index( index )
         ,   layout( layout )
+        ,   node_index( 0 )
         {}
 
         EID( const EID& other )
         :   index( other.index )
         ,   layout( other.layout )
+        ,   node_index( other.node_index )
         {
-            layout->dupId( other.index, &index );
+            layout->_widget_manager.duplicate( other.index, &index );
         }
 
         EID()
-        :   index( 0 )
-        ,   layout( nullptr )
+        :   layout( nullptr )
+        ,   index( 0 )
+        ,   node_index( 0 )
         {}
 
         ~EID()
         {
             if( layout )
             {
-                layout->recycleId( index );
+                layout->_widget_manager.recycle( index );
                 layout = nullptr;
             }
         }
 
     private:
 
-        uint32_t index;
         Layout* layout;
+
+        uint32_t index;
+        mutable NodeIndex node_index;
+
         friend Layout;
-        friend Canvas;
     };
 
 }

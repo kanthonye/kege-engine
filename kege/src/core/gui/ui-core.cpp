@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 3/2/25.
 //
 
-#include "ui-primatives.hpp"
+#include "ui-core.hpp"
 
 namespace kege::ui{
 
