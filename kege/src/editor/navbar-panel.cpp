@@ -13,8 +13,9 @@ namespace kege{
     {
         layout.push( _main );
 
-        if ( file( layout, "File", { "Save", "Open", "Import", "Export" } ) )
+        if ( 0 <= file.select( layout, "File", { "Save", "Open", "Import", "Export" } ) )
         {
+            std::cout <<"selection: " << file.index[0] <<"\n";
         }
 
         layout.pop();

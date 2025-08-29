@@ -9,7 +9,7 @@
 #define ui_input_hpp
 
 #include "ui-layout.hpp"
-#include "ui-primatives.hpp"
+#include "ui-core.hpp"
 
 namespace kege::ui{
 
@@ -188,7 +188,6 @@ namespace kege::ui{
 
         int _button_down;
 //        int _button_up;
-        friend Canvas;
     };
 
 }

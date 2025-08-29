@@ -15,8 +15,7 @@ namespace kege::ui{
 
     struct Options
     {
-        bool operator()( ui::Layout& layout, const char* text, const std::vector<const char*>& list );
-        void display( ui::Layout& layout );
+        int select( ui::Layout& layout, const char* text, const std::vector<const char*>& list );
 
         std::vector< ui::EID > options;
         ui::EID container;
@@ -25,6 +24,7 @@ namespace kege::ui{
 
         uint32_t index[2];
         bool state;
+        bool show;
     };
 
 }

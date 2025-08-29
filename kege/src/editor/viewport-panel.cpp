@@ -13,7 +13,11 @@ namespace kege{
     {
         _engine = engine;
 
-        _main = layout.make({ .style = layout.getStyleByName( "viewport" ) });
+        _main = layout.make({
+            .visible = true,
+            .mouseover = false,
+            .style = layout.getStyleByName( "viewport" )
+        });
 
         Communication::add< kege::RenderPassContext*, ViewportPanel >( this );
         return *this;

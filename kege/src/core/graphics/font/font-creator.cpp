@@ -5,7 +5,8 @@
 //  Created by Kenneth Esdaile on 7/29/25.
 //
 
-#include "ui-font-creator.hpp"
+#include "font-creator.hpp"
+#include "../loaders/image-loader.hpp"
 
 namespace kege::ui{
 

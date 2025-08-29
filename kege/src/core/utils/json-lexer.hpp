@@ -23,6 +23,7 @@ namespace kege{
             END,
             START,
             INTEGER,
+            HEXADECIMAL,
             FLOAT,
             FLOAT_E,
             FLOAT_EX,

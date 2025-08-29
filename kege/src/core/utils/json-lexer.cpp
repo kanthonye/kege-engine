@@ -177,6 +177,38 @@ namespace kege{
                         token = FLOAT;
                         state = FLOAT_E;
                     }
+                    else if ( curr_char == 'x' )
+                    {
+                        if ( index == 1 )
+                        {
+                            token = HEXADECIMAL;
+                            state = HEXADECIMAL;
+                        }
+                        else
+                        {
+                            state = ERROR;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        state = END;
+                        continue;
+                    }
+                    break;
+                }
+                case HEXADECIMAL:
+                {
+                    if
+                    (
+                        (curr_char >= 'a' && 'f' >= curr_char) ||
+                        (curr_char >= 'A' && 'F' >= curr_char) ||
+                        (curr_char >= '0' && '9' >= curr_char)
+                    )
+                    {
+                        token = HEXADECIMAL;
+                        state = HEXADECIMAL;
+                    }
                     else
                     {
                         state = END;

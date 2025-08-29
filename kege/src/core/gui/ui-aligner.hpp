@@ -9,7 +9,7 @@
 #define ui_aligner_hpp
 
 #include <stdlib.h>
-#include "ui-primatives.hpp"
+#include "ui-core.hpp"
 
 namespace kege::ui{
 

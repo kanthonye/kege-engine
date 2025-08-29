@@ -5,7 +5,6 @@
 //  Created by Kenneth Esdaile on 8/5/25.
 //
 
-#include "ui-canvas.hpp"
 #include "ui-layout.hpp"
 
 namespace kege::ui{
@@ -44,41 +43,36 @@ namespace kege::ui{
 
     bool Layout::mouseover( const ui::EID& id )const
     {
-        return _prev_hot_elem.id == _nodes[ _id_pool[ id.index ].node ].id;
+        return _prev_hot.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     bool Layout::doubleClick( const ui::EID& id )const
     {
-        return _clicked.id == _nodes[ _id_pool[ id.index ].node ].id && _clicked.clicks == 2;
+        return _curr_active.clicks == 2 && _curr_active.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     bool Layout::click( const ui::EID& id )const
     {
-        return _clicked.id == _nodes[ _id_pool[ id.index ].node ].id && _clicked.clicks == 1;
+        return _curr_active.clicks == 1 && _curr_active.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     bool Layout::hasFocus( const ui::EID& id )const
     {
-        return _focus_id == _nodes[ _id_pool[ id.index ].node ].id;
+        return _focus_id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     void Layout::setFocus( const ui::EID& id )
     {
-        _focus_id = _nodes[ _id_pool[ id.index ].node ].id;
+        _focus_id = _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
-    EID Layout::make( const Content& content )
+    EID Layout::make( const Widget& widget )
     {
-        uint32_t id = genId();
-        if( id <= 0 || id >= _nodes.size() )
-        //if ( _node_counter + 1 >= _nodes.size() )
+        return EID
         {
-            KEGE_LOG_ERROR << "Reached Maximum amount of UI Elems -> " << _node_counter + 1 << Log::nl;
-            return {};
-        }
-
-        _contents[ id ] = content;
-        return {id, this};
+            _widget_manager.make( widget ),
+            this
+        };
     }
 
     uint32_t Layout::put( const EID& id )
@@ -96,15 +90,15 @@ namespace kege::ui{
             return 0;
         }
 
-        if ( 0 != _parent && _id_pool[ id.index ].node == _parent )
+        if ( 0 != _parent && _widget_manager.getNodeIndex( id.index ) == _parent )
         {
             KEGE_LOG_ERROR << "Death cycle detected. Attaching child node to its self will cause the program to looping infinetly and become stuck"<<Log::nl;
             return 0;
         }
 
-        _id_pool[ id.index ].node = _node_counter;
+        _widget_manager.setNodeIndex( id.index, _node_counter );
         
-        _nodes[ _node_counter ].content = &_contents[ id.index ];
+        _nodes[ _node_counter ].content = &_widget_manager[ id.index ];
         _nodes[ _node_counter ].parent = _parent;
         _nodes[ _node_counter ].count = 0;
         _nodes[ _node_counter ].head = 0;
@@ -116,13 +110,13 @@ namespace kege::ui{
         _nodes[ _node_counter ].id = _node_counter;
 
         // if style width and height is fixed, set the rect width and height of the ui element
-        if ( _contents[ id.index ].style->height.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ _node_counter ].content->style->height.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ _node_counter ].content->rect.height = _contents[ id.index ].style->height.size;
+            _nodes[ _node_counter ].content->rect.height = _widget_manager[ id.index ].style->height.size;
         }
-        if ( _contents[ id.index ].style->width.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ _node_counter ].content->style->width.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ _node_counter ].content->rect.width = _contents[ id.index ].style->width.size;
+            _nodes[ _node_counter ].content->rect.width = _widget_manager[ id.index ].style->width.size;
         }
 
         // setup the layout tree hierarchy
@@ -175,52 +169,44 @@ namespace kege::ui{
         return pid;
     }
 
-    const Content* Layout::operator[]( NodeIndex node_id )const
+    const kege::ui::Widget* Layout::operator[]( const EID& eid ) const
+    {
+        return &_widget_manager[ eid.index ];
+    }
+
+    kege::ui::Widget* Layout::operator[]( const EID& eid )
+    {
+        return &_widget_manager[ eid.index ];
+    }
+
+    const Widget* Layout::operator[]( NodeIndex node_id )const
     {
         return _nodes[ node_id ].content;
     }
 
-    Content* Layout::operator[]( NodeIndex index )
+    Widget* Layout::operator[]( NodeIndex index )
     {
         return _nodes[ index ].content;
     }
 
-//    const kege::ui::Node& Layout::nodes( uint32_t index ) const
-//    {
-//        return _nodes[ index ];
-//    }
-//
-//    kege::ui::Node& Layout::nodes( uint32_t index )
-//    {
-//        return _nodes[ index ];
-//    }
-
     uint32_t Layout::addStyle( const AddStyle& as )
     {
-        auto itr = _style_index_map.find( as.name_id );
-        if ( itr == _style_index_map.end() )
-        {
-            _style_index_map[ as.name_id ] = _style_indexer;
-            _styles[ _style_indexer ] = as.style;
-            uint32_t index = _style_indexer++;
-            return  index;
-        }
-        return itr->second;
+        return _style_manager.addStyle( as );
     }
 
     ui::Style* Layout::getStyleByName( const std::string& name_id )
     {
-        auto itr = _style_index_map.find( name_id );
-        if ( itr == _style_index_map.end() )
-        {
-            return nullptr;
-        }
-        return &_styles[ itr->second ];
+        return _style_manager.getStyleByName( name_id );
     }
 
     ui::Style* Layout::getStyleByID( int index )
     {
-        return &_styles[ index ];
+        return _style_manager.getStyleByID( index );
+    }
+
+    bool Layout::loadStyles( const std::string& filename )
+    {
+        return _style_manager.load( filename );
     }
 
     NodeIndex Layout::parent( NodeIndex index )const
@@ -250,22 +236,8 @@ namespace kege::ui{
 
     void Layout::resize( uint32_t max_nodes )
     {
-        _contents.resize( max_nodes );
-        _styles.resize( max_nodes );
+        _widget_manager.resize( max_nodes );
         _nodes.resize( max_nodes );
-
-        _id_pool.resize( max_nodes );
-
-        // Initialize the free list: each node points to the next.
-        for (int32_t i = 0; i < max_nodes - 1; ++i)
-        {
-            _id_pool[i].node = 0;
-            _id_pool[i].prev  = i - 1;
-            _id_pool[i].next  = i + 1;
-            _id_pool[i].duplicates  = 0;
-        }
-        _id_pool[ max_nodes - 1 ].next = -1;
-        _available_id = 1;
     }
 
     uint32_t Layout::count()const
@@ -286,46 +258,46 @@ namespace kege::ui{
     void Layout::handleMouseOverEvents()
     {
         // Reset current hot element at start of frame
-        _curr_hot_elem = {0, 0, 0};
+        _curr_hot = {0, 0, 0};
 
         // First, check if previous hot element is still valid and under mouse
-        if (_prev_hot_elem.index != 0)
+        if (_prev_hot.index != 0)
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot_elem.index ].content->rect ) )
+            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot.index ].content->rect ) )
             {
                 // If previous hot element has children, there is a possibility that the mouse
                 // is over its child element. So, we need to account for those child elements.
-                if ( _nodes[ _prev_hot_elem.index ].count )
+                if ( _nodes[ _prev_hot.index ].count )
                 {
-                    findNewHotElement( _prev_hot_elem.index );
+                    findNewHotElement( _prev_hot.index );
                 }
 
                 // If the previous hot element has no children then it is still under mouse - keep it hot
-                if (_curr_hot_elem.id == 0)
+                if (_curr_hot.id == 0)
                 {
-                    _curr_hot_elem = _prev_hot_elem;
+                    _curr_hot = _prev_hot;
                 }
 
             }
         }
 
         // If we didn't find a persistent hot element, search for a new one
-        if (_curr_hot_elem.id == 0)
+        if (_curr_hot.id == 0)
         {
             findNewHotElement(1);
         }
 
         // Handle mouse enter/leave events
-        if (_curr_hot_elem.id != _prev_hot_elem.id)
+        if (_curr_hot.id != _prev_hot.id)
         {
-            if (_prev_hot_elem.id != 0)
+            if (_prev_hot.id != 0)
             {
-                std::cout  <<"mouse exit: " << _prev_hot_elem.index <<"\n";
+                std::cout  <<"mouse exit: " << _prev_hot.index <<"\n";
             }
 
-            if (_curr_hot_elem.id != 0)
+            if (_curr_hot.id != 0)
             {
-                std::cout  <<"mouse enter: " << _curr_hot_elem.index <<"\n";
+                std::cout  <<"mouse enter: " << _curr_hot.index <<"\n";
             }
         }
 
@@ -333,15 +305,15 @@ namespace kege::ui{
         //handleFocusLogic(root);
 
         // Store current hot for next frame
-        _prev_hot_elem = _curr_hot_elem;
+        _prev_hot = _curr_hot;
     }
 
 
     void Layout::findNewHotElement( uint32_t root )
     {
-        if ( _curr_hot_elem.id != 0) {
-            return;
-        }
+//        if ( _curr_hot.id != 0) {
+//            return;
+//        }
 
         for (uint32_t ui_index = _nodes[ root ].head; ui_index != 0 ; ui_index = _nodes[ ui_index ].next )
         {
@@ -352,23 +324,20 @@ namespace kege::ui{
         {
             if ( testPointVsRect( _input->currentPosition(), _nodes[ root ].content->rect ) )
             {
-                if ( _curr_hot_elem.depth < _nodes[ root ].depth  )
+                if ( _curr_hot.depth < _nodes[ root ].depth  )
                 {
-                    if ( _curr_hot_elem.index == 0 )
+                    if ( _curr_hot.index == 0 )
                     {
-                        _curr_hot_elem.id    = _nodes[ root ].id;
-                        _curr_hot_elem.index = _nodes[ root ].index;
-                        _curr_hot_elem.depth = _nodes[ root ].depth;
+                        _curr_hot.id    = _nodes[ root ].id;
+                        _curr_hot.index = _nodes[ root ].index;
+                        _curr_hot.depth = _nodes[ root ].depth;
                     }
-                    else if ( _nodes[ _curr_hot_elem.index ].content->style->zindex <= _nodes[ root ].content->style->zindex  )
+                    else if ( _nodes[ _curr_hot.index ].content->style->zindex <= _nodes[ root ].content->style->zindex )
                     {
-                        _curr_hot_elem.id    = _nodes[ root ].id;
-                        _curr_hot_elem.index = _nodes[ root ].index;
-                        _curr_hot_elem.depth = _nodes[ root ].depth;
+                        _curr_hot.id    = _nodes[ root ].id;
+                        _curr_hot.index = _nodes[ root ].index;
+                        _curr_hot.depth = _nodes[ root ].depth;
                     }
-//                    _curr_hot_elem.id    = _nodes[ root ].id;
-//                    _curr_hot_elem.index = _nodes[ root ].index;
-//                    _curr_hot_elem.depth = _nodes[ root ].depth;
                 }
             }
         }
@@ -378,103 +347,73 @@ namespace kege::ui{
     {
         if ( _input->buttonDown() ) return;
 
-        if ( _prev_active_elem.id != 0 && _prev_active_elem.index < _nodes.size() )
+        if ( _prev_active.id != 0 && _prev_active.index < _nodes.size() )
         {
-            if ( _nodes[ _prev_active_elem.index ].content->trigger == ui::ClickTrigger::OnRelease )
+            if ( _nodes[ _prev_active.index ].content->trigger == ui::ClickTrigger::OnRelease )
             {
-                std::cout  <<"release: " << _prev_active_elem.id <<"| " << _prev_hot_elem.id <<"\n";
-                if ( _prev_hot_elem.id == _prev_active_elem.id )
+                std::cout  <<"release: " << _prev_active.id <<"| " << _prev_hot.id <<"\n";
+                if ( _prev_hot.id == _prev_active.id )
                 {
                     std::cout  <<"FIRE ON RELEASE\n";
-                    _clicked = _prev_active_elem;
-                    _focus = _prev_active_elem;
+                    _curr_active = _prev_active;
+                    _focus = _prev_active;
                 }
             }
-            _prev_active_elem = {};
-            //std::cout  <<"release : " << _prev_active_elem.id <<"\n";
+            _prev_active = {};
         }
     }
 
 
     void Layout::handleButtonDownEvents()
     {
-        _curr_active_elem = {};
+        _curr_active = {};
         if ( _input->buttonDown() )
         {
-            if ( _prev_active_elem.id != 0 )
+            if ( _prev_active.id != 0 )
             {
-                _curr_active_elem = _prev_active_elem;
-                if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
-                {
-                    _clicked = _curr_active_elem;
-                }
-                //std::cout  <<"clicking : " << _curr_active_elem.id <<"\n";
+                _curr_active = _prev_active;
             }
 
-            if ( _curr_active_elem.id == 0 && _curr_hot_elem.index != 0  )
+            if ( _curr_active.id == 0 && _curr_hot.index != 0  )
             {
                 if ( _input->doubleClick() )
                 {
-                    _curr_active_elem = _curr_hot_elem;
-                    _curr_active_elem.clicks = 2;
-                    std::cout  <<"double-click : " << _curr_active_elem.id <<"\n";
+                    _curr_active = _curr_hot;
+                    _curr_active.clicks = 2;
+                    std::cout  <<"double-click : " << _curr_active.id <<"\n";
 
-                    if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active.index ].content->trigger == ui::ClickTrigger::OnClick )
                     {
-                        _clicked = _curr_active_elem;
-                        _focus = _curr_active_elem;
+                        _curr_active.active = true;
+                        _focus = _curr_active;
                     }
                 }
-                else if ( _input->primaryClick() && _curr_hot_elem.index != 0 )
+                else if ( _input->primaryClick() && _curr_hot.index != 0 )
                 {
-                    _curr_active_elem = _curr_hot_elem;
-                    _curr_active_elem.clicks = 1;
-                    std::cout  <<"single-click : " << _curr_active_elem.id <<"\n";
+                    _curr_active = _curr_hot;
+                    _curr_active.clicks = 1;
+                    std::cout  <<"single-click : " << _curr_active.id <<"\n";
 
-                    if ( _nodes[ _curr_active_elem.index ].content->trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active.index ].content->trigger == ui::ClickTrigger::OnClick )
                     {
-                        _clicked = _curr_active_elem;
-                        _focus = _curr_active_elem;
+                        _curr_active.active = true;
+                        _focus = _curr_active;
                     }
                 }
-                _prev_active_elem = _curr_active_elem;
+                _prev_active = _curr_active;
             }
         }
     }
 
     void Layout::begin( ui::Input* input )
     {
-        _node_counter = 0;
-
         _root = 0;
         _level = 0;
         _parent = 0;
         _input = input;
+        _node_counter = 0;
 
-        /**
-         * If the recycled id is not -1, we need to reset the recycled id.
-         * This is to ensure that the recycled nodes are available for reuse.
-         */
-        if ( _recycled_id < 0 )
-        {
-            _recycled_id = _recycled_node_head;
-        }
-        /**
-         * If the recycled node count is greater than 0, we need to append to the recovered recycled 
-         * list of element to the current recycled list. This is to ensure that elements that are 
-         * recycled in the current frame is not reused in same frame, because this can lead to 
-         * elements being overwritten or addding child node to it self.
-         */
-        else if ( _recycled_node_count > 0 )
-        {
-            _id_pool[ _recycled_node_tail ].next = _recycled_id;
-            _id_pool[ _recycled_id ].prev = _recycled_node_tail;
-            _recycled_id = _recycled_node_head;
-        }
-        _recycled_node_head = -1;
-        _recycled_node_tail = -1;
-        _recycled_node_count = 0;
-
+        _widget_manager.refresh();
     }
 
     void Layout::end()
@@ -487,33 +426,15 @@ namespace kege::ui{
             _aligner.align( *this, _root );
         }
 
-        /**
-         * If the mouse button is down, we keep the previous active element as the current active element.
-         * This is to ensure that the active element remains the same until the button is released.
-         */
-//        if ( _input->buttonDown() )
-//        {
-//            if ( _prev_active_elem.id != 0 )
-//            {
-//                _curr_active_elem = _prev_active_elem;
-//            }
-//            else
-//            {
-//                _prev_active_elem = _curr_active_elem;
-//                _curr_active_elem = {};
-//            }
-//        }
-//        else
-//        {
-//            _prev_active_elem = _curr_active_elem;
-//            _curr_active_elem = {};
-//        }
-
-        _clicked = {};
-
+        _button_down = _input->buttonDown();
         handleMouseOverEvents();
         handleButtonDownEvents();
         handleButtonUpEvents();
+    }
+
+    bool Layout::buttonDown()const
+    {
+        return _button_down;
     }
 
     ui::Input* Layout::input()
@@ -521,110 +442,15 @@ namespace kege::ui{
         return _input;
     }
 
-    void Layout::dupId( uint32_t src_index, uint32_t* dst_index )
-    {
-        if ( 1 <= src_index )
-        {
-            *dst_index = src_index;
-            _id_pool[ src_index ].duplicates++;
-            //std::cout << "duplicated: " << src->index <<"\n";
-        }
-    }
-
-    void Layout::recycleId( uint32_t index )
-    {
-        if ( index < 0 || index >= _id_pool.size())
-        {
-            return; // Invalid ID
-        }
-
-        /**
-         * Recycle the ID by decrementing its reference count.
-         */
-        if ( _id_pool[ index ].duplicates > 0 )
-        {
-            _id_pool[ index ].duplicates--;
-            /**
-             * If the reference count reaches zero, add the ID to the recycled list.
-             */
-            if ( _id_pool[ index ].duplicates == 0 )
-            {
-                _id_pool[ index ].next = -1;
-                _id_pool[ index ].prev = -1;
-                _id_pool[ index ].duplicates = 0;
-
-                if ( _recycled_node_head < 0 )
-                {
-                    _recycled_node_head = _recycled_node_tail = index;
-                }
-                else
-                {
-                    _id_pool[ index ].prev = _recycled_node_tail;
-                    _id_pool[ _recycled_node_tail ].next = index;
-                    _recycled_node_tail = index;
-                }
-                _recycled_node_count += 1;
-            }
-        }
-    }
-
-    uint32_t Layout::genId()
-    {
-        /**
-         * Generate a new ID from the pool.
-         * If there are recycled IDs, use the first one.
-         * Otherwise, use the next available ID from the pool.
-         * If the pool is exhausted, return 0.
-         */
-        if ( _available_id >= _id_pool.size() || _available_id == -1)
-        {
-            KEGE_LOG_ERROR << "max available ids exhausted." << Log::nl;
-            return 0;
-        }
-
-        int index;
-
-        /**
-         * If there are recycled IDs, use the first one.
-         * Otherwise, use the next available ID from the pool.
-         */
-        if ( _recycled_id > 0 )
-        {
-            index = _recycled_id;
-            _recycled_id = _id_pool[ _recycled_id ].next;
-        }
-        else
-        {
-            index = _available_id;
-            _available_id = _id_pool[ _available_id ].next;
-        }
-
-        /**     
-         * Initialize the ID structure.
-         * Set the next and previous pointers to -1, indicating no links.
-         * Set the duplicates count to 1, as this is a new ID.
-         */
-        _id_pool[ index ].next = -1;
-        _id_pool[ index ].prev = -1;
-        _id_pool[ index ].duplicates = 1;
-        return index;
-    }
-
     Layout::Layout()
     :   _level( 0 )
     ,   _parent( 0 )
-    ,   _curr_hot_elem{}
-    ,   _prev_active_elem{}
-    ,   _curr_active_elem{}
-    ,   _clicked{}
+    ,   _curr_hot{}
+    ,   _prev_active{}
+    ,   _curr_active{}
     ,   _node_counter( 0 )
-    ,   _recycled_node_tail( -1 )
-    ,   _recycled_node_head( -1 )
-    ,   _recycled_node_count( -1 )
     ,   _root( 0 )
-    ,   _recycled_id( -1 )
-    ,   _available_id( -1 )
-    ,   _style_indexer( 0 )
+    ,   _button_down( false )
     {
     }
 

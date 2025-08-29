@@ -81,7 +81,7 @@ namespace kege::ui{
         return {sum_w, max_h};
     }
 
-    void Viewer::draw( const ui::Content& content, const ui::Rect& clip_rect )
+    void Viewer::draw( const ui::Widget& content, const ui::Rect& clip_rect )
     {
         if ( !content.visible )
             return;
@@ -165,7 +165,7 @@ namespace kege::ui{
 //        draw( *layout[ pid ], clip_rect );
 
 
-//        std::vector< std::pair< int, ui::Content* > > contents( layout.count( pid ) );
+//        std::vector< std::pair< int, ui::Widget* > > contents( layout.count( pid ) );
 //        int count = 0;
 //
 //        linearize( layout, 1, contents, count );
@@ -211,7 +211,7 @@ namespace kege::ui{
 //        }
     }
 
-    void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Content* > >& contents, int& count )
+    void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& contents, int& count )
     {
         contents[count++] = { zindex, layout[pid] };
         for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
@@ -220,7 +220,7 @@ namespace kege::ui{
         }
     }
 
-    void Viewer::insertionSort(std::vector< std::pair< int, ui::Content* > >& arr)
+    void Viewer::insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr)
     {
         int n = (int)arr.size();
         for (int i = 1; i < n; i++)
@@ -241,7 +241,7 @@ namespace kege::ui{
 
     void Viewer::drawsort( ui::Layout& layout, int pid )
     {
-        std::vector< std::pair< int, ui::Content* > > contents( layout.count() );
+        std::vector< std::pair< int, ui::Widget* > > contents( layout.count() );
         int count = 0;
 
         linearize( layout, 1, layout[1]->style->zindex, contents, count );
@@ -251,7 +251,7 @@ namespace kege::ui{
         ui::Rect clip_rect = contents[0].second->rect;
         for ( int i = 0; i < contents.size(); ++i  )
         {
-            ui::Content* content = contents[i].second;
+            ui::Widget* content = contents[i].second;
             draw( *content, clip_rect );
             if ( content->style->clip_overflow )
             {

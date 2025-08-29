@@ -9,9 +9,9 @@
 #define font_hpp
 
 #include <vector>
-#include "../memory/ref.hpp"
-#include "../math/algebra/vmath.hpp"
-#include "../graphics/core/graphics.hpp"
+#include "../../memory/ref.hpp"
+#include "../../math/algebra/vmath.hpp"
+#include "../../graphics/core/graphics.hpp"
 
 namespace kege::ui{
 

@@ -1016,13 +1016,6 @@ build CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o: CXX_COMPILER__gui_u
   OBJECT_DIR = CMakeFiles/gui.dir
   OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
 
-build CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp || cmake_object_order_depends_target_gui
-  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o.d
-  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/gui.dir
-  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
-
 build CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp || cmake_object_order_depends_target_gui
   DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o.d
   FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
@@ -1058,8 +1051,22 @@ build CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o: CXX_COMPILER__gu
   OBJECT_DIR = CMakeFiles/gui.dir
   OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
 
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-style-manager.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-manager.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-style-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
 build CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp || cmake_object_order_depends_target_gui
   DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o.d
+  FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/gui.dir
+  OBJECT_FILE_DIR = CMakeFiles/gui.dir/kege/src/core/gui
+
+build CMakeFiles/gui.dir/kege/src/core/gui/ui-widget-manager.cpp.o: CXX_COMPILER__gui_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-widget-manager.cpp || cmake_object_order_depends_target_gui
+  DEP_FILE = CMakeFiles/gui.dir/kege/src/core/gui/ui-widget-manager.cpp.o.d
   FLAGS = -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/gui.dir
@@ -1073,7 +1080,7 @@ build CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o: CXX_COMPILER__gui_un
 #############################################
 # Link the static library libgui.a
 
-build libgui.a: CXX_STATIC_LIBRARY_LINKER__gui_Debug CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-canvas.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o
+build libgui.a: CXX_STATIC_LIBRARY_LINKER__gui_Debug CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-aligner.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-input.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-layout.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-style-manager.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-viewer.cpp.o CMakeFiles/gui.dir/kege/src/core/gui/ui-widget-manager.cpp.o
   ARCH_FLAGS = -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/gui.dir

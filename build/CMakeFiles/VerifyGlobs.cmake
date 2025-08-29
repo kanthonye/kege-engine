@@ -105,13 +105,14 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-aligner.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-canvas.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-input.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-layout.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-viewer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-widget-manager.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

@@ -521,6 +521,7 @@ namespace kege
             {
                 case kege::JsonLexer::FLOAT:
                 case kege::JsonLexer::INTEGER:
+                case kege::JsonLexer::HEXADECIMAL:
                 case kege::JsonLexer::STRING:
                 {
                     value = lexer.getLexeme();
