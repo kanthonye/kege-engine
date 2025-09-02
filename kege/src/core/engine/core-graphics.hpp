@@ -9,7 +9,7 @@
 #define graphics_system_hpp
 
 #include "module.hpp"
-#include "../../core/graphics/core/graphics.hpp"
+#include "../../core/renderer/core/graphics.hpp"
 
 namespace kege{
 

@@ -337,6 +337,24 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-creator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-creator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-creator.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-creator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/font/font.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/graph/render-graph.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/graph/render-graph.cpp.o"
@@ -589,12 +607,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/font.cpp",
-  "output": "CMakeFiles/gui.dir/kege/src/core/gui/font.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/id-manager.cpp",
   "output": "CMakeFiles/gui.dir/kege/src/core/gui/id-manager.cpp.o"
@@ -607,15 +619,9 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-creator.cpp",
-  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-font-creator.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-font-loader.cpp",
-  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-font-loader.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-core.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-core.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-core.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-core.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -631,9 +637,9 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-primatives.cpp",
-  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-primatives.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -o CMakeFiles/gui.dir/kege/src/core/gui/ui-style-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/gui/ui-style-loader.cpp",
+  "output": "CMakeFiles/gui.dir/kege/src/core/gui/ui-style-loader.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",

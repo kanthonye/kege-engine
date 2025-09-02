@@ -14,14 +14,14 @@ namespace kege::ui{
 
     struct Numeric3
     {
-        void update( ui::Layout& layout, vec3& value, const char* text );
+        bool update( ui::Layout& layout, float& x, float& y, float& z, const char* text );
 
         ui::EID container;
         ui::EID content;
         ui::EID label;
-        Numeric x;
-        Numeric y;
-        Numeric z;
+        Numeric nx;
+        Numeric ny;
+        Numeric nz;
     };
 }
 

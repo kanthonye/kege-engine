@@ -66,16 +66,16 @@ namespace kege{
         //System::setGraphics( graphics );
 
 
-        // shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
-        // if( !_module->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
-        // {
-        //     return false;
-        // }
-        // shader_file = _engine->vfs()->fetch( "graphics-shaders/basic/shader.json" );
-        // if( !_module->getShaderPipelineManager()->load( "basic-shader", shader_file.c_str() ) )
-        // {
-        //     return false;
-        // }
+         kege::string shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
+         if( !_module->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
+         {
+             return false;
+         }
+         shader_file = _engine->vfs()->fetch( "graphics-shaders/basic/shader.json" );
+         if( !_module->getShaderPipelineManager()->load( "basic-shader", shader_file.c_str() ) )
+         {
+             return false;
+         }
 
         return true;
     }

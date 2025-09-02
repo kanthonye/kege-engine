@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 
-    bool Input::onKeyInput( Input::Type type, std::string& text, int& cursor,  bool& has_focused, const kege::Input& input)
+    bool Input::onKeyInput( Input::Type type, kege::string& text, int& cursor,  bool& has_focused, const kege::Input& input)
     {
         if ( !has_focused ) return false;
 
@@ -144,13 +144,13 @@ namespace kege::ui{
                             if ((input.key.code >= '0' && input.key.code <= '9') || input.key.code == '.' || input.key.code == '-')
                             {
                                 // Ensure only one decimal point
-                                if (input.key.code == '.' && text.find('.') != std::string::npos)
+                                if (input.key.code == '.' && text.find('.') )
                                 {
                                     break;
                                 }
 
                                 // Ensure only one negative sign at the beginning
-                                if (input.key.code == '-' && (cursor != 0 || text.find('-') != std::string::npos))
+                                if (input.key.code == '-' && (cursor != 0 || text.find('-') ))
                                 {
                                     break;
                                 }
@@ -169,7 +169,7 @@ namespace kege::ui{
         return has_focused;
     }
 
-    bool Input::onTextInput(Input::Type type, std::string* text, int32_t* cursor, bool* has_focused)
+    bool Input::onTextInput(Input::Type type, kege::string* text, int32_t* cursor, bool* has_focused)
     {
         for (int i = 0; i < _key_count; ++i )
         {

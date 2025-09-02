@@ -16,6 +16,11 @@
 
 namespace kege{
 
+    struct SetSelectedEntity
+    {
+        Entity entity;
+    };
+
     class HierarchyPanel
     {
     public:

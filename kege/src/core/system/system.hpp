@@ -16,8 +16,8 @@
 #include "../../../src/core/math/algebra/matrices.hpp"
 #include "../../../src/core/math/algebra/quaternion.hpp"
 #include "../../../src/core/math/algebra/transform.hpp"
-#include "../../../src/core/graphics/core/graphics.hpp"
-#include "../../../src/core/graphics/graph/render-graph.hpp"
+#include "../../../src/core/renderer/core/graphics.hpp"
+#include "../../../src/core/graphics/render-graph/render-graph.hpp"
 #include "../../../src/core/input/input-context-manager.hpp"
 
 namespace kege{

@@ -80,30 +80,28 @@ namespace kege{
 
     bool Scene::initialize()
     {
-        _root = kege::Entity::create();
-        _root.add< EntityTag >( "world" );
 
 
-        Entity entity = kege::Entity::create();
-        entity.add< EntityTag >( "camera" );
-        insert( entity );
-
-        entity = kege::Entity::create();
-        entity.add< EntityTag >( "circle" );
-        insert( entity );
-
-        Entity square = kege::Entity::create();
-        square.add< EntityTag >( "square" );
-        {
-            entity = kege::Entity::create();
-            entity.add< EntityTag >( "triangle1" );
-            square.attach( entity );
-
-            entity = kege::Entity::create();
-            entity.add< EntityTag >( "triangle2" );
-            square.attach( entity );
-        }
-        insert( square );
+//        Entity entity = kege::Entity::create();
+//        entity.add< EntityTag >( "camera" );
+//        insert( entity );
+//
+//        entity = kege::Entity::create();
+//        entity.add< EntityTag >( "circle" );
+//        insert( entity );
+//
+//        Entity square = kege::Entity::create();
+//        square.add< EntityTag >( "square" );
+//        {
+//            entity = kege::Entity::create();
+//            entity.add< EntityTag >( "triangle1" );
+//            square.attach( entity );
+//
+//            entity = kege::Entity::create();
+//            entity.add< EntityTag >( "triangle2" );
+//            square.attach( entity );
+//        }
+//        insert( square );
 
 
         _ready = true;
@@ -140,5 +138,7 @@ namespace kege{
     Scene::Scene()
     :   _ready( false )
     {
+        _root = kege::Entity::create();
+        _root.add< EntityTag >( "world" );
     }
 }

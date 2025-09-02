@@ -24,7 +24,7 @@ namespace kege::ui{
             uint32_t node_index;
 
             // the number of duplicates, reference counter
-            int16_t duplicates = 0;
+            int16_t duplicates;
 
             // next free id
             int16_t next;
@@ -33,12 +33,19 @@ namespace kege::ui{
             int16_t prev;
         };
 
+        struct List
+        {
+            int16_t head;
+            int16_t tail;
+            int16_t count;
+        };
+
     public:
 
-        void duplicate( uint32_t src_index, uint32_t* dst_index );
+        void duplicate( int32_t src_index, int32_t* dst_index );
 
-        void setNodeIndex( uint32_t index, uint32_t nodex_index );
-        uint32_t getNodeIndex( uint32_t index )const;
+        void setNodeIndex( int32_t index, int32_t nodex_index );
+        uint32_t getNodeIndex( int32_t index )const;
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -47,7 +54,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget& operator[]( uint32_t index ) const;
+        const kege::ui::Widget& operator[]( int32_t index ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
@@ -56,7 +63,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget& operator[]( uint32_t index );
+        kege::ui::Widget& operator[]( int32_t index );
 
         /**
          * Creates a UI element with the give info.
@@ -65,21 +72,21 @@ namespace kege::ui{
          *
          * @return The element id.
          */
-        uint32_t make( const Widget& widget );
+        int32_t make( const Widget& widget );
 
         /**
          * recycle the give index for reuse.
          *
          * @param index the given index.
          */
-        void recycle( uint32_t index );
+        void recycle( int32_t index );
 
         /**
          * Resize total number of layout elements.
          *
          * @param max_quantity The maximum number of UI elements the system can manage.
          */
-        void resize( uint32_t max_quantity );
+        void resize( int32_t max_quantity );
 
 
         void refresh();
@@ -88,17 +95,34 @@ namespace kege::ui{
 
     private:
 
-        uint32_t generate();
+        int32_t generate();
 
     private:
 
         std::vector< Content > _contents;
 
-        int32_t _recycled_count;
-        int32_t _recycled_head;
-        int32_t _recycled_tail;
-        int32_t _available_id;
-        int32_t _recycled_id;
+        /**
+         * The recycles list of elements are transfered to this list so that they
+         * can be reused in the next frame. This is necessary to prevent elements
+         * recycled in the current frame is not recycled in the same frame.
+         */
+        List _available;
+
+        /**
+         * List of the currently recycled elements
+         */
+        List _recycled;
+
+        /**
+         * The currently active elements liste.
+         */
+        List _active;
+
+//        int32_t _recycled_count;
+//        int32_t _recycled_head;
+//        int32_t _recycled_tail;
+//        int32_t _available_id;
+//        int32_t _recycled_id;
     };
 
 }

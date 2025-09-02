@@ -18,8 +18,6 @@ namespace kege{
             return false;
         }
 
-        kege::Log::info << "initializing -> " << getName() << Log::nl;
-
         _module = new kege::InputContextManager;
         if( !_module->initialize( _engine->graphics()->getWindow() ) )
         {

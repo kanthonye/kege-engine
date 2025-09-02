@@ -39,7 +39,6 @@ namespace kege::ui{
             }
 
             max_h = kege::max<float>( max_h, h );
-            sum_w += g.advance * font_size;
 
             /**
              * if the render width for the text is greate than 0 then render the text.
@@ -49,10 +48,9 @@ namespace kege::ui{
              */
             if ( *c > 32 && sum_w < width )
             {
+                _drawbuffer[ _count ].color         = color;
                 _drawbuffer[ _count ].rect.width    = w;
                 _drawbuffer[ _count ].rect.height   = h;
-
-                _drawbuffer[ _count ].color         = color;
                 _drawbuffer[ _count ].rect.x        = cursor.x - font_size * g.bearing_x;
                 _drawbuffer[ _count ].rect.y        = cursor.y + font_size * g.bearing_y;
                 _drawbuffer[ _count ].texel.x       = g.x;
@@ -71,6 +69,7 @@ namespace kege::ui{
                 }
             }
 
+            sum_w += g.advance * font_size;
             cursor.x = start.x + sum_w; // Move cursor for next glyph
 
             if ( sum_w > width )
@@ -95,7 +94,11 @@ namespace kege::ui{
             _drawbuffer[ _count ].rect.x        = content.rect.x;
             _drawbuffer[ _count ].rect.y        = content.rect.y;
             _drawbuffer[ _count ].isfont        = 0.0f;
-            _drawbuffer[ _count ].texture_id    = 0.0f;
+            _drawbuffer[ _count ].texture_id    = content.texr.id;
+            _drawbuffer[ _count ].texel.x       = content.texr.x;
+            _drawbuffer[ _count ].texel.y       = content.texr.y;
+            _drawbuffer[ _count ].texel.width   = content.texr.width;
+            _drawbuffer[ _count ].texel.height  = content.texr.height;
             _drawbuffer[ _count ].clip_rect     = clip_rect;
             _count++;
 
@@ -151,11 +154,11 @@ namespace kege::ui{
                 content.style->font_size,
                 content.style->color,
                 content.style->wrap_around,
-                content.text.text,
+                content.text.text.str(),
                 clip_rect
             );
-            content.text.width = dim.x;
-            content.text.height = dim.y;
+//            content.text.width = dim.x;
+//            content.text.height = dim.y;
         }
     }
 
@@ -163,7 +166,10 @@ namespace kege::ui{
     {
         drawsort( layout, pid );
 //        draw( *layout[ pid ], clip_rect );
-
+//        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+//        {
+//            draw( layout, eid, clip_rect );
+//        }
 
 //        std::vector< std::pair< int, ui::Widget* > > contents( layout.count( pid ) );
 //        int count = 0;
@@ -252,6 +258,8 @@ namespace kege::ui{
         for ( int i = 0; i < contents.size(); ++i  )
         {
             ui::Widget* content = contents[i].second;
+            if( content == nullptr ) continue;
+            
             draw( *content, clip_rect );
             if ( content->style->clip_overflow )
             {
@@ -294,33 +302,29 @@ namespace kege::ui{
         return _font;
     }
 
-    void Viewer::setUiImages( SamplerHandle sampler, std::vector< kege::ImageHandle > images )
+    void Viewer::setUiImages( std::vector< kege::ImageInfo > image_info )
     {
-        std::vector< ImageInfo > image_info;
-        for (int i=0; i < images.size(); ++i)
-        {
-            image_info.push_back
-            ({
-                .image = images[i],
-                .sampler = sampler,
-                .layout = ImageLayout::ShaderReadOnly
-            });
-        }
         bool result = _graphics->updateDescriptorSets
         ({
             kege::WriteDescriptorSet
             {
-                .array_element = 0,
                 .binding = 0,
+                .array_element = 0,
                 .descriptor_type = DescriptorType::CombinedImageSampler,
                 .image_info = image_info,
                 .set = _descriptor_ui_texture
             }
         });
+
         if ( result == false )
         {
             kege::Log::error << "unable to update shader resource 'ui_texture'." <<Log::nl;
         }
+    }
+
+    kege::ImageHandle Viewer::getDefaultTexture()
+    {
+        return _default_ui_texture;
     }
 
     void Viewer::flush()
@@ -460,28 +464,6 @@ namespace kege::ui{
             .set = _descriptor_ui_texture
         } });
 
-
-//        _shader_resource_font = _graphics->allocateDescriptorSet
-//        ({
-//            .stage_flags = ShaderStage::Fragment,
-//            .bindings =
-//            {
-//                DescriptorSetBindingInfo
-//                {
-//                    .name = "ui_texture",
-//                    .descriptor_type = DescriptorType::CombinedImageSampler,
-//                    .binding = 1,
-//                    .array_element = 0,
-//                    .image_info =
-//                    {{
-//                        .image = _default_ui_texture,
-//                        .sampler = _font->getSampler(),
-//                        .layout = ImageLayout::ShaderReadOnly
-//                    }}
-//                }
-//            }
-//         });
-
         return true;
     }
 
@@ -507,6 +489,7 @@ namespace kege::ui{
 
     Viewer::Viewer()
     :   _max_render_instances( 500 )
+    ,   _graphics( nullptr )
     {}
 
 }

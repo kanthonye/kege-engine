@@ -12,11 +12,20 @@ namespace kege{
     ViewportPanel& ViewportPanel::init( Engine* engine, ui::Layout& layout )
     {
         _engine = engine;
-
-        _main = layout.make({
-            .visible = true,
-            .mouseover = false,
-            .style = layout.getStyleByName( "viewport" )
+        
+        _main = layout.make
+        ({
+            .visible    = true,
+            .mouseover  = false,
+            .texr       = ui::TexrID
+            {
+                .id     = 1,
+                .x      = 0.f,
+                .y      = 0.f,
+                .width  = 1.f,
+                .height = 1.f,
+            },
+            .style      = layout.getStyleByName( "viewport" )
         });
 
         Communication::add< kege::RenderPassContext*, ViewportPanel >( this );

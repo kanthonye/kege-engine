@@ -13,6 +13,7 @@ namespace kege{
     SceneModule::SceneModule( kege::Engine* engine )
     :   kege::Module( engine, "SceneModule" )
     ,   _module( nullptr )
+    ,   _scene_files({ "assets/scene/scene.json" })
     {}
 
     const kege::Scene* SceneModule::operator ->()const
@@ -70,12 +71,13 @@ namespace kege{
 
     bool SceneModule::initialize()
     {
+        SceneLoader loader;
         // 10. Load Initial Scene
         // Example: Load the first scene file path if available
         if ( !_scene_files.empty() )
         {
-            _module = SceneLoader::load( _scene_files[0] );
-            if ( _module )
+            _module = loader.load( _engine->vfs()->fetch( _scene_files[0].c_str() ).c_str() );
+            if ( !_module )
             {
                 kege::Log::error << "( LOADING_FAILED ) -> " << _scene_files[0] << Log::nl;
                 KEGE_LOG_ERROR << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;

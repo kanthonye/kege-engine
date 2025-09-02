@@ -10,7 +10,7 @@
 
 #include "../input/inputs.hpp"
 #include "../input/thread-safe-vector.hpp"
-#include "../graphics/core/graphics-window.hpp"
+#include "../renderer/core/graphics-window.hpp"
 
 namespace kege{
 

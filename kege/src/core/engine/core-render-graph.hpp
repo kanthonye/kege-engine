@@ -8,8 +8,8 @@
 #ifndef kege_render_graph_system_hpp
 #define kege_render_graph_system_hpp
 
-#include "../../core/graphics/graph/render-graph.hpp"
-#include "../graphics/loaders/pipeline-loader.hpp"
+#include "../graphics/render-graph/render-graph.hpp"
+#include "../graphics/pipeline/pipeline-loader.hpp"
 #include "module.hpp"
 
 namespace kege{

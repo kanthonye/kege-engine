@@ -10,6 +10,8 @@
 
 #include "ui-elements/droplist.hpp"
 #include "ui-elements/ui-numeric3.hpp"
+#include "ui-elements/ui-numeric4.hpp"
+#include "hierarchy-panel.hpp"
 
 namespace kege{
 
@@ -18,13 +20,13 @@ namespace kege{
     public:
 
         InspectorPanel& init( Engine* engine, ui::Layout& layout );
+        void operator()( const SetSelectedEntity& msg );
         void put( ui::Layout& layout );
         InspectorPanel();
 
     public:
 
-        Droplist droplist;
-        ui::Numeric3 transform[3];
+        std::map<void*, Droplist> _droplists;
         Entity _selected_entity;
         Engine* _engine;
         ui::EID _main;

@@ -74,7 +74,10 @@ namespace kege::ui{
         /**
          * Uninitializes the Core object, releasing any allocated resources.
          */
-        void setUiImages( SamplerHandle sampler, std::vector< kege::ImageHandle > images );
+        void setUiImages( std::vector< kege::ImageInfo > images );
+
+
+        kege::ImageHandle getDefaultTexture();
 
         /**
          * Uninitializes the Core object, releasing any allocated resources.

@@ -332,7 +332,7 @@
                                         "orientation": [0.0, 0.0, 0.0, 1.0],
                                         "immovable": "false",
                                         "sleeping": "false",
-                                        "anti_gravity": "false",
+                                        "anti_gravity": "true",
 
                                         "collider":
                                         {

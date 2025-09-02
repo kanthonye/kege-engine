@@ -18,10 +18,11 @@ namespace kege{
     void HierarchyPanel::build( const Entity& entity, ui::Layout& layout, int spacer )
     {
         const EntityTag* tag = entity.get< EntityTag >();
-        const char* text = ( tag ) ? tag->c_str() : "untitled";
-        
+        const char* entity_name = ( tag ) ? tag->c_str() : "untitled";
+        const bool entity_has_children = entity.isParent();
+
         ui::HierarchyDroplist& list = _open_states[ entity.getID() ];
-        if( list.open( layout, entity.isParent(), spacer, text ) )
+        if( list.open( layout, entity_has_children, spacer, entity_name ) )
         {
             list.beginContent( layout );
             for (Entity e = entity.begin(); e != 0 ; e = e.next() )
@@ -30,11 +31,12 @@ namespace kege{
             }
             list.endContent( layout );
         }
+
         if( layout.click( list.field ) )
         {
-            if ( int( _highlight ) != int( list.field ) )
+            if ( _highlight != list.field )
             {
-                if ( int( _highlight ) != 0 )
+                if ( _highlight )
                 {
                     _highlight->style = layout.getStyleByName( "droplist-field" );
                 }
@@ -42,6 +44,7 @@ namespace kege{
                 _highlight = list.field;
             }
             _selected_entity = entity;
+            Communication::broadcast< const SetSelectedEntity& >({ _selected_entity });
         }
     }
 

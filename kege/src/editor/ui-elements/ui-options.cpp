@@ -11,7 +11,7 @@ namespace kege::ui{
 
     int Options::select( ui::Layout& layout, const char* text, const std::vector<const char*>& list )
     {
-        if ( int( field ) == 0 )
+        if ( !field )
         {
             field = layout.make
             ({
@@ -34,7 +34,7 @@ namespace kege::ui{
 
             for (int i=0; i < list.size(); ++i)
             {
-                if ( int( options[i] ) == 0 )
+                if ( !options[i] )
                 {
                     options[i] = layout.make
                     ({

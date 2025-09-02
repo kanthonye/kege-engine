@@ -11,7 +11,7 @@ namespace kege::ui{
 
     bool Button::clicked( ui::Layout& layout, const char* text )
     {
-        if ( int(field) == 0 )
+        if ( !field )
         {
             field = layout.make
             ({

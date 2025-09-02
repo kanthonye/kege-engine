@@ -9,9 +9,9 @@
 
 namespace kege::ui{
 
-    void Numeric4::update( ui::Layout& layout, vec4& value, const char* text )
+    bool Numeric4::update( ui::Layout& layout, float& x, float& y, float& z, float& w, const char* text )
     {
-        if ( int( container ) == 0 )
+        if ( !container )
         {
             container = layout.make
             ({
@@ -30,19 +30,21 @@ namespace kege::ui{
             });
         }
 
+        bool active = false;
         layout.push( container );
         {
             layout.put( label );
             layout.push( content );
             {
-                x.update( layout, value.x, "x:" );
-                y.update( layout, value.y, "y:" );
-                z.update( layout, value.z, "z:" );
-                w.update( layout, value.w, "w:" );
+                if( nx.update( layout, x, "x:" ) ) active = true;
+                if( ny.update( layout, y, "y:" ) ) active = true;
+                if( nz.update( layout, z, "z:" ) ) active = true;
+                if( nw.update( layout, w, "w:" ) ) active = true;
             }
             layout.pop();
         }
         layout.pop();
+        return active;
     }
 
 }

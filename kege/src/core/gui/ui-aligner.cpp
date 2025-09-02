@@ -10,49 +10,6 @@
 
 namespace kege::ui{
 
-    float getWidth( Layout& layout, NodeIndex pid )
-    {
-        float width = 0;
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            width += getWidth( layout, eid );
-        }
-
-        const Style* style = layout[ pid ]->style;
-        switch ( style->width.type )
-        {
-            case ui::SizingType::SIZE_FIXED:
-            {
-                layout[ pid ]->rect.width = style->width.size;
-                break;
-            }
-
-            case ui::SizingType::SIZE_PERCENT:
-            {
-                layout[ pid ]->rect.width = layout[ layout.parent( pid ) ]->rect.width * style->width.size;
-                width += layout[ pid ]->rect.width;
-                break;
-            }
-
-            case ui::SizingType::SIZE_EXTEND:
-            {
-                break;
-            }
-
-            case ui::SizingType::SIZE_FLEXIBLE:
-            {
-                layout[ pid ]->rect.width = width;
-                break;
-            }
-
-            default: break;
-        }
-
-        return layout[ pid ]->rect.width;
-    }
-
-
-
     void alignTopToBottom( Layout& layout, NodeIndex pid )
     {
         int count = 0;
@@ -221,19 +178,19 @@ namespace kege::ui{
         const Style* style = layout[ pid ]->style;
         Widget* elem = layout[ pid ];
 
-        elem->rect.width = (style->width.type == ui::SizingType::SIZE_FIXED)
-        ? style->width.size
-        : 0;
+        elem->rect.width = 0;//(style->width.type == ui::SizingType::SIZE_FIXED)
+//        ? style->width.size
+//        : 0;
 
         bool percentage = false;
         uint32_t count = 0;
 
-        if ( 1 <= layout.parent( pid ) )
-        {
-            const Style* s = layout[ layout.parent( pid ) ]->style;
-            elem->rect.width += s->padding.left;
-            elem->rect.width += s->padding.right;
-        }
+//        if ( 1 <= layout.parent( pid ) )
+//        {
+//            const Style* s = layout[ layout.parent( pid ) ]->style;
+        elem->rect.width += style->padding.left;
+        elem->rect.width += style->padding.right;
+//        }
 
         for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
         {
@@ -282,6 +239,10 @@ namespace kege::ui{
         if ( 2 <= count )
         {
             elem->rect.width += style->gap.width * (count - 1);
+        }
+        else if ( !layout[ pid ]->text.text.empty() )
+        {
+            elem->rect.width += layout[ pid ]->text.width;
         }
 
         return elem->rect.width;
@@ -373,6 +334,10 @@ namespace kege::ui{
             {
                 height += style->gap.height * (count - 1);
             }
+        }
+        else if ( !layout[ pid ]->text.text.empty() )
+        {
+            height += layout[ pid ]->text.height;
         }
 
         height += style->padding.above;
@@ -603,12 +568,9 @@ namespace kege::ui{
         }
     }
 
-    void Aligner::align( Layout& layout, NodeIndex pid )
+    void align( Layout& layout, NodeIndex pid )
     {
         computeChildrenExtent( layout, pid );
         alignChildrenNodes( layout, pid );
     }
-
-    Aligner::Aligner()
-    {}
 }

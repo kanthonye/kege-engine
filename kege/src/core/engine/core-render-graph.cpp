@@ -41,8 +41,6 @@ namespace kege{
             kege::Log::error << "( INITIALIZATION_FAILED ) -> RenderGraph" << Log::nl;
             return false;
         }
-        kege::Log::info << "initializing -> RenderGraph" << Log::nl;
-
 
         kege::string shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
         if( !_engine->graphics()->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
@@ -327,36 +325,36 @@ namespace kege{
                     }
                 });
 
-//                graph->addGraphicsPass
-//                ({
-//                    "scene-output",
-//                    .reads =
-//                    {
-//                    },
-//                    .writes =
-//                    {
-//                        kege::RgWriteResrcDesc
-//                        {
-//                            .name = "scene_color",
-//                            .type = kege::RgResrcType::Image,
-//                            .access = kege::AccessFlags::ColorAttachmentWrite,
-//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-//                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
-//                        },
-//                        kege::RgWriteResrcDesc
-//                        {
-//                            .name = "scene_depth",
-//                            .type = kege::RgResrcType::Image,
-//                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-//                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-//                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
-//                        }
-//                    },
-//                    .execute = []( kege::RenderPassContext* context )
-//                    {
-//                        Communication::broadcast< kege::RenderPassContext* >( context );
-//                    }
-//                });
+                graph->addGraphicsPass
+                ({
+                    "scene-output",
+                    .reads =
+                    {
+                    },
+                    .writes =
+                    {
+                        kege::RgWriteResrcDesc
+                        {
+                            .name = "scene_color",
+                            .type = kege::RgResrcType::Image,
+                            .access = kege::AccessFlags::ColorAttachmentWrite,
+                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
+                        },
+                        kege::RgWriteResrcDesc
+                        {
+                            .name = "scene_depth",
+                            .type = kege::RgResrcType::Image,
+                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
+                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
+                        }
+                    },
+                    .execute = []( kege::RenderPassContext* context )
+                    {
+                        Communication::broadcast< kege::RenderPassContext* >( context );
+                    }
+                });
             }
         });
 

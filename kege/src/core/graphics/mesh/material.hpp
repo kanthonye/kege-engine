@@ -10,7 +10,7 @@
 
 #include <cstdint>
 #include "../../memory/ref.hpp"
-#include "../../graphics/core/graphics.hpp"
+#include "../../renderer/core/graphics.hpp"
 
 namespace kege{
 

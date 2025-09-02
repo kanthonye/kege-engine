@@ -14,7 +14,7 @@
 #include "../../core/input/input-context.hpp"
 #include "../../core/input/input-context-loader.hpp"
 #include "../../core/input/user-input-receiver.hpp"
-#include "../graphics/core/graphics-window.hpp"
+#include "../renderer/core/graphics-window.hpp"
 
 namespace kege{
 

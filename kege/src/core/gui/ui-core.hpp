@@ -15,7 +15,7 @@
 #include "../graphics/font/font.hpp"
 #include "../graphics/font/font-loader.hpp"
 #include "../graphics/font/font-creator.hpp"
-#include "../graphics/loaders/image-loader.hpp"
+#include "../utils/kege-string.hpp"
 
 namespace kege::ui{
 
@@ -161,7 +161,15 @@ namespace kege::ui{
 
     struct Text
     {
-        const char* text = nullptr;
+        kege::string text;
+        float x, y;
+        float width;
+        float height;
+    };
+
+    struct TexrID
+    {
+        uint32_t id;
         float x, y;
         float width;
         float height;
@@ -206,7 +214,6 @@ namespace kege::ui{
     struct Widget
     {
         Style* style = nullptr;
-        uint32_t id = 0;
 
         float x = 0.f;
         float y = 0.f;
@@ -231,6 +238,8 @@ namespace kege::ui{
          * text is the xy position of a text and the width and height that text span
          */
         mutable Text text = {};
+
+        TexrID texr = {};
     };
 
     // Node contains the widget specific data that specific to a widget
@@ -238,7 +247,6 @@ namespace kege::ui{
     {
         Widget* content    = nullptr;
         uint32_t depth      = 0;
-        uint32_t index      = 0;
         uint32_t id         = 0;
 
         int32_t parent      = 0;
@@ -246,15 +254,12 @@ namespace kege::ui{
         int32_t tail        = 0;
         int32_t next        = 0;
         int32_t count       = 0;
-
-        int32_t next_free   = 0;
-        bool    freed       = false;
     };
 
     struct DrawElem
     {
         ui::Rect rect;
-        ui::Color  color;
+        ui::Color color;
         ui::Rect texel;
         ui::Rect clip_rect;
         struct

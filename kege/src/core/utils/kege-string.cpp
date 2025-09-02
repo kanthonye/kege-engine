@@ -202,27 +202,40 @@ namespace kege{
 
     string& string::operator =( const string& str )
     {
-        clear();
-        if ( str._str != nullptr )
+        if ( _length == str._length && str._length != 0 )
         {
+            memcpy( _str, str._str, _length );
+            _str[ _length ] = 0;
+        }
+        else if ( str._str != nullptr )
+        {
+            clear();
             _length = str._length;
             _str = new char[ _length + 1 ];
-            strncpy( _str, str._str, _length );
+            memcpy( _str, str._str, _length );
             _str[ _length ] = 0;
-            //_allocated = true;
+        }
+        else
+        {
+            clear();
         }
         return *this;
     }
     string& string::operator =( const char* str )
     {
-        clear();
-        if ( str != nullptr ) 
+        size_t size = strlen( str );
+        if ( _length == size && size != 0 )
         {
+            memcpy( _str, str, size );
+            _str[ _length ] = 0;
+        }
+        else if ( str != nullptr )
+        {
+            clear();
             _length = strlen( str );
             _str = new char[ _length + 1 ];
             strncpy( _str, str, _length );
             _str[ _length ] = 0;
-            //_allocated = true;
         }
         return *this;
     }
@@ -379,6 +392,85 @@ namespace kege{
 //
 //        return string( s, l );
 //    }
+    void string::insert( size_t pos, size_t count, char ch )
+    {
+        if (count == 0) return;
+
+        if (pos > _length)
+        {
+            pos = _length; // clamp to end
+        }
+
+        size_t new_capacity = _length + count;
+        char* new_data = new char[new_capacity + 1];
+        if (_str)
+        {
+            std::memcpy(new_data, _str, _length + 1);
+            delete[] _str;
+        }
+        new_data[ new_capacity ] = 0;
+        _str = new_data;
+        _length = new_capacity;
+
+        // Move existing tail to make room (including null terminator)
+        std::memmove(_str + pos + count, _str + pos, _length - pos + 1);
+
+        // Fill the gap with `ch`
+        for (size_t i = 0; i < count; ++i)
+        {
+            _str[pos + i] = ch;
+        }
+
+        _length += count;
+    }
+
+    void string::insert(size_t pos, const char* str)
+    {
+        size_t insert_len = std::strlen(str);
+        if (insert_len == 0) return;
+
+        if (pos > _length)
+        {
+            pos = _length; // clamp to end
+        }
+
+        size_t new_capacity = _length + insert_len;
+        char* new_data = new char[new_capacity + 1];
+        if ( _str )
+        {
+            std::memcpy( new_data, _str, pos ); // copy old string (including null)
+            std::memcpy( new_data + pos, str, insert_len );
+            std::memcpy( new_data + pos + insert_len, str + pos, _length - insert_len );
+            delete[] _str;
+        }
+        new_data[ new_capacity ] = 0;
+        _str = new_data;
+        _length = new_capacity;
+    }
+
+    void string::erase(size_t pos, size_t count)
+    {
+        if (pos >= _length) {
+            // nothing to erase (pos beyond end)
+            return;
+        }
+
+        if (pos + count > _length) {
+            count = _length - pos; // clamp to available length
+        }
+
+        // Move the tail part of the string left
+        size_t tail_len = _length - (pos + count);
+        memmove(_str + pos, _str + pos + count, tail_len + 1);
+        // +1 to also copy the null terminator
+
+        _length -= count;
+    }
+
+    bool string::find( char c )const
+    {
+        return ( _str != nullptr )? strchr( _str, c ) != nullptr : false;
+    }
 
     string string::parse_fname()const
     {

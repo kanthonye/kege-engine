@@ -37,7 +37,7 @@ namespace kege{
         _module->addSystem( "camera" );
         _module->addSystem( "mesh-rendering" );
 
-        _module->addSystem( "entity-factory" );
+        //_module->addSystem( "entity-factory" );
 
         if ( !_module->initialize() )
         {

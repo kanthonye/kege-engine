@@ -41,7 +41,7 @@ namespace kege::ui{
          *
          * @return true if the input field remains focused, false otherwise.
          */
-        bool onKeyInput(Input::Type type, std::string& text, int& cursor, bool& has_focused, const kege::Input& input);
+        bool onKeyInput(Input::Type type, kege::string& text, int& cursor, bool& has_focused, const kege::Input& input);
 
         /**
          * Handles text input events (e.g., typing characters).
@@ -53,7 +53,7 @@ namespace kege::ui{
          *
          * @return true if the input field remains focused, false otherwise.
          */
-        bool onTextInput(Input::Type type, std::string* text, int32_t* cursor, bool* has_focused);
+        bool onTextInput(Input::Type type, kege::string* text, int32_t* cursor, bool* has_focused);
 
         /**
          * Processes mouse input events.

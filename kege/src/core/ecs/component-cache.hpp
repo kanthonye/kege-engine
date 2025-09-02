@@ -223,7 +223,10 @@ namespace kege{
                 _component++;
                 return Iterator( _components, _component );
             }
-
+            bool valid()
+            {
+                return _component >= 0 && _component < _components->_components.size();
+            }
             Iterator( ComponentCacheT< Component >* components, ComponentID component )
             :   _components( components )
             ,   _component( component )

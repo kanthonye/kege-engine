@@ -30,6 +30,22 @@ namespace kege::ui{
         return length;
     }
 
+    kege::vec2 Layout::computeExtent( int font_size, const char* text )
+    {
+        //const int text_index = node.text_id;
+        kege::vec2 cursor = {0.f, 0.f};
+        for (const char* c = text; 0 < *c; ++c )
+        {
+            const Glyph& g = _font->glyphs()[ *c ];
+            float h = font_size * g.scaled_height;
+
+            cursor.y = kege::max<float>( cursor.y, h );
+            cursor.x += g.advance * font_size;
+        }
+        return cursor;
+    }
+
+
     bool Layout::testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const
     {
         return
@@ -58,35 +74,55 @@ namespace kege::ui{
 
     bool Layout::hasFocus( const ui::EID& id )const
     {
-        return _focus_id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _focus.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     void Layout::setFocus( const ui::EID& id )
     {
-        _focus_id = _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        _focus.id = _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
     }
 
     EID Layout::make( const Widget& widget )
     {
+        int id = _widget_manager.make( widget );
+
+        if ( !_widget_manager[ id ].text.text.empty() )
+        {
+//            if
+//            (
+//             _widget_manager[ id ].style->height.type == ui::SizingType::SIZE_FLEXIBLE ||
+//             _widget_manager[ id ].style->align_text  == ui::AlignText::Right ||
+//             _widget_manager[ id ].style->align_text  == ui::AlignText::Center
+//            )
+            {
+                vec2 extent = computeExtent
+                (
+                 _widget_manager[ id ].style->font_size,
+                 _widget_manager[ id ].text.text.c_str()
+                );
+
+                _widget_manager[ id ].text.height = extent.y;
+                _widget_manager[ id ].text.width = extent.x;
+            }
+        }
         return EID
         {
-            _widget_manager.make( widget ),
+            id,
             this
         };
     }
 
     uint32_t Layout::put( const EID& id )
     {
-        _node_counter += 1;
-        if ( _node_counter >= _nodes.size() )
+        if ( id.index < 0 )
         {
-            KEGE_LOG_ERROR << "Reached Maximum amount of UI Node";
+            KEGE_LOG_ERROR << "Invalid Widget Index"<<Log::nl;
             return 0;
         }
 
-        if ( id.index == 0 )
+        if ( _node_counter + 1 >= _nodes.size() )
         {
-            KEGE_LOG_ERROR << "Invalid UI index"<<Log::nl;
+            KEGE_LOG_ERROR << "Reached Maximum amount of UI Node";
             return 0;
         }
 
@@ -96,27 +132,29 @@ namespace kege::ui{
             return 0;
         }
 
-        _widget_manager.setNodeIndex( id.index, _node_counter );
-        
-        _nodes[ _node_counter ].content = &_widget_manager[ id.index ];
-        _nodes[ _node_counter ].parent = _parent;
-        _nodes[ _node_counter ].count = 0;
-        _nodes[ _node_counter ].head = 0;
-        _nodes[ _node_counter ].tail = 0;
-        _nodes[ _node_counter ].next = 0;
-        _nodes[ _node_counter ].next_free = 0;
-        _nodes[ _node_counter ].freed = false;
-        _nodes[ _node_counter ].index = _node_counter;
-        _nodes[ _node_counter ].id = _node_counter;
+        int node_index = ( _node_counter += 1 );
+
+        _widget_manager.setNodeIndex( id.index, node_index );
+
+        _nodes[ node_index ].content = &_widget_manager[ id.index ];
+        _nodes[ node_index ].parent = _parent;
+        _nodes[ node_index ].count = 0;
+        _nodes[ node_index ].head = 0;
+        _nodes[ node_index ].tail = 0;
+        _nodes[ node_index ].next = 0;
+        //_nodes[ node_index ].next_free = 0;
+        //_nodes[ node_index ].freed = false;
+        _nodes[ node_index ].id = node_index;
+
 
         // if style width and height is fixed, set the rect width and height of the ui element
-        if ( _nodes[ _node_counter ].content->style->height.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ node_index ].content->style->height.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ _node_counter ].content->rect.height = _widget_manager[ id.index ].style->height.size;
+            _nodes[ node_index ].content->rect.height = _nodes[ node_index ].content->style->height.size;
         }
-        if ( _nodes[ _node_counter ].content->style->width.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ node_index ].content->style->width.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ _node_counter ].content->rect.width = _widget_manager[ id.index ].style->width.size;
+            _nodes[ node_index ].content->rect.width = _nodes[ node_index ].content->style->width.size;
         }
 
         // setup the layout tree hierarchy
@@ -133,10 +171,10 @@ namespace kege::ui{
             }
             _nodes[ _parent ].count++;
 
-            _nodes[ _node_counter ].depth = 1 + _nodes[ _parent ].depth;
+            _nodes[ node_index ].depth = 1 + _nodes[ _parent ].depth;
         }
 
-        return _node_counter;
+        return node_index;
     }
 
     uint32_t Layout::push( const EID& id )
@@ -209,6 +247,16 @@ namespace kege::ui{
         return _style_manager.load( filename );
     }
 
+    void Layout::setFont( const kege::Font& font )
+    {
+        _font = font;
+    }
+
+    const kege::Font& Layout::getFont()const
+    {
+        return _font;
+    }
+
     NodeIndex Layout::parent( NodeIndex index )const
     {
         return _nodes[ index ].parent;
@@ -250,26 +298,21 @@ namespace kege::ui{
         return node_id > 0 && node_id < _nodes.size();
     }
 
-//    bool Layout::parent( uint32_t node_id )const
-//    {
-//        return validate( _nodes[ node_id ].head );
-//    }
-
     void Layout::handleMouseOverEvents()
     {
         // Reset current hot element at start of frame
         _curr_hot = {0, 0, 0};
 
         // First, check if previous hot element is still valid and under mouse
-        if (_prev_hot.index != 0)
+        if (_prev_hot.id != 0)
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot.index ].content->rect ) )
+            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot.id ].content->rect ) )
             {
                 // If previous hot element has children, there is a possibility that the mouse
                 // is over its child element. So, we need to account for those child elements.
-                if ( _nodes[ _prev_hot.index ].count )
+                if ( _nodes[ _prev_hot.id ].count )
                 {
-                    findNewHotElement( _prev_hot.index );
+                    findNewHotElement( _prev_hot.id );
                 }
 
                 // If the previous hot element has no children then it is still under mouse - keep it hot
@@ -292,12 +335,12 @@ namespace kege::ui{
         {
             if (_prev_hot.id != 0)
             {
-                std::cout  <<"mouse exit: " << _prev_hot.index <<"\n";
+                std::cout  <<"mouse exit: " << _prev_hot.id <<"\n";
             }
 
             if (_curr_hot.id != 0)
             {
-                std::cout  <<"mouse enter: " << _curr_hot.index <<"\n";
+                std::cout  <<"mouse enter: " << _curr_hot.id <<"\n";
             }
         }
 
@@ -326,16 +369,14 @@ namespace kege::ui{
             {
                 if ( _curr_hot.depth < _nodes[ root ].depth  )
                 {
-                    if ( _curr_hot.index == 0 )
+                    if ( _curr_hot.id == 0 )
                     {
                         _curr_hot.id    = _nodes[ root ].id;
-                        _curr_hot.index = _nodes[ root ].index;
                         _curr_hot.depth = _nodes[ root ].depth;
                     }
-                    else if ( _nodes[ _curr_hot.index ].content->style->zindex <= _nodes[ root ].content->style->zindex )
+                    else if ( _nodes[ _curr_hot.id ].content->style->zindex <= _nodes[ root ].content->style->zindex )
                     {
                         _curr_hot.id    = _nodes[ root ].id;
-                        _curr_hot.index = _nodes[ root ].index;
                         _curr_hot.depth = _nodes[ root ].depth;
                     }
                 }
@@ -347,9 +388,9 @@ namespace kege::ui{
     {
         if ( _input->buttonDown() ) return;
 
-        if ( _prev_active.id != 0 && _prev_active.index < _nodes.size() )
+        if ( _prev_active.id != 0 && _prev_active.id < _nodes.size() )
         {
-            if ( _nodes[ _prev_active.index ].content->trigger == ui::ClickTrigger::OnRelease )
+            if ( _nodes[ _prev_active.id ].content->trigger == ui::ClickTrigger::OnRelease )
             {
                 std::cout  <<"release: " << _prev_active.id <<"| " << _prev_hot.id <<"\n";
                 if ( _prev_hot.id == _prev_active.id )
@@ -374,7 +415,7 @@ namespace kege::ui{
                 _curr_active = _prev_active;
             }
 
-            if ( _curr_active.id == 0 && _curr_hot.index != 0  )
+            if ( _curr_active.id == 0 && _curr_hot.id != 0  )
             {
                 if ( _input->doubleClick() )
                 {
@@ -382,19 +423,19 @@ namespace kege::ui{
                     _curr_active.clicks = 2;
                     std::cout  <<"double-click : " << _curr_active.id <<"\n";
 
-                    if ( _nodes[ _curr_active.index ].content->trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active.id ].content->trigger == ui::ClickTrigger::OnClick )
                     {
                         _curr_active.active = true;
                         _focus = _curr_active;
                     }
                 }
-                else if ( _input->primaryClick() && _curr_hot.index != 0 )
+                else if ( _input->primaryClick() && _curr_hot.id != 0 )
                 {
                     _curr_active = _curr_hot;
                     _curr_active.clicks = 1;
                     std::cout  <<"single-click : " << _curr_active.id <<"\n";
 
-                    if ( _nodes[ _curr_active.index ].content->trigger == ui::ClickTrigger::OnClick )
+                    if ( _nodes[ _curr_active.id ].content->trigger == ui::ClickTrigger::OnClick )
                     {
                         _curr_active.active = true;
                         _focus = _curr_active;
@@ -408,7 +449,6 @@ namespace kege::ui{
     void Layout::begin( ui::Input* input )
     {
         _root = 0;
-        _level = 0;
         _parent = 0;
         _input = input;
         _node_counter = 0;
@@ -423,7 +463,7 @@ namespace kege::ui{
          */
         if ( !_nodes.empty() )
         {
-            _aligner.align( *this, _root );
+            align( *this, _root );
         }
 
         _button_down = _input->buttonDown();
@@ -443,8 +483,7 @@ namespace kege::ui{
     }
 
     Layout::Layout()
-    :   _level( 0 )
-    ,   _parent( 0 )
+    :   _parent( 0 )
     ,   _curr_hot{}
     ,   _prev_active{}
     ,   _curr_active{}

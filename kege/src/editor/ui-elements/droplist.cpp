@@ -11,14 +11,8 @@ namespace kege{
 
     bool Droplist::begin( ui::Layout& layout, bool has_child, int space, const char* text )
     {
-        if ( int(container) == 0 )
+        if ( !container )
         {
-            spacer = ui::Style
-            {
-                .width = ui::fixed( space ),
-                .height = ui::extend(),
-            };
-
             container = layout.make
             ({
                 .mouseover = false,
@@ -52,7 +46,6 @@ namespace kege{
         {
             layout.push( field );
             {
-                //layout.put( spacer );
                 layout.put( icon );
                 layout.put( label );
             }

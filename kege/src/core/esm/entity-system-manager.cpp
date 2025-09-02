@@ -12,11 +12,13 @@ namespace kege{
 
     EntitySystemManager::EntitySystemManager( kege::Engine* engine )
     :   kege::System( engine, "entity-system-manager" )
+    ,   _engine( engine )
     {
     }
 
     void EntitySystemManager::addSystem( kege::Ref< kege::EntitySystem > system )
     {
+        system->_engine = _engine;
         _systems.push_back( system );
 
         if ( system->checkFlag( kege::EntitySystem::REQUIRE_UPDATE ) )
@@ -74,16 +76,16 @@ namespace kege{
 
     bool EntitySystemManager::initialize()
     {
-        Log::info << "initializing -> " << getName()  <<Log::nl;
+        Log::info << "initializing -> " << getName()  <<"\n";
         for (kege::Ref< kege::EntitySystem >& system : _systems )
         {
-            Log::info << "initializing -> " << system->getName() <<"\n";
+            Log::info << "- initializing -> " << system->getName() <<"... ";
             if ( !system->initialize() )
             {
-                Log::info << system->getName() << " initialization failed." <<"\n";
+                Log::info << "FAILED... ";
                 return false;
             }
-            Log::info <<system->getName() << ": initialization complete." <<"\n";
+            Log::info <<"complete" <<"\n";
         }
         Log::info << getName() << ", initialization complete."<<Log::nl;
         return true;
@@ -91,13 +93,12 @@ namespace kege{
 
     void EntitySystemManager::shutdown()
     {
-        Log::info << "shuting-down -> " << getName()  <<Log::nl;
+        Log::info << "shuting-down -> " << getName()  <<"\n";
         std::vector< kege::Ref< kege::EntitySystem > >::reverse_iterator syst;
         for ( syst = _systems.rbegin(); syst != _systems.rend(); syst++ )
         {
-            Log::info << "shuting-down -> " << (*syst)->getName() <<"\n";
+            Log::info << "- shuting-down -> " << (*syst)->getName() <<".\n";
             (*syst)->shutdown();
-            Log::info  << "shutdown complete -> " << (*syst)->getName() <<"\n";
         }
         _systems.clear();
         _system_updates.clear();

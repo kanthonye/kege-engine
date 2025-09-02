@@ -32,7 +32,6 @@ namespace kege{
         ui::EID field;
         ui::EID label;
         ui::EID icon;
-        ui::Style spacer;
 
         DropState state;
     };

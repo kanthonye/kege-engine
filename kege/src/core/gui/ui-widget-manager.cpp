@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 
-    void WidgetManager::duplicate( uint32_t src_index, uint32_t* dst_index )
+    void WidgetManager::duplicate( int32_t src_index, int32_t* dst_index )
     {
         if ( 1 <= src_index )
         {
@@ -19,10 +19,10 @@ namespace kege::ui{
         }
     }
 
-    uint32_t WidgetManager::make( const Widget& widget )
+    int32_t WidgetManager::make( const Widget& widget )
     {
         uint32_t id = generate();
-        if( id <= 0 || id >= _contents.size() )
+        if( id < 0 || id >= _contents.size() )
         {
             KEGE_LOG_ERROR << "Reached maximum amount of UI Widget -> " << _contents.size() + 1 << Log::nl;
             return {};
@@ -31,7 +31,7 @@ namespace kege::ui{
         return id;
     }
 
-    void WidgetManager::recycle( uint32_t index )
+    void WidgetManager::recycle( int32_t index )
     {
         if ( index < 0 || index >= _contents.size())
         {
@@ -44,45 +44,50 @@ namespace kege::ui{
         if ( _contents[ index ].duplicates > 0 )
         {
             _contents[ index ].duplicates--;
+
             /**
              * If the reference count reaches zero, add the ID to the recycled list.
              */
             if ( _contents[ index ].duplicates == 0 )
             {
-                _contents[ index ].next = -1;
-                _contents[ index ].prev = -1;
-                _contents[ index ].duplicates = 0;
+                _contents[ index ].node_index = 0;
 
-                if ( _recycled_head < 0 )
+                if ( _recycled.head < 0 )
                 {
-                    _recycled_head = _recycled_tail = index;
+                    _recycled.head = _recycled.tail = index;
                 }
                 else
                 {
-                    _contents[ index ].prev = _recycled_tail;
-                    _contents[ _recycled_tail ].next = index;
-                    _recycled_tail = index;
+                    _contents[ _recycled.tail ].next = index;
+                    _contents[ index ].prev = _recycled.tail;
+                    _recycled.tail = index;
                 }
-                _recycled_count += 1;
+
+                _recycled.count += 1;
             }
         }
     }
-    void WidgetManager::resize(uint32_t max_quantity)
+    void WidgetManager::resize( int32_t max_quantity )
     {
         _contents.resize( max_quantity );
+
+        _available.head = 0;
+        _available.tail = max_quantity - 1;
+        _available.count = max_quantity;
+
         // Initialize the free list: each node points to the next.
         for (int32_t i = 0; i < max_quantity; ++i)
         {
-            _contents[i].node_index = 0;
             _contents[i].prev  = i - 1;
             _contents[i].next  = i + 1;
+            _contents[i].node_index = 0;
             _contents[i].duplicates  = 0;
         }
-        _contents[ max_quantity - 1 ].next = -1;
-        _available_id = 1;
+
+        _contents[ _available.tail ].next = -1;
     }
 
-    uint32_t WidgetManager::generate()
+    int32_t WidgetManager::generate()
     {
         /**
          * Generate a new ID from the pool.
@@ -90,28 +95,24 @@ namespace kege::ui{
          * Otherwise, use the next available ID from the pool.
          * If the pool is exhausted, return 0.
          */
-        if ( _available_id >= _contents.size() || _available_id == -1)
+        if ( _available.head >= _contents.size() || _available.head == -1)
         {
             KEGE_LOG_ERROR << "max available ids exhausted." << Log::nl;
             return 0;
         }
 
-        int index;
+        int index = _available.head;
+        _available.head = _contents[ _available.head ].next;
 
-        /**
-         * If there are recycled IDs, use the first one.
-         * Otherwise, use the next available ID from the pool.
-         */
-        if ( _recycled_id > 0 )
+        if ( _available.head < 0 )
         {
-            index = _recycled_id;
-            _recycled_id = _contents[ _recycled_id ].next;
+            _available.tail = -1;
         }
         else
         {
-            index = _available_id;
-            _available_id = _contents[ _available_id ].next;
+            _contents[ _available.head ].prev = -1;
         }
+        _available.count -= 1;
 
         /**
          * Initialize the ID structure.
@@ -120,26 +121,28 @@ namespace kege::ui{
          */
         _contents[ index ].next = -1;
         _contents[ index ].prev = -1;
+        _contents[ index ].node_index = 0;
         _contents[ index ].duplicates = 1;
+
         return index;
     }
 
-    const Widget& WidgetManager::operator[]( uint32_t index )const
+    const Widget& WidgetManager::operator[]( int32_t index )const
     {
         return _contents[ index ].widget;
     }
 
-    Widget& WidgetManager::operator[]( uint32_t index )
+    Widget& WidgetManager::operator[]( int32_t index )
     {
         return _contents[ index ].widget;
     }
 
-    void WidgetManager::setNodeIndex( uint32_t index, uint32_t nodex_index )
+    void WidgetManager::setNodeIndex( int32_t index, int32_t nodex_index )
     {
         _contents[ index ].node_index = nodex_index;
     }
 
-    uint32_t WidgetManager::getNodeIndex( uint32_t index )const
+    uint32_t WidgetManager::getNodeIndex( int32_t index )const
     {
         return _contents[ index ].node_index;
     }
@@ -147,38 +150,31 @@ namespace kege::ui{
     void WidgetManager::refresh()
     {
         /**
-         * If the recycled id is not -1, we need to reset the recycled id.
-         * This is to ensure that the recycled nodes are available for reuse.
-         */
-        if ( _recycled_id < 0 )
-        {
-            _recycled_id = _recycled_head;
-        }
-        /**
          * If the recycled node count is greater than 0, we need to append to the recovered recycled
          * list of element to the current recycled list. This is to ensure that elements that are
          * recycled in the current frame is not reused in same frame, because this can lead to
          * elements being overwritten or addding child node to it self.
          */
-        else if ( _recycled_count > 0 )
+        if ( _recycled.count > 0 )
         {
-            _contents[ _recycled_tail ].next = _recycled_id;
-            _contents[ _recycled_id ].prev = _recycled_tail;
-            _recycled_id = _recycled_head;
+            _contents[ _recycled.tail ].next = _available.head;
+            _contents[ _available.head ].prev = _recycled.tail;
+            _available.head = _recycled.head;
+
+            _available.count += _recycled.count;
         }
-        _recycled_head = -1;
-        _recycled_tail = -1;
-        _recycled_count = 0;
+
+        _recycled.head = -1;
+        _recycled.tail = -1;
+        _recycled.count = 0;
     }
 
 
     WidgetManager::WidgetManager()
-    :   _recycled_tail( -1 )
-    ,   _recycled_head( -1 )
-    ,   _recycled_count( 0 )
-    ,   _recycled_id( -1 )
-    ,   _available_id( -1 )
     {
+        _recycled.head = -1;
+        _recycled.tail = -1;
+        _recycled.count = 0;
     }
 
 

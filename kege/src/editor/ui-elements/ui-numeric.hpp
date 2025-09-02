@@ -16,13 +16,12 @@ namespace kege::ui{
 
     struct Numeric
     {
-        void update( ui::Layout& layout, float& value, const char* text );
+        bool update( ui::Layout& layout, float& value, const char* text );
 
         ui::EID container;
         ui::EID label;
         ui::EID value;
 
-        std::string data;
         int32_t cursor;
         bool has_focused;
     };

@@ -56,6 +56,10 @@ namespace kege{
 //
 //        string skipfwd(const char* s)const;
 //        string skipbwd(const char* s)const;
+        void insert(size_t pos, size_t count, char ch);
+        void insert(size_t pos, const char* str);
+        void erase(size_t pos, size_t count);
+        bool find( char c )const;
 
         string parse_fname()const;
         string parse_fpath()const;

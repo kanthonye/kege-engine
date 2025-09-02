@@ -12,7 +12,7 @@ namespace kege::ui{
 
     bool HierarchyDroplist::open( ui::Layout& layout, bool has_child, int space, const char* text )
     {
-        if ( int(container) == 0 )
+        if ( !container )
         {
             spacer_style = ui::Style
             {
@@ -88,7 +88,7 @@ namespace kege::ui{
 
     void HierarchyDroplist::beginContent( ui::Layout& layout )
     {
-        if( int(content) == 0 )
+        if( !content )
         {
             content = layout.make
             ({

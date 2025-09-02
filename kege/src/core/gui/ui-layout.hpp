@@ -30,7 +30,6 @@ namespace kege::ui{
         struct State
         {
             uint32_t id = 0;
-            uint32_t index = 0;
             uint32_t depth = 0;
             uint16_t clicks = 0;
             bool active;
@@ -39,6 +38,7 @@ namespace kege::ui{
     public:
 
         float getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const kege::Font& font );
+        kege::vec2 computeExtent( int font_size, const char* text );
 
         /**
          * Checks if geven point and rectangular shape intersects.
@@ -218,6 +218,20 @@ namespace kege::ui{
         bool loadStyles( const std::string& filename );
 
         /**
+         * Sets the current font for rendering text.
+         *
+         * @param font The font to set.
+         */
+        void setFont(const kege::Font& font);
+
+        /**
+         * Retrieves the current font.
+         *
+         * @return The current font.
+         */
+        const kege::Font& getFont() const;
+
+        /**
          * Resize total number of layout elements.
          *
          * @param max_elements The maximum number of UI elements the system can manage.
@@ -271,27 +285,21 @@ namespace kege::ui{
         std::vector< kege::ui::Node > _nodes;
         uint32_t _node_counter;
 
+        kege::Font _font;
         ui::Input* _input;
-
-        ui::Aligner _aligner; // Handles alignment of UI elements.
 
         mutable State _curr_active;
         mutable State _prev_active;
         mutable State _curr_hot;
         mutable State _prev_hot;
         mutable State _focus;
-        
-        mutable uint32_t _focus_id;
 
         uint32_t _parent; // Tracks the current parent element in the UI hierarchy.
-
-        uint32_t _level; // Tracks the current level in the UI hierarchy.
 
         int32_t _root;
 
         bool _button_down;
 
-        friend Aligner;
         friend EID;
     };
 
@@ -300,6 +308,16 @@ namespace kege::ui{
     class EID
     {
     public:
+
+        friend bool operator ==( const EID& a, const EID& b )
+        {
+            return a.index == b.index;
+        }
+
+        friend bool operator !=( const EID& a, const EID& b )
+        {
+            return a.index != b.index;
+        }
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -391,16 +409,18 @@ namespace kege::ui{
          */
         //void pop();
 
+        operator bool()const{ return 0 <= index; }
+
 
         // Move assignment operator
         EID& operator =(EID&& other) noexcept
         {
             index = other.index;
             layout = other.layout;
-            node_index = other.node_index;
+            //node_index = other.node_index;
 
-            other.index = 0;
-            other.node_index = 0;
+            other.index = -1;
+            //other.node_index = 0;
             other.layout = nullptr;
 
             return *this;
@@ -410,7 +430,7 @@ namespace kege::ui{
         {
             index = other.index;
             layout = other.layout;
-            node_index = other.node_index;
+            //node_index = other.node_index;
             layout->_widget_manager.duplicate( other.index, &index );
             return *this;
         }
@@ -434,31 +454,31 @@ namespace kege::ui{
         EID( EID&& other ) noexcept
         :   index( other.index )
         ,   layout( other.layout )
-        ,   node_index( other.node_index )
+        //,   node_index( other.node_index )
         {
-            other.index = 0;
-            other.node_index = 0;
+            other.index = -1;
+            //other.node_index = 0;
             other.layout = nullptr;
         }
 
-        EID( uint32_t index, Layout* layout )
+        EID( int32_t index, Layout* layout )
         :   index( index )
         ,   layout( layout )
-        ,   node_index( 0 )
+        //,   node_index( 0 )
         {}
 
         EID( const EID& other )
         :   index( other.index )
         ,   layout( other.layout )
-        ,   node_index( other.node_index )
+        //,   node_index( other.node_index )
         {
             layout->_widget_manager.duplicate( other.index, &index );
         }
 
         EID()
         :   layout( nullptr )
-        ,   index( 0 )
-        ,   node_index( 0 )
+        ,   index( -1 )
+        //,   node_index( 0 )
         {}
 
         ~EID()
@@ -473,9 +493,9 @@ namespace kege::ui{
     private:
 
         Layout* layout;
+        int32_t index;
 
-        uint32_t index;
-        mutable NodeIndex node_index;
+        //mutable NodeIndex node_index;
 
         friend Layout;
     };

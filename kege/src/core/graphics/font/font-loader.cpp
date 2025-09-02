@@ -6,7 +6,6 @@
 //
 
 #include "font-loader.hpp"
-#include "../loaders/image-loader.hpp"
 
 namespace kege::ui{
 
