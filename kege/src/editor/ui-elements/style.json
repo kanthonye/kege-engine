@@ -177,6 +177,7 @@
 
     "properties-container":
     {
+        "border_radius": 5,
         "width": "extend",
         "height": "flexible",
         "background": "0xFFFFFF0B",
@@ -189,10 +190,11 @@
     },
     "properties-content":
     {
+        "border_radius": 5,
         "width": "extend",
         "height": "flexible",
         "background": "0xFFFFFF00",
-        "padding": [10,2,10,10],
+        "padding": [10,10,10,10],
         "gap":[2,2],
         "align":
         {
@@ -202,6 +204,7 @@
     },
     "properties-field":
     {
+        "border_radius": 5,
         "border_radius": 5,
         "padding": [10,2,4,4],
         "width": "extend",
@@ -233,17 +236,16 @@
         "width": "extend",
         "height": 20,
         "background": "0xFFFFFF00",
-        "color": "0xFFFFFF83",
+        "color": "0xFFFFFF90",
     },
 
-
-    "numeric-container":
+    "numeric":
     {
         "background": "0xFFFFFF0B",
         "border_radius": 5,
         "width": "extend",
         "height": "flexible",
-        "padding": [8,4,8,4],
+        "padding": [8,2,8,2],
         "gap": 2,
         "align":
         {
@@ -300,14 +302,14 @@
             "direction": "top to bottom",
         },
     },
-    "vector-content":
+
+    "row":
     {
         "background": "0xFFFFFF00",
         "width": "extend",
         "height": "flexible",
         "color": "0x9C9C9C",
-        "border_radius": 5,
-        "gap": [3,3],
+        "gap": [3,0],
         "align":
         {
             "origin": "left center",

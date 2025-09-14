@@ -11,7 +11,7 @@
 namespace kege{
 
     EntitySystem::EntitySystem( kege::Engine* engine, const std::string& name, uint32_t requirements )
-    :   kege::System( engine, name )
+    :   kege::EntityLogic( engine, name )
     ,   _requirements( requirements )
     {}
 
@@ -32,23 +32,16 @@ namespace kege{
     {
     }
 
-    void EntitySystem::onSceneChange()
-    {
-        if ( _signature.any() && _engine->scene() )
-        {
-            _entities = _engine->scene()->getEntityRegistry().getEntityView( _signature );
-        }
-    }
-    
     bool EntitySystem::initialize()
     {
         onSceneChange();
-        return System::initialize();
+        return true;
     }
 
     void EntitySystem::shutdown()
     {
-        System::shutdown();
+        _entities = nullptr;
+        _engine = nullptr;
     }
 
     EntitySystem:: ~EntitySystem()

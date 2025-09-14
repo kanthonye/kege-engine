@@ -9,33 +9,18 @@
 
 namespace kege{
 
-    void TerrainSystem::execute( kege::CommandBuffer* command_buffer )
+    void TerrainSystem::operator()( kege::RenderPassContext* context )
     {
-//        ShaderPipeline* pipeline = ShaderPipelineLibrary::get( "spherical-terrain-shader" );
-//        RenderState* render_state = getScene()->getRenderState();
-//
-//        /**
-//         * Important. must always set the viewport and scissor area before rendering
-//         */
-//        command_buffer->setViewport( render_state->viewport );
-//        command_buffer->setScissor( render_state->scissor );
-//
-//        command_buffer->bindShaderPipeline( *pipeline );
-//        command_buffer->bindShaderResource( *pipeline, global_resources->shader_resource_camera );
-//
-//        TerrainTransformPushConstant terrain_block;
-//        Terrain* terrain;
-//        for ( Entity entity : *_entities )
-//        {
-//            terrain = entity.get< component::Terrain >()->ref();
-//            Transform* transform = entity.get< Transform >();
-//
-//            terrain_block = *transform;
-//            terrain_block.data.spherical_radius = terrain->radius();
-//            command_buffer->pushConstants( *pipeline, terrain_block.push_constant );
-//
-//            terrain->draw( command_buffer );
-//        }
+        kege::CommandEncoder* encoder = context->getCommandEncoder();
+
+        Terrain* terrain;
+        Transform* transform;
+        for ( Entity entity : *_entities )
+        {
+            terrain = entity.get< Terrain >();
+            transform = entity.get< Transform >();
+            terrain->render( encoder, transform );
+        }
     }
 
     void TerrainSystem::update( double dms )
@@ -43,9 +28,9 @@ namespace kege{
         if( !_entities ) return;
 
         vec3 camera_position;
-        if ( _engine->scene()->getCameraEntity() )
+        if ( _engine->scene().getScene()->getCameraEntity() )
         {
-            camera_position = _engine->scene()->getCameraEntity().get< Transform >()->position;
+            camera_position = _engine->scene().getScene()->getCameraEntity().get< Transform >()->position;
         }
         else
         {
@@ -57,9 +42,9 @@ namespace kege{
             Terrain* terrain = entity.get< Terrain >();
             Transform* transform = entity.get< Transform >();
 
-            //terrain->setOrientation( transform->orientation );
-            //terrain->setPosition( transform->position );
-            terrain->update( camera_position );
+            terrain->setOrientation( (quatd) transform->orientation );
+            terrain->setPosition( (vec3d) transform->position );
+            terrain->update( (vec3d) camera_position );
         }
     }
 
@@ -69,22 +54,13 @@ namespace kege{
         return EntitySystem::initialize();
     }
 
-//    void TerrainSystem::prepareGeometries()
-//    {
-//        if( !_entities ) return;
-//
-//        component::Terrain* terrain;
-//
-//        for (Entity entity : *_entities )
-//        {
-//            terrain = entity.get< component::Terrain >();
-//            terrain->ref()->prepareGeometries( temp_render_buffer );
-//        }
-//    }
-
     TerrainSystem::~TerrainSystem()
     {}
+
     TerrainSystem::TerrainSystem( kege::Engine* engine )
     :   kege::EntitySystem( engine, "terrain-system", REQUIRE_UPDATE | REQUIRE_RENDER )
     {}
+
+
+    KEGE_REGISTER_ENTITY_SYSTEM( TerrainSystem, "terrain" );
 }

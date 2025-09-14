@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class CircleMesh : public kege::Mesh
+    class CircleMesh : public kege::MeshPrimitive
     {
         public: CircleMesh( const vec3& center, float radius, int divs );
     };

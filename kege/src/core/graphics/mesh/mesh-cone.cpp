@@ -8,14 +8,12 @@
 #include "mesh-cone.hpp"
 namespace kege{
     
-    std::vector<Vertex> generateConeVertices(float height, float radius, int columns)
+    void generateConeVertices(float height, float radius, int columns, std::vector<Vertex>& vertices)
     {
-        std::vector<Vertex> vertices;
-
         // Validate input parameters
-        if (height <= 0.0f || radius <= 0.0f || columns < 3) {
-            return vertices; // Return empty mesh for invalid parameters
-        }
+        if ( height <= 0.0f ) height = 1;
+        if ( radius <= 0.0f ) radius = 1;
+        if ( columns < 3 ) columns = 3;
 
         // Calculate cone properties
         float half_height = height * 0.5f;
@@ -72,14 +70,10 @@ namespace kege{
         centerVertex.texcoord = kege::vec2(0.5f, 0.5f);
         centerVertex.normal = kege::vec3(0.0f, -1.0f, 0.0f);
         vertices.push_back(centerVertex);
-
-        return vertices;
     }
 
-    std::vector<unsigned int> generateConeIndices(int columns)
+    void generateConeIndices(int columns, std::vector<unsigned int>& indices)
     {
-        std::vector<unsigned int> indices;
-
         // Generate base indices (triangle fan)
         unsigned int centerIndex = (columns + 1) * 2 + 1;
         for (int i = 0; i < columns; ++i)
@@ -101,14 +95,11 @@ namespace kege{
             indices.push_back(apexIndex);
             indices.push_back(baseIndex2);
         }
-
-        return indices;
     }
-
 
     ConeMesh::ConeMesh( float radius, float height, uint32_t columns )
     {
-        vertices = generateConeVertices( radius, height, columns );
-        indices = generateConeIndices( columns );
+        generateConeVertices( radius, height, columns, vertices );
+        generateConeIndices( columns, indices );
     }
 }

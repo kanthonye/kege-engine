@@ -11,47 +11,70 @@
 #include "landscape.hpp"
 #include "terrain-topography.hpp"
 #include "flat-terrain-node.hpp"
-#include "flat-terrain-tile-node.hpp"
 
 namespace kege{
-    
-    class FlatTerrainNode;
 
-    class FlatTerrainTile : public TerrainNode
+    class PhysicalFlatTerrain;
+
+    class FlatTerrainTile : public RefCounter
     {
+    public:
+
+        enum{ NORTH_VERTEX_BIT = 1, EAST_VERTEX_BIT = 2, SOUTH_VERTEX_BIT = 4, WEST_VERTEX_BIT = 8 };
+        enum Status{ IDLE, PENDING, ACTIVE };
+        enum{ NORTH, SOUTH, EAST, WEST };
+        enum{ NW, NE, SW, SE };
+
+        void initialize( Ref< TerrainTopography >& topography );
+        void setNeighborNorth( FlatTerrainTile* tile );
+        void setNeighborSouth( FlatTerrainTile* tile );
+        void setNeighborEast( FlatTerrainTile* tile );
+        void setNeighborWest( FlatTerrainTile* tile );
+        
+        void render();
+        void update();
+
+        void setHeight( FlatTerrainQuadtree& node );
+
+        const FlatTerrainQuadtree& getRoot()const;
+        const ImageLayer& getImageLayer()const;
+        const dvec3& center()const;
+
+        FlatTerrainTile( PhysicalFlatTerrain* terrain, const sint2& coord );
+        ~FlatTerrainTile();
+
     private:
 
-        void initialize( TerrainTileNode& node, const dvec3& center, uint32_t length, uint32_t depth );
+        //void initialize( FlatTerrainQuadtree& node, const dvec3& center, uint32_t length, uint32_t depth );
 
-        void render( TerrainTileNode& node, FlatTerrainRenderer& renderer );
+        void render( FlatTerrainQuadtree& node );
 
         /**
          * This funcion is use to determine if the given quadtree should split or not.
          *
          * @return True is returned if the given quadtree should split, false otherwise.
          */
-        bool splitable( TerrainTileNode& node, const dvec3& eye )const;
+        bool splitable( FlatTerrainQuadtree& node )const;
 
         /**
          * Update the given quadtree relative to the eye position. This determines if the
          * given quadtree should split, merge, or remain the same.
          *
          * @param node : the quadtree to update.
-         * @param eye : the postion which the quadtree should update relative to.
          */
-        void update( TerrainTileNode& node, const dvec3& eye );
+        void update( FlatTerrainQuadtree& node );
 
         /**
          * Split/sub-divide the given quadtreee
          * @param node : the quadtree to split.
          */
-        void split( TerrainTileNode& node );
+        //void split( FlatTerrainQuadtree& node );
 
         /**
          * Merge the divided quadtree into one.
          * @param node : the quadtree to merge.
          */
-        void merge( TerrainTileNode& node );
+        //void merge( FlatTerrainQuadtree& node );
 
     private:
 
@@ -74,38 +97,21 @@ namespace kege{
 //        void enableVertex( uint32_t x, uint32_t y );
 //
 //        uint32_t toIndex( uint32_t& x, uint32_t& y );
-        void setHeight( TerrainTileNode& node );
 
-        void setNeighborSouth( TerrainTileNode* node );
-    public:
-
-        enum{ NORTH_VERTEX_BIT = 1, EAST_VERTEX_BIT = 2, SOUTH_VERTEX_BIT = 4, WEST_VERTEX_BIT = 8 };
-        enum Status{ IDLE, PENDING, ACTIVE };
-        enum{ NORTH, SOUTH, EAST, WEST };
-        enum{ NW, NE, SW, SE };
-
-        void initialize( Ref< TerrainTopography >& topography );
-        void render( FlatTerrainRenderer& renderer );
-        void update( const dvec3& eye );
-
-        void merge();
-
-        const dvec3& center()const;
-
-        FlatTerrainTile( FlatTerrainNode* parent );
-        ~FlatTerrainTile();
+        void setNeighborSouth( FlatTerrainQuadtree* node );
 
     public:
 
-        TerrainTileNode _root;
-
-        FlatTerrainNode* _parent;
+        FlatTerrainQuadtree _root;
+        PhysicalFlatTerrain* _terrain;
 
         Ref< TerrainTopography > _topography;
         ImageLayer _image_layer;
 
         Status _status;
 
+        sint2 _coord_min;
+        sint2 _coord_max;
         sint2 _coord;
 
         vec4 color;

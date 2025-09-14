@@ -68,14 +68,14 @@ namespace kege{
         Json json_bindings = json[ "bindings" ];
         Json json_targets = json[ "targets" ];
 
-        std::vector< kege::DescriptorSetLayoutBinding > bindings;
+        std::vector< kege::UniformDesc > bindings;
         std::vector< kege::RgShaderResource > targets;
 
         for( uint32_t i = 0; i < json_bindings.count(); ++i )
         {
             Json binding = json_bindings[ i ];
 
-            kege::DescriptorSetLayoutBinding layout;
+            kege::UniformDesc layout;
             layout.name = binding[ "name" ].value();
             layout.count = binding[ "count" ].getInt();
             layout.binding = binding[ "binding" ].getInt();

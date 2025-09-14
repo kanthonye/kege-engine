@@ -9,7 +9,7 @@
 
 namespace kege{
 
-    std::vector< Vertex > generateCylinderVertices( float radius, uint32_t height, uint32_t columns )
+    void generateCylinderVertices( float radius, uint32_t height, uint32_t columns, std::vector< Vertex >& vertices )
     {
         float vx,vy, nx,ny, rad;
         uint32_t index;
@@ -18,7 +18,6 @@ namespace kege{
         const float segments = 6.28318530718 / (float)columns;
         columns = (columns<3) ? 3 : columns;
 
-        std::vector< Vertex > vertices;
         vertices.resize( 4 * columns + 2 );
 
         // VERTEX ~ TOP CENTER
@@ -62,11 +61,9 @@ namespace kege{
             vertices[ index ].normal   = kege::vec3( 0.0f, 0.0f, -1.0);
             vertices[ index ].texcoord = kege::vec2( 1.0f-nx, 1.0f-ny);
         }
-
-        return vertices;
     }
 
-    std::vector< uint32_t > generateCylinderIndices( uint32_t columns )
+    void generateCylinderIndices( uint32_t columns, std::vector< uint32_t >& indices )
     {
         uint32_t v[4];
         uint32_t column_index;
@@ -74,7 +71,6 @@ namespace kege{
         Vec3< uint32_t > triangles[4];
         columns = (columns<3) ? 3 : columns;
 
-        std::vector< uint32_t > indices;
         indices.resize( 3 * columns + 3 * columns + 6 * columns );
         memset( indices.data(), 0, 4*indices.size() );
 //        for (column_index = 0; column_index < columns; ++column_index)
@@ -113,13 +109,12 @@ namespace kege{
         indices[ triangles[2].x ] = 4;
         indices[ triangles[2].y ] = 3;
         indices[ triangles[3].z ] = 5;
-        return indices;
     }
 
     CylinderMesh::CylinderMesh( float radius, uint32_t height, uint32_t columns )
     {
-        vertices = generateCylinderVertices( radius, height, columns );
-        indices = generateCylinderIndices( columns );
+        generateCylinderVertices( radius, height, columns, vertices );
+        generateCylinderIndices( columns, indices );
     }
 
 }

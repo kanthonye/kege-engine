@@ -15,24 +15,11 @@
 
 namespace kege{
 
-
-    struct MeshObject
-    {
-        Resource resource;
-    };
-
-
     class MeshRenderingSystem : public kege::EntitySystem
     {
     public:
 
-//        typedef std::vector< ModelMatrices > ModelMatrixArray;
-//        typedef std::unordered_map< MeshID, ModelMatrixArray > SubmeshGroup;
-//        typedef std::unordered_map< EffectID, SubmeshGroup > MaterialSubmeshGroup;
-//        typedef std::unordered_map< MeshID, MaterialSubmeshGroup > MeshMaterialGroup;
-//        typedef std::unordered_map< ShaderPipelineID, MeshMaterialGroup > ShaderMeshGroup;
-
-        void operator()( kege::RenderPassContext* context );
+        void render( double dms );
         bool initialize();
         void shutdown();
 

@@ -32,7 +32,7 @@ namespace kege{
 //        /**
 //         * This ShaderResourceLayout will store the mesh vertices and indices
 //         */
-//        kege::DescriptorSetHandle mesh_shader_resource;
+//        kege::ShaderResource mesh_shader_resource;
 //
 //        /**
 //         * This uniform buffer will store the mesh vertices

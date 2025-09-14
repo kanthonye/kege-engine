@@ -46,7 +46,7 @@ namespace kege{
 
     void CameraSystem::shutdown()
     {
-        _comm.remove< const MappedInputs&, CameraSystem >( this );
+        Communication::remove< const MappedInputs&, CameraSystem >( this );
         return EntitySystem::shutdown();
     }
 

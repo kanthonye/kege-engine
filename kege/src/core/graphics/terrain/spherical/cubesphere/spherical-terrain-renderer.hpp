@@ -11,22 +11,29 @@
 #include "../../terrain/terrain-renderer.hpp"
 #include "../../terrain/physical-terrain.hpp"
 #include "dynamic-cube-mesh.hpp"
-#include "cube-mesh-shader-resource.hpp"
-#include "../../../mesh/mesh.hpp"
+#include "spherical-terrain-tile.hpp"
 
 namespace kege{
+
+    struct PatchDrawBuffer
+    {
+        kege::ShaderResource descriptor_set;
+        kege::BufferHandle patch_buffer;
+        kege::BufferHandle draw_buffer;
+        uint32_t instance_count;
+    };
 
     class SphericalTerrainRenderer : public TerrainRenderer
     {
     public:
 
-        bool initialize( const DynamicCubeMesh* cubemesh );
+        bool initialize();
         const DynamicCubeMesh* getDynamicCubeMesh()const;
 
-        void begin( kege::CommandBuffer* command_buffer );
+        void begin( kege::CommandEncoder* encoder, Transform* transform );
         void end();
 
-        void draw( QuadtreePatchNode& node );
+        void draw( SphericalTerrainTile& node );
 
 
         ~SphericalTerrainRenderer();
@@ -36,14 +43,10 @@ namespace kege{
 
         void flush();
 
-
-
-
-
         /**
          * This ShaderResourceLayout will store the mesh vertices and indices
          */
-        kege::DescriptorSetHandle _mesh_shader_resource;
+        kege::ShaderResource _mesh_shader_resource;
 
         /**
          * This uniform buffer will store the mesh vertices
@@ -57,16 +60,15 @@ namespace kege{
 
 
 
-        const DynamicCubeMesh* _cubemesh;
+        DynamicCubeMesh _cubemesh;
         kege::Graphics* _graphics;
         kege::Terrain* _terrain;
 
 
         std::vector< char > _temp_buffer;
 
-
-        kege::PatchData* _patch_buffer;
         kege::VertexDrawCommand* _draw_param_buffer;
+        kege::PatchData* _patch_buffer;
         uint32_t _max_instance_count;
         uint32_t _instance_count;
 

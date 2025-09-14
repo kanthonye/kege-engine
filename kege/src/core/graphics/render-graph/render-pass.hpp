@@ -39,10 +39,14 @@ namespace kege{
         void beginRendering( const int IMAGE_INDEX );
         void endRendering();
 
+        RenderPassType getType()const;
+
         bool execute();
         ~RenderPass();
 
     public:
+
+        RenderPassType _pass_type;
 
         /**
          * The main command buffer for recording command

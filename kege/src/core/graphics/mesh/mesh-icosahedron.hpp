@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class IcosahedronMesh : public kege::Mesh
+    class IcosahedronMesh : public kege::MeshPrimitive
     {
         public: IcosahedronMesh( float radius );
     };

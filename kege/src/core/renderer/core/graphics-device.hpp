@@ -10,6 +10,7 @@
 
 #include "graphics-core.hpp"
 #include "graphics-physical-device.hpp"
+#include "shader-resource-manager.hpp"
 
 namespace kege{
     
@@ -163,7 +164,18 @@ namespace kege{
          */
         virtual GraphicsAPI getCurrentAPI() const = 0;
 
-        // --- Resource Creation ---
+        //-------------------------------------------------------------------------
+        // CommandBuffer Life Cycle
+        //-------------------------------------------------------------------------
+
+        virtual bool submitCommands
+        (
+            const std::vector< kege::CommandBuffer* >& command_buffers,
+            kege::FenceHandle* signal_fence,
+            kege::SemaphoreHandle* signal_semaphore,
+            kege::SemaphoreHandle* wait_semaphore
+        )
+        = 0;
 
         /**
          * @brief Creates a command buffer for recording commands.
@@ -173,26 +185,16 @@ namespace kege{
         virtual CommandBuffer* createCommandBuffer( QueueType type ) = 0;
 
         /**
-         * @brief Creates a texture resource.
-         * @param desc Texture description including dimensions, format, and usage.
-         * @return Handle to the created texture, or invalid handle on failure.
+         * @brief Destroys a command buffer.
+         * @param cmb Pointer to the command buffer to destroy.
+         * @warning Ensure the command buffer is no longer in use.
          */
-        virtual kege::ImageHandle createImage( const kege::ImageDesc& desc ) = 0;
+        virtual void destroyCommandBuffer( kege::CommandBuffer* cmb ) = 0;
 
-        /**
-         * @brief Creates a buffer resource (vertex, index, uniform, etc.).
-         * @param desc Buffer description including size and usage flags.
-         * @return Handle to the created buffer, or invalid handle on failure.
-         */
-        virtual kege::BufferHandle createBuffer( const kege::BufferDesc& desc ) = 0;
-        virtual void updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data ) = 0;
 
-        /**
-         * @brief Creates a texture sampler.
-         * @param desc Sampler description including filtering and addressing modes.
-         * @return Handle to the created sampler, or invalid handle on failure.
-         */
-        virtual kege::SamplerHandle createSampler( const kege::SamplerDesc& desc ) = 0;
+        //-------------------------------------------------------------------------
+        // Shader Pipeline Life Cycle
+        //-------------------------------------------------------------------------
 
         /**
          * @brief Creates a shader module from source or bytecode.
@@ -200,6 +202,17 @@ namespace kege{
          * @return Handle to the created shader, or invalid handle on failure.
          */
         virtual kege::ShaderHandle createShader( const kege::ShaderDesc& desc ) = 0;
+
+        /**
+         * @brief Destroys a shader module.
+         * @param handle Handle to the shader to destroy.
+         * @warning Ensure no pipelines are using this shader.
+         */
+        virtual void destroyShader( kege::ShaderHandle handle ) = 0;
+
+        //-------------------------------------------------------------------------
+        // Shader Pipeline Life Cycle
+        //-------------------------------------------------------------------------
 
         /**
          * @brief Creates a pipeline layout defining resource bindings.
@@ -223,57 +236,6 @@ namespace kege{
         virtual kege::PipelineHandle createComputePipeline( const kege::ComputePipelineDesc& desc ) = 0;
 
         /**
-         * @brief Creates a descriptor set layout.
-         * @param bindings Description of binding points for resources.
-         * @return Handle to the created descriptor set layout.
-         */
-        virtual kege::DescriptorSetLayoutHandle createDescriptorSetLayout( const std::vector< kege::DescriptorSetLayoutBinding >& bindings ) = 0;
-
-        /**
-         * @brief Creates a descriptor set.
-         * @param bindings Description of binding points for resources.
-         * @return Handle to the created descriptor set.
-         */
-        virtual DescriptorSetHandle allocateDescriptorSet( const std::vector<DescriptorSetLayoutBinding>& bindings ) = 0;
-
-        /**
-         * @brief Allocates a descriptor set from a layout.
-         * @param layout Layout describing the descriptor set structure.
-         * @return Handle to the allocated descriptor set.
-         * @note Consider using a descriptor pool for better allocation management.
-         */
-        virtual DescriptorSetHandle allocateDescriptorSet( kege::DescriptorSetLayoutHandle layout ) = 0;
-
-        // --- Resource Destruction ---
-
-        /**
-         * @brief Destroys a texture resource.
-         * @param handle Handle to the texture to destroy.
-         * @warning Ensure the texture is no longer in use by the GPU.
-         */
-        virtual void destroyImage( kege::ImageHandle handle ) = 0;
-
-        /**
-         * @brief Destroys a buffer resource.
-         * @param handle Handle to the buffer to destroy.
-         * @warning Ensure the buffer is no longer in use by the GPU.
-         */
-        virtual void destroyBuffer( kege::BufferHandle handle ) = 0;
-
-        /**
-         * @brief Destroys a sampler resource.
-         * @param handle Handle to the sampler to destroy.
-         */
-        virtual void destroySampler( kege::SamplerHandle handle ) = 0;
-
-        /**
-         * @brief Destroys a shader module.
-         * @param handle Handle to the shader to destroy.
-         * @warning Ensure no pipelines are using this shader.
-         */
-        virtual void destroyShader( kege::ShaderHandle handle ) = 0;
-
-        /**
          * @brief Destroys a pipeline layout.
          * @param handle Handle to the pipeline layout to destroy.
          * @warning Ensure no pipelines are using this layout.
@@ -294,45 +256,128 @@ namespace kege{
          */
         virtual void destroyComputePipeline( kege::PipelineHandle handle ) = 0;
 
+        //-------------------------------------------------------------------------
+        // Image Life Cycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a texture resource.
+         * @param desc Texture description including dimensions, format, and usage.
+         * @return Handle to the created texture, or invalid handle on failure.
+         */
+        virtual kege::ImageHandle createImage( const kege::ImageDesc& desc ) = 0;
+
+        /**
+         * @brief Destroys a texture resource.
+         * @param handle Handle to the texture to destroy.
+         * @warning Ensure the texture is no longer in use by the GPU.
+         */
+        virtual void destroyImage( kege::ImageHandle handle ) = 0;
+
+        //-------------------------------------------------------------------------
+        // Sampler Life Cycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a texture sampler.
+         * @param desc Sampler description including filtering and addressing modes.
+         * @return Handle to the created sampler, or invalid handle on failure.
+         */
+        virtual kege::SamplerHandle createSampler( const kege::SamplerDesc& desc ) = 0;
+
+        /**
+         * @brief Destroys a sampler resource.
+         * @param handle Handle to the sampler to destroy.
+         */
+        virtual void destroySampler( kege::SamplerHandle handle ) = 0;
+
+        //-------------------------------------------------------------------------
+        // Buffer Life Cycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a buffer resource (vertex, index, uniform, etc.).
+         * @param desc Buffer description including size and usage flags.
+         * @return Handle to the created buffer, or invalid handle on failure.
+         */
+        virtual kege::BufferHandle createBuffer( const kege::BufferDesc& desc ) = 0;
+        virtual void updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data ) = 0;
+
+        /**
+         * @brief Destroys a buffer resource.
+         * @param handle Handle to the buffer to destroy.
+         * @warning Ensure the buffer is no longer in use by the GPU.
+         */
+        virtual void destroyBuffer( kege::BufferHandle handle ) = 0;
+
+        /**
+         * @brief Maps buffer memory for CPU access.
+         * @param handle Handle to the buffer to map.
+         * @param offset Byte offset into the buffer.
+         * @param size Number of bytes to map (or -1 for entire buffer).
+         * @return Pointer to mapped memory, or nullptr on failure.
+         * @note Must call unmapBuffer when done.
+        */
+        virtual void* mapBuffer( kege::BufferHandle handle, size_t offset = 0, size_t size = -1) = 0;
+
+        /**
+         * @brief Unmaps previously mapped buffer memory.
+         * @param handle Handle to the buffer to unmap.
+         */
+        virtual void unmapBuffer( kege::BufferHandle handle ) = 0;
+
+        virtual size_t bufferSize( const BufferHandle& handle ) = 0;
+
+        //-------------------------------------------------------------------------
+        // UniformSetLayout Life Cycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Retrieves or creates a descriptor set layout based on bindings.
+         * @param descriptors Description of binding points for resources.
+         * @param create Whether to create the layout if it does not exist.
+         * @return Handle to the descriptor set layout.
+         */
+        virtual UniformSetLayout getUniformSetLayout( const UniformLayoutDescription& descriptors, bool create ) = 0;
+
+        /**
+         * @brief Creates a descriptor set layout.
+         * @param descriptors Description of binding points for resources.
+         * @return Handle to the created descriptor set layout.
+         */
+        virtual UniformSetLayout createUniformSetLayout( const UniformLayoutDescription& descriptors ) = 0;
+
         /**
          * @brief Destroys a descriptor set layout.
-         * @param handle Handle to the layout to destroy.
+         * @param layout Handle to the layout to destroy.
          * @warning Ensure no descriptor sets or pipelines are using this layout.
          */
-        virtual void destroyDescriptorSetLayout( kege::DescriptorSetLayoutHandle handle ) = 0;
+        virtual void destroyUniformSetLayout( const UniformSetLayout& layout ) = 0;
+
+        //-------------------------------------------------------------------------
+        // Dexcriptor Life Cycle
+        //-------------------------------------------------------------------------
+
+        virtual bool allocateDescriptors
+        (
+            const UniformSetLayout& layout,
+            uint32_t quantity,
+            int32_t* descriptor_ids
+        )
+        = 0;
+        
+        virtual bool updateDescriptor( int32_t descriptor_id, const UniformBindingElements& elements )= 0;
 
         /**
          * @brief Frees a descriptor set.
-         * @param handle Handle to the descriptor set to free.
+         * @param descriptor_id Handle to the descriptor set to free.
          * @note The descriptor set handle becomes invalid after this call.
          */
-        virtual void freeDescriptorSet( kege::DescriptorSetHandle handle ) = 0;
+        virtual void freeDescriptor( int32_t descriptor_id ) = 0;
 
-        // --- Command & Queue Management ---
-
-        /**
-         * @brief Retrieves a command queue of the specified type.
-         * @param type The type of queue (Graphics, Compute, Transfer).
-         * @return Handle to the command queue.
-         */
-        //virtual CommandQueueHandle getCommandQueue(QueueType type) = 0;
-
-        /**
-         * @brief Destroys a command buffer.
-         * @param cmb Pointer to the command buffer to destroy.
-         * @warning Ensure the command buffer is no longer in use.
-         */
-        virtual void destroyCommandBuffer( kege::CommandBuffer* cmb ) = 0;
-
-
-        virtual bool submitCommands
-        (
-            const std::vector< kege::CommandBuffer* >& command_buffers,
-            kege::FenceHandle* signal_fence,
-            kege::SemaphoreHandle* signal_semaphore,
-            kege::SemaphoreHandle* wait_semaphore
-        )
-        = 0;
+        //-------------------------------------------------------------------------
+        // CommandBuffer Life Cycle
+        //-------------------------------------------------------------------------
 
         // --- Synchronization ---
 
@@ -414,32 +459,6 @@ namespace kege{
          * @warning Ensure no images from this swapchain are in use.
          */
         virtual void destroySwapchain( kege::Swapchain swapchain ) = 0;
-
-        // --- Buffer Mapping ---
-
-        /**
-         * @brief Maps buffer memory for CPU access.
-         * @param handle Handle to the buffer to map.
-         * @param offset Byte offset into the buffer.
-         * @param size Number of bytes to map (or -1 for entire buffer).
-         * @return Pointer to mapped memory, or nullptr on failure.
-         * @note Must call unmapBuffer when done.
-        */
-        virtual void* mapBuffer( kege::BufferHandle handle, size_t offset = 0, size_t size = -1) = 0;
-
-        /**
-         * @brief Unmaps previously mapped buffer memory.
-         * @param handle Handle to the buffer to unmap.
-         */
-        virtual void unmapBuffer( kege::BufferHandle handle ) = 0;
-
-        /**
-         * @brief Updates descriptor sets with new resource bindings.
-         * @param writes Array of descriptor write operations to perform.
-         */
-        virtual bool updateDescriptorSets( const std::vector< kege::WriteDescriptorSet >& writes ) = 0;
-
-        // --- Utility ---
 
         /**
          * @brief Waits for the device to complete all outstanding operations.

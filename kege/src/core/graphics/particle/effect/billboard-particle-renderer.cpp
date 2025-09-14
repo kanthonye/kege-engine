@@ -16,7 +16,7 @@ namespace kege{
             return;
         }
 
-        DescriptorSetHandle camera_descriptor = context->getPhysicalDescriptorSet( "camera-descriptor" );
+        ShaderResource* camera_descriptor = context->getPhysicalShaderResource( "camera-descriptor" );
         if( !camera_descriptor ) return;
 
         kege::Graphics* graphics = context->getGraphics();
@@ -36,7 +36,7 @@ namespace kege{
         });
 
         encoder->bindGraphicsPipeline( _pipeline );
-        encoder->bindDescriptorSets( camera_descriptor );
+        encoder->bindShaderResource( *camera_descriptor, false );
 
         ModelMatrices model_matrices;
 
@@ -84,13 +84,13 @@ namespace kege{
             return false;
         }
 
-        _comm.add< kege::RenderPassContext*, BillboardParticleRenderer>( this );
+        Communication::add< kege::RenderPassContext*, BillboardParticleRenderer>( this );
         return EntitySystem::initialize();
     }
 
     void BillboardParticleRenderer::shutdown()
     {
-        _comm.remove< kege::RenderPassContext*, BillboardParticleRenderer >( this );
+        Communication::remove< kege::RenderPassContext*, BillboardParticleRenderer >( this );
         EntitySystem::shutdown();
     }
 

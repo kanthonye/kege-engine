@@ -14,9 +14,9 @@ namespace kege{
         _engine.vfs().add();
         _engine.graphics().add();
         _engine.renderGraph().add();
+        _engine.renderManager().add();
         _engine.input().add();
-        _engine.ecs().add();
-        _engine.esm().add();
+//        _engine.ecs().add();
         _engine.scene().add();
 
         if( !_engine.initialize() )
@@ -26,9 +26,8 @@ namespace kege{
         }
 
         // alert systems of the scene change
-        _engine.esm()->onSceneChange();
 
-        kege::string shader_file = _engine.vfs()->fetch( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
+        kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
         PipelineHandle pipeline = PipelineLoader::load( _engine.graphics().get(), shader_file.c_str() );
         if( !pipeline )
         {
@@ -39,7 +38,7 @@ namespace kege{
         kege::Font font = ui::FontCreator::create
         (
             _engine.graphics().get(), 8, 16,
-            _engine.vfs()->fetch( "assets/fonts/monaco.tga" ).c_str()
+            vfs( "assets/fonts/monaco.tga" ).c_str()
         );
         if( !font )
         {
@@ -54,7 +53,7 @@ namespace kege{
 
         Communication::add< kege::RenderPassContext*, Editor >( this );
 
-        if( !_layout.loadStyles( _engine.vfs()->fetch( "root/src/editor/ui-elements/style.json" ).c_str() ) )
+        if( !_layout.loadStyles( kege::vfs( "root/src/editor/ui-elements/style.json" ).c_str() ) )
         {
             KEGE_LOG_ERROR << "Failed to load ui style.json" << Log::nl;
             return false;
@@ -136,12 +135,13 @@ namespace kege{
             // 4. Step engine/game systems
             if ( !_paused )
             {
-                _engine.esm()->update( _engine.dms() );
+                _engine.scene().update( _engine.dms() );
             }
+            _engine.scene()._entity_systems->render(0);
 
             if ( 0 <= _engine.graphics()->beginFrame() )
             {
-                _engine.renderGraph()->execute();
+                _engine.renderManager()->execute( 0.f );
                 if ( !_engine.graphics()->endFrame() )
                 {
                     KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;

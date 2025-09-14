@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class CuboidMesh : public kege::Mesh
+    class CuboidMesh : public kege::MeshPrimitive
     {
         public: CuboidMesh( const kege::vec3& center, const kege::vec3& lengths );
     };

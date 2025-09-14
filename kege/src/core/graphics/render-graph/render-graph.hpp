@@ -42,7 +42,7 @@ namespace kege{
         (
             const std::string& name,
             int frames_in_flight,
-            const std::vector<kege::DescriptorSetLayoutBinding>& bindings
+            const std::vector<kege::UniformDesc>& bindings
         );
 
         /**
@@ -64,7 +64,7 @@ namespace kege{
          * @param handle Resource handle.
          * @return The descriptor set handle.
          */
-        kege::DescriptorSetHandle getPhysicalDescriptorSet
+        kege::ShaderResource* getPhysicalShaderResource
         (
             const RgResrcHandle& handle
         );
@@ -74,7 +74,7 @@ namespace kege{
          * @param name Resource name.
          * @return The descriptor set handle.
          */
-        kege::DescriptorSetHandle getPhysicalDescriptorSet
+        kege::ShaderResource* getPhysicalShaderResource
         (
             const std::string& name
         );

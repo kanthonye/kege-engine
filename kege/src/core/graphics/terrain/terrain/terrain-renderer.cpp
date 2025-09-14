@@ -9,6 +9,4 @@
 
 namespace kege{
 
-    TerrainRenderer:: ~TerrainRenderer()
-    {}
 }

@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class CapsuleMesh : public kege::Mesh
+    class CapsuleMesh : public kege::MeshPrimitive
     {
         public: CapsuleMesh( float height, float radius, int columns, int rings );
     };

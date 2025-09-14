@@ -48,7 +48,7 @@ namespace kege{
     {
     public:
 
-        void execute( CommandBuffer* command_buffer );
+        void operator()( kege::RenderPassContext* context );
         void update( double dms );
 
         bool initialize();

@@ -101,5 +101,18 @@ namespace kege{
         buffer[ filesize ] = '\0';
         return kege::string( buffer, filesize );
     }
+
+
+
+    void vfs_add( const kege::string& name, const kege::string& path )
+    {
+        VirtualDirectory::instance().add( name, path );
+    }
+
+    kege::string vfs( const kege::string& name )
+    {
+        return VirtualDirectory::instance().fetch( name );
+    }
+
 }
 

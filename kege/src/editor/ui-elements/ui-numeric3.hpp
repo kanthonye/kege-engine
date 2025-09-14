@@ -12,17 +12,25 @@
 
 namespace kege::ui{
 
-    struct Numeric3
-    {
-        bool update( ui::Layout& layout, float& x, float& y, float& z, const char* text );
+    bool orientation
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        float& x, float& y, float& z, float& w,
+        const char* text
+    );
 
-        ui::EID container;
-        ui::EID content;
-        ui::EID label;
-        Numeric nx;
-        Numeric ny;
-        Numeric nz;
-    };
+    bool transform
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        kege::Transform* transform
+    );
+
+    bool rigidbody( ui::Layout& layout, TreeNode& tree, kege::Rigidbody* body );
+
+
+    bool camera( ui::Layout& layout, TreeNode& tree, Camera* camera );
 }
 
 #endif /* ui_numeric3_hpp */

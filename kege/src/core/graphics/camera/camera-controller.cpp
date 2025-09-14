@@ -11,7 +11,7 @@ namespace kege{
 
     void CameraControlSystem::operator()( const MappedInputs& inputs )
     {
-        Entity entity = _engine->scene()->getCameraEntity();
+        Entity entity = _engine->scene().getScene()->getCameraEntity();
         if( !entity ) return;
 
         CameraControls* controls = entity.get< CameraControls >();
@@ -71,13 +71,13 @@ namespace kege{
 
     bool CameraControlSystem::initialize()
     {
-        _comm.add< const MappedInputs&, CameraControlSystem >( this );
+        Communication::add< const MappedInputs&, CameraControlSystem >( this );
         return EntitySystem::initialize();
     }
 
     void CameraControlSystem::shutdown()
     {
-        _comm.remove< const MappedInputs&, CameraControlSystem >( this );
+        Communication::remove< const MappedInputs&, CameraControlSystem >( this );
         return EntitySystem::shutdown();
     }
 

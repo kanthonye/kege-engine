@@ -27,18 +27,18 @@ namespace kege{
         const float half_pi  =  1.57079632679;
         const int total_vertices = (rows + 1) * (cols + 1);
 
-        this->vertices.resize( total_vertices );
+        vertices.resize( total_vertices );
 
         int index_count[2];
         index_count[0] = 2 * cols; // top and botton triangle faces
         index_count[1] = 2 * cols * (rows - 2); // middle = total triangle faces minus the top and bottom triangle faces
         int total_indices = 3 * (index_count[0] + index_count[1]);
-        this->indices.resize( total_indices );
+        indices.resize( total_indices );
 
         index = 0;
-        this->vertices[ index ].position = vec3( 0.f, y_radius, 0.f );
-        this->vertices[ index ].texcoord = vec2( 0.f, 0.f );
-        this->vertices[ index ].normal   = vec3( 0.f, 1.f, 0.f );
+        vertices[ index ].position = vec3( 0.f, y_radius, 0.f );
+        vertices[ index ].texcoord = vec2( 0.f, 0.f );
+        vertices[ index ].normal   = vec3( 0.f, 1.f, 0.f );
         index++;
         
         y = 1;
@@ -57,9 +57,9 @@ namespace kege{
 
             ux = sx * cy;
             uy = cx * cy;
-            this->vertices[ index ].position = vec3( ux * x_radius, sy * y_radius, uy * x_radius );
-            this->vertices[ index ].texcoord = vec2( float(x) / float(cols), 0.f);//( angle.x, angle.y );
-            this->vertices[ index ].normal   = vec3( ux, sy, uy );
+            vertices[ index ].position = vec3( ux * x_radius, sy * y_radius, uy * x_radius );
+            vertices[ index ].texcoord = vec2( float(x) / float(cols), 0.f);//( angle.x, angle.y );
+            vertices[ index ].normal   = vec3( ux, sy, uy );
             //std::cout <<std::setw(2) <<index <<": "<< vertices[ index ].position <<"\n";
         }
 
@@ -83,18 +83,18 @@ namespace kege{
 
                 ux = sx * cy;
                 uy = cx * cy;
-                this->vertices[ index ].position = vec3( ux * x_radius, sy * y_radius, uy * x_radius );
-                this->vertices[ index ].texcoord = vec2(float(x)/float(cols), float(y)/float(rows));//( angle.x, angle.y );
-                this->vertices[ index ].normal   = vec3( ux, sy, uy );
+                vertices[ index ].position = vec3( ux * x_radius, sy * y_radius, uy * x_radius );
+                vertices[ index ].texcoord = vec2(float(x)/float(cols), float(y)/float(rows));//( angle.x, angle.y );
+                vertices[ index ].normal   = vec3( ux, sy, uy );
                 //std::cout <<std::setw(2) <<index <<": "<< vertices[ index ].position <<"\n";
                 index++;
             }
             //std::cout<<"\n";
         }
         int vend = index;
-        this->vertices[ index ].position = vec3( 0.f, -y_radius, 0.f );
-        this->vertices[ index ].texcoord = vec2( 0.f, 0.f );
-        this->vertices[ index ].normal   = vec3( 0.f, -1.f, 0.f );
+        vertices[ index ].position = vec3( 0.f, -y_radius, 0.f );
+        vertices[ index ].texcoord = vec2( 0.f, 0.f );
+        vertices[ index ].normal   = vec3( 0.f, -1.f, 0.f );
         index++;
 
         index = 0;

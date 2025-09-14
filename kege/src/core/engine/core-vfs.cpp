@@ -31,10 +31,13 @@ namespace kege{
             kege::Log::error << "CoreVFS already initialized!" << Log::nl;
             return false;
         }
-        
+
+        VirtualDirectory::instance().add( "root", "/Users/kae/Developer/vscode/kege-engine/kege" );
+        VirtualDirectory::instance().add( "assets", "/Users/kae/Developer/vscode/kege-engine/kege/assets" );
+        VirtualDirectory::instance().add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );
+        VirtualDirectory::instance().add( "compute-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/compute" );
+
         _module = new VirtualDirectory();
-
-
         _module->add( "root", "/Users/kae/Developer/vscode/kege-engine/kege" );
         _module->add( "assets", "/Users/kae/Developer/vscode/kege-engine/kege/assets" );
         _module->add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );

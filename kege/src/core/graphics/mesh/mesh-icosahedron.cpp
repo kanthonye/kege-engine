@@ -19,7 +19,7 @@ namespace kege{
         out_indices.clear();
 
         const float phi = (1.0f + std::sqrt(5.0f)) * 0.5f; // golden ratio
-        const float invLen = 1.0f / std::sqrt(1 + phi * phi);
+        //const float invLen = 1.0f / std::sqrt(1 + phi * phi);
 
         // 12 vertices of a unit icosahedron
         kege::vec3 positions[] = {

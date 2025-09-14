@@ -96,13 +96,12 @@ namespace kege::ui{
 
         const int _max_render_instances;
 
-        BufferHandle _gpu_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
-        DescriptorSetHandle _shader_resource_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
-        DescriptorSetHandle _shader_resource_font;
-        DescriptorSetHandle _descriptor_ui_texture;
+        BufferHandle   _indirect_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
+        ShaderResource _storage_buffer_resource[ kege::MAX_FRAMES_IN_FLIGHT ];
+        ShaderResource _ui_texture_shader_resource;
+        ShaderResource _font_shader_resource;
+        ImageHandle _default_texture;
         kege::PipelineHandle _pipeline;
-
-        kege::ImageHandle _default_ui_texture;
 
         kege::CommandEncoder* _encoder;
         Graphics* _graphics;

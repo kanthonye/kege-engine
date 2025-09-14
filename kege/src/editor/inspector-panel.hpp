@@ -10,7 +10,6 @@
 
 #include "ui-elements/droplist.hpp"
 #include "ui-elements/ui-numeric3.hpp"
-#include "ui-elements/ui-numeric4.hpp"
 #include "hierarchy-panel.hpp"
 
 namespace kege{
@@ -26,7 +25,7 @@ namespace kege{
 
     public:
 
-        std::map<void*, Droplist> _droplists;
+        std::map<void*, ui::TreeNode> _tree;
         Entity _selected_entity;
         Engine* _engine;
         ui::EID _main;

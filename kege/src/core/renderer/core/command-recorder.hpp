@@ -98,7 +98,7 @@ namespace kege{
 
         // --- State Binding ---
 
-        virtual bool bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) = 0;
+        virtual bool bindShaderResource( const ShaderResource& resource ) = 0;
 
         /**
          * @brief Binds a graphics pipeline to the command buffer.
@@ -128,7 +128,7 @@ namespace kege{
          * false if it contains 32-bit unsigned integers.
          */
         virtual void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) = 0; // Added index type bool
-        // virtual void bindDescriptorSets(...) = 0; // Postponed for later
+        // virtual void bindShaderResource(...) = 0; // Postponed for later
         // virtual void setPushConstants(...) = 0; // Postponed for later
 
         virtual void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data ) = 0;

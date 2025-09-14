@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class RectMesh : public kege::Mesh
+    class RectMesh : public kege::MeshPrimitive
     {
         public: RectMesh( const kege::vec3& center, float width, float height );
     };

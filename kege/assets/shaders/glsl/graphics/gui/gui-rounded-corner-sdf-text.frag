@@ -26,7 +26,8 @@ layout(push_constant) uniform Camera2D {
 };
 
 // Function to compute the signed distance field for a rounded rectangle
-float roundedBoxSDF(vec2 p, vec2 b, float r) {
+float roundedBoxSDF(vec2 p, vec2 b, float r)
+{
     vec2 q = abs(p) - b + r;
     return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
 }
@@ -63,7 +64,7 @@ void main()
         final = color;
     }
 
-    if ( render_text >= 1.0 )
+    if ( render_text >= 0.5 )
     {
         float width = 0.05;
         float edge  = 0.07;

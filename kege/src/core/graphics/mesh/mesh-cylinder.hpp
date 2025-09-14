@@ -11,7 +11,7 @@
 #include "../mesh/mesh.hpp"
 namespace kege{
 
-    class CylinderMesh : public kege::Mesh
+    class CylinderMesh : public kege::MeshPrimitive
     {
         public: CylinderMesh( float radius, uint32_t height, uint32_t columns );
     };

@@ -13,27 +13,71 @@ namespace kege{
     {
         _renderer = renderer;
 
-        _cube_mesh = _renderer->getDynamicCubeMesh();
-        for (int i = 0; i < MAX_CUBE_FACES; i++ )
-        {
-            _cube_faces[ i ].vertices = &_cube_mesh->face_vertices[i];
-            _cube_faces[ i ].surface_axies[ 0 ] = _cube_mesh->face_axies[ i ][ 0 ];
-            _cube_faces[ i ].surface_axies[ 1 ] = _cube_mesh->face_axies[ i ][ 1 ];
+        const DynamicCubeMesh* cube_mesh = _renderer->getDynamicCubeMesh();
 
-            init( _cube_faces[ i ].root, _cube_mesh->face_axies[ i ][ 2 ], 1.f, _planet_radius, 0, i );
+        SphericalTerrainTile* neighbors[6][4];
+
+        neighbors[ CUBE_FACE_FRONT ][ NORTH ] = &_faces[ CUBE_FACE_ABOVE ]._root; // NORTH
+        neighbors[ CUBE_FACE_FRONT ][ EAST  ] = &_faces[ CUBE_FACE_RIGHT ]._root; // EAST
+        neighbors[ CUBE_FACE_FRONT ][ SOUTH ] = &_faces[ CUBE_FACE_BELOW ]._root; // SOUTH
+        neighbors[ CUBE_FACE_FRONT ][ WEST  ] = &_faces[ CUBE_FACE_LEFT  ]._root; // WEST
+
+        neighbors[ CUBE_FACE_BACK ][ NORTH ] = &_faces[ CUBE_FACE_ABOVE ]._root; // NORTH
+        neighbors[ CUBE_FACE_BACK ][ EAST  ] = &_faces[ CUBE_FACE_RIGHT ]._root; // EAST
+        neighbors[ CUBE_FACE_BACK ][ SOUTH ] = &_faces[ CUBE_FACE_BELOW ]._root; // SOUTH
+        neighbors[ CUBE_FACE_BACK ][ WEST  ] = &_faces[ CUBE_FACE_LEFT  ]._root; // WEST
+
+        neighbors[ CUBE_FACE_LEFT ][ NORTH ] = &_faces[ CUBE_FACE_ABOVE ]._root; // NORTH
+        neighbors[ CUBE_FACE_LEFT ][ EAST  ] = &_faces[ CUBE_FACE_BACK  ]._root; // EAST
+        neighbors[ CUBE_FACE_LEFT ][ SOUTH ] = &_faces[ CUBE_FACE_BELOW ]._root; // SOUTH
+        neighbors[ CUBE_FACE_LEFT ][ WEST  ] = &_faces[ CUBE_FACE_FRONT ]._root; // WEST
+
+        neighbors[ CUBE_FACE_RIGHT ][ NORTH ] = &_faces[ CUBE_FACE_ABOVE ]._root; // NORTH
+        neighbors[ CUBE_FACE_RIGHT ][ EAST  ] = &_faces[ CUBE_FACE_FRONT ]._root; // EAST
+        neighbors[ CUBE_FACE_RIGHT ][ SOUTH ] = &_faces[ CUBE_FACE_BELOW ]._root; // SOUTH
+        neighbors[ CUBE_FACE_RIGHT ][ WEST  ] = &_faces[ CUBE_FACE_BACK  ]._root; // WEST
+
+        neighbors[ CUBE_FACE_ABOVE ][ NORTH ] = &_faces[ CUBE_FACE_BACK  ]._root; // NORTH
+        neighbors[ CUBE_FACE_ABOVE ][ EAST  ] = &_faces[ CUBE_FACE_RIGHT ]._root; // EAST
+        neighbors[ CUBE_FACE_ABOVE ][ SOUTH ] = &_faces[ CUBE_FACE_FRONT ]._root; // SOUTH
+        neighbors[ CUBE_FACE_ABOVE ][ WEST  ] = &_faces[ CUBE_FACE_LEFT  ]._root; // WEST
+
+        neighbors[ CUBE_FACE_BELOW ][ NORTH ] = &_faces[ CUBE_FACE_BACK  ]._root; // NORTH
+        neighbors[ CUBE_FACE_BELOW ][ EAST  ] = &_faces[ CUBE_FACE_LEFT  ]._root; // EAST
+        neighbors[ CUBE_FACE_BELOW ][ SOUTH ] = &_faces[ CUBE_FACE_FRONT ]._root; // SOUTH
+        neighbors[ CUBE_FACE_BELOW ][ WEST  ] = &_faces[ CUBE_FACE_RIGHT ]._root; // WEST
+
+        for (int face_id = 0; face_id < MAX_CUBE_FACES; face_id++ )
+        {
+//            _faces[ i ]._face_id = i;
+//            _faces[ i ]._vertices = &_cube_mesh->face_vertices[i];
+//            _faces[ i ]._surface_axies[ 0 ] = _cube_mesh->face_axies[ i ][ 0 ];
+//            _faces[ i ]._surface_axies[ 1 ] = _cube_mesh->face_axies[ i ][ 1 ];
+            _faces[ face_id ].init
+            (
+                face_id,
+                this,
+                neighbors[face_id],
+                &cube_mesh->face_vertices[face_id],
+                cube_mesh->face_axies[ face_id ],
+                1.f,
+                _planet_radius,
+                0
+            );
         }
+
         return true;
     }
 
-    void PhysicalSphericalTerrain::render( kege::CommandBuffer* command_buffer )
+    void PhysicalSphericalTerrain::render( kege::CommandEncoder* encoder, Transform* transform )
     {
-        _renderer->begin( command_buffer );
-        render( _cube_faces[ 0 ].root );
-        render( _cube_faces[ 1 ].root );
-        render( _cube_faces[ 2 ].root );
-        render( _cube_faces[ 3 ].root );
-        render( _cube_faces[ 4 ].root );
-        render( _cube_faces[ 5 ].root );
+        _renderer->begin( encoder, transform );
+        render( _faces[ 0 ]._root );
+        render( _faces[ 1 ]._root );
+        render( _faces[ 2 ]._root );
+        render( _faces[ 3 ]._root );
+        render( _faces[ 4 ]._root );
+        render( _faces[ 5 ]._root );
         _renderer->end();
 
 
@@ -47,7 +91,7 @@ namespace kege{
         }
     }
 
-    void PhysicalSphericalTerrain::render( QuadtreePatchNode& node )
+    void PhysicalSphericalTerrain::render( SphericalTerrainTile& node )
     {
         if( node.children )
         {
@@ -61,43 +105,43 @@ namespace kege{
             _renderer->draw( node );
         }
     }
-    
-    void PhysicalSphericalTerrain::init( QuadtreePatchNode& node, const kege::vec3& position, float scale, double radius, int depth, int face_id )
-    {
-        kege::dvec3 sphere_position = _planet_radius * normalize( dvec3( position ) );
-
-        node.sphere = { sphere_position, radius };
-        node.patch.transform = { position, scale };
-        node.patch.patch_vertex_id = face_id;
-        node.children = nullptr;
-        node.depth = depth;
-
-//        node.patch.elevations[ 0 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 0 ].xyz ) );
-//        node.patch.elevations[ 1 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 1 ].xyz ) );
-//        node.patch.elevations[ 2 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 2 ].xyz ) );
-//        node.patch.elevations[ 3 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 3 ].xyz ) );
-//        node.patch.elevations[ 4 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 4 ].xyz ) );
-//        node.patch.elevations[ 5 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 5 ].xyz ) );
-//        node.patch.elevations[ 6 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 6 ].xyz ) );
-//        node.patch.elevations[ 7 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 7 ].xyz ) );
-//        node.patch.elevations[ 8 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 8 ].xyz ) );
+//    
+//    void PhysicalSphericalTerrain::init( QuadtreePatchNode& node, const kege::vec3& position, float scale, double radius, int depth, int face_id )
+//    {
+//        kege::dvec3 sphere_position = _planet_radius * normalize( dvec3( position ) );
 //
-//        float normal_strength = 16.f;
-//        node.normal = {0.f, 0.f, 0.f};
-//        node.normal.z = 1.0 / normal_strength;
-//        node.normal.x =
-//        {
-//            node.patch.elevations[0] + 2.f * node.patch.elevations[3] + node.patch.elevations[5] -
-//            node.patch.elevations[2] - 2.f * node.patch.elevations[4] - node.patch.elevations[7]
-//        };
-//        node.normal.y =
-//        {
-//            node.patch.elevations[0] + 2.f * node.patch.elevations[1] + node.patch.elevations[2] -
-//            node.patch.elevations[5] - 2.f * node.patch.elevations[6] - node.patch.elevations[7]
-//        };
-//        node.normal = normalize( node.normal );
-        _total_nodes++;
-    }
+//        node.sphere = { sphere_position, radius };
+//        node.patch.transform = { position, scale };
+//        node.patch.patch_vertex_id = face_id;
+//        node.children = nullptr;
+//        node.depth = depth;
+//
+////        node.patch.elevations[ 0 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 0 ].xyz ) );
+////        node.patch.elevations[ 1 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 1 ].xyz ) );
+////        node.patch.elevations[ 2 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 2 ].xyz ) );
+////        node.patch.elevations[ 3 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 3 ].xyz ) );
+////        node.patch.elevations[ 4 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 4 ].xyz ) );
+////        node.patch.elevations[ 5 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 5 ].xyz ) );
+////        node.patch.elevations[ 6 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 6 ].xyz ) );
+////        node.patch.elevations[ 7 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 7 ].xyz ) );
+////        node.patch.elevations[ 8 ] = getHeight( kege::normalize( position + scale * _cube_faces[face_id].vertices->data[ 8 ].xyz ) );
+////
+////        float normal_strength = 16.f;
+////        node.normal = {0.f, 0.f, 0.f};
+////        node.normal.z = 1.0 / normal_strength;
+////        node.normal.x =
+////        {
+////            node.patch.elevations[0] + 2.f * node.patch.elevations[3] + node.patch.elevations[5] -
+////            node.patch.elevations[2] - 2.f * node.patch.elevations[4] - node.patch.elevations[7]
+////        };
+////        node.normal.y =
+////        {
+////            node.patch.elevations[0] + 2.f * node.patch.elevations[1] + node.patch.elevations[2] -
+////            node.patch.elevations[5] - 2.f * node.patch.elevations[6] - node.patch.elevations[7]
+////        };
+////        node.normal = normalize( node.normal );
+//        _total_nodes++;
+//    }
 //
 //    void PhysicalSphericalTerrain::prepareGeometries( std::vector< char >& buffer )
 //    {
@@ -130,12 +174,12 @@ namespace kege{
 ////        _instance_count = 0;
 ////        _current_drawbatch = 0;
 ////
-////        prepareGeometries( _cube_faces[ 0 ].root );
-////        prepareGeometries( _cube_faces[ 1 ].root );
-////        prepareGeometries( _cube_faces[ 2 ].root );
-////        prepareGeometries( _cube_faces[ 3 ].root );
-////        prepareGeometries( _cube_faces[ 4 ].root );
-////        prepareGeometries( _cube_faces[ 5 ].root );
+////        prepareGeometries( _cube_faces[ 0 ]._root );
+////        prepareGeometries( _cube_faces[ 1 ]._root );
+////        prepareGeometries( _cube_faces[ 2 ]._root );
+////        prepareGeometries( _cube_faces[ 3 ]._root );
+////        prepareGeometries( _cube_faces[ 4 ]._root );
+////        prepareGeometries( _cube_faces[ 5 ]._root );
 ////
 ////        if ( _instance_count > 0 )
 ////        {
@@ -314,13 +358,6 @@ namespace kege{
 ////        command_buffer->bindShaderResource( _cubemesh->mesh_shader_resource, set_index );
 //    }
 
-    void PhysicalSphericalTerrain::setCameraPosition( const kege::vec3& position )
-    {
-        _camera_position.x = position.x;
-        _camera_position.y = position.y;
-        _camera_position.z = position.z;
-    }
-
     void PhysicalSphericalTerrain::setRotation( const kege::quat& rotation )
     {
 //        _rotation = dquat(rotation.x, rotation.y, rotation.z, rotation.w);
@@ -338,194 +375,201 @@ namespace kege{
         return 0.f;
     }
 
-    bool PhysicalSphericalTerrain::canSubDivide( QuadtreePatchNode& node )
-    {
-        kege::dvec3 world_position = _position + rotate( _orientation, node.sphere.xyz );
-        kege::dvec3 v = _camera_position - world_position;
+//    bool PhysicalSphericalTerrain::canSubDivide( QuadtreePatchNode& node )
+//    {
+//        kege::dvec3 world_position = _position + rotate( _orientation, node.sphere.xyz );
+//        kege::dvec3 v = _camera_position - world_position;
+//
+//        double a = dot( _center_to_camera, world_position);
+//        if (a < 0 )
+//        {
+//            node.visible = false;
+//        }
+//        else
+//        {
+//            node.visible = true;
+//        }
+//
+//        double radius_sq = kege::sq( node.sphere.w + node.sphere.w );
+//        double dist = magnSq( v );
+//        double resolution = (dist / radius_sq);
+//        return ( node.depth < _minimum_depth ) ? true : resolution < _maximum_resolution;
+//    }
+//
+//    bool PhysicalSphericalTerrain::splitable( QuadtreePatchNode& node )
+//    {
+//        return !node.children && node.depth < _maximum_depth;
+//    }
+//
+//    void PhysicalSphericalTerrain::split( int face_id, QuadtreePatchNode& node )
+//    {
+//        const int    DEPTH  = node.depth    + 1;
+//        const double RADIUS = node.sphere.w * 0.5;
+//        const float  SCALE  = node.patch.transform.w   * 0.5;
+//        const kege::vec3& CENTER = node.patch.transform.xyz;
+//
+//        /*
+//         * compute child quadtree center positions
+//         */
+//        kege::fvec3 child_center[ MAX_CHILD_COUNT ];
+//        child_center[ NW ] = CENTER + _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE + _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
+//        child_center[ NE ] = CENTER - _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE + _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
+//        child_center[ SW ] = CENTER - _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE - _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
+//        child_center[ SE ] = CENTER + _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE - _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
+//
+//        node.children = new QuadtreePatchChildren;
+//        init( node.children->nodes[ NW ], child_center[ NW ], SCALE, RADIUS, DEPTH, face_id );
+//        init( node.children->nodes[ NE ], child_center[ NE ], SCALE, RADIUS, DEPTH, face_id );
+//        init( node.children->nodes[ SW ], child_center[ SW ], SCALE, RADIUS, DEPTH, face_id );
+//        init( node.children->nodes[ SE ], child_center[ SE ], SCALE, RADIUS, DEPTH, face_id );
+//    }
+//
+//    void PhysicalSphericalTerrain::merge( QuadtreePatchNode& node )
+//    {
+//        if ( node.children )
+//        {
+//            merge( node.children->nodes[ 0 ] );
+//            merge( node.children->nodes[ 1 ] );
+//            merge( node.children->nodes[ 2 ] );
+//            merge( node.children->nodes[ 3 ] );
+//
+//            delete node.children;
+//            node.children = nullptr;
+//            _total_nodes--;
+//        }
+//    }
+//
+//    void PhysicalSphericalTerrain::update( int16_t face_id, QuadtreePatchNode& node, QuadtreePatchNode* neighbors[4] )
+//    {
+//        _total_levels = kege::max( _total_levels, node.depth );
+//
+//        node.patch.patch_index_id = 0;
+////        if ( neighbors[ NORTH ]) node.patch.patch_index_id |= 1;
+////        if ( neighbors[ EAST  ]) node.patch.patch_index_id |= 2;
+////        if ( neighbors[ SOUTH ]) node.patch.patch_index_id |= 4;
+////        if ( neighbors[ WEST  ]) node.patch.patch_index_id |= 8;
+////        node.patch.patch_vertex_id = face_id;
+//
+//        if( canSubDivide( node ) )
+//        {
+//            if ( splitable( node ) )
+//            {
+//                split( face_id, node );
+//            }
+//
+//            if( node.children )
+//            {
+//                QuadtreePatchNode* nw_neighbors[4] =
+//                {
+//                    (neighbors[ NORTH ]) ? ((neighbors[ NORTH ]->children) ? &neighbors[ NORTH ]->children->nodes[ SW ] : nullptr) : nullptr, // NORTH
+//                    &node.children->nodes[ NE ], // EAST
+//                    &node.children->nodes[ SW ], // SOUTH
+//                    (neighbors[ WEST ]) ? ((neighbors[ WEST ]->children) ? &neighbors[ WEST ]->children->nodes[ NE ] : nullptr) : nullptr  // WEST
+//                };
+//
+//                QuadtreePatchNode* ne_neighbors[4] =
+//                {
+//                    (neighbors[ NORTH ]) ? ((neighbors[ NORTH ]->children) ? &neighbors[ NORTH ]->children->nodes[ SE ] : nullptr) : nullptr, // NORTH
+//                    (neighbors[ EAST  ]) ? ((neighbors[ EAST  ]->children) ? &neighbors[ EAST  ]->children->nodes[ NW ] : nullptr) : nullptr, // EAST
+//                    &node.children->nodes[ SE ], // SOUTH
+//                    &node.children->nodes[ NW ], // WEST
+//                };
+//
+//                QuadtreePatchNode* sw_neighbors[4] =
+//                {
+//                    &node.children->nodes[ NW ], // NORTH
+//                    &node.children->nodes[ SE ], // EAST
+//                    (neighbors[ SOUTH ]) ? ((neighbors[ SOUTH ]->children) ? &neighbors[ SOUTH ]->children->nodes[ NW ] : nullptr) : nullptr, // NORTH
+//                    (neighbors[ WEST  ]) ? ((neighbors[ WEST  ]->children) ? &neighbors[ WEST  ]->children->nodes[ SE ] : nullptr) : nullptr,  // WEST
+//                };
+//
+//                QuadtreePatchNode* se_neighbors[4] =
+//                {
+//                    &node.children->nodes[ NE ], // NORTH
+//                    (neighbors[ EAST  ]) ? ((neighbors[ EAST  ]->children) ? &neighbors[ EAST  ]->children->nodes[ SW ] : nullptr) : nullptr, // EAST
+//                    (neighbors[ SOUTH ]) ? ((neighbors[ SOUTH ]->children) ? &neighbors[ SOUTH ]->children->nodes[ NE ] : nullptr) : nullptr, // SOUTH
+//                    &node.children->nodes[ SW ], // WEST
+//                };
+//
+//                update( face_id, node.children->nodes[ 0 ], nw_neighbors );
+//                update( face_id, node.children->nodes[ 1 ], ne_neighbors );
+//                update( face_id, node.children->nodes[ 2 ], sw_neighbors );
+//                update( face_id, node.children->nodes[ 3 ], se_neighbors );
+//            }
+//        }
+//        else if ( node.children )
+//        {
+//            merge( node );
+//        }
+//    }
 
-        double a = dot( _center_to_camera, world_position);
-        if (a < 0 )
-        {
-            node.visible = false;
-        }
-        else
-        {
-            node.visible = true;
-        }
-
-        double radius_sq = kege::sq( node.sphere.w + node.sphere.w );
-        double dist = magnSq( v );
-        double resolution = (dist / radius_sq);
-        return ( node.depth < _minimum_depth ) ? true : resolution < _maximum_resolution;
-    }
-
-    bool PhysicalSphericalTerrain::splitable( QuadtreePatchNode& node )
-    {
-        return !node.children && node.depth < _maximum_depth;
-    }
-
-    void PhysicalSphericalTerrain::split( int face_id, QuadtreePatchNode& node )
-    {
-        const int    DEPTH  = node.depth    + 1;
-        const double RADIUS = node.sphere.w * 0.5;
-        const float  SCALE  = node.patch.transform.w   * 0.5;
-        const kege::vec3& CENTER = node.patch.transform.xyz;
-
-        /*
-         * compute child quadtree center positions
-         */
-        kege::fvec3 child_center[ MAX_CHILD_COUNT ];
-        child_center[ NW ] = CENTER + _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE + _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
-        child_center[ NE ] = CENTER - _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE + _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
-        child_center[ SW ] = CENTER - _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE - _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
-        child_center[ SE ] = CENTER + _cube_faces[ face_id ].surface_axies[ 0 ] * SCALE - _cube_faces[ face_id ].surface_axies[ 1 ] * SCALE;
-
-        node.children = new QuadtreePatchChildren;
-        init( node.children->nodes[ NW ], child_center[ NW ], SCALE, RADIUS, DEPTH, face_id );
-        init( node.children->nodes[ NE ], child_center[ NE ], SCALE, RADIUS, DEPTH, face_id );
-        init( node.children->nodes[ SW ], child_center[ SW ], SCALE, RADIUS, DEPTH, face_id );
-        init( node.children->nodes[ SE ], child_center[ SE ], SCALE, RADIUS, DEPTH, face_id );
-    }
-
-    void PhysicalSphericalTerrain::merge( QuadtreePatchNode& node )
-    {
-        if ( node.children )
-        {
-            merge( node.children->nodes[ 0 ] );
-            merge( node.children->nodes[ 1 ] );
-            merge( node.children->nodes[ 2 ] );
-            merge( node.children->nodes[ 3 ] );
-
-            delete node.children;
-            node.children = nullptr;
-            _total_nodes--;
-        }
-    }
-
-    void PhysicalSphericalTerrain::update( int16_t face_id, QuadtreePatchNode& node, QuadtreePatchNode* neighbors[4] )
-    {
-        _total_levels = kege::max( _total_levels, node.depth );
-
-        node.patch.patch_index_id = 0;
-//        if ( neighbors[ NORTH ]) node.patch.patch_index_id |= 1;
-//        if ( neighbors[ EAST  ]) node.patch.patch_index_id |= 2;
-//        if ( neighbors[ SOUTH ]) node.patch.patch_index_id |= 4;
-//        if ( neighbors[ WEST  ]) node.patch.patch_index_id |= 8;
-//        node.patch.patch_vertex_id = face_id;
-
-        if( canSubDivide( node ) )
-        {
-            if ( splitable( node ) )
-            {
-                split( face_id, node );
-            }
-
-            if( node.children )
-            {
-                QuadtreePatchNode* nw_neighbors[4] =
-                {
-                    (neighbors[ NORTH ]) ? ((neighbors[ NORTH ]->children) ? &neighbors[ NORTH ]->children->nodes[ SW ] : nullptr) : nullptr, // NORTH
-                    &node.children->nodes[ NE ], // EAST
-                    &node.children->nodes[ SW ], // SOUTH
-                    (neighbors[ WEST ]) ? ((neighbors[ WEST ]->children) ? &neighbors[ WEST ]->children->nodes[ NE ] : nullptr) : nullptr  // WEST
-                };
-
-                QuadtreePatchNode* ne_neighbors[4] =
-                {
-                    (neighbors[ NORTH ]) ? ((neighbors[ NORTH ]->children) ? &neighbors[ NORTH ]->children->nodes[ SE ] : nullptr) : nullptr, // NORTH
-                    (neighbors[ EAST  ]) ? ((neighbors[ EAST  ]->children) ? &neighbors[ EAST  ]->children->nodes[ NW ] : nullptr) : nullptr, // EAST
-                    &node.children->nodes[ SE ], // SOUTH
-                    &node.children->nodes[ NW ], // WEST
-                };
-
-                QuadtreePatchNode* sw_neighbors[4] =
-                {
-                    &node.children->nodes[ NW ], // NORTH
-                    &node.children->nodes[ SE ], // EAST
-                    (neighbors[ SOUTH ]) ? ((neighbors[ SOUTH ]->children) ? &neighbors[ SOUTH ]->children->nodes[ NW ] : nullptr) : nullptr, // NORTH
-                    (neighbors[ WEST  ]) ? ((neighbors[ WEST  ]->children) ? &neighbors[ WEST  ]->children->nodes[ SE ] : nullptr) : nullptr,  // WEST
-                };
-
-                QuadtreePatchNode* se_neighbors[4] =
-                {
-                    &node.children->nodes[ NE ], // NORTH
-                    (neighbors[ EAST  ]) ? ((neighbors[ EAST  ]->children) ? &neighbors[ EAST  ]->children->nodes[ SW ] : nullptr) : nullptr, // EAST
-                    (neighbors[ SOUTH ]) ? ((neighbors[ SOUTH ]->children) ? &neighbors[ SOUTH ]->children->nodes[ NE ] : nullptr) : nullptr, // SOUTH
-                    &node.children->nodes[ SW ], // WEST
-                };
-
-                update( face_id, node.children->nodes[ 0 ], nw_neighbors );
-                update( face_id, node.children->nodes[ 1 ], ne_neighbors );
-                update( face_id, node.children->nodes[ 2 ], sw_neighbors );
-                update( face_id, node.children->nodes[ 3 ], se_neighbors );
-            }
-        }
-        else if ( node.children )
-        {
-            merge( node );
-        }
-    }
-
-    void PhysicalSphericalTerrain::update()
+    void PhysicalSphericalTerrain::update( const kege::dvec3& position )
     {
         _total_levels = 0;
-
-        QuadtreePatchNode* front_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_ABOVE ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_RIGHT ].root, // EAST
-            &_cube_faces[ CUBE_FACE_BELOW ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_LEFT  ].root, // WEST
-        };
-
-        QuadtreePatchNode* back_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_ABOVE ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_RIGHT ].root, // EAST
-            &_cube_faces[ CUBE_FACE_BELOW ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_LEFT  ].root, // WEST
-        };
-
-        QuadtreePatchNode* left_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_ABOVE ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_BACK  ].root, // EAST
-            &_cube_faces[ CUBE_FACE_BELOW ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_FRONT ].root, // WEST
-        };
-
-        QuadtreePatchNode* right_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_ABOVE ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_FRONT ].root, // EAST
-            &_cube_faces[ CUBE_FACE_BELOW ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_BACK  ].root, // WEST
-        };;
-
-        QuadtreePatchNode* above_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_BACK  ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_RIGHT ].root, // EAST
-            &_cube_faces[ CUBE_FACE_FRONT ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_LEFT  ].root, // WEST
-        };
-
-        QuadtreePatchNode* below_neighbors[4] =
-        {
-            &_cube_faces[ CUBE_FACE_BACK  ].root, // NORTH
-            &_cube_faces[ CUBE_FACE_LEFT  ].root, // EAST
-            &_cube_faces[ CUBE_FACE_FRONT ].root, // SOUTH
-            &_cube_faces[ CUBE_FACE_RIGHT ].root, // WEST
-        };
-
+        _camera_position = position;
         _center_to_camera = normalize( _camera_position - _position );
 
-        update( CUBE_FACE_FRONT, _cube_faces[ CUBE_FACE_FRONT ].root, front_neighbors );
-        update( CUBE_FACE_BACK,  _cube_faces[ CUBE_FACE_BACK  ].root, back_neighbors );
-        update( CUBE_FACE_LEFT,  _cube_faces[ CUBE_FACE_LEFT  ].root, left_neighbors );
-        update( CUBE_FACE_RIGHT, _cube_faces[ CUBE_FACE_RIGHT ].root, right_neighbors );
-        update( CUBE_FACE_ABOVE, _cube_faces[ CUBE_FACE_ABOVE ].root, above_neighbors );
-        update( CUBE_FACE_BELOW, _cube_faces[ CUBE_FACE_BELOW ].root, below_neighbors );
+        _faces[0].update();
+        _faces[1].update();
+        _faces[2].update();
+        _faces[3].update();
+        _faces[4].update();
+        _faces[5].update();
+//        QuadtreePatchNode* front_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_ABOVE ]._root, // NORTH
+//            &_faces[ CUBE_FACE_RIGHT ]._root, // EAST
+//            &_faces[ CUBE_FACE_BELOW ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_LEFT  ]._root, // WEST
+//        };
+//
+//        QuadtreePatchNode* back_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_ABOVE ]._root, // NORTH
+//            &_faces[ CUBE_FACE_RIGHT ]._root, // EAST
+//            &_faces[ CUBE_FACE_BELOW ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_LEFT  ]._root, // WEST
+//        };
+//
+//        QuadtreePatchNode* left_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_ABOVE ]._root, // NORTH
+//            &_faces[ CUBE_FACE_BACK  ]._root, // EAST
+//            &_faces[ CUBE_FACE_BELOW ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_FRONT ]._root, // WEST
+//        };
+//
+//        QuadtreePatchNode* right_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_ABOVE ]._root, // NORTH
+//            &_faces[ CUBE_FACE_FRONT ]._root, // EAST
+//            &_faces[ CUBE_FACE_BELOW ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_BACK  ]._root, // WEST
+//        };;
+//
+//        QuadtreePatchNode* above_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_BACK  ]._root, // NORTH
+//            &_faces[ CUBE_FACE_RIGHT ]._root, // EAST
+//            &_faces[ CUBE_FACE_FRONT ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_LEFT  ]._root, // WEST
+//        };
+//
+//        QuadtreePatchNode* below_neighbors[4] =
+//        {
+//            &_faces[ CUBE_FACE_BACK  ]._root, // NORTH
+//            &_faces[ CUBE_FACE_LEFT  ]._root, // EAST
+//            &_faces[ CUBE_FACE_FRONT ]._root, // SOUTH
+//            &_faces[ CUBE_FACE_RIGHT ]._root, // WEST
+//        };
+//
+
+//        update( CUBE_FACE_FRONT, _cube_faces[ CUBE_FACE_FRONT ]._root, front_neighbors );
+//        update( CUBE_FACE_BACK,  _cube_faces[ CUBE_FACE_BACK  ]._root, back_neighbors );
+//        update( CUBE_FACE_LEFT,  _cube_faces[ CUBE_FACE_LEFT  ]._root, left_neighbors );
+//        update( CUBE_FACE_RIGHT, _cube_faces[ CUBE_FACE_RIGHT ]._root, right_neighbors );
+//        update( CUBE_FACE_ABOVE, _cube_faces[ CUBE_FACE_ABOVE ]._root, above_neighbors );
+//        update( CUBE_FACE_BELOW, _cube_faces[ CUBE_FACE_BELOW ]._root, below_neighbors );
     }
 
     double PhysicalSphericalTerrain::radius()const

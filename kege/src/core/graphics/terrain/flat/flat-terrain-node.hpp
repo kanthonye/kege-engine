@@ -9,54 +9,70 @@
 #define flat_terrain_node_hpp
 
 #include "landscape-settings.h"
-#include "flat-terrain-renderer.hpp"
+#include "../../../memory/ref.hpp"
 
 namespace kege{
 
-    class Terrain;
-
-    class TerrainNode : public RefCounter
+    struct FlatTerrainPatch
     {
-    public:
-
-        virtual void render( FlatTerrainRenderer& renderer ) = 0;
-        virtual void update( const dvec3& eye ) = 0;
-        virtual void merge() = 0;
-        virtual ~TerrainNode(){}
+        struct{ int x, y, radius, index_buffer_id; };
+        struct{ int image_index, image_layer, tile_position[2]; };
+        kege::vec4 color;
     };
 
-    class FlatTerrainNode : public TerrainNode
+
+    class FlatTerrainTile;
+    struct FlatTerrainQuadtree;
+    struct FlatTerrainQuadtreeChildren;
+
+    struct FlatTerrainQuadtreeNeighbors
     {
-    public:
+        FlatTerrainQuadtreeNeighbors()
+        :   north( nullptr )
+        ,   south( nullptr )
+        ,   east( nullptr )
+        ,   west( nullptr )
+        {}
 
-        void initialize( PhysicalFlatTerrain* terrain, const dvec3& center, uint32_t diameter, uint32_t depth );
-        bool splitable( const dvec3& eye )const;
-        void update( const dvec3& eye );
-        void split();
-        void merge();
-
-        void render( FlatTerrainRenderer& renderer );
-
-        FlatTerrainNode();
-
-        Ref< TerrainNode > children;
-        Terrain* terrain;
-
-        dvec3 center;
-        uint1 diameter;
-        uint1 depth;
+        FlatTerrainQuadtree* north;
+        FlatTerrainQuadtree* south;
+        FlatTerrainQuadtree* east;
+        FlatTerrainQuadtree* west;
     };
 
-    struct TerrainNodeChildren : public TerrainNode
+    struct FlatTerrainQuadtree
     {
-        void render( FlatTerrainRenderer& renderer );
-        void update( const dvec3& eye );
+        enum{ SOUTH_VERTEX_BIT = 1, EAST_VERTEX_BIT = 2, NORTH_VERTEX_BIT = 4, WEST_VERTEX_BIT = 8 };
+
+        void operator()( FlatTerrainTile* tile, const dvec3& center, uint32_t diameter, uint32_t depth );
+
+        void setNeighborNorth( FlatTerrainQuadtree* node );
+        void setNeighborSouth( FlatTerrainQuadtree* node );
+        void setNeighborEast( FlatTerrainQuadtree* node );
+        void setNeighborWest( FlatTerrainQuadtree* node );
+        void split( FlatTerrainTile* tile );
         void merge();
         
-        TerrainNodeChildren( PhysicalFlatTerrain* terrain, const FlatTerrainNode* node );
-        ~TerrainNodeChildren();
+        ~FlatTerrainQuadtree();
 
-        FlatTerrainNode nodes[4];
+        FlatTerrainQuadtreeChildren* children;
+        FlatTerrainQuadtreeNeighbors neighbor;
+
+        FlatTerrainPatch patch;
+
+        dvec3 center;
+        uint32_t diameter;
+        uint32_t depth;
+
+        sint2 local;
+    };
+
+    struct FlatTerrainQuadtreeChildren : public RefCounter
+    {
+        FlatTerrainQuadtree nw;
+        FlatTerrainQuadtree ne;
+        FlatTerrainQuadtree sw;
+        FlatTerrainQuadtree se;
     };
 
 }

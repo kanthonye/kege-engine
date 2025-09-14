@@ -14,12 +14,12 @@ namespace kege {
         kege::PipelineHandle pipeline = context->getGraphics()->getShaderPipelineManager()->get( "line-shader" );
         if ( !pipeline ) return;
 
-        DescriptorSetHandle camera_descriptor;
+        ShaderResource camera_descriptor;
         if ( !pipeline ) return;
 
         CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
         encoder->bindGraphicsPipeline( pipeline );
-        encoder->bindDescriptorSets( camera_descriptor );
+        encoder->bindShaderResource( camera_descriptor, false );
         encoder->bindVertexBuffers( 0, { _vbo }, { 0 } );
         encoder->bindIndexBuffer( _ibo, 0, false );
         encoder->drawIndexed( _icount, 1, 0, 0, 0 );

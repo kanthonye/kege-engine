@@ -9,8 +9,8 @@
 #define graphics_hpp
 
 
-#include "../vulkan/vulkan-instance.hpp"
-#include "../vulkan/vulkan-device.hpp"
+#include "../vulkan/vk-instance.hpp"
+#include "../vulkan/vk-device.hpp"
 #include "glfw-window.hpp"
 #include "shader-resource-manager.hpp"
 #include "shader-pipeline-manager.hpp"
@@ -82,6 +82,7 @@ namespace kege{
         void updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data );
         void unmapBuffer( const BufferHandle& handle );
         void* mapBuffer( const BufferHandle& handle, size_t offset = 0, size_t size = 0 );
+        size_t bufferSize( const BufferHandle& handle );
 
         /**
          * @brief Destroys a buffer resource.
@@ -161,47 +162,137 @@ namespace kege{
          */
         void destroyComputePipeline(PipelineHandle handle);
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // UniformSetLayout lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+        /**
+         * @brief Creates multiple descriptor set layout.
+         * @param description Description of binding points for resources.
+         * @return A list of descriptor set layout handles to the created descriptor set layout.
+         */
+        std::vector< UniformSetLayout > createUniformSetLayouts( const UniformMultiSetDesc& description );
+
         /**
          * @brief Creates a descriptor set layout.
-         * @param bindings Description of binding points for resources.
+         * @param description Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        DescriptorSetLayoutHandle createDescriptorSetLayout( const std::vector<DescriptorSetLayoutBinding>& bindings );
+        UniformSetLayout createUniformSetLayout( const UniformDescs& description );
+
+        /**
+         * @brief Retrieves or creates a descriptor set layout based on bindings.
+         * @param description Description of binding points for resources.
+         * @return Handle to the descriptor set layout.
+         */
+        UniformSetLayout getUniformSetLayout( const UniformDescs& description );
 
         /**
          * @brief Destroys a descriptor set layout.
          * @param handle Handle to the layout to destroy.
          * @warning Ensure no descriptor sets or pipelines are using this layout.
          */
-        void destroyDescriptorSetLayout(DescriptorSetLayoutHandle handle);
+        void destroyUniformSetLayout( const UniformSetLayout& handle );
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // UniformSetLayout lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+        //bool allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource );
+
+
+        std::vector< CreateUniformSet > createShaderResource( const CreateUniformMultiSet& info );
+        CreateUniformSet createShaderResource( const CreateUniformSet& info );
+
+        std::vector< CreateUniformSet > allocateShaderResource( const UniformMultiSetDesc& description );
+        CreateUniformSet allocateShaderResource( const UniformDescs& description );
+
+
+        bool updateShaderResource( const UpdateUniformParams& resources );
+
+        
+        /**
+         * @brief A single descriptor set, containing its layout descriptions and bound resources.
+         */
+//        struct CreateUniformSet
+//        {
+//            UniformDescSet descriptions;
+//            UniformResrcSet resources;
+//        };
+//
+//        /**
+//         * @brief A collection of multiple descriptor sets, each with their own bindings and resources.
+//         */
+//        struct CreateUniformMultiSet
+//        {
+//            UniformMultiSetDesc descriptions;
+//            UniformResrcSet resources;
+//        };
+
+
+
+
+        bool allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource );
+        bool allocateShaderResource( const UniformDesc& descriptor, ShaderResource& resource );
 
         /**
-         * @brief Creates a descriptor set.
-         * @param bindings Description of binding points for resources.
-         * @return Handle to the created descriptor set.
+         * @brief Allocates new shader resources.
+         * @param layout Descriptor set layout bindings for the resource.
+         * @param quantity Number of shader resources to allocate.
+         * @return The allocated shader resource descriptor.
          */
-        DescriptorSetHandle allocateDescriptorSet( const std::vector<DescriptorSetLayoutBinding>& bindings );
-
-        DescriptorSetHandle allocateDescriptorSet( const DescriptorSetLayoutHandle& layout );
-        DescriptorSetHandle allocateDescriptorSet( const DescriptorSetAllocateInfo& info );
-
+        bool allocateShaderResources( const UniformSetLayout& layout, int quantity, ShaderResource* resource );
+        bool allocateShaderResource( const UniformSetLayout& layout, ShaderResource& resource );
 
         /**
-         * @brief Frees a descriptor set.
-         * @param handle Handle to the descriptor set to free.
-         * @note The descriptor set handle becomes invalid after this call.
+         * @brief Updates a descriptor set with new resource bindings.
+         * @param set Handle to the descriptor set to update.
+         * @param elements New resource bindings to apply.
+         * @return True if the update succeeded, false otherwise.
          */
-        void freeDescriptorSet(DescriptorSetHandle handle);
+        bool updateShaderResource( kege::ShaderResource& set, const UniformBindingElements& elements );
+        bool updateShaderResource( kege::ShaderResource& set );
 
-        /**
-         * @brief Allocates a descriptor set from a layout.
-         * @param layout Layout describing the descriptor set structure.
-         * @return Handle to the allocated descriptor set.
-         * @note Consider using a descriptor pool for better allocation management.
-         */
-        DescriptorSetHandle allocateDescriptorSet(DescriptorSetLayoutHandle layout);
+        void freeShaderResource( int quantity, ShaderResource* resource );
+        void freeShaderResource( ShaderResource& resource );
 
-        bool updateDescriptorSets( const std::vector< kege::WriteDescriptorSet >& writes );
+        bool createShaderResources( const CreateShaderResources& parameters );
+        bool makeShaderResources( const MakeShaderResources& parameters );
+
+//        /**
+//         * @brief Allocates multiple descriptor sets from a layout.
+//         * @param bindings Bindings describing the descriptor set structure.
+//         * @param frames_in_flight Number of frames in flight to allocate sets for.
+//         * @param handles Output array to receive allocated descriptor set handles.
+//         * @return True if allocation succeeded for all sets, false otherwise.
+//         */
+//        bool allocateDescriptors
+//        (
+//            const std::vector< kege::UniformDesc >& bindings,
+//            int frames_in_flight,
+//            ShaderResource* handles
+//        );
+//
+//        /**
+//         * @brief Allocates multiple descriptor sets from a layout.
+//         * @param layout Layout describing the descriptor set structure.
+//         * @param frames_in_flight Number of frames in flight to allocate sets for.
+//         * @param handles Output array to receive allocated descriptor set handles.
+//         * @return True if allocation succeeded for all sets, false otherwise.
+//         */
+//        bool allocateDescriptors
+//        (
+//            const UniformSetLayout& layout,
+//            int frames_in_flight,
+//            ShaderResource* handles
+//        );
+//
+//        /**
+//         * @brief Frees a descriptor set.
+//         * @param handle Handle to the descriptor set to free.
+//         * @note The descriptor set handle becomes invalid after this call.
+//         */
+//        void freeDescriptorSet( ShaderResource handle );
 
         /**
          * @brief Creates a fence for CPU-GPU synchronization.
@@ -311,6 +402,9 @@ namespace kege{
         kege::Swapchain _swapchain;
         uint32_t _current_frame;
         uint32_t _image_index;
+
+        // Map of descriptor set layout bindings to their corresponding layout handles.
+        std::unordered_map< size_t, UniformSetLayout > _uniform_set_layouts;
 
         kege::ShaderResourceManager _shader_resource_manager;
         kege::ShaderPipelineManager _shader_pipeline_manager;

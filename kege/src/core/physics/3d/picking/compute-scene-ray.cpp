@@ -12,7 +12,7 @@ namespace kege{
 
     void ComputeCameraRaySystem::operator()( const MappedInputs& inputs )
     {
-        Entity entity = _engine->scene()->getPlayer();
+        Entity entity = _engine->scene().getScene()->getPlayer();
         if( !entity ) return;
 
         Transform* transform = entity.get< Transform >();
@@ -37,18 +37,18 @@ namespace kege{
         mat44 viewmatrix = viewMatrix( transform->orientation, transform->position );
         vec4 ray_world = kege::inverse( viewmatrix ) * ray_eye;
 
-        _engine->scene()->setSceneRay( kege::normalize( ray_world.xyz ) );
+        _engine->scene().getScene()->setSceneRay( kege::normalize( ray_world.xyz ) );
     }
 
     bool ComputeCameraRaySystem::initialize()
     {
-        _comm.add< const MappedInputs&, ComputeCameraRaySystem >( this );
+        Communication::add< const MappedInputs&, ComputeCameraRaySystem >( this );
         return EntitySystem::initialize();
     }
 
     void ComputeCameraRaySystem::shutdown()
     {
-        _comm.remove< const MappedInputs&, ComputeCameraRaySystem >( this );
+        Communication::remove< const MappedInputs&, ComputeCameraRaySystem >( this );
         EntitySystem::shutdown();
     }
 

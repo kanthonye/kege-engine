@@ -10,7 +10,7 @@
 
 namespace kege{
 
-    kege::RgResrcHandle RenderGraph::defineShaderResource( const std::string& name, int frames_in_flight, const std::vector< kege::DescriptorSetLayoutBinding >& bindings )
+    kege::RgResrcHandle RenderGraph::defineShaderResource( const std::string& name, int frames_in_flight, const std::vector< kege::UniformDesc >& bindings )
     {
         auto i = _shader_resrc_map.find( name );
         if ( i != _shader_resrc_map.end() )
@@ -29,12 +29,12 @@ namespace kege{
 
         for( int frame=0; frame < frames_in_flight; ++frame )
         {
-            RgShaderResourceBindingSet& resource_binding_set = definition.resource_sets[ frame ];
+            RgUniformResourceInfoSet& resource_binding_set = definition.resource_sets[ frame ];
             resource_binding_set.bindings.resize( bindings.size() );
 
             for(int i=0; i<bindings.size(); ++i)
             {
-                kege::RgShaderResourceBinding& resource_binding = resource_binding_set.bindings[ i ];
+                kege::RgUniformResourceInfo& resource_binding = resource_binding_set.bindings[ i ];
                 resource_binding.descriptor_type = bindings[i].descriptor_type;
                 resource_binding.binding = bindings[i].binding;
                 resource_binding.name = bindings[i].name;
@@ -76,13 +76,13 @@ namespace kege{
 
                     default:
                     {
-                        KEGE_LOG_ERROR << "Invalid DescriptorType at DescriptorSetLayoutBinding -> " << i <<"\n";
+                        KEGE_LOG_ERROR << "Invalid DescriptorType at UniformDesc -> " << i <<"\n";
                         return {};
                     }
                 }
             }
 
-            resource_binding_set.descriptor_sets = _graphics->allocateDescriptorSet( bindings );
+            //TODO: resource_binding_set.descriptor_sets = _graphics->allocateDescriptorSet( bindings );
         }
         return resouce_handle;
     }
@@ -99,7 +99,7 @@ namespace kege{
 
         for( int frame=0; frame<definition.resource_sets.size(); ++frame )
         {
-            RgShaderResourceBindingSet& resource_binding_set = definition.resource_sets[ frame ];
+            RgUniformResourceInfoSet& resource_binding_set = definition.resource_sets[ frame ];
             for(int i=0; i<bindings.size(); ++i)
             {
                 if ( resource_binding_set.bindings[ i ].resource.type != bindings[ i ].type )
@@ -178,161 +178,161 @@ namespace kege{
     bool RenderGraph::updateShaderResources()
     {
         // with the physical resource handles resovle, update descriptor sets
-        for(int defn_index=0; defn_index<_shader_resrc_definitions.size(); ++defn_index)
-        {
-            kege::RgShaderResourceDefn& definition = _shader_resrc_definitions[defn_index];
-            for ( int frame = 0; frame < definition.resource_sets.size(); ++frame )
-            {
-                std::vector< kege::WriteDescriptorSet > writes;
-                for( int j = 0; j < definition.resource_sets[ frame ].bindings.size(); ++j )
-                {
-                    kege::RgShaderResourceBinding& bindings = definition.resource_sets[ frame ].bindings[ j ];
-
-                    kege::WriteDescriptorSet write = {};
-                    write.set = definition.resource_sets[ frame ].descriptor_sets;
-                    write.descriptor_type = bindings.descriptor_type;
-                    write.binding = bindings.binding;
-                    write.array_element = 0;
-
-                    switch ( write.descriptor_type )
-                    {
-                        case kege::DescriptorType::UniformBuffer:
-                        case kege::DescriptorType::StorageBuffer:
-                        case kege::DescriptorType::StorageBufferDynamic:
-                        case kege::DescriptorType::UniformBufferDynamic:
-                        {
-                            for (int k=0; k<bindings.resource.buffers.size(); ++k)
-                            {
-                                const RgResrcHandle& resource = bindings.resource.buffers[ k ].buffer;
-                                if ( _buffer_definitions[ resource.index ].physical_handle.empty() )
-                                {
-                                    createBuffer( _buffer_definitions[ resource.index ] );
-                                }
-
-                                const BufferDefn& buffer_defn = _buffer_definitions[ resource.index ];
-                                const int index = frame % buffer_defn.frames_in_flight;
-                                const BufferHandle& buffer = buffer_defn.physical_handle[ index ];
-
-                                write.buffer_info.push_back
-                                (
-                                    BufferInfo
-                                    {
-                                        .buffer = buffer,
-                                        .offset = bindings.resource.buffers[k].offset,
-                                        .range = bindings.resource.buffers[k].range
-                                    }
-                                );
-                            }
-                            break;
-                        }
-
-                        case kege::DescriptorType::Sampler:
-                        {
-                            for (int k=0; k<bindings.resource.buffers.size(); ++k)
-                            {
-                                const RgResrcHandle resource = bindings.resource.samplers[ k ].sampler;
-                                SamplerHandle sampler = _sampler_definitions[ resource.index ].physical_handle;
-                                write.image_info.push_back
-                                (
-                                    ImageInfo
-                                    {
-                                        .image = {-1},
-                                        .sampler = sampler,
-                                        .layout = ImageLayout::ShaderReadOnly
-                                    }
-                                );
-                            }
-                            break;
-                        }
-
-                        case kege::DescriptorType::SampledImage:
-                        {
-                            for (int k=0; k<bindings.resource.samplers.size(); ++k)
-                            {
-                                const RgResrcHandle resource = bindings.resource.images[ k ].image;
-                                if ( _image_definitions[ resource.index ].physical_handle.empty() )
-                                {
-                                    createImage( _image_definitions[ resource.index ] );
-                                }
-
-                                const ImageDefn& image_defn = _image_definitions[ resource.index ];
-                                const int index = frame % image_defn.frames_in_flight;
-                                const ImageHandle& image = image_defn.physical_handle[ index ];
-
-                                write.image_info.push_back
-                                (
-                                    ImageInfo
-                                    {
-                                        .image = image,
-                                        .sampler = {-1},
-                                        .layout = ImageLayout::ShaderReadOnly
-                                    }
-                                );
-                            }
-                            break;
-                        }
-
-                        case kege::DescriptorType::CombinedImageSampler:
-                        {
-                            for (int k=0; k<bindings.resource.images.size(); ++k)
-                            {
-                                const RgResrcHandle image_resource = bindings.resource.images[ k ].image;
-                                if ( _image_definitions[ image_resource.index ].physical_handle.empty() )
-                                {
-                                    createImage( _image_definitions[ image_resource.index ] );
-                                }
-
-                                const ImageDefn& image_defn = _image_definitions[ image_resource.index ];
-                                const int index = frame % image_defn.frames_in_flight;
-                                const ImageHandle& image = image_defn.physical_handle[ index ];
-
-                                const RgResrcHandle& sampler_resource = bindings.resource.images[ k ].sampler;
-                                const SamplerHandle& sampler = _sampler_definitions[ sampler_resource.index ].physical_handle;
-
-                                write.image_info.push_back
-                                (
-                                    ImageInfo
-                                    {
-                                        .image = image,
-                                        .sampler = sampler,
-                                        .layout = ImageLayout::ShaderReadOnly
-                                    }
-                                );
-                            }
-                            break;
-                        }
-
-                        case kege::DescriptorType::StorageTexelBuffer:
-                        case kege::DescriptorType::UniformTexelBuffer:
-                        {
-                            /*
-                            for (int k=0; k<bindings.resource.views.size(); ++k)
-                            {
-                                const RgResrcHandle& resource = bindings.resource.views[ k ].view;
-                                if ( _buffer_view_definitions[ resource.index ].physical_handle.empty() )
-                                {
-                                    createBufferView( _buffer_definitions[ resource.index ] );
-                                }
-                            }
-                             */
-                            break;
-                        }
-
-                        default:
-                        {
-                            KEGE_LOG_ERROR << "Invalid ShaderResrcUpdateInfo DescriptorType with image object" << Log::nl;
-                            return false;
-                        }
-                    }
-                    writes.push_back( write );
-                }
-
-                if ( !_graphics->updateDescriptorSets( writes ) )
-                {
-                    return false;
-                }
-            }
-        }
+//TODO:         for(int defn_index=0; defn_index<_shader_resrc_definitions.size(); ++defn_index)
+//        {
+//            kege::RgShaderResourceDefn& definition = _shader_resrc_definitions[defn_index];
+//            for ( int frame = 0; frame < definition.resource_sets.size(); ++frame )
+//            {
+//                std::vector< kege::WriteDescriptorSet > writes;
+//                for( int j = 0; j < definition.resource_sets[ frame ].bindings.size(); ++j )
+//                {
+//                    kege::RgUniformResourceInfo& bindings = definition.resource_sets[ frame ].bindings[ j ];
+//
+//                    kege::WriteDescriptorSet write = {};
+//                    write.set = definition.resource_sets[ frame ].descriptor_sets;
+//                    write.descriptor_type = bindings.descriptor_type;
+//                    write.binding = bindings.binding;
+//                    write.array_element = 0;
+//
+//                    switch ( write.descriptor_type )
+//                    {
+//                        case kege::DescriptorType::UniformBuffer:
+//                        case kege::DescriptorType::StorageBuffer:
+//                        case kege::DescriptorType::StorageBufferDynamic:
+//                        case kege::DescriptorType::UniformBufferDynamic:
+//                        {
+//                            for (int k=0; k<bindings.resource.buffers.size(); ++k)
+//                            {
+//                                const RgResrcHandle& resource = bindings.resource.buffers[ k ].buffer;
+//                                if ( _buffer_definitions[ resource.index ].physical_handle.empty() )
+//                                {
+//                                    createBuffer( _buffer_definitions[ resource.index ] );
+//                                }
+//
+//                                const BufferDefn& buffer_defn = _buffer_definitions[ resource.index ];
+//                                const int index = frame % buffer_defn.frames_in_flight;
+//                                const BufferHandle& buffer = buffer_defn.physical_handle[ index ];
+//
+//                                write.buffer_info.push_back
+//                                (
+//                                    BufferInfo
+//                                    {
+//                                        .buffer = buffer,
+//                                        .offset = bindings.resource.buffers[k].offset,
+//                                        .range = bindings.resource.buffers[k].range
+//                                    }
+//                                );
+//                            }
+//                            break;
+//                        }
+//
+//                        case kege::DescriptorType::Sampler:
+//                        {
+//                            for (int k=0; k<bindings.resource.buffers.size(); ++k)
+//                            {
+//                                const RgResrcHandle resource = bindings.resource.samplers[ k ].sampler;
+//                                SamplerHandle sampler = _sampler_definitions[ resource.index ].physical_handle;
+//                                write.image_info.push_back
+//                                (
+//                                    ImageInfo
+//                                    {
+//                                        .image = {-1},
+//                                        .sampler = sampler,
+//                                        .layout = ImageLayout::ShaderReadOnly
+//                                    }
+//                                );
+//                            }
+//                            break;
+//                        }
+//
+//                        case kege::DescriptorType::SampledImage:
+//                        {
+//                            for (int k=0; k<bindings.resource.samplers.size(); ++k)
+//                            {
+//                                const RgResrcHandle resource = bindings.resource.images[ k ].image;
+//                                if ( _image_definitions[ resource.index ].physical_handle.empty() )
+//                                {
+//                                    createImage( _image_definitions[ resource.index ] );
+//                                }
+//
+//                                const ImageDefn& image_defn = _image_definitions[ resource.index ];
+//                                const int index = frame % image_defn.frames_in_flight;
+//                                const ImageHandle& image = image_defn.physical_handle[ index ];
+//
+//                                write.image_info.push_back
+//                                (
+//                                    ImageInfo
+//                                    {
+//                                        .image = image,
+//                                        .sampler = {-1},
+//                                        .layout = ImageLayout::ShaderReadOnly
+//                                    }
+//                                );
+//                            }
+//                            break;
+//                        }
+//
+//                        case kege::DescriptorType::CombinedImageSampler:
+//                        {
+//                            for (int k=0; k<bindings.resource.images.size(); ++k)
+//                            {
+//                                const RgResrcHandle image_resource = bindings.resource.images[ k ].image;
+//                                if ( _image_definitions[ image_resource.index ].physical_handle.empty() )
+//                                {
+//                                    createImage( _image_definitions[ image_resource.index ] );
+//                                }
+//
+//                                const ImageDefn& image_defn = _image_definitions[ image_resource.index ];
+//                                const int index = frame % image_defn.frames_in_flight;
+//                                const ImageHandle& image = image_defn.physical_handle[ index ];
+//
+//                                const RgResrcHandle& sampler_resource = bindings.resource.images[ k ].sampler;
+//                                const SamplerHandle& sampler = _sampler_definitions[ sampler_resource.index ].physical_handle;
+//
+//                                write.image_info.push_back
+//                                (
+//                                    ImageInfo
+//                                    {
+//                                        .image = image,
+//                                        .sampler = sampler,
+//                                        .layout = ImageLayout::ShaderReadOnly
+//                                    }
+//                                );
+//                            }
+//                            break;
+//                        }
+//
+//                        case kege::DescriptorType::StorageTexelBuffer:
+//                        case kege::DescriptorType::UniformTexelBuffer:
+//                        {
+//                            /*
+//                            for (int k=0; k<bindings.resource.views.size(); ++k)
+//                            {
+//                                const RgResrcHandle& resource = bindings.resource.views[ k ].view;
+//                                if ( _buffer_view_definitions[ resource.index ].physical_handle.empty() )
+//                                {
+//                                    createBufferView( _buffer_definitions[ resource.index ] );
+//                                }
+//                            }
+//                             */
+//                            break;
+//                        }
+//
+//                        default:
+//                        {
+//                            KEGE_LOG_ERROR << "Invalid ShaderResrcUpdateInfo DescriptorType with image object" << Log::nl;
+//                            return false;
+//                        }
+//                    }
+//                    writes.push_back( write );
+//                }
+//
+//                if ( !_graphics->updateDescriptorSets( writes ) )
+//                {
+//                    return false;
+//                }
+//            }
+//        }
         return true;
     }
 
@@ -469,17 +469,17 @@ namespace kege{
         return ( i != _sampler_resource_map.end() ) ? &_sampler_definitions[ i->second ].physical_handle : nullptr;
     }
 
-    kege::DescriptorSetHandle RenderGraph::getPhysicalDescriptorSet( const RgResrcHandle& handle )
+    kege::ShaderResource* RenderGraph::getPhysicalShaderResource( const RgResrcHandle& handle )
     {
         uint32_t frame_index = _graphics->getCurrFrameIndex() % _shader_resrc_definitions[ handle.index ].resource_sets.size();
-        return _shader_resrc_definitions[ handle.index ].resource_sets[ frame_index ].descriptor_sets;
+        return &_shader_resrc_definitions[ handle.index ].resource_sets[ frame_index ].shader_resource;
     }
 
-    kege::DescriptorSetHandle RenderGraph::getPhysicalDescriptorSet( const std::string& name )
+    kege::ShaderResource* RenderGraph::getPhysicalShaderResource( const std::string& name )
     {
         auto i = _shader_resrc_map.find( name );
         if ( i == _shader_resrc_map.end() ) return {};
-        return getPhysicalDescriptorSet( i->second );
+        return getPhysicalShaderResource( i->second );
     }
 
     kege::BufferHandle RenderGraph::getPhysicalBuffer( const RgResrcHandle& handle )
@@ -1190,7 +1190,7 @@ namespace kege{
             {
                 for (int i=0; i<defn.resource_sets.size(); ++i)
                 {
-                    _graphics->freeDescriptorSet( defn.resource_sets[i].descriptor_sets );
+                    _graphics->freeShaderResource( 1, &defn.resource_sets[i].shader_resource );
                 }
             }
 

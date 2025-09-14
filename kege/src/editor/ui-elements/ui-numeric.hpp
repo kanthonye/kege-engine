@@ -14,17 +14,56 @@
 
 namespace kege::ui{
 
-    struct Numeric
+    struct TreeNode
     {
-        bool update( ui::Layout& layout, float& value, const char* text );
-
-        ui::EID container;
-        ui::EID label;
-        ui::EID value;
-
-        int32_t cursor;
-        bool has_focused;
+        int cursor;
+        bool state[2];
+        std::string name;
+        std::vector< ui::EID > elements;
+        std::vector< TreeNode > children;
     };
+
+
+    void setupDroplist( ui::Layout& layout, TreeNode& tree, const char* text );
+    bool droplistOpen( ui::Layout& layout, TreeNode& tree );
+
+    ui::EID makeRow( ui::Layout& layout );
+    ui::EID makeCol( ui::Layout& layout );
+
+    bool numeric
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        float& num,
+        const char* text
+    );
+
+    bool numeric2
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        float& x, float& y,
+        const char* text
+    );
+
+    bool numeric3
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        float& x, float& y, float& z,
+        const char* text
+    );
+
+    bool numeric4
+    (
+        ui::Layout& layout,
+        TreeNode& tree,
+        float& x, float& y, float& z, float& w,
+        const char* text
+    );
+
+    
+    bool numericD( ui::Layout& layout, TreeNode& tree, double& num, const char* text );
 }
 
 #endif /* ui_numeric_hpp */

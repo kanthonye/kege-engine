@@ -11,147 +11,198 @@
 
 namespace kege{
 
-    void TerrainNodeChildren::render( FlatTerrainRenderer& renderer )
+    void FlatTerrainQuadtree::operator()( FlatTerrainTile* tile, const dvec3& position, uint32_t diameter, uint32_t depth )
     {
-        nodes[ 0 ].render( renderer );
-        nodes[ 1 ].render( renderer );
-        nodes[ 2 ].render( renderer );
-        nodes[ 3 ].render( renderer );
+        children   = nullptr;
+        diameter   = diameter;
+        center     = position;
+        depth      = depth;
+
+        patch.x = center.x;
+        patch.y = center.z;
+        patch.radius = diameter * 0.5;
+        patch.index_buffer_id = 0;
+
+        patch.image_index = tile->getImageLayer().imageIndex();
+        patch.image_layer = tile->getImageLayer().imageLayer();
+        patch.tile_position[0] = tile->getRoot().center[0];
+        patch.tile_position[1] = tile->getRoot().center[2];
+
+        patch.color = tile->color;
+
+        local.x = (center.x - tile->getRoot().center.x) + tile->getRoot().patch.radius;
+        local.y = (center.z - tile->getRoot().center.z) + tile->getRoot().patch.radius;
+
+        tile->setHeight( *this );
     }
 
-    void TerrainNodeChildren::update( const dvec3& eye )
+    void FlatTerrainQuadtree::split( FlatTerrainTile* tile )
     {
-        nodes[ 0 ].update( eye );
-        nodes[ 1 ].update( eye );
-        nodes[ 2 ].update( eye );
-        nodes[ 3 ].update( eye );
-    }
-    
-    void TerrainNodeChildren::merge()
-    {
-        nodes[0].merge();
-        nodes[1].merge();
-        nodes[2].merge();
-        nodes[3].merge();
-    }
-
-    TerrainNodeChildren::TerrainNodeChildren( PhysicalFlatTerrain* terrain, const FlatTerrainNode* node )
-    {
-        uint32_t diameter  = node->diameter * 0.5;
-        uint32_t offset = diameter * 0.5;
-        uint32_t depth  = node->depth  + 1;
+        uint32_t child_width  = diameter * 0.5;
+        uint32_t child_offset = child_width * 0.5;
+        uint32_t child_depth  = depth  + 1;
 
         dvec3 centers[4];
 
-        centers[0].x = node->center.x - offset;
-        centers[0].z = node->center.z - offset;
-        centers[0].y = node->center.y;
+        centers[0].x = center.x - child_offset;
+        centers[0].z = center.z + child_offset;
+        centers[0].y = center.y;
 
-        centers[1].x = node->center.x - offset;
-        centers[1].z = node->center.z + offset;
-        centers[1].y = node->center.y;
+        centers[1].x = center.x + child_offset;
+        centers[1].z = center.z + child_offset;
+        centers[1].y = center.y;
 
-        centers[2].x = node->center.x + offset;
-        centers[2].z = node->center.z - offset;
-        centers[2].y = node->center.y;
+        centers[2].x = center.x - child_offset;
+        centers[2].z = center.z - child_offset;
+        centers[2].y = center.y;
 
-        centers[3].x = node->center.x + offset;
-        centers[3].z = node->center.z + offset;
-        centers[3].y = node->center.y;
+        centers[3].x = center.x + child_offset;
+        centers[3].z = center.z - child_offset;
+        centers[3].y = center.y;
 
-        nodes[ 0 ].initialize( terrain, centers[ 0 ], diameter, depth );
-        nodes[ 1 ].initialize( terrain, centers[ 1 ], diameter, depth );
-        nodes[ 2 ].initialize( terrain, centers[ 2 ], diameter, depth );
-        nodes[ 3 ].initialize( terrain, centers[ 3 ], diameter, depth );
-    }
-    
-    TerrainNodeChildren::~TerrainNodeChildren()
-    {
-        merge();
-    }
+        children = new FlatTerrainQuadtreeChildren;
+        children->nw.operator()( tile, centers[0], child_width, child_depth );
+        children->ne.operator()( tile, centers[1], child_width, child_depth );
+        children->sw.operator()( tile, centers[2], child_width, child_depth );
+        children->se.operator()( tile, centers[3], child_width, child_depth );
 
+        /*
+         A child descendent can only have neighbors if and only if that neighbor and
+         the child are at the same depth. This is a crucial step in correcting the
+         disuniform LOD between terrain nodes. If a terrain tile node's adjacent
+         neighbor is null, then the edge center vertex between the terrain tile node
+         and its adjacent null neighbor is disabled.
+         */
 
+        children->nw.setNeighborEast( &children->ne );
+        children->ne.setNeighborWest( &children->nw );
+        children->sw.setNeighborEast( &children->se );
+        children->se.setNeighborWest( &children->sw );
 
+        children->nw.setNeighborSouth( &children->sw );
+        children->sw.setNeighborNorth( &children->nw );
+        children->ne.setNeighborSouth( &children->se );
+        children->se.setNeighborNorth( &children->ne );
 
-    
-    void FlatTerrainNode::initialize( PhysicalFlatTerrain* terrain, const dvec3& center, uint32_t diameter, uint32_t depth )
-    {
-        this->children = nullptr;
-        this->terrain = terrain;
-        this->diameter = diameter;
-        this->center = center;
-        this->depth = depth;
-    }
-
-    void FlatTerrainNode::render( FlatTerrainRenderer& renderer )
-    {
-        if ( children )
+        if ( neighbor.north )
         {
-            children->render( renderer );
-        }
-    }
-
-    bool FlatTerrainNode::splitable( const dvec3& eye )const
-    {
-        double dx = eye.x - center.x;
-        double dy = eye.y - center.y;
-        double dz = eye.z - center.z;
-        double radius_sum = diameter + terrain->getViewRadius();
-        double distance_squared = sqrt(dx * dx + dy * dy + dz * dz);
-//        double radius_squared = radius_sum * radius_sum;
-        return (distance_squared <= radius_sum);
-    }
-
-    void FlatTerrainNode::update( const dvec3& eye )
-    {
-        if( splitable( eye ) )
-        {
-            if ( !children && diameter >= terrain->getTileDiameter() )
+            if( neighbor.north->children )
             {
-                split();
-            }
+                neighbor.north->children->sw.setNeighborSouth( &children->nw );
+                children->nw.setNeighborNorth( &neighbor.north->children->sw );
 
-            if ( children )
-            {
-                children->update( eye );
+                neighbor.north->children->se.setNeighborSouth( &children->ne );
+                children->ne.setNeighborNorth( &neighbor.north->children->se );
             }
         }
-        else if ( children )
+        if ( neighbor.south )
         {
-            merge();
+            if( neighbor.south->children )
+            {
+                neighbor.south->children->nw.setNeighborNorth( &children->sw );
+                children->sw.setNeighborSouth( &neighbor.south->children->nw );
+
+                neighbor.south->children->ne.setNeighborNorth( &children->se );
+                children->se.setNeighborSouth( &neighbor.south->children->ne );
+            }
+        }
+        if ( neighbor.east )
+        {
+            if( neighbor.east->children )
+            {
+                neighbor.east->children->nw.setNeighborWest( &children->ne );
+                children->ne.setNeighborEast( &neighbor.east->children->nw );
+
+                neighbor.east->children->sw.setNeighborWest( &children->se );
+                children->se.setNeighborEast( &neighbor.east->children->sw );
+            }
+        }
+        if ( neighbor.west )
+        {
+            if( neighbor.west->children )
+            {
+                neighbor.west->children->ne.setNeighborEast( &children->nw );
+                children->nw.setNeighborWest( &neighbor.west->children->ne );
+
+                neighbor.west->children->se.setNeighborEast( &children->sw );
+                children->sw.setNeighborWest( &neighbor.west->children->se );
+            }
         }
     }
 
-    void FlatTerrainNode::split()
+    void FlatTerrainQuadtree::setNeighborNorth( FlatTerrainQuadtree* node )
     {
-        if ( diameter > terrain->getTileDiameter() )
+        neighbor.north = node;
+        if ( node == nullptr )
         {
-            children = new TerrainNodeChildren( terrain, this );
+            patch.index_buffer_id &= ~NORTH_VERTEX_BIT;
         }
         else
         {
-            FlatTerrainTile* tile = new FlatTerrainTile( this );
-            terrain->generateHeightmapTile( tile );
-            children = tile;
+            patch.index_buffer_id |= NORTH_VERTEX_BIT;
         }
     }
 
-    void FlatTerrainNode::merge()
+    void FlatTerrainQuadtree::setNeighborSouth( FlatTerrainQuadtree* node )
+    {
+        neighbor.south = node;
+        if ( node == nullptr )
+        {
+            patch.index_buffer_id &= ~SOUTH_VERTEX_BIT;
+        }
+        else
+        {
+            patch.index_buffer_id |= SOUTH_VERTEX_BIT;
+        }
+    }
+
+    void FlatTerrainQuadtree::setNeighborEast( FlatTerrainQuadtree* node )
+    {
+        neighbor.east = node;
+        if ( node == nullptr )
+        {
+            patch.index_buffer_id &= ~EAST_VERTEX_BIT;
+        }
+        else
+        {
+            patch.index_buffer_id |= EAST_VERTEX_BIT;
+        }
+    }
+
+    void FlatTerrainQuadtree::setNeighborWest( FlatTerrainQuadtree* node )
+    {
+        neighbor.west = node;
+        if ( node == nullptr )
+        {
+            patch.index_buffer_id &= ~WEST_VERTEX_BIT;
+        }
+        else
+        {
+            patch.index_buffer_id |= WEST_VERTEX_BIT;
+        }
+    }
+
+    void FlatTerrainQuadtree::merge()
     {
         if ( children )
         {
-            children->merge();
-            children.clear();
-            //delete children;
-            //children = nullptr;
+            children->nw.merge();
+            children->ne.merge();
+            children->sw.merge();
+            children->se.merge();
+
+            delete children;
+            children = nullptr;
         }
     }
-    
-    FlatTerrainNode::FlatTerrainNode()
-    :   terrain( nullptr )
-    ,   children( nullptr )
-    ,   center( 0,0,0 )
-    ,   diameter( 0 )
-    ,   depth( 0 )
-    {}
+
+    FlatTerrainQuadtree::~FlatTerrainQuadtree()
+    {
+        if ( neighbor.north ) neighbor.north->setNeighborSouth( nullptr );
+        if ( neighbor.south ) neighbor.south->setNeighborNorth( nullptr );
+        if ( neighbor.east  ) neighbor.east->setNeighborWest( nullptr );
+        if ( neighbor.west  ) neighbor.west->setNeighborEast( nullptr );
+        merge();
+    }
+
 }

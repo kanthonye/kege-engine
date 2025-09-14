@@ -65,6 +65,13 @@ namespace kege{
          */
         VirtualDirectory();
 
+
+        static VirtualDirectory& instance()
+        {
+            static VirtualDirectory v;
+            return v;
+        }
+
     private:
 
         std::vector< kege::string > _directories;
@@ -73,6 +80,10 @@ namespace kege{
 
 
     kege::string readfile( const kege::string& filename );
+
+
+    void vfs_add( const kege::string& name, const kege::string& path );
+    kege::string vfs( const kege::string& name );
 }
 #endif /* vsf_hpp */
 

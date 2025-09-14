@@ -15,33 +15,24 @@
 
 namespace kege{
 
-//    struct Stats
-//    {
-//        uint32_t total_landscape_node = 0;
-//        uint32_t total_terrain_node = 0;
-//        uint32_t total_terrain = 0;
-//        uint32_t total_memory = 0;
-//        uint32_t drawcount = 0;
-//        uint32_t instances = 0;
-//    };
-
     class Terrain : public RefCounter
     {
     public:
 
+
+        virtual TerrainTile* getTerrainTile( const kege::dvec3& position )const;
+        virtual double getHeight( const kege::dvec3& position )const;
+        
         virtual bool initialize( const kege::TerrainSettings& settings );
         virtual void notify( void* sender, int event, void* data );
-        virtual void render( kege::TerrainRenderer& renderer );
+        virtual void render( kege::CommandEncoder* encoder, Transform* transform );
         virtual void update( const kege::dvec3& eye );
-
-        void setOrientation( const kege::dquat& orientation );
-        void setPosition( const kege::dvec3& position );
-        kege::ImageLayerManager* imageLayerManager();
-
-        //void addLayer( LandscapeLayer* layer );
 
         void setPhysicalTerrain( kege::Ref< PhysicalTerrain > eye );
         const kege::PhysicalTerrain* getPhysicalTerrain()const;
+
+        void setOrientation( const kege::dquat& orientation );
+        void setPosition( const kege::dvec3& position );
 
         virtual ~Terrain();
         Terrain();
@@ -49,12 +40,7 @@ namespace kege{
     protected:
 
         kege::Ref< PhysicalTerrain > _physical_terrain;
-        kege::ImageLayerManager _image_layer_manager;
         bool _init;
-
-    public:
-
-//        Stats stats;
     };
 
 }

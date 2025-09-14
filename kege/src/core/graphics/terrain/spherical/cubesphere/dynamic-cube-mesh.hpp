@@ -8,7 +8,66 @@
 #ifndef dynamic_cube_mesh_hpp
 #define dynamic_cube_mesh_hpp
 
-#include "cube-face-mesh-data.hpp"
+#include "../../../../renderer/core/graphics.hpp"
+#include "../../../../math/algebra/vmath.hpp"
+#include "../../../mesh/mesh.hpp"
+
+namespace kege{
+
+    /**
+     * This struct represents the vertex data for a single face of a cube. Each
+     * face is composed of 8 triangles max, requiring a total of nine vertices,
+     * abd 24 indices when rendered at full resolution.
+     */
+    struct PatchVertices // PatchVertices
+    {
+        kege::vec4 data[ 9 ];
+    };
+
+    /**
+     * This struct represents the index data for a single face of a cube. It
+     * specifies the order in which vertices from the PatchVertices struct
+     * should be connected to form triangles. At max resolution 24 indices are
+     * used, rendering 9 triangles.
+     */
+    struct PatchIndices // PatchIndices
+    {
+        uint32_t data[ 24 ];
+        uint16_t draw_count;
+    };
+
+
+    struct PatchData
+    {
+        PatchData();
+        /**
+         * Heightmap elevations data for a single patch.
+         */
+        //float elevations[ 9 ];
+
+        /**
+         * The transformation data for this patch. It's xyz components represents
+         * the position and the w component represents the scale
+         */
+        kege::fvec4 transform;
+
+        /**
+         * The patch_vertex_id hold the index to which PatchVertices to use when
+         * rendering this patch.
+         */
+        uint32_t patch_vertex_id;
+
+        /**
+         * The patch_index_id hold the index to which PatchIndices to use when
+         * rendering this patch.
+         */
+        uint32_t patch_index_id;
+
+
+        uint32_t pddn[2];
+    };
+
+}
 
 namespace kege{
 
@@ -29,7 +88,8 @@ namespace kege{
     struct DynamicCubeMesh
     {
         DynamicCubeMesh( float scale );
-        
+        DynamicCubeMesh();
+
         /**
          * This struct represents the vertex data for all 6 faces that make up the
          * cube. Each face is composed of 9 vertices, that makes a max of 8 triangles,

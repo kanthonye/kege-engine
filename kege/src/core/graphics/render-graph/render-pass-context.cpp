@@ -11,14 +11,14 @@
 
 namespace kege{
 
-    kege::DescriptorSetHandle RenderPassContext::getPhysicalDescriptorSet( const RgResrcHandle& handle )
+    kege::ShaderResource* RenderPassContext::getPhysicalShaderResource( const RgResrcHandle& handle )
     {
-        return _pass->_graph->getPhysicalDescriptorSet( handle );
+        return _pass->_graph->getPhysicalShaderResource( handle );
     }
     
-    kege::DescriptorSetHandle RenderPassContext::getPhysicalDescriptorSet( const std::string& name )
+    kege::ShaderResource* RenderPassContext::getPhysicalShaderResource( const std::string& name )
     {
-        return _pass->_graph->getPhysicalDescriptorSet( name );
+        return _pass->_graph->getPhysicalShaderResource( name );
     }
 
     const std::vector< kege::BufferHandle >* RenderPassContext::getBuffers( const std::string& name )const
@@ -83,6 +83,11 @@ namespace kege{
     kege::Graphics* RenderPassContext::getGraphics()
     {
         return _graphics;
+    }
+
+    RenderPassType RenderPassContext::getRenderPassType()const
+    {
+        return _render_pass_type;
     }
 
     const std::string& RenderPassContext::name()

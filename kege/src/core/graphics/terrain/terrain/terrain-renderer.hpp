@@ -30,11 +30,9 @@ namespace kege{
     {
     public:
 
-
-        virtual ~TerrainRenderer();
-
-    protected:
-
+        virtual void begin( kege::CommandEncoder* encoder, Transform* transform ) = 0;
+        virtual void end() = 0;
+        virtual ~TerrainRenderer(){}
     };
 
 }

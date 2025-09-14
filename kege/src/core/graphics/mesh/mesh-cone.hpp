@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class ConeMesh : public kege::Mesh
+    class ConeMesh : public kege::MeshPrimitive
     {
         public: ConeMesh( float radius, float height, uint32_t columns );
     };

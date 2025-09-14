@@ -9,105 +9,41 @@
 
 namespace kege{
 
-    void MeshRenderingSystem::operator()( kege::RenderPassContext* context )
+    void MeshRenderingSystem::render( double dms )
     {
-        if( context->name() != "scene-output" )
-            return;
-        
-//        kege::PipelineHandle pipeline = context->graphics()->getShaderPipelineManager()->get( "triangle-shader" );
-//        if ( pipeline )
-//        {
-//            kege::CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
-//
-//            encoder->setScissor
-//            ({
-//                0, 0,
-//                context->getRenderArea().extent.width,
-//                context->getRenderArea().extent.height
-//            });
-//            encoder->setViewport
-//            ({
-//                0, 0,
-//                static_cast<float>(context->getRenderArea().extent.width),
-//                static_cast<float>(context->getRenderArea().extent.height)
-//            });
-//
-//            encoder->bindGraphicsPipeline( pipeline );
-//            encoder->draw( 3, 1, 0, 0 );
-//        }
-
-
-        CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
-        encoder->setScissor
-        ({
-            0, 0,
-            context->getRenderArea().extent.width,
-            context->getRenderArea().extent.height
-        });
-        encoder->setViewport
-        ({
-            0, 0,
-            static_cast<float>( context->getRenderArea().extent.width ),
-            static_cast<float>( context->getRenderArea().extent.height )
-        });
-
-        kege::PipelineHandle pipeline = context->getGraphics()->getShaderPipelineManager()->get( "basic-shader" );
-        if( !pipeline ) return;
-
-        DescriptorSetHandle camera_descriptor = context->getPhysicalDescriptorSet( "camera-descriptor" );
-        if( !camera_descriptor ) return;
-
-        kege::AssetSystem* assets = &_engine->scene()->getAssetSystem();
-
-        encoder->bindGraphicsPipeline( pipeline );
-        encoder->bindDescriptorSets( camera_descriptor );
-
         for (kege::Entity entity : *_entities )
         {
-            kege::Ref< kege::Mesh >* mesh = entity.get< kege::Ref< kege::Mesh > >();
-            Transform* transform = entity.get< Transform >();
+            kege::Geometry* geometry = entity.get< kege::Geometry >();
+            kege::Transform* transform = entity.get< kege::Transform >();
 
-            if ( mesh == nullptr ) continue;
-
-            kege::Ref< kege::Mesh > resmesh = *mesh;//assets->get< kege::Ref< kege::Mesh > >( mesh->resource );
-            if ( resmesh == nullptr ) continue;;
-
-            if( !resmesh->vertex_buffer )
+            for ( const Ref< MeshSource >& source : geometry->mesh->sources )
             {
-                resmesh->init( context->getGraphics() );
-            }
-
-            encoder->bindVertexBuffers( 0, { resmesh->vertex_buffer }, { 0 });
-            encoder->bindIndexBuffer( resmesh->index_buffer, 0, false );
-
-            ModelMatrices model;
-            model(transform->position, transform->orientation, transform->scale);
-            encoder->setPushConstants(ShaderStage::Vertex, 0, sizeof( model ), &model );
-
-            for (int i=0; i<resmesh->primatives.size(); ++i)
-            {
-                resmesh->primatives[i]->draw( encoder );
+                if ( 0 <= source->material_index )
+                {
+                    _engine->renderManager()->submit(RenderObject{
+                        .material = geometry->material->sources[ source->material_index ],
+                        .mesh = source,
+                        .transform = *transform
+                    });
+                }
             }
         }
-        
     }
 
     bool MeshRenderingSystem::initialize()
     {
-        _comm.add< kege::RenderPassContext*, kege::MeshRenderingSystem >( this );
         return EntitySystem::initialize();
     }
 
     void MeshRenderingSystem::shutdown()
     {
-        _comm.remove< kege::RenderPassContext*, kege::MeshRenderingSystem >( this );
         EntitySystem::shutdown();
     }
 
     MeshRenderingSystem::MeshRenderingSystem( kege::Engine* engine )
     :   kege::EntitySystem( engine, "mesh-rendering-system", 0 )
     {
-        _signature = createEntitySignature< kege::Ref< kege::Mesh >, kege::Transform >();
+        _signature = createEntitySignature< kege::Geometry, kege::Transform >();
     }
 
 

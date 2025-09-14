@@ -43,6 +43,11 @@ namespace kege{
 //        return _mapped_inputs;
 //    }
 
+    kege::RenderManagerModule& Engine::renderManager()
+    {
+        return _render_manager;
+    }
+
     kege::AssetSystem& Engine::assetSystem()
     {
         return _asset_system;
@@ -63,15 +68,15 @@ namespace kege{
         return _input;
     }
 
-    kege::EntitySystemManagerModule& Engine::esm()
-    {
-        return _esm;
-    }
+//    kege::EntitySystemManagerModule& Engine::esm()
+//    {
+//        return _esm;
+//    }
 
-    kege::ECSModule& Engine::ecs()
-    {
-        return _ecs;
-    }
+//    kege::ECSModule& Engine::ecs()
+//    {
+//        return _ecs;
+//    }
 
     kege::VirtualDirectoryModule& Engine::vfs()
     {
@@ -83,9 +88,9 @@ namespace kege{
         return _logger;
     }
 
-    kege::SceneModule& Engine::scene()
+    kege::SceneManager& Engine::scene()
     {
-        return _scene;
+        return _scene_manager;
     }
 //    kege::RenderGraph* Engine::getRenderGraph()
 //
@@ -157,16 +162,15 @@ namespace kege{
                 tick();
                 _input->updateCurrentInputs();
 
-                if ( !_scene->ready() )
+                if ( !_scene_manager.getScene()->ready() )
                 {
-                    _scene->initialize();
+                    _scene_manager.getScene()->initialize();
                 }
                 //while ( _lag >= _fixed_delta_time )
                 {
                     _esm->update( _fixed_delta_time );
                     _lag -= _fixed_delta_time;
                 }
-
 
                 if ( 0 <= _graphics->beginFrame() )
                 {
@@ -248,7 +252,8 @@ namespace kege{
     ,   _ecs( this )
     ,   _vfs( this )
     ,   _logger( this )
-    ,   _scene( this )
+    ,   _scene_manager( this )
+    ,   _render_manager( this )
     ,   _modules()
     ,   _root_directory( "" )
     {

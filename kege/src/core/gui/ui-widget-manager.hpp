@@ -113,11 +113,6 @@ namespace kege::ui{
          */
         List _recycled;
 
-        /**
-         * The currently active elements liste.
-         */
-        List _active;
-
 //        int32_t _recycled_count;
 //        int32_t _recycled_head;
 //        int32_t _recycled_tail;

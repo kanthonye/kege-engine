@@ -9,15 +9,26 @@
 
 namespace kege{
 
-    std::vector<Vertex> generateCapsuleVertices(float height, float radius, int columns, int rings)
+    void generateCapsuleVertices(float height, float radius, int columns, int rings, std::vector<Vertex>& vertices)
     {
-        std::vector<Vertex> vertices;
-
         // Validate input parameters
-        if (height <= 0.0f || radius <= 0.0f || columns < 3 || rings < 1)
+        if ( height <= 0.0f )
         {
-            return vertices; // Return empty mesh for invalid parameters
+            height = 1;
         }
+        if ( radius <= 0.0f )
+        {
+            radius = 1;
+        }
+        if ( columns < 3 )
+        {
+            columns = 3;
+        }
+        if ( rings < 1 )
+        {
+            rings = 1;
+        }
+
 
         // Calculate capsule properties
         float halfHeight = (height - 2.0f * radius) * 0.5f;
@@ -104,14 +115,10 @@ namespace kege{
                 }
             }
         }
-
-        return vertices;
     }
 
-    std::vector<unsigned int> generateCapsuleIndices(int columns, int rings)
+    void generateCapsuleIndices( int columns, int rings, std::vector< unsigned int >& indices )
     {
-        std::vector<unsigned int> indices;
-
         // Generate indices for bottom hemisphere
         for (int i = 0; i < rings / 2; ++i) {
             for (int j = 0; j < columns; ++j) {
@@ -164,14 +171,12 @@ namespace kege{
                 indices.push_back(next + 1);
             }
         }
-
-        return indices;
     }
 
 
     CapsuleMesh::CapsuleMesh( float height, float radius, int columns, int rings )
     {
-        vertices = generateCapsuleVertices( height, radius, columns, rings );
-        indices = generateCapsuleIndices( columns, rings );
+        generateCapsuleVertices( height, radius, columns, rings, vertices );
+        generateCapsuleIndices( columns, rings, indices );
     }
 }

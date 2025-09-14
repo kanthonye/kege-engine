@@ -18,6 +18,45 @@ namespace kege{
     struct RenderGraph;
     struct RenderPassContext;
 
+    enum class RenderPassType
+    {
+        DepthPrePass,        // Z-prepass for depth filling
+        ShadowMap,           // Shadow mapping pass
+        Geometry,            // G-buffer generation (deferred)
+        Lighting,            // G-buffer generation (deferred)
+        ForwardOpaque,       // Forward rendering for opaque objects
+        ForwardTransparent,  // Forward rendering for transparent objects
+        PostProcess,         // Full-screen post-processing effects
+        UI,                  // User interface rendering
+        Count,
+        // Custom passes can be added as needed
+    };
+
+    // Bitwise operators for ImageUsageFlags
+    inline constexpr RenderPassType operator|(RenderPassType a, RenderPassType b)
+    {
+        return static_cast< RenderPassType >(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+    }
+
+    inline constexpr RenderPassType& operator|=(RenderPassType& a, RenderPassType b)
+    {
+        return a = a | b;
+    }
+
+    inline constexpr RenderPassType operator&(RenderPassType a, RenderPassType b)
+    {
+        return static_cast< RenderPassType >(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+    }
+
+    inline constexpr RenderPassType& operator&=(RenderPassType& a, RenderPassType b)
+    {
+        return a = a & b;
+    }
+
+
+
+
+
     enum struct RgResrcType{ Invalid, Buffer, Image, Sampler, BufferView, ShaderResource };
 
     struct RgResrcHandle
@@ -184,7 +223,7 @@ namespace kege{
 
     };
 
-    struct RgShaderResourceBinding
+    struct RgUniformResourceInfo
     {
         std::string name;
         uint32_t binding;
@@ -192,15 +231,15 @@ namespace kege{
         RgShaderResource resource;
     };
 
-    struct RgShaderResourceBindingSet
+    struct RgUniformResourceInfoSet
     {
-        kege::array< kege::RgShaderResourceBinding > bindings;
-        kege::DescriptorSetHandle descriptor_sets;
+        kege::array< kege::RgUniformResourceInfo > bindings;
+        kege::ShaderResource shader_resource;
     };
 
     struct RgShaderResourceDefn
     {
-        kege::array< kege::RgShaderResourceBindingSet > resource_sets;
+        kege::array< kege::RgUniformResourceInfoSet > resource_sets;
         RgResrcHandle resouce_handle;
     };
 
@@ -314,6 +353,7 @@ namespace kege{
         std::vector< RgReadResrcDesc > reads;
         std::vector< RgWriteResrcDesc > writes;
         RenderPassExecuteCallback execute;
+        RenderPassType pass;
     };
 
     struct BarrierDescription
@@ -325,8 +365,8 @@ namespace kege{
     {
     public:
 
-        kege::DescriptorSetHandle getPhysicalDescriptorSet( const RgResrcHandle& handle );
-        kege::DescriptorSetHandle getPhysicalDescriptorSet( const std::string& name );
+        kege::ShaderResource* getPhysicalShaderResource( const RgResrcHandle& handle );
+        kege::ShaderResource* getPhysicalShaderResource( const std::string& name );
 
 
         const std::vector< kege::SamplerHandle >* getSampler( const std::string& name )const;
@@ -344,7 +384,12 @@ namespace kege{
 
         const std::string& name();
 
+        RenderPassType getRenderPassType()const;
+
     private:
+
+
+        RenderPassType _render_pass_type;
 
         std::unordered_map< std::string, RgResrcHandle > _buffer_defn_map;
         std::unordered_map< std::string, RgResrcHandle > _image_defn_map;

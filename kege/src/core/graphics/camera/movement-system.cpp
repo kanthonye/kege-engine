@@ -15,19 +15,19 @@ namespace kege{
 
     bool MovementSystem::initialize()
     {
-        _comm.add< const MappedInputs&, MovementSystem >( this );
+        Communication::add< const MappedInputs&, MovementSystem >( this );
         return EntitySystem::initialize();
     }
 
     void MovementSystem::shutdown()
     {
-        _comm.remove< const MappedInputs&, MovementSystem >( this );
+        Communication::remove< const MappedInputs&, MovementSystem >( this );
         EntitySystem::shutdown();
     }
 
     void MovementSystem::operator()( const MappedInputs& input_commands )
     {
-        Entity entity = _engine->scene()->getPlayer();
+        Entity entity = _engine->scene().getScene()->getPlayer();
         if( !entity ) return;
 
         kege::Rigidbody* body = entity.get< Rigidbody >();

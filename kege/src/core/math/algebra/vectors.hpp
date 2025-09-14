@@ -93,7 +93,7 @@ namespace kege{
          * Overloading Conversion Operators, to convert from one vector to another.
          * e.g float vect3 to a double vec3
          */
-        template< typename J > inline operator Vec3< J >()const
+        template< typename J > explicit inline operator Vec3< J >()const
         {
             return Vec3< J >( x, y, z );
         }

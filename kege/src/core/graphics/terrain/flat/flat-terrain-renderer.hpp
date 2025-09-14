@@ -8,22 +8,17 @@
 #ifndef flat_terrain_renderer_hpp
 #define flat_terrain_renderer_hpp
 
-#include "mesh.hpp"
-#include "landscape.hpp"
-#include "quad-mesh-index-buffers.hpp"
+#include "../../../io/virtual-directory.hpp"
+#include "../../mesh/mesh.hpp"
+#include "flat-terrain-node.hpp"
+#include "../terrain/terrain-renderer.hpp"
+#include "../terrain/image-layer-manager.hpp"
 
 namespace kege{
 
     class PhysicalFlatTerrain;
 
-    struct FlatTerrainPatch
-    {
-        struct{ int x, y, radius, index_buffer_id; };
-        struct{ int image_index, image_layer, tile_position[2]; };
-        kege::vec4 color;
-    };
-
-    class FlatTerrainRenderer
+    class FlatTerrainRenderer : public TerrainRenderer
     {
     private:
 
@@ -37,13 +32,14 @@ namespace kege{
             /**
              * a collection of Patch to render
              */
-            kege::DescriptorSetHandle resource_set;
+            kege::ShaderResource resource_set;
 
             /**
              * a collection of DrawParams for each patch.
              */
             kege::BufferHandle draw_buffer;
-
+            kege::BufferHandle storage_buffer;
+            
             /**
              * The total number of patch to draw.
              */
@@ -65,29 +61,36 @@ namespace kege{
             FlatTerrainPatch* patchs;
         };
 
-    private:
-
         enum{ MAX_INSTANCE_BUFFER_SIZE = 8196, MAX_INSTANCE_BUFFER_COUNT = 10 };
-        uint32_t newBatch( uint32_t image_index );
 
     public:
 
-        void beginRender( kege::CommandBuffer& command_buffer );
-        void endRender( kege::CommandBuffer& command_buffer );
-        void submit( const FlatTerrainPatch& patch );
+        void begin( kege::CommandEncoder* encoder, Transform* transform );
+        void end();
 
-        bool initialize();
+        kege::ImageLayerManager& getImageLayerManager();
+        void submit( const FlatTerrainPatch& node );
+        uint32_t flush( int image_index );
+
+        bool initialize( const kege::TerrainSettings* settings );
         void shutdown();
 
-        FlatTerrainRenderer( PhysicalFlatTerrain* terrain );
         ~FlatTerrainRenderer();
+        FlatTerrainRenderer( kege::Graphics* graphics );
 
     private:
 
-        /*
-         the index buffers to load into shader
-         */
-        QuadMeshIndexBuffers _quad_mesh_index_buffers;
+        bool initializeMesh();
+        
+        kege::ImageLayerManager _image_layer_manager;
+        const kege::TerrainSettings* _settings;
+        kege::CommandEncoder* _encoder;
+        kege::Graphics* _graphics;
+
+
+        std::vector< IndexDrawCommand > _index_draw_commands;
+        kege::BufferHandle _vertex_buffer;
+        kege::BufferHandle _index_buffer;
 
         /*
          The shader used to render the landscape.
@@ -99,8 +102,6 @@ namespace kege{
          in one draw call. Each InstanceBuffer results in a draw call.
          */
         std::vector< Batch > _batchs;
-
-        PhysicalFlatTerrain* _terrain;
 
         uint32_t _total_instances;
         uint32_t _batch_count;

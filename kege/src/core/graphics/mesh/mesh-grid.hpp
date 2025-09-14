@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class GridMesh : public kege::Mesh 
+    class GridMesh : public kege::MeshPrimitive
     {
         public: GridMesh( int width, float height, int cols, int rows );
     };

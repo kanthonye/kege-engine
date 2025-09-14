@@ -66,13 +66,13 @@
 //     bool SleepSystem::initialize()
 //     {
 //         _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
-//         _comm.add< const WakeSleepableObjects&, SleepSystem>( this );
+//         Communication::add< const WakeSleepableObjects&, SleepSystem>( this );
 //         return EntitySystem::initialize();
 //     }
 
 //     void SleepSystem::shutdown()
 //     {
-//         _comm.remove< const WakeSleepableObjects&, SleepSystem>( this );
+//         Communication::remove< const WakeSleepableObjects&, SleepSystem>( this );
 //         return EntitySystem::shutdown();
 //     }
 

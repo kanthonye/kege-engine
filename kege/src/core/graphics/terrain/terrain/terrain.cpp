@@ -6,10 +6,20 @@
 //
 
 #include "terrain.hpp"
-//#include "../flat/flat-terrain.hpp"
+#include "../flat/flat-terrain.hpp"
 #include "../spherical/cubesphere/physical-spherical-terrain.hpp"
 
 namespace kege{
+
+    TerrainTile* Terrain::getTerrainTile( const kege::dvec3& position )const
+    {
+        return _physical_terrain->getTerrainTile( position );
+    }
+
+    double Terrain::getHeight( const kege::dvec3& position )const
+    {
+        return _physical_terrain->getHeight( position );
+    }
 
     bool Terrain::initialize( const kege::TerrainSettings& settings )
     {
@@ -37,15 +47,14 @@ namespace kege{
     void Terrain::notify( void* sender, int event, void* data )
     {}
 
-    void Terrain::render( kege::TerrainRenderer& renderer )
-    {}
+    void Terrain::render( kege::CommandEncoder* encoder, Transform* transform )
+    {
+        _physical_terrain->render( encoder, transform );
+    }
 
     void Terrain::update( const kege::dvec3& eye )
-    {}
-
-    kege::ImageLayerManager* Terrain::imageLayerManager()
     {
-        return &_image_layer_manager;
+        _physical_terrain->update( eye );
     }
 
     void Terrain::setPhysicalTerrain( kege::Ref< PhysicalTerrain > terrain )
@@ -59,7 +68,9 @@ namespace kege{
     }
 
     Terrain:: ~Terrain()
-    {}
+    {
+        _physical_terrain.clear();
+    }
 
     Terrain::Terrain()
     {}

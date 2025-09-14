@@ -16,6 +16,11 @@ namespace kege{
 
     template< typename var > struct Quat
     {
+        template< typename J > explicit inline operator Quat< J >()const
+        {
+            return Quat< J >( x, y, z, w );
+        }
+
         inline void operator *= ( const Quat< var >& q )
         {
             var rx = w*q.x + x*q.w + y*q.z - z*q.y;

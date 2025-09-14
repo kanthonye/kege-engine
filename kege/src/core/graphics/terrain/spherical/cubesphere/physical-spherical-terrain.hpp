@@ -11,6 +11,7 @@
 #include "../../terrain/physical-terrain.hpp"
 #include "spherical-terrain-renderer.hpp"
 #include "cube-mesh-shader-resource.hpp"
+#include "spherical-terrain-face.hpp"
 
 namespace kege{
 
@@ -19,8 +20,11 @@ namespace kege{
     public:
 
         bool initialize( SphericalTerrainRenderer* renderer );
-        void render( kege::CommandBuffer* command_buffer );
-        void update();
+        void render( kege::CommandEncoder* encoder, Transform* transform );
+        void update( const kege::dvec3& position );
+
+        void setRotation( const kege::quat& rotation );
+        void setPosition( const kege::vec3& position );
 
 
         /**
@@ -30,141 +34,27 @@ namespace kege{
          */
         PhysicalSphericalTerrain( const kege::TerrainSettings& settings );
 
-//    protected:
+    protected:
 
 
-        void render( QuadtreePatchNode& node );
+        float getHeight( const kege::vec3& point );
+        void render( SphericalTerrainTile& node );
 
         enum { NW, NE, SW, SE, MAX_CHILD_COUNT };
         enum { NORTH, EAST, SOUTH, WEST };
 
-        void init( QuadtreePatchNode& node, const kege::vec3& position, float scale, double radius, int depth, int face_id  );
-
-        /**
-         * @fn prepare
-         *
-         * Update the geometric render data of the surface.
-         *
-         * @note This function must be called before the draw function
-         * @param temp_render_buffer The temp data to use while preparing the geometries.
-         */
-        void prepareGeometries( std::vector< char >& temp_render_buffer );
-        
-        /**
-         * @fn prepare
-         *
-         * Prepare the geometries for rendering
-         *
-         * @param node The node to process the geometric data for
-         */
-        void prepareGeometries( QuadtreePatchNode& node );
-
-        /**
-         * @fn submit
-         *
-         * Upload the geometric data to the GPU
-         */
-        void submitDrawParamsAndPatchBuffer();
-
-
-        void draw( kege::CommandBuffer* command_buffer )const;
-        void bind( kege::CommandBuffer* command_buffer )const;
-
-        void setCameraPosition( const kege::vec3& position );
-        void setRotation( const kege::quat& rotation );
-        void setPosition( const kege::vec3& position );
-
-
-        float getHeight( const kege::vec3& point );
-
-        /**
-         * @fn canSubDivide
-         *
-         * Test whether a node can be sub-divided. This function uses distance and size to determine the result.
-         *
-         * @param node The node to test
-         * @return true if the node is too large or false if it is not.
-         *
-         */
-        bool canSubDivide( QuadtreePatchNode& node );
-
-        /**
-         * @fn splitable
-         *
-         * Test whether a node can be split or not. This function uses the depth and children to determine the result.
-         *
-         * @param node The node to test
-         * @return true if the node can be split or false if it can not.
-         */
-        bool splitable( QuadtreePatchNode& node );
-
-        /**
-         * @fn split
-         *
-         * Splits the quadtree node into smaller quadtree node.
-         *
-         * @param node The quadtree node to be split.
-         */
-        void split(  int face_id, QuadtreePatchNode& node );
-
-        /**
-         * @fn merge
-         *
-         * Merge the quadtree node child nodes into the parent quadtree node.
-         *
-         * @param node The quadtree node to be merge.
-         */
-        void merge( QuadtreePatchNode& node );
-
-        /**
-         * @fn update
-         *
-         * Update the geometric surface
-         *
-         * @param node The current node to update
-         */
-        void update( int16_t face_id, QuadtreePatchNode& node, QuadtreePatchNode* neighbors[4] );
-
-        /**
-         * @fn update
-         *
-         * Update the quadtree surface
-         */
-        //void update();
-
         double radius()const;
-
-        /**
-         * @fn init
-         *
-         * Initializes this object
-         */
-        //void initialize();
 
     private:
 
         /**
          * The 6 quadtree faces that make up the cube
          */
-        QuadtreePatch _cube_faces[ MAX_CUBE_FACES ];
+        SphericalTerrainFace _faces[ MAX_CUBE_FACES ];
 
         Ref< SphericalTerrainRenderer > _renderer;
-        const DynamicCubeMesh* _cube_mesh;
 
         kege::Terrain* _terrain;
-//
-//        /**
-//         */
-//        kege::PatchData* _patch_buffer;
-//        kege::DrawParams* _draw_param_buffer;
-//        uint32_t _max_instance_count;
-//        uint32_t _instance_count;
-//
-//
-//        const CubeMeshShaderResource* _cubemesh;
-//
-//        std::vector< PatchDrawBuffer > _draw_buffers;
-
 
         /**
          * This radius of the planet
@@ -204,21 +94,6 @@ namespace kege{
          */
         double _maximum_height;
 
-
-//        const uint32_t _drawparam_stride;
-//        const uint32_t _patchdata_stride;
-//        uint32_t _current_drawbatch;
-
-        /**
-         * Exponent value is used to compute buffer size
-         */
-//        uint32_t _exponent;
-
-        /**
-         * Base value is used to compute buffer size
-         */
-//        uint32_t _base;
-
         /**
          * The node_count is used to track the count off all nodes in this quadtree.
          * It is just used for informational purposes.
@@ -226,6 +101,9 @@ namespace kege{
         uint32_t _total_nodes;
         int16_t _total_levels;
         uint32_t _total_leaves;
+
+        friend SphericalTerrainFace;
+        friend SphericalTerrainTile;
     };
 
 }

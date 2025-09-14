@@ -19,7 +19,7 @@ namespace kege::physics{
 
     void ForceApplier::simulate( double dms )
     {
-        kege::Rigidbody* body;
+        //kege::Rigidbody* body;
 
         for (kege::Ref< ForceDriver >& force : _force_drivers )
         {

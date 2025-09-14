@@ -40,10 +40,10 @@ namespace kege{
         _module = scene;
 
         // alert systems of the scene change
-        if ( _engine->esm() )
-        {
-            _engine->esm()->onSceneChange();
-        }
+//        if ( _engine->esm() )
+//        {
+//            _engine->esm()->onSceneChange();
+//        }
     }
 
     void SceneModule::changeScene( uint32_t scene_id )
@@ -76,7 +76,7 @@ namespace kege{
         // Example: Load the first scene file path if available
         if ( !_scene_files.empty() )
         {
-            _module = loader.load( _engine->vfs()->fetch( _scene_files[0].c_str() ).c_str() );
+            _module = loader.load( vfs( _scene_files[0].c_str() ).c_str() );
             if ( !_module )
             {
                 kege::Log::error << "( LOADING_FAILED ) -> " << _scene_files[0] << Log::nl;

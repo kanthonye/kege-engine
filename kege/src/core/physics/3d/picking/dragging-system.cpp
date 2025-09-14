@@ -73,10 +73,10 @@ namespace kege{
         _selected_entity = msg.entity;
 
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
-        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
 
         _distance = kege::magn( body->center - origin );
-        _comm.broadcast< const MsgEntitySelectionDistance& >({ _distance });
+        Communication::broadcast< const MsgEntitySelectionDistance& >({ _distance });
     }
     
     void EntityDraggingSystem::update( double dms )
@@ -84,8 +84,8 @@ namespace kege{
         if ( !_drag_entity || !_selected_entity ) return;
 
         _drag_entity = false;
-        kege::vec3 ray = _engine->scene()->getSceneRay();
-        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = _engine->scene().getScene()->getSceneRay();
+        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
 
         if ( body == nullptr ) return;
@@ -102,15 +102,15 @@ namespace kege{
 
     bool EntityDraggingSystem::initialize()
     {
-        _comm.add< const MappedInputs&, EntityDraggingSystem>( this );
-        _comm.add< const MsgEntitySelection&, EntityDraggingSystem>( this );
+        Communication::add< const MappedInputs&, EntityDraggingSystem>( this );
+        Communication::add< const MsgEntitySelection&, EntityDraggingSystem>( this );
         return kege::EntitySystem::initialize();
     }
 
     void EntityDraggingSystem::shutdown()
     {
-        _comm.remove< const MsgEntitySelection&, EntityDraggingSystem>( this );
-        _comm.remove< const MappedInputs&, EntityDraggingSystem>( this );
+        Communication::remove< const MsgEntitySelection&, EntityDraggingSystem>( this );
+        Communication::remove< const MappedInputs&, EntityDraggingSystem>( this );
         kege::EntitySystem::shutdown();
     }
 

@@ -11,7 +11,7 @@ namespace kege{
     void HierarchyPanel::put( ui::Layout& layout )
     {
         layout.push( _main );
-        build( _engine->scene()->root(), layout );
+        build( _engine->scene().getScene()->root(), layout );
         layout.pop();
     }
 

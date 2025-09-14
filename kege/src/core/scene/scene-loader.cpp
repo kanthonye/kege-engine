@@ -364,74 +364,81 @@ namespace kege{
         MeshLoader::load( params->assets, mesh_path );
     }
 
-    void SceneLoader::meshBox( Params* params, Entity* entity, Json json )
+    void resolveGeometry( SceneLoader::Params* params, Entity* entity, kege::Ref< kege::MeshPrimitive > primative )
     {
-        kege::Ref< kege::Mesh > mesh = new CuboidMesh( vec3( 0.0 ), toVec3( json[ "extent" ] ) );
         if ( entity )
         {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
+            entity->add< Geometry >
+            ({
+                .mesh = new Mesh
+                {{
+                    new MeshSource
+                    (
+                        primative, // .primative =
+                        1, // .instance_count
+                        0, // .first_instance =
+                        0, // .first_index =
+                        primative->drawcount // .index_count
+                    )
+                }}
+            });
         }
         else
         {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
+            params->assets->add< kege::Geometry >( params->id, {
+                .mesh = new Mesh
+                {{
+                    new MeshSource
+                    {
+                        primative,  // .primative =
+                        1, // .instance_count
+                        0, // .first_instance =
+                        0, // .first_index =
+                        primative->drawcount // .index_count
+                    }
+                }}
+            });
         }
+    }
+
+    void SceneLoader::meshBox( Params* params, Entity* entity, Json json )
+    {
+        kege::Ref< kege::MeshPrimitive > primative = new CuboidMesh( vec3( 0.0 ), toVec3( json[ "extent" ] ) );
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshCone( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new ConeMesh
+        kege::Ref< kege::MeshPrimitive > primative = new ConeMesh
         (
             json[ "radius" ].getFloat(),
             json[ "hegith" ].getFloat(),
             json[ "columns" ].getFloat()
         );
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshRect( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new RectMesh
+        kege::Ref< kege::MeshPrimitive > primative = new RectMesh
         (
             vec3( 0.0 ),
             json[ "radius" ].getFloat(),
             json[ "hegith" ].getFloat()
         );
-
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshGrid( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new GridMesh
+        kege::Ref< kege::MeshPrimitive > primative = new GridMesh
         (
             json[ "radius" ].getFloat(),
             json[ "hegith" ].getFloat(),
             json[ "columns" ].getFloat(),
             json[ "rows" ].getFloat()
         );
-
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshSphere( Params* params, Entity* entity, Json json )
@@ -451,77 +458,45 @@ namespace kege{
             v_radius = json[ "radius" ].getFloat();
         }
 
-        kege::Ref< kege::Mesh > mesh = new EllipsoidMesh
+        kege::Ref< kege::MeshPrimitive > primative = new EllipsoidMesh
         (
             v_radius,
             h_radius,
             columns,
             rows
         );
-        
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshCircle( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new CircleMesh
+        kege::Ref< kege::MeshPrimitive > primative = new CircleMesh
         (
             toVec3( json[ "center" ] ),
             json[ "radius" ].getFloat(),
             json[ "divs" ].getFloat()
         );
-
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::meshCylinder( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new CylinderMesh
+        kege::Ref< kege::MeshPrimitive > primative = new CylinderMesh
         (
             json[ "radius" ].getFloat(),
             json[ "height" ].getFloat(),
             json[ "columns" ].getFloat()
         );
-
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
     
     void SceneLoader::meshIcosahedron( Params* params, Entity* entity, Json json )
     {
-        kege::Ref< kege::Mesh > mesh = new IcosahedronMesh
+        kege::Ref< kege::MeshPrimitive > primative = new IcosahedronMesh
         (
             json[ "radius" ].getFloat()
         );
-
-        if ( entity )
-        {
-            entity->add< kege::Ref< kege::Mesh > >( mesh );
-        }
-        else
-        {
-            params->assets->add< kege::Ref< kege::Mesh > >( params->id, mesh );
-        }
+        resolveGeometry( params, entity, primative );
     }
 
     void SceneLoader::cameraController( Params* params, Entity* entity, Json json )

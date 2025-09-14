@@ -9,27 +9,32 @@
 
 namespace kege{
 
-    bool SphericalTerrainRenderer::initialize( const DynamicCubeMesh* cubemesh )
+    uint32_t getCapSize( uint32_t count, uint32_t base, uint32_t exponent )
     {
-//        _terrain = terrain;
-        _cubemesh = new DynamicCubeMesh( 1.f );
+        uint32_t exp = ceil( ::log( count ) / ::log( base ) );
+        exp = kege::min( exp, exponent );
+        uint32_t size = pow( base, exp );
+        return ( size < base ) ? base : size;
+    }
 
+    bool SphericalTerrainRenderer::initialize()
+    {
         kege::Vec4< uint32_t > cube_face_indices[ 16 ][ 24 ];
         for (int j,i = 0; i < 16; i++ )
         {
             for (j = 0; j < 24; j++ )
             {
-                cube_face_indices[ i ][ j ].x = _cubemesh->face_indices[ i ].data[ j ];
+                cube_face_indices[ i ][ j ].x = _cubemesh.face_indices[ i ].data[ j ];
             }
         }
 
-        size_t vertices_size = sizeof( _cubemesh->face_vertices );
+        size_t vertices_size = sizeof( _cubemesh.face_vertices );
         size_t indices_size = sizeof( kege::Vec4< uint32_t > ) * 16 * 24;
 
         _vertices_uniform_buffer = _graphics->createBuffer
         ({
             .size = vertices_size,
-            .data = _cubemesh->face_vertices,
+            .data = _cubemesh.face_vertices,
             .usage = BufferUsage::UniformBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .debug_name = "terrain_cube_mesh_vertices"
@@ -44,57 +49,58 @@ namespace kege{
             .debug_name = "terrain_cube_mesh_indices"
         });
 
-        _mesh_shader_resource = _graphics->allocateDescriptorSet
-        ({
-            {
-                .binding = 0,
-                .count = 1,
-                .descriptor_type = DescriptorType::UniformBuffer,
-                .stage_flags = ShaderStage::Vertex
-            },
-            {
-                .binding = 1,
-                .count = 1,
-                .descriptor_type = DescriptorType::UniformBuffer,
-                .stage_flags = ShaderStage::Vertex
-            }
-        });
-
-        _graphics->updateDescriptorSets
-        ({
-            {
-                .set = _mesh_shader_resource,
-                .binding = 0,
-                .array_element = 0,
-                .descriptor_type = DescriptorType::UniformBuffer,
-                .buffer_info =
-                {{
-                    .buffer = _vertices_uniform_buffer,
-                    .range  = vertices_size,
-                    .offset = 0,
-                }}
-            },
-            {
-                .set = _mesh_shader_resource,
-                .binding = 1,
-                .array_element = 0,
-                .descriptor_type = DescriptorType::UniformBuffer,
-                .buffer_info =
-                {{
-                    .buffer = _indices_uniform_buffer,
-                    .range  = indices_size,
-                    .offset = 0,
-                }}
-            }
-        });
+//        _mesh_shader_resource = _graphics->allocateDescriptorSet
+//        ({
+//            {
+//                .binding = 0,
+//                .count = 1,
+//                .descriptor_type = DescriptorType::UniformBuffer,
+//                .stage_flags = ShaderStage::Vertex
+//            },
+//            {
+//                .binding = 1,
+//                .count = 1,
+//                .descriptor_type = DescriptorType::UniformBuffer,
+//                .stage_flags = ShaderStage::Vertex
+//            }
+//        });
+//
+//        _graphics->updateDescriptorSets
+//        ({
+//            {
+//                .set = _mesh_shader_resource,
+//                .binding = 0,
+//                .array_element = 0,
+//                .descriptor_type = DescriptorType::UniformBuffer,
+//                .buffer_info =
+//                {{
+//                    .buffer = _vertices_uniform_buffer,
+//                    .range  = vertices_size,
+//                    .offset = 0,
+//                }}
+//            },
+//            {
+//                .set = _mesh_shader_resource,
+//                .binding = 1,
+//                .array_element = 0,
+//                .descriptor_type = DescriptorType::UniformBuffer,
+//                .buffer_info =
+//                {{
+//                    .buffer = _indices_uniform_buffer,
+//                    .range  = indices_size,
+//                    .offset = 0,
+//                }}
+//            }
+//        });
 
         return true;
     }
 
     const DynamicCubeMesh* SphericalTerrainRenderer::getDynamicCubeMesh()const
     {
-        return _cubemesh;
+        return &_cubemesh;
     }
+    
 //    void SphericalTerrainRenderer::prepareGeometries( std::vector< char >& buffer )
 //    {
 //        /**
@@ -149,7 +155,7 @@ namespace kege{
 //        }
 //    }
 
-    void SphericalTerrainRenderer::draw( QuadtreePatchNode& node )
+    void SphericalTerrainRenderer::draw( SphericalTerrainTile& node )
     {
         if ( _instance_count >= _max_instance_count )
         {
@@ -157,7 +163,7 @@ namespace kege{
             _instance_count = 0;
         }
 
-        const PatchIndices* patch_indices = &_cubemesh->face_indices[ node.patch.patch_index_id ];
+        const PatchIndices* patch_indices = &_cubemesh.face_indices[ node.patch.patch_index_id ];
 
         /**
          * Add the current draw-command to the draw-command-buffer. The patch mesh is made up of 9 vertices,
@@ -212,81 +218,90 @@ namespace kege{
                 .debug_name = "terrain_patch_buffer"
             });
 
-            buffer.descriptor_set = _graphics->allocateDescriptorSet
-            ({
-                {
-                    .binding = 0,
-                    .count = 1,
-                    .descriptor_type = DescriptorType::StorageBuffer,
-                    .stage_flags = ShaderStage::Vertex
-                }
-            });
-
-            _graphics->updateDescriptorSets
-            ({
-                {
-                    .set = buffer.descriptor_set,
-                    .binding = 0,
-                    .array_element = 0,
-                    .descriptor_type = DescriptorType::StorageBuffer,
-                    .buffer_info =
-                    {{
-                        .buffer = buffer.patch_buffer,
-                        .range  = max_storage_buffer_size,
-                        .offset = 0,
-                    }}
-                }
-            });
+//            buffer.descriptor_set = _graphics->allocateDescriptorSet
+//            ({
+//                {
+//                    .binding = 0,
+//                    .count = 1,
+//                    .descriptor_type = DescriptorType::StorageBuffer,
+//                    .stage_flags = ShaderStage::Vertex
+//                }
+//            });
+//
+//            _graphics->updateDescriptorSets
+//            ({
+//                {
+//                    .set = buffer.descriptor_set,
+//                    .binding = 0,
+//                    .array_element = 0,
+//                    .descriptor_type = DescriptorType::StorageBuffer,
+//                    .buffer_info =
+//                    {{
+//                        .buffer = buffer.patch_buffer,
+//                        .range  = max_storage_buffer_size,
+//                        .offset = 0,
+//                    }}
+//                }
+//            });
         }
         else
         {
             PatchDrawBuffer& buffer = _draw_buffers[ _current_drawbatch ];
 
-//            if ( _graphics->bufferSize( buffer.patch_buffer ) < max_storage_buffer_size )
-//            {
-//                buffer.patch_buffer.destroy();
-//                buffer.draw_buffer.destroy();
-//
-//                buffer.instance_count = _instance_count;
-//
-//                buffer.draw_buffer = kege::DrawParamBuffer
+            if ( _graphics->bufferSize( buffer.patch_buffer ) < max_storage_buffer_size )
+            {
+                _graphics->destroyBuffer( buffer.patch_buffer );
+                _graphics->destroyBuffer( buffer.draw_buffer );
+                buffer.instance_count = _instance_count;
+
+                buffer.draw_buffer = _graphics->createBuffer
+                ({
+                    .size = max_drawcommand_buffer_size,
+                    .data = _draw_param_buffer,
+                    .usage = BufferUsage::UniformBuffer,
+                    .memory_usage = MemoryUsage::CpuToGpu,
+                    .debug_name = "terrain_draw_buffer"
+                });
+
+                buffer.patch_buffer = _graphics->createBuffer
+                ({
+                    .size = max_storage_buffer_size,
+                    .data = _patch_buffer,
+                    .usage = BufferUsage::UniformBuffer,
+                    .memory_usage = MemoryUsage::CpuToGpu,
+                    .debug_name = "terrain_patch_buffer"
+                });
+
+//                _graphics->updateDescriptorSets
 //                ({
-//                    max_drawcommand_buffer_size,
-//                    _draw_param_buffer,
-//                    kege::DYNAMIC_BUFFER
+//                    {
+//                        .set = buffer.descriptor_set,
+//                        .binding = 0,
+//                        .array_element = 0,
+//                        .descriptor_type = DescriptorType::StorageBuffer,
+//                        .buffer_info =
+//                        {{
+//                            .buffer = buffer.patch_buffer,
+//                            .range  = max_storage_buffer_size,
+//                            .offset = 0,
+//                        }}
+//                    }
 //                });
-//
-//                buffer.descriptor_set->buffers[0] = kege::StorageBuffer
-//                ({
-//                    max_storage_buffer_size,
-//                    _patch_buffer,
-//                    kege::DYNAMIC_BUFFER
-//                });
-//                buffer.descriptor_set.update();
-////                buffer.descriptor_set.update
-////                ({
-////                    {
-////                        "PatchDataBuffer", // string name
-////                        buffer.patch_buffer.id(), // resource_id
-////                        DESCRIPTOR_TYPE_STORAGE_BUFFER, // DescriptorType
-////                        0, // uint32_t binding
-////                        1, // uint32_t count
-////                        2, // uint32_t set
-////                    },
-////                });
-//            }
-//            else
-//            {
-//                buffer.draw_buffer.updateBufferData({ 0, max_drawcommand_buffer_size, _draw_param_buffer });
-//                buffer.patch_buffer.updateBufferData({ 0, max_storage_buffer_size, _patch_buffer });
-//                buffer.instance_count = _instance_count;
-//            }
+            }
+            else
+            {
+                _graphics->updateBuffer( buffer.draw_buffer, 0, max_drawcommand_buffer_size, _draw_param_buffer );
+                _graphics->updateBuffer( buffer.patch_buffer, 0, max_storage_buffer_size, _patch_buffer );
+                //buffer.draw_buffer.updateBufferData({ 0, max_drawcommand_buffer_size, _draw_param_buffer });
+                //buffer.patch_buffer.updateBufferData({ 0, max_storage_buffer_size, _patch_buffer });
+                buffer.instance_count = _instance_count;
+            }
         }
 
         _current_drawbatch++;
     }
 
-    void SphericalTerrainRenderer::begin( kege::CommandBuffer* command_buffer )
+    void SphericalTerrainRenderer::begin( kege::CommandEncoder* encoder, Transform* transform )
     {
         /**
          * Given the buffer, determine how many instance can fit into the buffer. This is done
@@ -349,17 +364,12 @@ namespace kege{
 
     SphericalTerrainRenderer::~SphericalTerrainRenderer()
     {
-        if ( _cubemesh )
-        {
-            delete _cubemesh;
-            _cubemesh = nullptr;
-        }
     }
 
     SphericalTerrainRenderer::SphericalTerrainRenderer()
     :   _terrain( nullptr )
     ,   _graphics( nullptr )
-    ,   _cubemesh( nullptr )
+    ,   _cubemesh( 1.0 )
     ,   _patch_buffer( nullptr )
     ,   _draw_param_buffer( nullptr )
     ,   _max_instance_count( 0 )

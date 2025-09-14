@@ -11,7 +11,7 @@
 #include "../../math/algebra/vectors.hpp"
 #include "../../math/algebra/quaternion.hpp"
 #include "../../math/algebra/transform.hpp"
-#include "material.hpp"
+#include "../material/material.hpp"
 
 namespace kege{
 
@@ -66,16 +66,6 @@ namespace kege{
 
 namespace kege{
 
-    struct Primitive : public kege::RefCounter
-    {
-        enum{ VERTEX_DRAW, INDEX_DRAW, VERTEX_DRAW_COMMANDS, INDEX_DRAW_COMMANDS};
-        virtual void init( kege::Graphics* graphics ){};
-        virtual void draw( CommandEncoder* encoder ) = 0;
-        virtual ~Primitive(){}
-
-        uint32_t material_index;
-    };
-
     struct IndexDrawCommand
     {
         uint32_t index_count;
@@ -93,65 +83,146 @@ namespace kege{
         uint32_t first_instance;
     };
 
-    struct IndexPrimitive : public kege::Primitive
+
+
+
+
+    struct InstanceBuffer
     {
-        void init( kege::Graphics* graphics ){};
-        void draw( CommandEncoder* encoder );
-        IndexDrawCommand draw_index_command;
+        kege::ShaderResource shader_resource;
+        kege::BufferHandle buffer;
+        uint32_t instance_count;
+        uint32_t first_instance;
+    };
+    class InstanceBufferList : public kege::RefCounter
+    {
+    public:
+
+        InstanceBufferList
+        (
+            kege::Graphics* graphics,
+            const std::vector< InstanceBuffer >& buffers
+        );
+
+        ~InstanceBufferList();
+        InstanceBufferList();
+
+        std::vector< InstanceBuffer > buffers;
+        kege::Graphics* graphics;
     };
 
-    struct VertexPrimitive : public kege::Primitive
-    {
-        void init( kege::Graphics* graphics ){};
-        void draw( CommandEncoder* encoder );
-        VertexDrawCommand draw_vertex_command;
-    };
 
-    struct IndexPrimitives : public kege::Primitive
+
+    
+    struct IndirectDrawBuffer
     {
-        void init( kege::Graphics* graphics );
-        void draw( CommandEncoder* encoder );
-        std::vector< IndexDrawCommand > index_draw_commands;
-        kege::BufferHandle indirect_draw_buffer;
+        kege::ShaderResource shader_resource;
+        kege::BufferHandle buffer;
         uint64_t offset;
         uint32_t count;
         uint32_t stride;
     };
 
-    struct VertexPrimitives : public kege::Primitive
+    class IndirectDrawBufferList : public kege::RefCounter
     {
-        void init( kege::Graphics* graphics );
-        void draw( CommandEncoder* encoder );
-        std::vector< VertexDrawCommand > vertex_draw_commands;
-        kege::BufferHandle indirect_draw_buffer;
-        uint64_t offset;
-        uint32_t count;
-        uint32_t stride;
+    public:
+
+        IndirectDrawBufferList
+        (
+            kege::Graphics* graphics,
+            const std::vector< IndirectDrawBuffer >& buffers
+        );
+
+        ~IndirectDrawBufferList();
+        IndirectDrawBufferList();
+
+        std::vector< IndirectDrawBuffer > buffers;
+        kege::Graphics* graphics;
     };
 
 
 
-    struct Geometry : public kege::RefCounter
-    {
-        //virtual void draw( CommandEncoder* encoder ) = 0;
-        //virtual void bind() = 0;
-        virtual ~Geometry(){}
-    };
 
-    struct Mesh : public kege::Geometry
+    class MeshPrimitive : public kege::RefCounter
     {
-        void init( kege::Graphics* graphics );
+    public:
+        
+        MeshPrimitive
+        (
+            const std::vector< Vertex >& vertices,
+            const std::vector< uint32_t >& indices,
+            const kege::vec3& aabb_min,
+            const kege::vec3& aabb_max
+        );
+        ~MeshPrimitive();
+        MeshPrimitive();
 
-        std::vector< kege::Ref< Primitive > > primatives;
+        void unload( kege::Graphics* graphics );
+        void upload();
+
         std::vector< Vertex > vertices;
         std::vector< uint32_t > indices;
 
+        // GPU vertex buffer handle
         kege::BufferHandle vertex_buffer;
+
+        // GPU index buffer handle
         kege::BufferHandle index_buffer;
+
+        kege::vec3 aabb_min;
+        kege::vec3 aabb_max;
+        
+        kege::Graphics* graphics;
+        uint32_t drawcount;
+    };
+
+    enum class PrimitiveType { Mesh, ScreenSpaceQuad, PointList };
+
+    struct MeshSource : public kege::RefCounter
+    {
+        MeshSource
+        (
+            Ref< MeshPrimitive > primative,
+            uint32_t instance_count,
+            uint32_t first_instance,
+            uint32_t first_index,
+            uint32_t index_count,
+            int32_t material_index = 1
+        );
+        
+        MeshSource
+        ();
+
+        Ref< IndirectDrawBufferList > indirect_draw_buffer_list;
+        Ref< InstanceBufferList > instance_buffer_list;
+        Ref< MeshPrimitive > primative;
+
+        PrimitiveType primitive_type;
+        uint32_t instance_count = 0;
+        uint32_t first_instance = 0;
+        uint32_t first_index = 0;
+        uint32_t index_count = 0;
+
+        int material_index = -1;
+    };
+
+    struct Mesh : public kege::RefCounter
+    {
+        Mesh( const std::vector< Ref< MeshSource > >& sources );
+        Mesh();
+        
+        std::vector< Ref< MeshSource > > sources;
+        kege::vec3 aabb_min;
+        kege::vec3 aabb_max;
+    };
+
+    struct Geometry
+    {
+        Ref< Mesh > mesh;
+        Ref< Material > material;
     };
 
     void computeTangentBitangent( std::vector< kege::Vertex >& vertices, const std::vector< uint32_t >& indices );
-    void uploadMesh( kege::Graphics* graphics, kege::Mesh& mesh );
 };
 
 #endif /* mesh_hpp */

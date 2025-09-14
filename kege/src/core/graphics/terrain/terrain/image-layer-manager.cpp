@@ -47,14 +47,16 @@ namespace kege{
         if ( layer.image_index < 0 || data == nullptr ) return;
 
         size_t size = sq( _image_width );
+//        _graphics->copyBufferToImage(sizeof(float) * size, data[0], layer.image_layer, 0 );
+//        _graphics->copyBufferToImage(4 * size, data[1], layer.image_layer, 0 );
 //        _resource_binding_sets[ _current_image_index ].resources[0].image->copyFrom(sizeof(float) * size, data[0], layer.image_layer, 0 );
 //        _resource_binding_sets[ _current_image_index ].resources[1].image->copyFrom(4 * size, data[1], layer.image_layer, 0 );
     }
 
-//    const ResourceSet& ImageLayerManager::getShaderResourceLayout()const
-//    {
-//        return _resource_set;
-//    }
+    const ShaderResource& ImageLayerManager::getShaderResource()const
+    {
+        return _shader_resource;
+    }
 
     void ImageLayerManager::freeHeightmap( ImageLayer& layer )
     {
@@ -69,8 +71,43 @@ namespace kege{
     std::vector< ImageInfo > ImageLayerManager::createNewImageArray( int width, int height, int layers )
     {
         size_t size = sq( _image_width ) * _image_layers;
+
         std::vector< ImageInfo > bindings =
         {
+            ImageInfo
+            {
+                .image = _graphics->createImage
+                ({
+                    .type = ImageType::Type2D,
+                    .width = _image_width,
+                    .height = _image_width,
+                    .depth = _image_layers,
+                    .mip_levels = 1,
+                    .format = Format::r_f32,
+                    .sample_count = SampleCount::Count1,
+                    .usage = ImageUsageFlags::None,
+                    .memory_usage = MemoryUsage::GpuOnly,
+                    .data =  nullptr
+                }),
+                .sampler = _sampler,
+            },
+            ImageInfo
+            {
+                .image = _graphics->createImage
+                ({
+                    .type = ImageType::Type2D,
+                    .width = _image_width,
+                    .height = _image_width,
+                    .depth = _image_layers,
+                    .mip_levels = 1,
+                    .format = Format::rgba_8_srgb,
+                    .sample_count = SampleCount::Count1,
+                    .usage = ImageUsageFlags::None,
+                    .memory_usage = MemoryUsage::GpuOnly,
+                    .data =  nullptr
+                }),
+                .sampler = _sampler,
+            },
 //            Graphics::createImage2DArray
 //            (
 //                IMAGE_ASPECT_COLOR,
@@ -119,11 +156,9 @@ namespace kege{
         _current_image_index = (uint32_t) _image_layer_counters.size();
         _image_layer_counters.push_back( 0 );
 
-//        ResourceBindings images = createNewImageArray( _image_width, _image_height, _image_layers );
-//
-//        _resource_binding_sets[ _current_image_index ].resources = images;
-//        kege::Graphics::updateResourceSet( _resource_set, _resource_binding_sets );
-
+        std::vector< ImageInfo > images = createNewImageArray( _image_width, _image_height, _image_layers );
+        //_writes[ _current_image_index ].image_info = images;
+        //_graphics->updateDescriptorSets( _writes );
         return true;
     }
 
@@ -168,14 +203,36 @@ namespace kege{
         _image_height = image_height;
         _image_layers = image_layers;
 
-//        ResourceBindings images = createNewImageArray( _image_width, _image_height, _image_layers );
-//        _resource_binding_sets.resize( _max_shader_resource_capacity );
+        std::vector< ImageInfo > images = createNewImageArray( _image_width, _image_height, _image_layers );
+        //_writes.resize( _max_shader_resource_capacity );
+
+//        _shader_resource = _graphics->allocateDescriptorSet
+//        ({
+//            UniformDesc{
+//                .count = _max_shader_resource_capacity,
+//                .name = "HeightmapImageArray",
+//                .descriptor_type = DescriptorType::CombinedImageSampler,
+//                .stage_flags = ShaderStage::Vertex | ShaderStage::Fragment
+//            },
+//            UniformDesc{
+//                .count = _max_shader_resource_capacity,
+//                .name = "NormalmapImageArray",
+//                .descriptor_type = DescriptorType::CombinedImageSampler,
+//                .stage_flags = ShaderStage::Vertex | ShaderStage::Fragment
+//            }
+//        });
 //        for (int i=0; i<_max_shader_resource_capacity; ++i)
 //        {
-//            _resource_binding_sets[i].starting_index = 0;
-//            _resource_binding_sets[i].resources = images;
+//            _writes[i] = kege::WriteDescriptorSet
+//            {
+//                .binding = 1,
+//                .descriptor_type = DescriptorType::CombinedImageSampler,
+//                .array_element = 0,
+//                .image_info = images,
+//                .set = _descriptor_set_handle
+//            };
 //        }
-//
+
 //        _resource_set = kege::Graphics::allocateResourceSet
 //        ({
 //            {0, "HeightmapImageArray"},
@@ -186,9 +243,7 @@ namespace kege{
 //        {
 //            return false;
 //        }
-
-
-
+//
 //        graphics::UniformDescriptors resource_descriptors =
 //        {{
 //            {
@@ -208,14 +263,24 @@ namespace kege{
 
     bool ImageLayerManager::empty()const
     {
-        return false;//_resource_binding_sets.empty();
+        return 0;//TODO: _writes.empty();
     }
 
     void ImageLayerManager::purge()
     {
-//        _freed_layers.clear();
-//        _image_layer_counters.clear();
-//        _resource_binding_sets.clear();
+// TODO:       if ( _graphics )
+//        {
+//            _graphics->freeDescriptorSet( _descriptor_set_handle );
+//            for (int i=0; i<_writes.size(); ++i)
+//            {
+//                _graphics->destroyImage( _writes[i].image_info[0].image );
+//                _graphics->destroySampler( _writes[i].image_info[0].sampler );
+//            }
+//            _graphics = nullptr;
+//        }
+//        _writes.clear();
+        _image_layer_counters.clear();
+        _image_layer_counters.clear();
     }
 
     ImageLayerManager::~ImageLayerManager()

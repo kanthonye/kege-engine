@@ -25,7 +25,7 @@ namespace kege{
             return false;
         }
 
-        string input_file = _engine->vfs()->fetch( "assets/config/keybinds.json" );
+        string input_file = kege::vfs( "assets/config/keybinds.json" );
         kege::Ref< kege::InputContext > context = kege::InputContextLoader::load( input_file );
         if ( !context )
         {

@@ -72,7 +72,7 @@ namespace kege{
     {
         inline operator bool()const{ return id >= 0; }
         int32_t id = -1;
-    };
+    }; 
     struct CommandQueueHandle { int32_t id = -1; };
     struct FenceHandle
     {
@@ -84,9 +84,7 @@ namespace kege{
         inline operator bool()const{ return id >= 0; }
         int32_t id = -1;
     };
-    struct DescriptorSetLayoutHandle { int32_t id = -1; };
-    struct DescriptorSetHandle
-    {
+    struct UniformSetLayout {
         inline operator bool()const{ return id >= 0; }
         int32_t id = -1;
     };
@@ -127,13 +125,9 @@ namespace kege{
     inline bool operator!=(const kege::SemaphoreHandle& a, const kege::SemaphoreHandle& b){ return a.id != b.id; }
     inline bool operator <(const kege::SemaphoreHandle& a, const kege::SemaphoreHandle& b){ return a.id  < b.id; }
 
-    inline bool operator==(const kege::DescriptorSetLayoutHandle& a, const kege::DescriptorSetLayoutHandle& b){ return a.id == b.id; }
-    inline bool operator!=(const kege::DescriptorSetLayoutHandle& a, const kege::DescriptorSetLayoutHandle& b){ return a.id != b.id; }
-    inline bool operator <(const kege::DescriptorSetLayoutHandle& a, const kege::DescriptorSetLayoutHandle& b){ return a.id  < b.id; }
-
-    inline bool operator==(const kege::DescriptorSetHandle& a, const kege::DescriptorSetHandle& b){ return a.id == b.id; }
-    inline bool operator!=(const kege::DescriptorSetHandle& a, const kege::DescriptorSetHandle& b){ return a.id != b.id; }
-    inline bool operator <(const kege::DescriptorSetHandle& a, const kege::DescriptorSetHandle& b){ return a.id  < b.id; }
+    inline bool operator==(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id == b.id; }
+    inline bool operator!=(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id != b.id; }
+    inline bool operator <(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id  < b.id; }
 
 
 
@@ -201,7 +195,6 @@ namespace kege{
         uint32_t         signal_semaphore_count;
         SemaphoreHandle* signal_semaphores;
     };
-
 
     enum class Format
     {
@@ -734,7 +727,7 @@ namespace kege{
         ImageType type = ImageType::Type2D;             ///< Dimensionality and type of texture
         uint32_t width = 1;                                 ///< Base width in texels
         uint32_t height = 1;                                ///< Base height in texels
-        uint32_t depth = 1;                 ///< Depth for 3D textures, array layers for others
+        uint32_t depth = 1;                                 ///< Depth for 3D textures, array layers for others
         uint32_t mip_levels = 1;                            ///< Number of mipmap levels
         Format format = Format::undefined;                  ///< Pixel format and data type
         SampleCount sample_count = SampleCount::Count1;     ///< MSAA sample count
@@ -1164,7 +1157,8 @@ namespace kege{
     /**
      * @brief Describes how vertex data is organized in memory for a single binding.
      */
-    struct VertexInputBindingDesc {
+    struct VertexInputBindingDesc
+    {
         /**
          * @brief Binding number that matches the binding in shader.
          *
@@ -1227,57 +1221,28 @@ namespace kege{
     /**
      * @brief Complete vertex input state description.
      */
-    struct VertexInputStateDesc {
+    struct VertexInputStateDesc
+    {
         /**
          * @brief List of vertex buffer bindings.
          *
          * Each entry describes a separate vertex buffer that will be bound.
          */
-        std::vector<VertexInputBindingDesc> bindings;
+        std::vector< VertexInputBindingDesc > bindings;
 
         /**
          * @brief List of vertex attributes.
          *
          * Defines how to interpret data from the bound buffers.
          */
-        std::vector<VertexInputAttributeDesc> attributes;
-
-        /**
-         * @brief Validates that the vertex input state is consistent.
-         *
-         * Checks:
-         * - All attributes reference valid bindings
-         * - Formats are valid
-         * - Offsets don't exceed strides
-         */
-    //    bool validate() const
-    //    {
-    //        for (const auto& attr : attributes)
-    //        {
-    //            bool binding_found = false;
-    //            for (const auto& bind : bindings)
-    //            {
-    //                if (bind.binding == attr.binding)
-    //                {
-    //                    binding_found = true;
-    //                    // Check offset+format size doesn't exceed stride
-    //                    if (attr.offset + getsizeOfFormat(attr.format) > bind.stride)
-    //                    {
-    //                        return false;
-    //                    }
-    //                    break;
-    //                }
-    //            }
-    //            if (!binding_found) return false;
-    //        }
-    //        return true;
-    //    }
+        std::vector< VertexInputAttributeDesc > attributes;
     };
 
     /**
      * @brief Primitive topology types.
      */
-    enum class PrimitiveTopology {
+    enum class PrimitiveTopology
+    {
         Invalid,
         PointList,        ///< List of individual points
         LineList,         ///< List of separate line segments (2 verts per line)
@@ -1295,7 +1260,8 @@ namespace kege{
     /**
      * @brief Describes how vertices are assembled into primitives.
      */
-    struct InputAssemblyStateDesc {
+    struct InputAssemblyStateDesc
+    {
         /**
          * @brief How to interpret vertex data.
          *
@@ -1446,14 +1412,6 @@ namespace kege{
          */
         float line_width = 1.0f;
     };
-
-//    rasterization.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-//    rasterization.lineWidth = 1;
-//    rasterization.rasterizerDiscardEnable = VK_FALSE;
-//    rasterization.depthClampEnable = VK_FALSE;
-//    rasterization.depthBiasEnable = VK_FALSE;
-//    rasterization.cullMode = VK_CULL_MODE_NONE;
-//    rasterization.frontFace = VK_FRONT_FACE_CLOCKWISE;
 
 
     /**
@@ -1669,9 +1627,6 @@ namespace kege{
         return a == static_cast< uint32_t >(b);
     }
 
-
-
-
     /**
      * @brief Per-render-target blending configuration.
      */
@@ -1791,7 +1746,7 @@ namespace kege{
          * Must match the number of color attachments in the render pass.
          * Each entry controls blending for one render target.
          */
-        std::vector<ColorBlendAttachmentState> attachments;
+        std::vector< ColorBlendAttachmentState > attachments;
 
         /**
          * @brief Blend constants for certain blend factors.
@@ -1841,165 +1796,6 @@ namespace kege{
     };
 
     /**
-     * @brief Describes a single binding in a descriptor set layout.
-     */
-    struct DescriptorSetLayoutBinding
-    {
-        /**
-         * @brief The descriptor set layout binding name in the shader.
-         */
-        std::string name = "";
-
-        /**
-         * @brief Binding number matching shader declaration.
-         *
-         * Example: `layout(binding = 0) uniform UniformBufferObject`
-         */
-        uint32_t binding = 0;
-
-        /**
-         * @brief Number of array elements (for array bindings).
-         *
-         * Use 1 for non-array resources.
-         */
-        uint32_t count = 1;
-
-        /**
-         * @brief Type of resource being bound.
-         */
-        DescriptorType descriptor_type = DescriptorType::UniformBuffer;
-
-        /**
-         * @brief Shader stages that can access this binding.
-         */
-        ShaderStage stage_flags = ShaderStage::All;
-
-        /**
-         * @brief Optional immutable samplers (for sampler/image bindings).
-         *
-         * When non-empty, overrides any sampler provided in descriptor set.
-         */
-        std::vector< SamplerHandle > immutable_samplers;
-    };
-
-    /**
-     * @brief Describes a complete descriptor set layout.
-     */
-    typedef std::vector< DescriptorSetLayoutBinding > DescriptorSetLayoutBindings;
-
-
-    /**
-     * @brief Information for updating buffer-type descriptors
-     */
-    struct BufferInfo
-    {
-        /** @brief Handle to the buffer resource */
-        BufferHandle buffer {};
-
-        /** @brief Byte offset into the buffer */
-        uint64_t offset = 0;
-
-        /** @brief Size of the region to bind, or VK_WHOLE_SIZE */
-        uint64_t range = 0;
-    };
-
-    /**
-     * @brief Information for updating image-type descriptors
-     */
-    struct ImageInfo
-    {
-        /** @brief Handle to the texture resource */
-        ImageHandle image {};
-
-        /** @brief Optional sampler for combined image samplers */
-        SamplerHandle sampler {};
-
-        /**
-         * @brief Layout the texture will be in during shader access
-         *
-         * Commonly needed for explicit APIs like Vulkan.
-         */
-         ImageLayout layout = ImageLayout::ShaderReadOnly;
-    };
-
-
-    /**
-     * @brief Descriptor for updating descriptor sets with buffer, image, or other resource bindings
-     *
-     * Used to bind resources to descriptor sets for shader access. A single WriteDescriptorSet
-     * can update multiple descriptors of the same type in a single operation.
-     */
-    struct WriteDescriptorSet
-    {
-        /** @brief Target descriptor set to update */
-        DescriptorSetHandle set {};
-
-        /** @brief Binding slot within the descriptor set layout */
-        uint32_t binding = 0;
-
-        /** @brief Starting element for array bindings, 0 for non-array descriptors */
-        uint32_t array_element = 0;
-
-        /** @brief Type of descriptor being updated */
-        DescriptorType descriptor_type = DescriptorType::UniformBuffer;
-
-        /** @brief Buffer descriptors to update (used for uniform/storage buffers) */
-        std::vector< BufferInfo > buffer_info;
-
-        /** @brief Image descriptors to update (used for textures and samplers) */
-        std::vector< ImageInfo > image_info;
-
-        /** @brief Texel buffer descriptors to update */
-        std::vector< BufferViewHandle > texel_buffer_info;
-    };
-
-
-
-
-    
-    struct DescriptorSetBindingInfo
-    {
-        /**
-         * @brief The descriptor set layout binding name in the shader.
-         */
-        std::string name = "";
-
-         /** @brief Type of descriptor being updated */
-         kege::DescriptorType descriptor_type = kege::DescriptorType::UniformBuffer;
-
-         /** @brief Binding slot within the descriptor set layout */
-         uint32_t binding = 0;
-
-         /** @brief Starting element for array bindings, 0 for non-array descriptors */
-         uint32_t array_element = 0;
-
-         /** @brief Buffer descriptors to update (used for uniform/storage buffers) */
-         std::vector< kege::BufferInfo > buffer_info;
-
-         /** @brief Image descriptors to update (used for textures and samplers) */
-         std::vector< kege::ImageInfo > image_info;
-
-         /** @brief Texel buffer descriptors to update */
-         std::vector< kege::BufferViewHandle > texel_buffer_info;
-     };
-
-    /**
-     * @brief Descriptor for updating descriptor sets with buffer, image, or other resource bindings
-     *
-     * Used to bind resources to descriptor sets for shader access. A single WriteDescriptorSet
-     * can update multiple descriptors of the same type in a single operation.
-     */
-    struct DescriptorSetAllocateInfo
-    {
-        std::string name = "";
-        kege::ShaderStage stage_flags = kege::ShaderStage::All;
-        std::vector< DescriptorSetBindingInfo > bindings;
-    };
-
-
-
-
-    /**
      * @brief Describes a push constant range.
      */
     struct PushConstantRange
@@ -2032,7 +1828,7 @@ namespace kege{
         /**
          * @brief Descriptor set layouts used by this pipeline.
          */
-        std::vector<DescriptorSetLayoutHandle> descriptor_set_layouts;
+        std::vector<UniformSetLayout> descriptor_set_layouts;
 
         /**
          * @brief Push constant ranges used by this pipeline.
@@ -2088,33 +1884,6 @@ namespace kege{
          * @brief Debug name for graphics debugging tools.
          */
         std::string debug_name = "";
-
-        /**
-         * @brief Creates a minimal pipeline description for basic rendering.
-         */
-        static GraphicsPipelineDesc createBasic
-        (
-            ShaderHandle vertex_shader,
-            ShaderHandle fragment_shader,
-            PipelineLayoutHandle layout,
-            Format color_format,
-            const std::string& name = "BasicPipeline"
-        )
-        {
-            return GraphicsPipelineDesc
-            {
-                .pipeline_layout = layout,
-                { vertex_shader, fragment_shader },
-                .vertex_input_state = VertexInputStateDesc(),
-                .input_assembly_state = InputAssemblyStateDesc(),
-                .rasterization_state = RasterizationStateDesc(),
-                .multisample_state = MultisampleStateDesc(),
-                .depth_stencil_state = DepthStencilStateDesc(),
-                .color_blend_state = ColorBlendStateDesc::createOpaque(),
-                .color_attachment_formats = { color_format },
-                .debug_name = name
-            };
-        }
     };
 
     /**
@@ -2134,7 +1903,6 @@ namespace kege{
             return compute_shader.id != 0 && pipeline_layout.id != 0;
         }
     };
-
 
     struct PipelineRenderingCreateInfo
     {
@@ -3466,17 +3234,9 @@ namespace std{
         }
     };
 
-    template <> struct hash< kege::DescriptorSetLayoutHandle >
+    template <> struct hash< kege::UniformSetLayout >
     {
-        std::size_t operator()( const kege::DescriptorSetLayoutHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::DescriptorSetHandle >
-    {
-        std::size_t operator()( const kege::DescriptorSetHandle& handle ) const
+        std::size_t operator()( const kege::UniformSetLayout& handle ) const
         {
             return handle.id;
         }

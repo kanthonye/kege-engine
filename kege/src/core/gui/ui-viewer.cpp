@@ -147,7 +147,7 @@ namespace kege::ui{
                 };
             }
 
-            vec2 dim = drawText
+            drawText
             (
                 start,
                 content.rect.width,
@@ -304,19 +304,8 @@ namespace kege::ui{
 
     void Viewer::setUiImages( std::vector< kege::ImageInfo > image_info )
     {
-        bool result = _graphics->updateDescriptorSets
-        ({
-            kege::WriteDescriptorSet
-            {
-                .binding = 0,
-                .array_element = 0,
-                .descriptor_type = DescriptorType::CombinedImageSampler,
-                .image_info = image_info,
-                .set = _descriptor_ui_texture
-            }
-        });
-
-        if ( result == false )
+        _ui_texture_shader_resource[0].images = image_info;
+        if ( !_graphics->updateShaderResource( _ui_texture_shader_resource ) )
         {
             kege::Log::error << "unable to update shader resource 'ui_texture'." <<Log::nl;
         }
@@ -324,17 +313,17 @@ namespace kege::ui{
 
     kege::ImageHandle Viewer::getDefaultTexture()
     {
-        return _default_ui_texture;
+        return _default_texture;
     }
 
     void Viewer::flush()
     {
-        _graphics->updateBuffer( _gpu_draw_buffer[ _graphics->getCurrFrameIndex() ], 0, _count * sizeof(ui::DrawElem), _drawbuffer.data());
+        _graphics->updateBuffer( _indirect_draw_buffer[ _graphics->getCurrFrameIndex() ], 0, _count * sizeof(ui::DrawElem), _drawbuffer.data());
 
         _encoder->bindGraphicsPipeline( _pipeline );
-        _encoder->bindDescriptorSets( _shader_resource_draw_buffer[ _graphics->getCurrFrameIndex() ], false );
-        _encoder->bindDescriptorSets( _shader_resource_font, false );
-        _encoder->bindDescriptorSets( _descriptor_ui_texture, false );
+        _encoder->bindShaderResource( _storage_buffer_resource[ _graphics->getCurrFrameIndex() ], false );
+        _encoder->bindShaderResource( _font_shader_resource, false );
+        _encoder->bindShaderResource( _ui_texture_shader_resource, false );
         _encoder->setPushConstants( ShaderStage::Vertex | ShaderStage::Fragment, 0, sizeof( _push_constant ), &_push_constant );
         _encoder->draw( 4, _count, 0, 0 );
         _count = 0;
@@ -378,62 +367,71 @@ namespace kege::ui{
 
         _drawbuffer.resize( _max_render_instances );
 
-        for (int i = 0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // create and setup the ui instance buffer shader resources
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+        size_t size = _max_render_instances * sizeof( ui::DrawElem );
+        BufferDesc buffer_desc =
         {
-            _gpu_draw_buffer[i] = _graphics->createBuffer
-            ({
-                .size = _max_render_instances * sizeof(ui::DrawElem),
-                .usage = kege::BufferUsage::StorageBuffer,
-                .memory_usage = MemoryUsage::CpuToGpu,
-                .data = nullptr
-            });
-
-            _shader_resource_draw_buffer[i] = _graphics->allocateDescriptorSet({DescriptorSetLayoutBinding{
-                .name = "UIViewBuffer",
-                .descriptor_type = DescriptorType::StorageBuffer,
-                .binding = 0,
-                .count = 1,
-                .stage_flags = ShaderStage::Vertex,
-            }});
-
-            _graphics->updateDescriptorSets({ kege::WriteDescriptorSet{
-                .array_element = 0,
-                .binding = 0,
-                .descriptor_type = DescriptorType::StorageBuffer,
-                .buffer_info =
-                {{
-                    .buffer = _gpu_draw_buffer[i],
-                    .offset = 0,
-                    .range = _max_render_instances * sizeof(ui::DrawElem)
-                }},
-                .set = _shader_resource_draw_buffer[i]
-            } });
-        }
-
-
-        _shader_resource_font = _graphics->allocateDescriptorSet({ DescriptorSetLayoutBinding{
-            .name = "sdf_font_texture",
-            .descriptor_type = DescriptorType::CombinedImageSampler,
-            .stage_flags = ShaderStage::Fragment,
+            .size = size,
+            .usage = kege::BufferUsage::StorageBuffer,
+            .memory_usage = MemoryUsage::CpuToGpu,
+            .data = nullptr
+        };
+        UniformLayoutDescription descriptors =
+        {{
+            .descriptor_type = DescriptorType::StorageBuffer,
+            .stage_flags = ShaderStage::Vertex,
+            .name = "UIViewBuffer",
             .binding = 0,
             .count = 1,
-        }});
-        _graphics->updateDescriptorSets({ kege::WriteDescriptorSet{
-            .array_element = 0,
-            .binding = 0,
+        }};
+        _graphics->allocateShaderResources( descriptors, MAX_FRAMES_IN_FLIGHT, _storage_buffer_resource );
+        for (int i = 0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)
+        {
+            _storage_buffer_resource[i][0] = BufferBinding
+            {
+                .binding = 0,
+                .buffers
+                {{
+                    .buffer = _graphics->createBuffer( buffer_desc ),
+                    .offset = 0,
+                    .range = size
+                }}
+            };
+            _graphics->updateShaderResource( _storage_buffer_resource[i] );
+        }
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // create and setup the ui font shader resources
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+        UniformDesc font_descriptors =
+        {
             .descriptor_type = DescriptorType::CombinedImageSampler,
-            .image_info =
-            {{
+            .stage_flags = ShaderStage::Fragment,
+            .name = "sdf_font_texture",
+            .binding = 0,
+            .count = 1,
+        };
+        _graphics->allocateShaderResource( font_descriptors, _font_shader_resource );
+        _font_shader_resource[0] = ImageBindings{
+            .binding = 0,
+            .images = {{
                 .image = _font->getImage(),
                 .sampler = _font->getSampler(),
                 .layout = ImageLayout::ShaderReadOnly
-            }},
-            .set = _shader_resource_font
-        } });
+            }}
+        };
+        _graphics->updateShaderResource( _font_shader_resource );
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // create and setup the ui textures shader resources
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
         uint32_t color[] = {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF};
-        _default_ui_texture = _graphics->createImage( ImageDesc{
+        _default_texture = _graphics->createImage( ImageDesc{
             .width  = 2,
             .height = 2,
             .depth  = 1,
@@ -443,27 +441,25 @@ namespace kege::ui{
             .format = Format::rgba_u8_norm,
             .data = &color
         });
-        
-        _descriptor_ui_texture = _graphics->allocateDescriptorSet({ DescriptorSetLayoutBinding{
-            .name = "ui_texture",
+        UniformLayoutDescription textures_descriptors =
+        {{
             .descriptor_type = DescriptorType::CombinedImageSampler,
             .stage_flags = ShaderStage::Fragment,
+            .name = "sdf_font_texture",
             .binding = 0,
             .count = 16,
-        }});
-        _graphics->updateDescriptorSets({ kege::WriteDescriptorSet{
-            .array_element = 0,
-            .binding = 0,
-            .descriptor_type = DescriptorType::CombinedImageSampler,
-            .image_info =
-            {{
-                .image = _default_ui_texture,
-                .sampler = _font->getSampler(),
-                .layout = ImageLayout::ShaderReadOnly
-            }},
-            .set = _descriptor_ui_texture
-        } });
+        }};
+        _graphics->allocateShaderResource( font_descriptors, _ui_texture_shader_resource );
 
+        _ui_texture_shader_resource[0] = ImageBindings{
+            .binding = 0,
+            .images = std::vector< ImageInfo >( 16, ImageInfo{
+                .image = _default_texture,
+                .sampler = _font->getSampler()
+            } )
+        };
+        _graphics->updateShaderResource( _ui_texture_shader_resource );
+        
         return true;
     }
 
@@ -471,21 +467,46 @@ namespace kege::ui{
     {
         if ( _graphics )
         {
-            _graphics->destroyImage( _default_ui_texture );
-
-            if( _shader_resource_font )
-                _graphics->freeDescriptorSet( _shader_resource_font );
             for (int i = 0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)
             {
-                if( _shader_resource_draw_buffer[i] )
-                    _graphics->freeDescriptorSet( _shader_resource_draw_buffer[i] );
+                if( _indirect_draw_buffer[i] )
+                {
+                    _graphics->destroyBuffer( _indirect_draw_buffer[i] );
+                }
+
+                if( _storage_buffer_resource[i] )
+                {
+                    _graphics->destroyBuffer( _storage_buffer_resource[i][0].buffers[0].buffer );
+                    _graphics->freeShaderResource( _storage_buffer_resource[i] );
+                }
+            }
+
+            if( _default_texture )
+            {
+                _graphics->destroyImage( _default_texture );
+                _default_texture = {};
+            }
+            if( _font_shader_resource )
+            {
+                _graphics->freeShaderResource( _font_shader_resource );
+            }
+            if( _ui_texture_shader_resource )
+            {
+                _graphics->freeShaderResource( _ui_texture_shader_resource );
             }
             if( _pipeline )
+            {
                 _graphics->destroyGraphicsPipeline( _pipeline );
+            }
             _font.clear();
             _graphics = nullptr;
         }
     }
+    BufferHandle   _indirect_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
+    ShaderResource _storage_buffer_resource[ kege::MAX_FRAMES_IN_FLIGHT ];
+    ShaderResource _ui_texture_shader_resource;
+    ShaderResource _font_shader_resource;
+
 
     Viewer::Viewer()
     :   _max_render_instances( 500 )

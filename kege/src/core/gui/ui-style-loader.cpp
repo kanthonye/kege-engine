@@ -183,7 +183,7 @@ namespace kege::ui{
                 corners.bottom_right = arr.data[1];
                 corners.bottom_right = arr.data[1];
             }
-            else if ( json.count() == 1 )
+            else
             {
                 int b = atoi( json.value() );
                 corners.top_left     = b;

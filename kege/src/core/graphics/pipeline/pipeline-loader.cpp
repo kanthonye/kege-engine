@@ -195,7 +195,7 @@ namespace kege{
     bool createDescriptorSetLayout
     (
         kege::Graphics* graphics,
-        std::vector< kege::DescriptorSetLayoutHandle >& descriptor_set_layouts,
+        std::vector< kege::UniformSetLayout >& descriptor_set_layouts,
         kege::Json descriptors
     )
     {
@@ -203,11 +203,11 @@ namespace kege{
         {
             return false;
         }
-        using LayoutBinding = std::map< int, kege::DescriptorSetLayoutBindings >;
+        using LayoutBinding = std::map< int, kege::UniformLayoutDescription >;
         LayoutBinding dslb_map;
         for (int i = 0; i < descriptors.count(); ++i)
         {
-            kege::DescriptorSetLayoutBinding dslb;
+            kege::UniformDesc dslb;
 
             kege::Json descriptor =  descriptors[i];
             dslb.descriptor_type = convertDescriptorType( descriptor[ "type" ].getString() );
@@ -216,13 +216,13 @@ namespace kege{
             dslb.count = descriptor[ "count" ].getInt();
             dslb.name = descriptor[ "name" ].getString();
 
-            kege::DescriptorSetLayoutBindings& dsl = dslb_map[ descriptor[ "set" ].getInt() ];
+            kege::UniformLayoutDescription& dsl = dslb_map[ descriptor[ "set" ].getInt() ];
             dsl.push_back( dslb );
         }
 
         for ( LayoutBinding::iterator m = dslb_map.begin(); m != dslb_map.end(); m++ )
         {
-            kege::DescriptorSetLayoutHandle handle = graphics->createDescriptorSetLayout( m->second );
+            kege::UniformSetLayout handle = graphics->createUniformSetLayout( m->second );
             descriptor_set_layouts.push_back( handle );
         }
         return true;

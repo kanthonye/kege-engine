@@ -13,26 +13,6 @@ namespace kege{
     CoreRenderGraph::CoreRenderGraph( kege::Engine* engine )
     :   Module( engine, "RenderGraph" )
     {}
-//
-//    PipelineHandle CoreRenderGraph::loadPipeline( const std::string& name, const std::string& filename )
-//    {
-//        kege::ShaderPipelineManager* pipeline_manager = _engine->graphics()->getShaderPipelineManager();
-//        pipeline_manager->set( "copy-shader", pipeline );
-//    }
-
-    void addFinalRenderPass( kege::RenderGraph* graph )
-    {
-        // ------- Deferred Geometry Render Targets -------
-
-        // ------- Deferred Lighting Render Targets -------
-
-        // ------- Deferred Geometry Render Pass -------
-
-        // ------- Deferred Lighting Render Pass -------
-
-        // ------- Final Render Pass -------
-
-    }
     
     bool CoreRenderGraph::initialize( )
     {
@@ -42,7 +22,7 @@ namespace kege{
             return false;
         }
 
-        kege::string shader_file = _engine->vfs()->fetch( "graphics-shaders/copy/copy-color-depth.json" );
+        kege::string shader_file = kege::vfs( "graphics-shaders/copy/copy-color-depth.json" );
         if( !_engine->graphics()->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
         {
             kege::Log::error << "( LOADING_FAILED ) -> graphics-shaders/copy/copy-color-depth.json" << Log::nl;
@@ -175,7 +155,7 @@ namespace kege{
             "camera-descriptor",
             frames_in_flight,
             {
-                kege::DescriptorSetLayoutBinding
+                kege::UniformDesc
                 {
                     .name = "CameraBlock",
                     .binding = 0,
@@ -214,7 +194,7 @@ namespace kege{
                 (
                     "scene-frame-descriptor", frames_in_flight,
                     {
-                        kege::DescriptorSetLayoutBinding
+                        kege::UniformDesc
                         {
                             .name = "src_color",
                             .binding = 0,
@@ -222,7 +202,7 @@ namespace kege{
                             .descriptor_type = kege::DescriptorType::CombinedImageSampler,
                             .stage_flags = kege::ShaderStage::Fragment
                         },
-                        kege::DescriptorSetLayoutBinding
+                        kege::UniformDesc
                         {
                             .name = "src_depth",
                             .binding = 1,
@@ -260,6 +240,7 @@ namespace kege{
             {
                 graph->addGraphicsPass
                 ({
+                    .pass = RenderPassType::ForwardOpaque,
                     .name = "final-pass",
                     .reads =
                     {
@@ -311,7 +292,7 @@ namespace kege{
 //                            return;
 //                        }
 //
-//                        kege::DescriptorSetHandle descriptor_set = context->getPhysicalDescriptorSet( "scene-frame-descriptor" );
+//                        kege::ShaderResource descriptor_set = context->getPhysicalDescriptorSet( "scene-frame-descriptor" );
 //                        if ( !descriptor_set )
 //                        {
 //                            KEGE_LOG_ERROR << "descriptor_set not found." <<Log::nl;
@@ -320,7 +301,7 @@ namespace kege{
 //
 //                        kege::CommandEncoder* encoder = context->getCommandEncoder();
 //                        encoder->bindGraphicsPipeline( pipeline );
-//                        encoder->bindDescriptorSets( descriptor_set );
+//                        encoder->bindShaderResource( descriptor_set );
 //                        encoder->draw( 4, 1, 0, 0 );
                     }
                 });
@@ -328,6 +309,7 @@ namespace kege{
                 graph->addGraphicsPass
                 ({
                     "scene-output",
+                    .pass = RenderPassType::Geometry,
                     .reads =
                     {
                     },
@@ -364,6 +346,8 @@ namespace kege{
             return false;
         }
 
+
+//        _module->addRenderDrfn
         return true;
     }
 
@@ -382,4 +366,52 @@ namespace kege{
     }
 
 //    KEGE_REGISTER_SYSTEM( RenderGraphSystem, "render-graph" );
+}
+
+
+
+namespace kege{
+
+    RenderManagerModule::RenderManagerModule( kege::Engine* engine )
+    :   Module( engine, "RenderManagerModule" )
+    {}
+
+    bool RenderManagerModule::initialize( )
+    {
+        if ( _module != nullptr )
+        {
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> RenderGraph" << Log::nl;
+            return false;
+        }
+
+        _module = new kege::RenderManager
+        ({
+            .engine = _engine,
+            .graphics = _engine->graphics().get(),
+            .graph = _engine->renderGraph().get(),
+            .frames_in_flight = MAX_FRAMES_IN_FLIGHT,
+        });
+
+        _module->initialize();
+        // ------- Setup Image Sampler Resources -------
+
+
+        return true;
+    }
+
+    void RenderManagerModule::shutdown()
+    {
+        if ( _module )
+        {
+            _module->shutdown();
+            _module.clear();
+        }
+    }
+
+    void RenderManagerModule::add()
+    {
+        _engine->addModule( this );
+        kege::Log::info << "RenderManagerModule added to engine" << Log::nl;
+    }
+
 }

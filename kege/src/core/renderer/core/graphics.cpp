@@ -93,6 +93,11 @@ namespace kege{
         return _device->mapBuffer( handle, offset, size );
     }
 
+    size_t Graphics::bufferSize( const BufferHandle& handle )
+    {
+        return _device->bufferSize( handle );
+    }
+
     SamplerHandle Graphics::createSampler(const SamplerDesc& desc)
     {
         return _device->createSampler( desc );
@@ -148,81 +153,217 @@ namespace kege{
         _device->destroyComputePipeline( handle );
     }
 
-    DescriptorSetLayoutHandle Graphics::createDescriptorSetLayout( const std::vector<DescriptorSetLayoutBinding>& bindings )
+
+
+    UniformSetLayout Graphics::getUniformSetLayout( const UniformLayoutDescription& descriptors )
     {
-        return _device->createDescriptorSetLayout( bindings );
+        return _device->getUniformSetLayout( descriptors, false );
     }
 
-    void Graphics::destroyDescriptorSetLayout(DescriptorSetLayoutHandle handle)
+    UniformSetLayout Graphics::createUniformSetLayout( const UniformLayoutDescription& descriptors )
     {
-        _device->destroyDescriptorSetLayout( handle );
+        return _device->createUniformSetLayout( descriptors );
     }
 
-    DescriptorSetHandle Graphics::allocateDescriptorSet( const std::vector<DescriptorSetLayoutBinding>& bindings )
+    void Graphics::destroyUniformSetLayout(UniformSetLayout handle)
     {
-        return _device->allocateDescriptorSet( bindings );
+        _device->destroyUniformSetLayout( handle );
     }
 
-    DescriptorSetHandle Graphics::allocateDescriptorSet( const DescriptorSetLayoutHandle& layout )
-    {
-        return _device->allocateDescriptorSet( layout );
-    }
 
-    DescriptorSetHandle Graphics::allocateDescriptorSet( const DescriptorSetAllocateInfo& info )
+    bool Graphics::allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource )
     {
-        std::vector<DescriptorSetLayoutBinding> bindings;
-
-        for (int i = 0; i < info.bindings.size(); i++)
+        std::size_t key = kege::hash( descriptors );
+        auto m = _uniform_set_layouts.find( key );
+        if ( m == _uniform_set_layouts.end() )
         {
-            DescriptorSetLayoutBinding dslb = {};
-            dslb.name = info.bindings[i].name;
-            dslb.binding = info.bindings[i].binding;
-            dslb.descriptor_type = info.bindings[i].descriptor_type;
-            dslb.stage_flags = info.stage_flags;
+            return false;
+        }
+        return allocateShaderResources( m->second, quantity, resource );
+    }
 
-            dslb.count = (uint32_t) info.bindings[i].buffer_info.size();
-            if ( !dslb.count ) dslb.count = (uint32_t) info.bindings[i].image_info.size();
-            if ( !dslb.count ) dslb.count = (uint32_t) info.bindings[i].texel_buffer_info.size();
-            bindings.push_back( dslb );
+    bool Graphics::allocateShaderResource( const UniformDesc& descriptor, ShaderResource& resource )
+    {
+        std::size_t key = kege::hash( descriptor );
+        auto m = _uniform_set_layouts.find( key );
+        if ( m == _uniform_set_layouts.end() )
+        {
+            return false;
+        }
+        return allocateShaderResources( m->second, 1, &resource );
+    }
+
+    bool Graphics::allocateShaderResources( const UniformSetLayout& layout, int quantity, ShaderResource* resource )
+    {
+        int32_t descriptor_ids[ quantity ];
+        if( _device->allocateDescriptors( layout, quantity, descriptor_ids ) )
+        {
+            _shader_resource_manager.generate( quantity, descriptor_ids, resource );
+            return true;
+        }
+        return false;
+    }
+
+    bool Graphics::allocateShaderResource( const UniformSetLayout& layout, ShaderResource& resource )
+    {
+        return allocateShaderResources( layout, 1, &resource );
+    }
+    
+    bool Graphics::updateShaderResource( kege::ShaderResource& resource, const UniformBindingElements& elements )
+    {
+        return _device->updateDescriptor( *resource, elements );
+    }
+
+    bool Graphics::updateShaderResource( kege::ShaderResource& resource )
+    {
+        return _device->updateDescriptor( resource, resource.resources() );
+    }
+
+    void Graphics::freeShaderResource( int quantity, ShaderResource* resources )
+    {
+        _shader_resource_manager.free( quantity, resources );
+    }
+
+    void Graphics::freeShaderResource( ShaderResource& resources )
+    {
+        _shader_resource_manager.free( 1, &resources );
+    }
+
+    bool Graphics::createShaderResources( const CreateShaderResources& create )
+    {
+        std::size_t key = kege::hash( create.descriptors );
+        auto m = _uniform_set_layouts.find( key );
+        if ( m == _uniform_set_layouts.end() )
+        {
+            return false;
         }
 
-        DescriptorSetHandle handle = allocateDescriptorSet( bindings);
-        std::vector<kege::WriteDescriptorSet> writes;
-
-        for (int i = 0; i < info.bindings.size(); i++)
+        if( !allocateShaderResources( m->second, create.quantity, create.resources ) )
         {
-            writes.push_back
-            ({
-                .set = handle,
-                .array_element = info.bindings[i].array_element,
-                .binding = info.bindings[i].binding,
-                .descriptor_type = info.bindings[i].descriptor_type,
-                .buffer_info = info.bindings[i].buffer_info,
-                .image_info = info.bindings[i].image_info,
-                .texel_buffer_info = info.bindings[i].texel_buffer_info,
-            });
+            return false;
         }
 
-        return _device->allocateDescriptorSet( bindings );
-    }
-
-    void Graphics::freeDescriptorSet(DescriptorSetHandle handle)
-    {
-        if ( handle )
+        for (int count=0; count<create.quantity; ++count)
         {
-            _device->freeDescriptorSet( handle );
+            UniformBindingElements binding_elements;
+            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
+            {
+                const CreateBufferBindingPair& info = create.binding_buffer_sets[i];
+                std::vector< BufferInfo > buffer_infos;
+
+                for (int k=0; k<info.create_infos.size(); ++k)
+                {
+                    BufferHandle buffer = createBuffer( info.create_infos[k].desc );
+
+                    buffer_infos.push_back
+                    ({
+                        .buffer = buffer,
+                        .range = info.create_infos[k].range,
+                        .offset = info.create_infos[k].offset
+                    });
+                }
+
+                binding_elements.push_back
+                ({
+                    BufferBinding
+                    {
+                        .binding = info.binding,
+                        .buffers = buffer_infos
+                    }
+                });
+            }
+
+            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
+            {
+                const CreateImageBindingPair& info = create.binding_image_sets[i];
+                std::vector< ImageInfo > image_infos;
+
+                for (int k=0; k<info.create_infos.size(); ++k)
+                {
+                    ImageHandle img = createImage( info.create_infos[k].desc );
+
+                    image_infos.push_back
+                    ({
+                        .image = img,
+                        .sampler = info.create_infos[k].sampler
+                    });
+                }
+
+                binding_elements.push_back
+                ({
+                    ImageBindings
+                    {
+                        .binding = info.binding,
+                        .images = image_infos
+                    }
+                });
+            }
+            updateShaderResource( create.resources[ count ], binding_elements );
         }
+        return true;
     }
 
-    DescriptorSetHandle Graphics::allocateDescriptorSet(DescriptorSetLayoutHandle layout)
+    bool Graphics::makeShaderResources( const MakeShaderResources& parameters )
     {
-        return _device->allocateDescriptorSet( layout );
+//        std::size_t key = kege::hash( create.descriptors );
+//        auto m = _uniform_set_layouts.find( key );
+//        if ( m == _uniform_set_layouts.end() )
+//        {
+//            return false;
+//        }
+//
+//        if( !allocateShaderResources( m->second, create.quantity, create.resources ) )
+//        {
+//            return false;
+//        }
+//
+//        for (int count=0; count<create.quantity; ++count)
+//        {
+//            UniformBindingElements binding_elements;
+//            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
+//            {
+//                const std::pair< int, CreateBufferSet >& info = create.binding_buffer_sets[i];
+//                std::vector< BufferInfo > buffer_infos;
+//
+//                for (int k=0; k<info.second.size(); ++k)
+//                {
+//                    BufferHandle buffer = createBuffer( info.second[k].desc );
+//
+//                    buffer_infos.push_back
+//                    ({
+//                        .buffer = buffer,
+//                        .range = info.second[k].range,
+//                        .offset = info.second[k].offset
+//                    });
+//                }
+//
+//                binding_elements.push_back( Uniform( info.first, buffer_infos ) );
+//            }
+//
+//            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
+//            {
+//                const std::pair< int, CreateImageSet >& info = create.binding_image_sets[i];
+//                std::vector< ImageInfo > image_infos;
+//
+//                for (int k=0; k<info.second.size(); ++k)
+//                {
+//                    ImageHandle img = createImage( info.second[k].desc );
+//
+//                    image_infos.push_back
+//                    ({
+//                        .image = img,
+//                        .sampler = info.second[k].sampler
+//                    });
+//                }
+//
+//                binding_elements.push_back( Uniform( info.first, image_infos ) );
+//            }
+//            updateShaderResource( create.resources[ count ], binding_elements );
+//        }
+        return true;
     }
 
-    bool Graphics::updateDescriptorSets( const std::vector<kege::WriteDescriptorSet>& writes )
-    {
-        return _device->updateDescriptorSets( writes );
-    }
+
 
     FenceHandle Graphics::createFence( bool initially_signaled )
     {
@@ -331,7 +472,7 @@ namespace kege{
 
     int Graphics::beginFrame()
     {
-        _shader_resource_manager.reset();
+        //_shader_resource_manager.reset();
         
         if ( _cmb_submit_count != 0 )
         {
@@ -485,7 +626,7 @@ namespace kege{
         }
 
         _shader_pipeline_manager.initalize( this );
-        _shader_resource_manager.initalize( this );
+        _shader_resource_manager.initalize( _device );
         return true;
     }
 

@@ -405,4 +405,6 @@ namespace kege{
         face_indices[ i ].draw_count = 24;
     }
 
+    DynamicCubeMesh::DynamicCubeMesh()
+    {}
 }

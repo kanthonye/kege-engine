@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "graphics-core.hpp"
+#include "shader-resource.hpp"
 
 namespace kege{
 
@@ -97,7 +98,7 @@ namespace kege{
          */
         virtual void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) = 0;
 
-        virtual bool bindDescriptorSets( DescriptorSetHandle handle, bool globally = false ) = 0;
+        virtual bool bindShaderResource( const ShaderResource& resource ) = 0;
 
         virtual void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data ) = 0;
 
@@ -112,7 +113,7 @@ namespace kege{
          * @param pipeline_handle Opaque handle to the compute pipeline object.
          */
         virtual void bindComputePipeline(PipelineHandle pipeline_handle) = 0;
-        // virtual void bindDescriptorSets(...) = 0; // Postponed for later
+        // virtual void bindShaderResource(...) = 0; // Postponed for later
         // virtual void setPushConstants(...) = 0; // Postponed for later
 
         // --- Dynamic State ---

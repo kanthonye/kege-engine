@@ -10,278 +10,269 @@
 
 namespace kege{
 
-    ShaderResrc ShaderResourceManager::allocate( const ShaderResrcAllocInfo& info )
+//    bool ShaderResourceManager::allocate( const std::vector< kege::UniformDesc >& info, int quantity, ShaderResource* resource )
+//    {
+//        UniformSetLayout usl = createDescriptorSetLayout( info );
+//        return allocate( usl, quantity, resource );
+//    }
+//
+//    bool ShaderResourceManager::allocate( const UniformSetLayout& layout, int quantity, ShaderResource* resource )
+//    {
+//        std::vector< ShaderResource > handles( quantity );
+//        if ( _device->allocateDescriptors( layout, quantity, handles.data() ) )
+//        {
+//            generate( quantity, resource, handles.data() );
+//            return true;
+//        };
+//        return false;
+//    }
+//
+//    ShaderResource ShaderResourceManager::allocate( const std::vector< kege::UniformDesc >& info )
+//    {
+//        UniformSetLayout usl = createDescriptorSetLayout( info );
+//        return allocate( usl );
+//    }
+//
+//    ShaderResource ShaderResourceManager::allocate( const UniformSetLayout& layout )
+//    {
+//        ShaderResource resource;
+//        ShaderResource handle;
+//        if ( _device->allocateDescriptors( layout, 1, &handle ) )
+//        {
+//            generate( 1, &resource, &handle );
+//            return resource;
+//        };
+//        return {};
+//    }
+//
+//    UniformSetLayout ShaderResourceManager::createDescriptorSetLayout( const std::vector< UniformDesc >& info )
+//    {
+//        size_t key = kege::hash( info );
+//        auto m = _uniform_set_layouts.find( key );
+//        if ( m == _uniform_set_layouts.end() )
+//        {
+//            UniformSetLayout usl = _device->createDescriptorSetLayout( info );
+//            _uniform_set_layouts[ info ] = usl;
+//            return usl;
+//        }
+//        return m->second;
+//    }
+//
+//    void ShaderResourceManager::destroyUniformSetLayout( UniformSetLayout& handle )
+//    {
+//        size_t key = kege::hash( info );
+//        auto m = _uniform_set_layouts.find( key );
+//        if ( m != _uniform_set_layouts.end() )
+//        {
+//            UniformSetLayout usl = _device->createDescriptorSetLayout( info );
+//            _uniform_set_layouts[ info ] = usl;
+//            return usl;
+//        }
+//        _device->destroyUniformSetLayout( handle );
+//    }
+//
+
+
+//    bool ShaderResourceManager::create( const std::vector< kege::UniformResourceSet >& uniforms, ShaderResource* resources )
+//    {
+//        for ( int i = 0; i < uniforms.size(); ++i )
+//        {
+//            
+//        }
+//    }
+//
+//    ShaderResource ShaderResourceManager::create( const kege::UniformResourceSet& uniform )
+//    {
+//        ShaderResource resource = allocate( uniform.frames_in_flight, uniform.descriptors );
+//
+//        for ( int i = 0; i < uniform.frames_in_flight; ++i )
+//        {
+//            for ( int k = 0; k < uniform.descriptors.size(); ++k )
+//            {
+//                resource[i]->bindings[k].resource = uniform.resources[k];
+//            }
+//            _device->updateDescriptorSet( resource[i]->handle, resource[i]->bindings );
+//        }
+//
+//        return resource;
+//    }
+
+//    ShaderResource ShaderResourceManager::allocate( int frames_in_flight, const std::vector< kege::UniformDesc >& bindings )
+//    {
+//        ShaderResourceLayoutObject* layout;
+//
+//        auto m = _uniform_set_layouts.find( bindings );
+//        if ( m == _uniform_set_layouts.end() )
+//        {
+//            int index = static_cast< int >( _shader_set_layouts.size() );
+//            _uniform_set_layouts[ bindings ] = index;
+//            _shader_set_layouts.push_back({});
+//
+//            layout = &_shader_set_layouts[ _shader_set_layouts.size() - 1 ];
+//            layout->handle = _device->createDescriptorSetLayout( bindings );
+//            layout->freed.head = -1;
+//            layout->freed.tail = -1;
+//            layout->id = index;
+//        }
+//        else
+//        {
+//            layout = &_shader_set_layouts[ m->second ];
+//        }
+//
+//        uint32_t index;
+//        ShaderResourceObject* sro;
+//        if ( 0 <= layout->freed.head )
+//        {
+//            index = layout->freed.head;
+//            sro = &_shader_resources[ index ];
+//            layout->freed.head = _shader_resources[ layout->freed.head ].next;
+//        }
+//        else
+//        {
+//            index = generate();
+//            sro = &_shader_resources[ index ];
+//        }
+//
+////        sro->shader_set_layout_id = layout->id;
+////        ShaderResource descriptor[ frames_in_flight ];
+////        _device->allocateDescriptors( layout->handle, frames_in_flight, descriptor );
+////
+////        if ( sro->resources.size() != frames_in_flight )
+////        {
+////            sro->resources.resize( frames_in_flight );
+////        }
+////
+////        for ( int i = 0; i < frames_in_flight; ++i )
+////        {
+////            sro->resources[i].handle = descriptor[i];
+////            sro->resources[i].bindings.resize( bindings.size() );
+////            for ( int k = 0; k < bindings.size(); ++k )
+////            {
+////                sro->resources[i].bindings[k] = {};
+////                sro->resources[i].bindings[k].binding = bindings[i].binding;
+////                sro->resources[i].bindings[k].descriptor_type = bindings[i].descriptor_type;
+////            }
+////        }
+//
+//        return ShaderResource( this, index );
+//    }
+
+//    bool ShaderResourceManager::update( int frame_index, ShaderResource& handler )
+//    {
+//        if ( handler._index >= _shader_resources.size() )
+//        {
+//            return false;
+//        }
+//
+//        ShaderResourceObject& node = _shader_resources[ handler._index ];
+//        return _device->updateDescriptorSet
+//        (
+//            node.resources[ frame_index ].handle,
+//            node.resources[ frame_index ].bindings
+//        );
+//    }
+//
+//    bool ShaderResourceManager::update( ShaderResource& resource )
+//    {
+//        if ( resource._index >= _shader_resources.size() )
+//        {
+//            return false;
+//        }
+//
+//        ShaderResourceObject& node = _shader_resources[ resource._index ];
+//        for (int frame_index = 0; frame_index < node.resources.size(); ++frame_index )
+//        {
+//            bool state = _device->updateDescriptorSet
+//            (
+//                node.resources[ frame_index ].handle,
+//                node.resources[ frame_index ].bindings
+//            );
+//            if ( !state )
+//            {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
+    void ShaderResourceManager::free( int quantity, const ShaderResource* resources )
     {
-        uint32_t index = generate();
-        splice( &_freed_head, &_freed_tail, index, &_alloc_head, &_alloc_tail );
-
-        _shader_resources[ index ].shader_resource_sets.resize( info.quantity );
-        for ( int i = 0; i < info.quantity; ++i )
+        for (int i = 0; i < quantity; ++i )
         {
-            ShaderResrcSetBindings& binding = _shader_resources[ index ];
-
-            binding.shader_resource_sets[i].set = _graphics->allocateDescriptorSet( info.bindings );
-            if ( !binding.shader_resource_sets[i].set )
+            if ( resources[i]._index >= _shader_resources.size() )
             {
-                return {};
+                continue;
             }
-
-            //binding.shader_resource_sets[i].bindings.resize(<#size_type sz#>) = info.bindings[i].descriptor_type;
-            binding.shader_resource_sets[i].bindings.resize( info.bindings.size() );
-            for ( int k = 0; k < info.bindings.size(); ++k )
+            _shader_resources[ resources[i]._index ].duplicates -= 1;
+            if ( _shader_resources[ resources[i]._index ].duplicates <= 0 )
             {
-                binding.shader_resource_sets[i].bindings[k] = {};
-                binding.shader_resource_sets[i].bindings[k].binding = info.bindings[i].binding;
-                binding.shader_resource_sets[i].bindings[k].descriptor_type = info.bindings[i].descriptor_type;
-            }
-        }
-        return ShaderResrc( this, index );
-    }
+                _device->freeDescriptor( _shader_resources[ resources[i]._index ].handle );
+                _shader_resources[ resources[i]._index ].handle = -1;
+                _shader_resources[ resources[i]._index ].next = -1;
+                _shader_resources[ resources[i]._index ].prev = -1;
 
-    void ShaderResourceManager::splice( int32_t* lhead, int32_t* ltail, int32_t index, int32_t* head, int32_t* tail )
-    {
-        if ( index == *lhead )
-        {
-            *lhead = _shader_resources[ *lhead ].next;
-            if ( *lhead < 0 )
-            {
-                *ltail = -1;
-            }
-        }
-        else if ( index == _alloc_tail )
-        {
-            *ltail = _shader_resources[ *ltail ].prev;
-            if ( *ltail < 0 )
-            {
-                *lhead = -1;
-            }
-        }
-        else
-        {
-            uint32_t prev = _shader_resources[ index ].prev;
-            uint32_t next = _shader_resources[ index ].next;
-            _shader_resources[ prev ].next = next;
-            _shader_resources[ next ].prev = prev;
-        }
-
-        if ( *head < 0 )
-        {
-            *tail = *head = index;
-        }
-        else
-        {
-            _shader_resources[ *tail ].next = index;
-            _shader_resources[ index ].prev = *tail;
-            *tail = index;
-        }
-    }
-    
-    bool ShaderResourceManager::retain( const std::string& name, ShaderResrc& descriptor )
-    {
-        auto i = _name_index_map.find( name );
-        if ( i != _name_index_map.end() )
-        {
-            KEGE_LOG_ERROR << "invalid operation -> redeclearation of resource -> " << name <<Log::nl;
-            return false;
-        }
-        _name_index_map[ name ] = descriptor._index;
-        splice( &_alloc_head, &_alloc_tail, descriptor._index, &_retained_head, &_retained_tail );
-        return true;
-    }
-
-    bool ShaderResourceManager::undeclear( const std::string& name )
-    {
-        auto i = _name_index_map.find( name );
-        if ( i == _name_index_map.end() )
-        {
-            return false;
-        }
-
-        splice( &_retained_head, &_retained_tail, i->second, &_freed_head, &_freed_tail );
-        _name_index_map.erase( i );
-        return true;
-    }
-
-    bool ShaderResourceManager::update( int frame_index, ShaderResrcSet* resource, const std::vector< kege::ShaderResrcUpdateInfo >& update_infos )
-    {
-        for ( const ShaderResrcUpdateInfo& info : update_infos )
-        {
-            resource->bindings[ info.index ] = info.infos;
-        }
-
-        std::vector< kege::WriteDescriptorSet > writes;
-        for ( const ShaderResrcUpdateInfo& info : update_infos )
-        {
-            kege::ShaderResrcBinding& bindings = resource->bindings[ info.index ];
-
-            kege::WriteDescriptorSet write = {};
-            write.descriptor_type = resource->bindings[ info.index ].descriptor_type;
-            write.binding = bindings.binding;
-            write.array_element = 0;
-            write.set = resource->set;
-
-            switch ( write.descriptor_type )
-            {
-                case kege::DescriptorType::UniformBuffer:
-                case kege::DescriptorType::StorageBuffer:
-                case kege::DescriptorType::StorageBufferDynamic:
-                case kege::DescriptorType::UniformBufferDynamic:
+                if ( _freed.head < 0 )
                 {
-                    if ( bindings.type != ShaderResrcBinding::BUFFER )
-                    {
-                        KEGE_LOG_ERROR
-                        << "Invalid Operation attempting to map none buffer resource to a buffer DescriptorType"
-                        << " in ShaderResourceManager::update" <<Log::nl;
-                        return false;
-                    }
-                    write.buffer_info = bindings.buffer_info;
-                    break;
+                    _freed.tail = _freed.head = resources[i]._index;
                 }
-
-                case kege::DescriptorType::Sampler:
-                case kege::DescriptorType::SampledImage:
-                case kege::DescriptorType::CombinedImageSampler:
+                else
                 {
-                    if ( bindings.type != ShaderResrcBinding::IMAGE )
-                    {
-                        KEGE_LOG_ERROR
-                        << "Invalid Operation attempting to map none image resource to a image DescriptorType"
-                        << " in ShaderResourceManager::update" <<Log::nl;
-                        return false;
-                    }
-                    write.image_info = bindings.image_info;
-                    break;
-                }
-
-                case kege::DescriptorType::StorageTexelBuffer:
-                case kege::DescriptorType::UniformTexelBuffer:
-                {
-                    if ( bindings.type != ShaderResrcBinding::TEXEL_BUFFER )
-                    {
-                        KEGE_LOG_ERROR
-                        << "Invalid Operation attempting to map none buffer resource to a buffer DescriptorType"
-                        << " in ShaderResourceManager::update" <<Log::nl;
-                        return false;
-                    }
-                    write.texel_buffer_info = bindings.texel_buffer_info;
-                    break;
-                }
-
-                default:
-                {
-                    KEGE_LOG_ERROR << "Invalid ShaderResrcUpdateInfo DescriptorType with image object" <<Log::nl;
-                    return false;
+                    _shader_resources[ _freed.tail ].next = resources[i]._index;
+                    _shader_resources[ resources[i]._index ].prev = _freed.tail;
+                    _freed.tail = resources[i]._index;
                 }
             }
-            writes.push_back( write );
         }
-        return _graphics->updateDescriptorSets( writes );
     }
 
-    bool ShaderResourceManager::update( ShaderResrc& resource, const std::vector< ShaderResrcUpdateInfos >& infos )
+    void ShaderResourceManager::incrementReference( ShaderResource* handler )
     {
-        for (int frame_index = 0; frame_index < _shader_resources[ resource._index ].shader_resource_sets.size(); ++frame_index )
+        if ( handler->_index >= _shader_resources.size() ) return;
+        _shader_resources[ handler->_index ].duplicates += 1;
+    }
+
+    void ShaderResourceManager::generate( int quantity, int32_t* descriptor_ids, ShaderResource* resources )
+    {
+        for ( int i=0; i<quantity; ++i )
         {
-            if ( !update( frame_index, &_shader_resources[ resource._index ].shader_resource_sets[ frame_index ], infos[ frame_index ] ) )
+            uint32_t index = _shader_resource_counter;
+            _shader_resource_counter += 1;
+
+            if ( index >= _shader_resources.size() )
             {
-                KEGE_LOG_ERROR << "ShaderResrc update attempt failed in ShaderResourceManager::update" <<Log::nl;
-                return false;
+                _shader_resources.resize( (index * 2) + 1 );
             }
+
+            _shader_resources[ index ].handle = descriptor_ids[i];
+            _shader_resources[ index ].duplicates = 1;
+            _shader_resources[ index ].next = -1;
+            _shader_resources[ index ].prev = -1;
+
+            resources[i]._index = index;
+            resources[i]._mngr = this;
         }
-        return true;
     }
 
-    ShaderResrc ShaderResourceManager::get( const std::string& name )
+    void ShaderResourceManager::initalize( kege::GraphicsDevice* device )
     {
-        auto itr = _name_index_map.find( name );
-        return ( itr != _name_index_map.end() )
-        ? ShaderResrc( this, itr->second )
-        : ShaderResrc();
-    }
-
-    void ShaderResourceManager::reset()
-    {
-        if ( _freed_head < 0 )
-        {
-            _freed_head = _alloc_head;
-            _freed_tail = _alloc_tail;
-        }
-        else
-        {
-            _shader_resources[ _freed_tail ].next = _alloc_head;
-            _shader_resources[ _alloc_head ].prev = _freed_tail;
-            _freed_tail = _alloc_head;
-        }
-        _alloc_head = -1;
-        _alloc_tail = -1;
-    }
-
-    uint32_t ShaderResourceManager::generate()
-    {
-        uint32_t index;
-        if ( 0 <= _freed_head )
-        {
-            index = _freed_head;
-            _freed_head = _shader_resources[ _freed_head ].next;
-            if ( _freed_head < 0 )
-            {
-                _freed_tail = -1;
-            }
-            return index;
-        }
-
-        index = static_cast< uint32_t >( _shader_resources.size() );
-        _shader_resources.push_back({});
-        //_shader_resources[ index ].shader_resource_sets = resources;
-        //_shader_resources[ index ].shader_resource_sets = set;
-        _shader_resources[ index ].next = -1;
-        _shader_resources[ index ].prev = -1;
-
-        if ( _freed_head < 0 )
-        {
-            _freed_tail = _freed_head = index;
-        }
-        else
-        {
-            _shader_resources[ _freed_tail ].next = index;
-            _shader_resources[ index ].prev = _freed_tail;
-            _freed_tail = index;
-        }
-        return index;
-    }
-
-    void ShaderResourceManager::initalize( kege::Graphics* graphics )
-    {
-        _graphics = graphics;
-        _retained_head = -1;
-        _retained_tail = -1;
-        _alloc_head = -1;
-        _alloc_tail = -1;
-        _freed_head = -1;
-        _freed_tail = -1;
+        _device = device;
+        _shader_resource_counter = 0;
     }
 
     void ShaderResourceManager::shutdown()
     {
-        if ( _graphics )
-        {
-            for ( ShaderResrcSetBindings& bindings : _shader_resources )
-            {
-                for (int i = 0; i < bindings.shader_resource_sets.size(); ++i )
-                {
-                    _graphics->freeDescriptorSet( bindings.shader_resource_sets[i].set );
-                }
-            }
-            _shader_resources.clear();
-            _name_index_map.clear();
-            _graphics = nullptr;
-            _retained_head = -1;
-            _retained_tail = -1;
-            _alloc_head = -1;
-            _alloc_tail = -1;
-            _freed_head = -1;
-            _freed_tail = -1;
-        }
+//        if ( _device )
+//        {
+//            for ( ShaderResourceObject& bindings : _shader_resources )
+//            {
+//                for (int i = 0; i < bindings.resources.size(); ++i )
+//                {
+//                    _device->freeDescriptorSet( bindings.resources[i].handle );
+//                }
+//            }
+//            _shader_resources.clear();
+//            _device = nullptr;
+//        }
     }
 
     ShaderResourceManager::~ShaderResourceManager()
@@ -290,41 +281,8 @@ namespace kege{
     }
     
     ShaderResourceManager::ShaderResourceManager()
-    :   _graphics( nullptr )
-    ,   _retained_head( -1 )
-    ,   _retained_tail( -1 )
-    ,   _alloc_head( -1 )
-    ,   _alloc_tail( -1 )
-    ,   _freed_head( -1 )
-    ,   _freed_tail( -1 )
-    {}
-
-}
-
-
-namespace kege{
-
-
-
-    const ShaderResrcSet* ShaderResrc::operator ->()const
-    {
-        int index = _mngr->_graphics->getCurrFrameIndex() % _mngr->_shader_resources[ _index ].shader_resource_sets.size();
-        return &_mngr->_shader_resources[ _index ].shader_resource_sets[ index ];
-    }
-
-    ShaderResrc::operator bool()const
-    {
-        return _mngr != nullptr;
-    }
-
-    ShaderResrc::ShaderResrc( ShaderResourceManager* mngr, uint32_t index )
-    :   _mngr( mngr )
-    ,   _index( index )
-    {}
-
-    ShaderResrc::ShaderResrc()
-    :   _mngr( nullptr )
-    ,   _index( 0 )
+    :   _device( nullptr )
+    ,   _shader_resource_counter(0)
     {}
 
 }

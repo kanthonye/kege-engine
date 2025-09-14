@@ -1,4 +1,5 @@
 #version 450
+layout(location = 0) in vec4 _vertex;
 
 layout( push_constant ) uniform TerrainParameters
 {
@@ -14,14 +15,14 @@ layout(set = 0, binding = 0) uniform CameraBlock
     vec3 position;
 } camera;
 
-struct IndexBuffer
-{
-    ivec4 indices[ 24 ];
-};
-layout( set = 1, binding = 0 ) uniform IndexBuffers
-{
-    IndexBuffer indices[ 16 ];
-};
+//struct IndexBuffer
+//{
+//    ivec4 indices[ 24 ];
+//};
+//layout( set = 1, binding = 0 ) uniform IndexBuffers
+//{
+//    IndexBuffer indices[ 16 ];
+//};
 
 struct Patch
 {
@@ -29,30 +30,14 @@ struct Patch
     ivec4 layer;    // the texture image index and array layer for this patch. [x] : image index, [y] : image array layer
     vec4 color;
 };
-layout( std140, set = 2, binding = 0 ) buffer PatchBuffer
+layout( std140, set = 1, binding = 0 ) buffer PatchBuffer
 {
     Patch patchs[];
 };
 
 
-layout( set = 3, binding = 0 ) uniform sampler2DArray HeightmapImageArray[4];
-layout( set = 3, binding = 1 ) uniform sampler2DArray NormalmapImageArray[4];
-
-
-const vec2 vertex_position[ 9 ] = vec2[]
-(
-    vec2( -1.f, -1.f ),
-    vec2(  0.f, -1.f ),
-    vec2(  1.f, -1.f ),
-
-    vec2( -1.f, 0.f ),
-    vec2(  0.f, 0.f ),
-    vec2(  1.f, 0.f ),
-
-    vec2( -1.f, 1.f ),
-    vec2(  0.f, 1.f ),
-    vec2(  1.f, 1.f )
-);
+layout( set = 2, binding = 0 ) uniform sampler2DArray HeightmapImageArray[4];
+layout( set = 2, binding = 1 ) uniform sampler2DArray NormalmapImageArray[4];
 
 float getElevation( vec3 texcoord )
 {
@@ -88,10 +73,10 @@ void main()
 
     vec2  patch_center      = vec2( patchs[ gl_InstanceIndex ].position.x, patchs[ gl_InstanceIndex ].position.y );
     float patch_width       = float( patchs[ gl_InstanceIndex ].position.z );
-    uint  indices_id        = patchs[ gl_InstanceIndex ].position.w;
-    uint  vertex_index      = indices[ indices_id ].indices[ gl_VertexIndex ].x;
+//    uint  indices_id        = patchs[ gl_InstanceIndex ].position.w;
+//    uint  vertex_index      = indices[ indices_id ].indices[ gl_VertexIndex ].x;
 
-    vec2  patch_vertex      = patch_width * vertex_position[ vertex_index ];
+    vec2  patch_vertex      = patch_width * _vertex.xy;/// vertex_position[ vertex_index ];
 
 
     vec2  offset;

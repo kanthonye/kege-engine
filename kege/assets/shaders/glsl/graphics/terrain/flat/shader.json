@@ -16,3 +16,112 @@
     ]
 }
 
+{
+    "pipeline": "graphics",
+    "name": "flat-terrain-shader",
+
+    "primatives": ["triangle-list"],
+
+    "vertex_bindings":
+    [
+        {
+            "binding": 0,
+            "stride": 12,
+            "input_rate": "vertex",
+            "attributes": [ "_vertex" ]
+        }
+    ],
+
+    "vertex_inputs":
+    [
+        {
+            "name": "_vertex",
+            "format": "vec4",
+            "location": 0,
+            "binding": 0,
+            "offset": 0
+        }
+    ],
+
+    "stages":
+    [
+        {
+            "type": "fragment",
+            "file":  "shader.frag",
+            "entry-point" : "main",
+            "debug-name": "flat-terrain-fragment-shader"
+        },
+        {
+            "type": "vertex",
+            "file":  "shader.vert",
+            "entry-point" : "main",
+            "debug-name":"flat-terrain-vertex-shader"
+        }
+    ],
+
+    "descriptor_set_layouts":
+    [
+        {
+            "name": "CameraBlock",
+            "type": "uniform-buffer",
+            "binding" : 0,
+            "count" : 1,
+            "set" : 0,
+            "stages": [ "vertex" ]
+        },
+        {
+            "name": "PatchBuffer",
+            "type": "uniform-buffer",
+            "binding" : 0,
+            "count" : 1,
+            "set" : 1,
+            "stages": [ "vertex" ]
+        },
+        {
+            "name": "HeightmapImageArray",
+            "type": "combined-image-sampler",
+            "binding" : 0,
+            "count" : 4,
+            "set" : 2,
+            "stages": [ "vertex" ]
+        },
+        {
+            "name": "NormalmapImageArray",
+            "type": "combined-image-sampler",
+            "binding" : 1,
+            "count" : 4,
+            "set" : 2,
+            "stages": [ "vertex" ]
+        },
+    ],
+
+    "push_constants_ranges":
+    [
+        {
+            "sid": "TerrainParameters",
+            "offset": 0,
+            "size": 128,
+            "stages": [ "vertex" ]
+        },
+    ],
+
+    "rasterization_state":
+    {
+        "rasterizer_discard_enable": "false",
+        "polygon_mode": "line",
+        "cull_mode": "none",
+        "front_face": "ccw",
+        "line_width": 1.0f,
+        "depth_clamp_enable": "false",
+        "depth_bias_enable": "false",
+        "depth_bias_constant_factor": 0.0f,
+        "depth_bias_clamp": 0.0f,
+        "depth_bias_slope_factor": 0.0f,
+    },
+
+    "rendering_output":
+    {
+        "color_output_formats": [ "bgra_u8_norm" ],
+        "depth_output_format": "depth_32"
+    }
+}

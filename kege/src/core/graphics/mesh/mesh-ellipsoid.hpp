@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class EllipsoidMesh : public kege::Mesh
+    class EllipsoidMesh : public kege::MeshPrimitive
     {
         public: EllipsoidMesh( float x_radius, float y_radius, int cols, int rows );
     };

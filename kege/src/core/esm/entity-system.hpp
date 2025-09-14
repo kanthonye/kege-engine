@@ -11,13 +11,14 @@
 #include "../engine/engine.hpp"
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
+#include "../ecs/entity-logic.hpp"
 #include "../system/system.hpp"
 
 namespace kege{
 
     class EntitySystemManager;
 
-    class EntitySystem : public kege::System
+    class EntitySystem : public kege::EntityLogic
     {
     public:
 
@@ -34,21 +35,16 @@ namespace kege{
         virtual void update( double dms );
         virtual void render( double dms );
 
-        virtual void onSceneChange();
-        virtual bool initialize()override;
-        virtual void shutdown()override;
+        virtual bool initialize();
+        virtual void shutdown();
 
         bool checkFlag( StateBitFlag flag );
-        EntityView* getEntities(){return _entities;}
 
         virtual ~EntitySystem();
 
     protected:
 
-        kege::EntitySignature _signature;
-        EntityView* _entities;
         uint32_t _requirements;
-
         friend kege::EntitySystemManager;
     };
 

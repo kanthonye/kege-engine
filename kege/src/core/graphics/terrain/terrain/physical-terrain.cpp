@@ -10,6 +10,15 @@
 
 namespace kege{
 
+    TerrainTile* PhysicalTerrain::getTerrainTile( const kege::dvec3& position )const
+    {
+        return nullptr;
+    }
+    double PhysicalTerrain::getHeight( const kege::dvec3& position )const
+    {
+        return 0.0;
+    }
+
     PhysicalTerrain::PhysicalTerrain( const kege::TerrainSettings& settings )
     :   _settings( settings )
     {}
@@ -34,10 +43,10 @@ namespace kege{
         return false;
     }
 
-    void PhysicalTerrain::render()
+    void PhysicalTerrain::render( kege::CommandEncoder* encoder, Transform* transform )
     {}
 
-    void PhysicalTerrain::update()
+    void PhysicalTerrain::update( const kege::dvec3& position )
     {}
 
     PhysicalTerrain:: ~PhysicalTerrain()

@@ -10,24 +10,29 @@
 
 #include "../../../memory/ref.hpp"
 #include "../../../math/algebra/vmath.hpp"
+#include "../../../renderer/core/graphics.hpp"
 #include "landscape-settings.h"
 
 namespace kege{
 
     class Terrain;
+    class TerrainTile;
     class TerrainRenderer;
 
     class PhysicalTerrain : public kege::RefCounter
     {
     public:
 
+        virtual TerrainTile* getTerrainTile( const kege::dvec3& position )const;
+        virtual double getHeight( const kege::dvec3& position )const;
+
         void setOrientation( const kege::dquat& orientation );
         void setPosition( const kege::dvec3& position );
 
         const kege::TerrainSettings& settings()const;
         bool initialize( kege::Terrain* terrain );
-        void render();
-        void update();
+        void render( kege::CommandEncoder* encoder, Transform* transform );
+        void update( const kege::dvec3& position );
 
         PhysicalTerrain( const kege::TerrainSettings& settings );
         virtual ~PhysicalTerrain();

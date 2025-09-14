@@ -18,7 +18,7 @@ namespace kege{
     }
     void EntitySelectionSystem::update( double dms )
     {
-        if ( !_engine->scene()->getCameraEntity() )
+        if ( !_engine->scene().getScene()->getCameraEntity() )
         {
             return;
         }
@@ -29,8 +29,8 @@ namespace kege{
         }
 
         _make_selection = false;
-        kege::vec3 ray = _engine->scene()->getSceneRay();
-        kege::vec3 origin = _engine->scene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = _engine->scene().getScene()->getSceneRay();
+        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
 
         std::vector< std::pair< kege::Entity, double > > selections;
 
@@ -66,20 +66,20 @@ namespace kege{
             );
 
             // select the closest entity.
-            _comm.broadcast< const MsgEntitySelection& >({ selections[0].first });
+            Communication::broadcast< const MsgEntitySelection& >({ selections[0].first });
             //std::cout <<"entity: "<< selections[0].first <<"\n";
         }
     }
     
     bool EntitySelectionSystem::initialize()
     {
-        _comm.add< const MappedInputs&, EntitySelectionSystem >( this );
+        Communication::add< const MappedInputs&, EntitySelectionSystem >( this );
         return kege::EntitySystem::initialize();
     }
 
     void EntitySelectionSystem::shutdown()
     {
-        _comm.remove< const MappedInputs&, EntitySelectionSystem >( this );
+        Communication::remove< const MappedInputs&, EntitySelectionSystem >( this );
         kege::EntitySystem::shutdown();
     }
 

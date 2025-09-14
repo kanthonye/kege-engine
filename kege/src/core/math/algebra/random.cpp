@@ -100,7 +100,7 @@ namespace kege{
 
         int rand_index = rand() % (asize-min);
 
-        float  tmp = 0;
+        //float  tmp = 0;
 
         float t = rand_array[last_index];
         rand_array[last_index] = rand_array[rand_index];
