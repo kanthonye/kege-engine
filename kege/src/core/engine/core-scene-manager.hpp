@@ -29,6 +29,8 @@ namespace kege{
         operator bool()const override;
 
         void update( double dms );
+        void render( double dms );
+        void input( double dms );
 
         bool initialize()override;
         void shutdown()override;

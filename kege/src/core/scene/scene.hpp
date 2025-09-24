@@ -12,7 +12,7 @@
 #include "../math/algebra/vectors.hpp"
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
-#include "../utils/asset-system.hpp"
+#include "../utils/asset-manager.hpp"
 #include "entity-tag.hpp"
 
 namespace kege{
@@ -26,7 +26,7 @@ namespace kege{
          *
          * @return resource-manager of this scene
          */
-        kege::AssetSystem& getAssetSystem();
+        kege::AssetManager& getResourceManager();
 
         /**
          * @fn getEntityRegistry
@@ -136,7 +136,7 @@ namespace kege{
 
     protected:
 
-        kege::AssetSystem _asset_system;
+        kege::AssetManager _asset_system;
 
         /**
          * The scene entity set group manager

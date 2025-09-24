@@ -43,6 +43,10 @@ namespace kege{
     {
     public:
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // CommandBuffer lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
         /**
          * @brief Creates a command buffer for recording commands.
          * @param type The type of queue the command buffer will be submitted to.
@@ -59,6 +63,10 @@ namespace kege{
 
         void submitCommands( std::vector< CommandBuffer* > command_buffers );
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Image lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
         /**
          * @brief Creates a texture resource.
          * @param desc Texture description including dimensions, format, and usage.
@@ -72,6 +80,27 @@ namespace kege{
          * @warning Ensure the texture is no longer in use by the GPU.
          */
         void destroyImage(ImageHandle handle);
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Sampler lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+        /**
+         * @brief Creates a texture sampler.
+         * @param desc Sampler description including filtering and addressing modes.
+         * @return Handle to the created sampler, or invalid handle on failure.
+         */
+        SamplerHandle createSampler(const SamplerDesc& desc);
+
+        /**
+         * @brief Destroys a sampler resource.
+         * @param handle Handle to the sampler to destroy.
+         */
+        void destroySampler(SamplerHandle handle);
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Buffer lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
         /**
          * @brief Creates a buffer resource (vertex, index, uniform, etc.).
@@ -91,20 +120,9 @@ namespace kege{
          */
         void destroyBuffer(BufferHandle handle);
 
-        /**
-         * @brief Creates a texture sampler.
-         * @param desc Sampler description including filtering and addressing modes.
-         * @return Handle to the created sampler, or invalid handle on failure.
-         */
-        SamplerHandle createSampler(const SamplerDesc& desc);
-
-        /**
-         * @brief Destroys a sampler resource.
-         * @param handle Handle to the sampler to destroy.
-         */
-        void destroySampler(SamplerHandle handle);
-
-        void insertPipeline(const std::string& name, const PipelineHandle& handle);
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Shader lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
         /**
          * @brief Creates a shader module from source or bytecode.
@@ -120,6 +138,10 @@ namespace kege{
          */
         void destroyShader(ShaderHandle handle);
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Pipeline lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
         /**
          * @brief Creates a pipeline layout defining resource bindings.
          * @param desc Description of push constants and descriptor set layouts.
@@ -133,6 +155,8 @@ namespace kege{
          * @warning Ensure no pipelines are using this layout.
          */
         void destroyPipelineLayout(PipelineLayoutHandle handle);
+
+        std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc );
 
         /**
          * @brief Creates a graphics rendering pipeline.
@@ -167,132 +191,39 @@ namespace kege{
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
         /**
-         * @brief Creates multiple descriptor set layout.
-         * @param description Description of binding points for resources.
-         * @return A list of descriptor set layout handles to the created descriptor set layout.
-         */
-        std::vector< UniformSetLayout > createUniformSetLayouts( const UniformMultiSetDesc& description );
-
-        /**
          * @brief Creates a descriptor set layout.
-         * @param description Description of binding points for resources.
+         * @param descriptors Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        UniformSetLayout createUniformSetLayout( const UniformDescs& description );
+        UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors );
 
         /**
          * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param description Description of binding points for resources.
+         * @param descriptors Description of binding points for resources.
          * @return Handle to the descriptor set layout.
          */
-        UniformSetLayout getUniformSetLayout( const UniformDescs& description );
+        UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors );
 
         /**
          * @brief Destroys a descriptor set layout.
-         * @param handle Handle to the layout to destroy.
+         * @param layout Handle to the layout to destroy.
          * @warning Ensure no descriptor sets or pipelines are using this layout.
          */
-        void destroyUniformSetLayout( const UniformSetLayout& handle );
+        void destroyUniformSetLayout( const UniformSetLayout& layout );
 
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // UniformSetLayout lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // UniformSets Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-        //bool allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource );
+        ShaderResource allocateUniformSets( const UniformSetsDesc& description );
 
+        ShaderResource allocateUniformSet( const UniformSetDesc& description );
 
-        std::vector< CreateUniformSet > createShaderResource( const CreateUniformMultiSet& info );
-        CreateUniformSet createShaderResource( const CreateUniformSet& info );
+        void freeUniformSet( const ShaderResource& resource );
 
-        std::vector< CreateUniformSet > allocateShaderResource( const UniformMultiSetDesc& description );
-        CreateUniformSet allocateShaderResource( const UniformDescs& description );
-
-
-        bool updateShaderResource( const UpdateUniformParams& resources );
-
-        
-        /**
-         * @brief A single descriptor set, containing its layout descriptions and bound resources.
-         */
-//        struct CreateUniformSet
-//        {
-//            UniformDescSet descriptions;
-//            UniformResrcSet resources;
-//        };
-//
-//        /**
-//         * @brief A collection of multiple descriptor sets, each with their own bindings and resources.
-//         */
-//        struct CreateUniformMultiSet
-//        {
-//            UniformMultiSetDesc descriptions;
-//            UniformResrcSet resources;
-//        };
-
-
-
-
-        bool allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource );
-        bool allocateShaderResource( const UniformDesc& descriptor, ShaderResource& resource );
-
-        /**
-         * @brief Allocates new shader resources.
-         * @param layout Descriptor set layout bindings for the resource.
-         * @param quantity Number of shader resources to allocate.
-         * @return The allocated shader resource descriptor.
-         */
-        bool allocateShaderResources( const UniformSetLayout& layout, int quantity, ShaderResource* resource );
-        bool allocateShaderResource( const UniformSetLayout& layout, ShaderResource& resource );
-
-        /**
-         * @brief Updates a descriptor set with new resource bindings.
-         * @param set Handle to the descriptor set to update.
-         * @param elements New resource bindings to apply.
-         * @return True if the update succeeded, false otherwise.
-         */
-        bool updateShaderResource( kege::ShaderResource& set, const UniformBindingElements& elements );
-        bool updateShaderResource( kege::ShaderResource& set );
-
-        void freeShaderResource( int quantity, ShaderResource* resource );
-        void freeShaderResource( ShaderResource& resource );
-
-        bool createShaderResources( const CreateShaderResources& parameters );
-        bool makeShaderResources( const MakeShaderResources& parameters );
-
-//        /**
-//         * @brief Allocates multiple descriptor sets from a layout.
-//         * @param bindings Bindings describing the descriptor set structure.
-//         * @param frames_in_flight Number of frames in flight to allocate sets for.
-//         * @param handles Output array to receive allocated descriptor set handles.
-//         * @return True if allocation succeeded for all sets, false otherwise.
-//         */
-//        bool allocateDescriptors
-//        (
-//            const std::vector< kege::UniformDesc >& bindings,
-//            int frames_in_flight,
-//            ShaderResource* handles
-//        );
-//
-//        /**
-//         * @brief Allocates multiple descriptor sets from a layout.
-//         * @param layout Layout describing the descriptor set structure.
-//         * @param frames_in_flight Number of frames in flight to allocate sets for.
-//         * @param handles Output array to receive allocated descriptor set handles.
-//         * @return True if allocation succeeded for all sets, false otherwise.
-//         */
-//        bool allocateDescriptors
-//        (
-//            const UniformSetLayout& layout,
-//            int frames_in_flight,
-//            ShaderResource* handles
-//        );
-//
-//        /**
-//         * @brief Frees a descriptor set.
-//         * @param handle Handle to the descriptor set to free.
-//         * @note The descriptor set handle becomes invalid after this call.
-//         */
-//        void freeDescriptorSet( ShaderResource handle );
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Fence Objects Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         /**
          * @brief Creates a fence for CPU-GPU synchronization.
@@ -308,6 +239,10 @@ namespace kege{
          */
         void destroyFence(FenceHandle handle);
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // Semaphore lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
         /**
          * @brief Creates a semaphore for GPU-GPU synchronization.
          * @return Handle to the created semaphore.
@@ -321,6 +256,10 @@ namespace kege{
          */
         void destroySemaphore(SemaphoreHandle handle);
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Swapchain Access
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
         ImageHandle getSwapchainColorImage( uint32_t image_index );
         ImageHandle getSwapchainDepthImage( uint32_t image_index );
         std::vector< ImageHandle > getSwapchainColorImages();
@@ -333,16 +272,20 @@ namespace kege{
 
         uint32_t getCurrFrameIndex()const;
 
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        //
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         kege::ShaderPipelineManager* getShaderPipelineManager();
-        kege::ShaderResourceManager* getShaderResourceManager();
-
         kege::GraphicsWindow* getWindow();
-
         int32_t windowHeight()const;
         int32_t windowWidth()const;
         void pollWindowEvents();
         bool windowIsOpen()const;
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        //
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         int  beginFrame();
         bool endFrame();
@@ -354,14 +297,9 @@ namespace kege{
             const kege::SwapchainDesc& swapchain_create_info
         );
 
-        bool initalize();
-
         void shutdown();
 
-
-        //Graphics( GraphicsAPIInfo info );
         Graphics();
-
         ~Graphics();
 
     private:

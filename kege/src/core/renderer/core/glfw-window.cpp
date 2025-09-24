@@ -12,7 +12,6 @@ namespace kege{
 
     static GlfwWindow* global_window_ptr;
 
-
     void keyCallback( GLFWwindow* window, int key, int scancode, int action, int mods )
     {
         if ( global_window_ptr == nullptr ) return;

@@ -135,7 +135,7 @@ namespace kege::ui{
             .sample_count = SampleCount::Count1,
             .usage = ImageUsageFlags::ShaderResource | ImageUsageFlags::ColorAttachment,
             .memory_usage = MemoryUsage::GpuOnly,
-            .debug_name = "font-image",
+            .name = "font-image",
             .data = info.data.data()
         });
 

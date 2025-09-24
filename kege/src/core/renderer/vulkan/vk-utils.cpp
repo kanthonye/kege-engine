@@ -846,23 +846,34 @@ namespace kege::vk{
     {
         VkShaderStageFlags vkFlags = 0; // Start with no flags
 
-        if ((stage & ShaderStage::Vertex) != static_cast<ShaderStage>(0)) { // Use static_cast for type safety with None=0
-            vkFlags |= VK_SHADER_STAGE_VERTEX_BIT;
+        if ((stage & ShaderStage::All) == ShaderStage::All)
+        {
+            vkFlags |= VK_SHADER_STAGE_ALL;
         }
-        if ((stage & ShaderStage::Fragment) != static_cast<ShaderStage>(0)) {
-            vkFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+        else if ((stage & ShaderStage::AllGraphics) == ShaderStage::AllGraphics)
+        {
+            vkFlags |= VK_SHADER_STAGE_ALL_GRAPHICS;
         }
-        if ((stage & ShaderStage::Compute) != static_cast<ShaderStage>(0)) {
-            vkFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
-        }
-        if ((stage & ShaderStage::Geometry) != static_cast<ShaderStage>(0)) {
-            vkFlags |= VK_SHADER_STAGE_GEOMETRY_BIT;
-        }
-        if ((stage & ShaderStage::TessellationControl) != static_cast<ShaderStage>(0)) {
-            vkFlags |= VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        }
-        if ((stage & ShaderStage::TessellationEvaluation) != static_cast<ShaderStage>(0)) {
-            vkFlags |= VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+        else
+        {
+            if ((stage & ShaderStage::Vertex) != ShaderStage::Invalid) { // Use static_cast for type safety with None=0
+                vkFlags |= VK_SHADER_STAGE_VERTEX_BIT;
+            }
+            if ((stage & ShaderStage::Fragment) != ShaderStage::Invalid) {
+                vkFlags |= VK_SHADER_STAGE_FRAGMENT_BIT;
+            }
+            if ((stage & ShaderStage::Geometry) != ShaderStage::Invalid) {
+                vkFlags |= VK_SHADER_STAGE_GEOMETRY_BIT;
+            }
+            if ((stage & ShaderStage::TessellationControl) != ShaderStage::Invalid) {
+                vkFlags |= VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+            }
+            if ((stage & ShaderStage::TessellationEvaluation) != ShaderStage::Invalid) {
+                vkFlags |= VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+            }
+            if ((stage & ShaderStage::Compute) != ShaderStage::Invalid) {
+                vkFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
+            }
         }
 
         return vkFlags;
@@ -922,6 +933,29 @@ namespace kege::vk{
         }
     }
 
+    VkLogicOp convertLogicOp( ColorBlendLogicOp op )
+    {
+        switch( op )
+        {
+            case ColorBlendLogicOp::Clear: return VK_LOGIC_OP_CLEAR;
+            case ColorBlendLogicOp::And: return VK_LOGIC_OP_AND;
+            case ColorBlendLogicOp::AndReverse: return VK_LOGIC_OP_AND_REVERSE;
+            case ColorBlendLogicOp::AndInverted: return VK_LOGIC_OP_AND_INVERTED;
+            case ColorBlendLogicOp::Copy: return VK_LOGIC_OP_COPY;
+            case ColorBlendLogicOp::NoOp: return VK_LOGIC_OP_NO_OP;
+            case ColorBlendLogicOp::Xor: return VK_LOGIC_OP_XOR;
+            case ColorBlendLogicOp::Or: return VK_LOGIC_OP_OR;
+            case ColorBlendLogicOp::Nor: return VK_LOGIC_OP_NOR;
+            case ColorBlendLogicOp::Equiv: return VK_LOGIC_OP_EQUIVALENT;
+            case ColorBlendLogicOp::Invert: return VK_LOGIC_OP_INVERT;
+            case ColorBlendLogicOp::OrReverse: return VK_LOGIC_OP_OR_REVERSE;
+            case ColorBlendLogicOp::CopyInverted: return VK_LOGIC_OP_COPY_INVERTED;
+            case ColorBlendLogicOp::OrInverted: return VK_LOGIC_OP_OR_INVERTED;
+            case ColorBlendLogicOp::Nand: return VK_LOGIC_OP_NAND;
+            case ColorBlendLogicOp::Set: return VK_LOGIC_OP_SET;
+        }
+    }
+    
     VkStencilOp convertStencilOp(StencilOp op)
     {
         switch ( op )

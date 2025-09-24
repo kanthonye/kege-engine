@@ -115,6 +115,7 @@ namespace kege{
     {
         generateCylinderVertices( radius, height, columns, vertices );
         generateCylinderIndices( columns, indices );
+        drawcount = static_cast< int >( indices.size() );
     }
 
 }

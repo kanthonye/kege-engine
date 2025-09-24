@@ -131,6 +131,7 @@ namespace kege::vk{
         /** @brief Original pipeline creation parameters for reference/recreation */
         kege::GraphicsPipelineDesc desc;
         VkPipelineBindPoint bind_point;
+        int pipeline_layout_id;
     };
 
     /**
@@ -578,6 +579,9 @@ namespace kege::vk{
      */
     VkCompareOp convertCompareOp(CompareOp compare);
 
+
+    VkLogicOp convertLogicOp( ColorBlendLogicOp op );
+    
     /**
      * @brief Translate engine stencil operation to Vulkan stencil operation
      *

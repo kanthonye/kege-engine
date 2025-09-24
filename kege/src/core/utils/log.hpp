@@ -75,6 +75,18 @@ namespace kege{
 
         Log& operator <<( const Log::NL& nl )
         {
+            if( func )
+            {
+                push( " | " );
+                push( func );
+                push( "() -> " );
+                func = nullptr;
+            }
+            if( file )
+            {
+                push( file );
+                file = nullptr;
+            }
             push( "\n" );
             logs.push_back( new Entry );
             return *this;
@@ -84,6 +96,14 @@ namespace kege{
         {
             logs.back()->push_back( b );
             logs.back()->push_back( " " );
+            return *this;
+        }
+
+
+        Log& from( const char* func, const char* file )
+        {
+            this->func = func;
+            this->file = file;
             return *this;
         }
 
@@ -127,10 +147,12 @@ namespace kege{
         std::string color;
         std::string name;
         int entry_index;
+        const char* func;
+        const char* file;
     };
 }
-#define KEGE_LOG_ERROR kege::Log::error   << "( "<<__FILE__ <<" ) -> " << __FUNCTION__ << "() -> "
-#define KEGE_LOG_WARN  kege::Log::warning << "( "<<__FILE__ <<" ) -> " << __FUNCTION__ << "() -> "
+#define KEGE_LOG_ERROR kege::Log::error.from( __FUNCTION__, __FILE__ )
+#define KEGE_LOG_WARN  kege::Log::warning.from( __FUNCTION__, __FILE__ )
 #define KEGE_LOG_INFO  kege::Log::info
 #define KEGE_LOG_DEBUG kege::Log::debug
 

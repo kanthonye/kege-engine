@@ -9,7 +9,7 @@
 
 namespace kege{
 
-    bool MaterialLoader::load( kege::AssetSystem* assets, const std::string& filename )
+    bool MaterialLoader::load( kege::AssetManager* assets, const std::string& filename )
     {
         return false;
     }

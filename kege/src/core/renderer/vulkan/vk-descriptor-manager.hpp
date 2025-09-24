@@ -81,7 +81,7 @@
 //
 //        std::unordered_map< uint32_t, uint32_t > binding_locations;
 //        VkPipelineBindPoint pipeline_bind_point;
-//        std::string debug_name;
+//        std::string name;
 //    };
 //
 //    /**

@@ -52,7 +52,7 @@ namespace kege{
             .sample_count   = SampleCount::Count1,
             .usage          = ImageUsageFlags::None,
             .memory_usage   = MemoryUsage::GpuOnly,
-            .debug_name     = "image"
+            .name     = "image"
         });
     }
 

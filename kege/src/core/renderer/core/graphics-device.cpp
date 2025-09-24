@@ -6,3 +6,7 @@
 //
 
 #include "graphics-device.hpp"
+
+namespace kege{
+
+}

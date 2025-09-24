@@ -19,7 +19,7 @@ namespace kege{
             .mouseover  = false,
             .texr       = ui::TexrID
             {
-                .id     = 1,
+                .id     = 2,
                 .x      = 0.f,
                 .y      = 0.f,
                 .width  = 1.f,
@@ -28,17 +28,17 @@ namespace kege{
             .style      = layout.getStyleByName( "viewport" )
         });
 
-        Communication::add< kege::RenderPassContext*, ViewportPanel >( this );
+        //Communication::add< kege::RenderPassContext*, ViewportPanel >( this );
         return *this;
     }
 
-    void ViewportPanel::operator()( kege::RenderPassContext* context )
-    {
-        if( context->name() != "scene-pass" )
-        {
-            return;
-        }
-    }
+//    void ViewportPanel::operator()( kege::RenderPassContext* context )
+//    {
+//        if( context->name() != "scene-pass" )
+//        {
+//            return;
+//        }
+//    }
 
     void ViewportPanel::put( ui::Layout& layout )
     {

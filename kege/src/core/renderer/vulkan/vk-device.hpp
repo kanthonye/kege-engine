@@ -170,6 +170,17 @@ namespace kege::vk{
          * @param desc Description of the graphics pipeline to create
          * @return Handle to the newly created graphics pipeline
          */
+        std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc )override;
+
+        /**
+         * @brief Create a graphics pipeline
+         *
+         * Creates a VkPipeline for graphics rendering based on the provided description.
+         * Uses pipeline caching for improved performance when creating similar pipelines.
+         *
+         * @param desc Description of the graphics pipeline to create
+         * @return Handle to the newly created graphics pipeline
+         */
         kege::PipelineHandle createGraphicsPipeline( const kege::GraphicsPipelineDesc& desc ) override;
 
         /**
@@ -255,19 +266,18 @@ namespace kege::vk{
         //-------------------------------------------------------------------------
 
         /**
-         * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param descriptors Description of binding points for resources.
-         * @param create Whether to create the layout if it does not exist.
-         * @return Handle to the descriptor set layout.
-         */
-        UniformSetLayout getUniformSetLayout( const UniformLayoutDescription& descriptors, bool create )override;
-
-        /**
          * @brief Creates a descriptor set layout.
          * @param descriptors Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        UniformSetLayout createUniformSetLayout( const UniformLayoutDescription& descriptors )override;
+        UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors )override;
+
+        /**
+         * @brief Retrieves or creates a descriptor set layout based on bindings.
+         * @param descriptors Description of binding points for resources.
+         * @return Handle to the descriptor set layout.
+         */
+        UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors )override;
 
         /**
          * @brief Destroys a descriptor set layout.
@@ -277,33 +287,46 @@ namespace kege::vk{
         void destroyUniformSetLayout( const UniformSetLayout& layout )override;
 
         const vk::DescriptorSetLayout* getDescriptorSetLayout(int32_t layout );
+
         //-------------------------------------------------------------------------
         // Descriptor Set Lifecycle
         //-------------------------------------------------------------------------
 
-        bool allocateDescriptors
-        (
-            const UniformSetLayout& layout,
-            uint quantity,
-            int32_t* descriptor_id
-        )
-        override;
+        /**
+         * @brief Update multiple descriptor sets with new resource bindings.
+         * @param handles Vector of descriptor set handles to update.
+         * @param resource_sets Vector of resource sets containing the new bindings.
+         * @return True if all updates succeeded, false otherwise.
+         */
+        bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )override;
 
-        bool updateDescriptor
-        (
-            int32_t descriptor_id,
-            const UniformBindingElements& elements
-        )
-        override;
+        /**
+         * @brief Update a single descriptor set with new resource bindings.
+         * @param handle Handle of the descriptor set to update.
+         * @param resource_set Resource set containing the new bindings.
+         * @return True if the update succeeded, false otherwise.
+         */
+        bool updateUniformSet( int handle, const UniformSet& resource_set )override;
+
+        /**
+         * @brief Allocate multiple descriptor sets from layouts.
+         * @param description Descriptions of the descriptor set layouts to allocate from.
+         * @return Vector of handles to the newly allocated descriptor sets.
+         */
+        std::vector< int > allocateUniformSets( const UniformSetsDesc& description )override;
+
+        /**
+         * @brief Allocate a single descriptor set from a layout.
+         * @param description Description of the descriptor set layout to allocate from.
+         * @return Handle to the newly allocated descriptor set.
+         */
+        int allocateUniformSet( const UniformSetDesc& description )override;
 
         /**
          * @brief Free a descriptor set
-         *
-         * Returns the VkDescriptorSet to the descriptor pool.
-         *
          * @param descriptor_id Handle to the descriptor set to free
          */
-        void freeDescriptor( int32_t descriptor_id ) override;
+        void freeUniformSet( int32_t descriptor_id )override;
 
         /**
          * @brief Get the internal Vulkan descriptor-set object

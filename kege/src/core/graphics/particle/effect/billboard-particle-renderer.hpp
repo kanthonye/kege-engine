@@ -37,7 +37,7 @@ namespace kege{
     {
     public:
 
-        void operator()( kege::RenderPassContext* context );
+        //void operator()( kege::RenderPassContext* context );
         BillboardParticleRenderer( kege::Engine* engine );
         bool initialize();
         void shutdown();

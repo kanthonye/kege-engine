@@ -1,7 +1,7 @@
 #version 450
 
-layout(location = 0) in vec3 in_position;
-layout(location = 1) in vec3 in_normal;
+layout(location = 0) in vec3 _position;
+layout(location = 1) in vec3 _normal;
 
 layout(set = 0, binding = 0) uniform CameraBlock
 {
@@ -16,13 +16,13 @@ layout( push_constant ) uniform ObjectMatrices
     mat4 rotation;
 } model;
 
-layout(location = 0) out vec3 _normal;
+layout(location = 0) out vec3 normal;
 
 void main()
 {
-    gl_Position = camera.projection * camera.transform * model.transform * vec4( in_position, 1.0 );
+    gl_Position = camera.projection * camera.transform * model.transform * vec4( _position, 1.0 );
     gl_Position.y = -gl_Position.y;
 
-    _normal = in_normal;
+    normal = _normal;
 }
 

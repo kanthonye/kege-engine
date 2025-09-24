@@ -108,11 +108,6 @@ namespace kege{
         _device->destroySampler( handle );
     }
 
-    void Graphics::insertPipeline( const std::string& name, const PipelineHandle& pipeline )
-    {
-        _shader_pipeline_manager.set( name, pipeline );
-    }
-    
     ShaderHandle Graphics::createShader(const ShaderDesc& desc)
     {
         return _device->createShader( desc );
@@ -131,6 +126,11 @@ namespace kege{
     void Graphics::destroyPipelineLayout(PipelineLayoutHandle handle)
     {
         _device->destroyPipelineLayout( handle );
+    }
+
+    std::vector< PipelineHandle > Graphics::createGraphicsPipeline( const CreateShaderPipelineInfo& desc )
+    {
+        return _device->createGraphicsPipeline( desc );
     }
 
     PipelineHandle Graphics::createGraphicsPipeline(const GraphicsPipelineDesc& desc)
@@ -154,216 +154,47 @@ namespace kege{
     }
 
 
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    // UniformSetLayout
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    UniformSetLayout Graphics::getUniformSetLayout( const UniformLayoutDescription& descriptors )
+    UniformSetLayout Graphics::createUniformSetLayout( const UniformSetDesc& desc )
     {
-        return _device->getUniformSetLayout( descriptors, false );
+        return _device->createUniformSetLayout( desc );
     }
 
-    UniformSetLayout Graphics::createUniformSetLayout( const UniformLayoutDescription& descriptors )
+    UniformSetLayout Graphics::getUniformSetLayout( const UniformSetDesc& desc )
     {
-        return _device->createUniformSetLayout( descriptors );
+        return _device->getUniformSetLayout( desc );
     }
 
-    void Graphics::destroyUniformSetLayout(UniformSetLayout handle)
+    void Graphics::destroyUniformSetLayout( const UniformSetLayout& layout )
     {
-        _device->destroyUniformSetLayout( handle );
+        _device->destroyUniformSetLayout( layout );
     }
 
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    // ShaderResource
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    bool Graphics::allocateShaderResources( const UniformLayoutDescription& descriptors, int quantity, ShaderResource* resource )
+    ShaderResource Graphics::allocateUniformSets( const UniformSetsDesc& desc )
     {
-        std::size_t key = kege::hash( descriptors );
-        auto m = _uniform_set_layouts.find( key );
-        if ( m == _uniform_set_layouts.end() )
-        {
-            return false;
-        }
-        return allocateShaderResources( m->second, quantity, resource );
+        return _shader_resource_manager.create( desc );
     }
 
-    bool Graphics::allocateShaderResource( const UniformDesc& descriptor, ShaderResource& resource )
+    ShaderResource Graphics::allocateUniformSet( const UniformSetDesc& desc )
     {
-        std::size_t key = kege::hash( descriptor );
-        auto m = _uniform_set_layouts.find( key );
-        if ( m == _uniform_set_layouts.end() )
-        {
-            return false;
-        }
-        return allocateShaderResources( m->second, 1, &resource );
+        return _shader_resource_manager.create( desc );
     }
 
-    bool Graphics::allocateShaderResources( const UniformSetLayout& layout, int quantity, ShaderResource* resource )
+    void Graphics::freeUniformSet( const ShaderResource& resource )
     {
-        int32_t descriptor_ids[ quantity ];
-        if( _device->allocateDescriptors( layout, quantity, descriptor_ids ) )
-        {
-            _shader_resource_manager.generate( quantity, descriptor_ids, resource );
-            return true;
-        }
-        return false;
+        return _shader_resource_manager.free( resource );
     }
 
-    bool Graphics::allocateShaderResource( const UniformSetLayout& layout, ShaderResource& resource )
-    {
-        return allocateShaderResources( layout, 1, &resource );
-    }
-    
-    bool Graphics::updateShaderResource( kege::ShaderResource& resource, const UniformBindingElements& elements )
-    {
-        return _device->updateDescriptor( *resource, elements );
-    }
-
-    bool Graphics::updateShaderResource( kege::ShaderResource& resource )
-    {
-        return _device->updateDescriptor( resource, resource.resources() );
-    }
-
-    void Graphics::freeShaderResource( int quantity, ShaderResource* resources )
-    {
-        _shader_resource_manager.free( quantity, resources );
-    }
-
-    void Graphics::freeShaderResource( ShaderResource& resources )
-    {
-        _shader_resource_manager.free( 1, &resources );
-    }
-
-    bool Graphics::createShaderResources( const CreateShaderResources& create )
-    {
-        std::size_t key = kege::hash( create.descriptors );
-        auto m = _uniform_set_layouts.find( key );
-        if ( m == _uniform_set_layouts.end() )
-        {
-            return false;
-        }
-
-        if( !allocateShaderResources( m->second, create.quantity, create.resources ) )
-        {
-            return false;
-        }
-
-        for (int count=0; count<create.quantity; ++count)
-        {
-            UniformBindingElements binding_elements;
-            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
-            {
-                const CreateBufferBindingPair& info = create.binding_buffer_sets[i];
-                std::vector< BufferInfo > buffer_infos;
-
-                for (int k=0; k<info.create_infos.size(); ++k)
-                {
-                    BufferHandle buffer = createBuffer( info.create_infos[k].desc );
-
-                    buffer_infos.push_back
-                    ({
-                        .buffer = buffer,
-                        .range = info.create_infos[k].range,
-                        .offset = info.create_infos[k].offset
-                    });
-                }
-
-                binding_elements.push_back
-                ({
-                    BufferBinding
-                    {
-                        .binding = info.binding,
-                        .buffers = buffer_infos
-                    }
-                });
-            }
-
-            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
-            {
-                const CreateImageBindingPair& info = create.binding_image_sets[i];
-                std::vector< ImageInfo > image_infos;
-
-                for (int k=0; k<info.create_infos.size(); ++k)
-                {
-                    ImageHandle img = createImage( info.create_infos[k].desc );
-
-                    image_infos.push_back
-                    ({
-                        .image = img,
-                        .sampler = info.create_infos[k].sampler
-                    });
-                }
-
-                binding_elements.push_back
-                ({
-                    ImageBindings
-                    {
-                        .binding = info.binding,
-                        .images = image_infos
-                    }
-                });
-            }
-            updateShaderResource( create.resources[ count ], binding_elements );
-        }
-        return true;
-    }
-
-    bool Graphics::makeShaderResources( const MakeShaderResources& parameters )
-    {
-//        std::size_t key = kege::hash( create.descriptors );
-//        auto m = _uniform_set_layouts.find( key );
-//        if ( m == _uniform_set_layouts.end() )
-//        {
-//            return false;
-//        }
-//
-//        if( !allocateShaderResources( m->second, create.quantity, create.resources ) )
-//        {
-//            return false;
-//        }
-//
-//        for (int count=0; count<create.quantity; ++count)
-//        {
-//            UniformBindingElements binding_elements;
-//            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
-//            {
-//                const std::pair< int, CreateBufferSet >& info = create.binding_buffer_sets[i];
-//                std::vector< BufferInfo > buffer_infos;
-//
-//                for (int k=0; k<info.second.size(); ++k)
-//                {
-//                    BufferHandle buffer = createBuffer( info.second[k].desc );
-//
-//                    buffer_infos.push_back
-//                    ({
-//                        .buffer = buffer,
-//                        .range = info.second[k].range,
-//                        .offset = info.second[k].offset
-//                    });
-//                }
-//
-//                binding_elements.push_back( Uniform( info.first, buffer_infos ) );
-//            }
-//
-//            for (int i=0; i<create.binding_buffer_sets.size(); ++i)
-//            {
-//                const std::pair< int, CreateImageSet >& info = create.binding_image_sets[i];
-//                std::vector< ImageInfo > image_infos;
-//
-//                for (int k=0; k<info.second.size(); ++k)
-//                {
-//                    ImageHandle img = createImage( info.second[k].desc );
-//
-//                    image_infos.push_back
-//                    ({
-//                        .image = img,
-//                        .sampler = info.second[k].sampler
-//                    });
-//                }
-//
-//                binding_elements.push_back( Uniform( info.first, image_infos ) );
-//            }
-//            updateShaderResource( create.resources[ count ], binding_elements );
-//        }
-        return true;
-    }
-
-
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    //
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
     FenceHandle Graphics::createFence( bool initially_signaled )
     {
@@ -435,6 +266,11 @@ namespace kege{
         return _current_frame;
     }
 
+    kege::ShaderPipelineManager* Graphics::getShaderPipelineManager()
+    {
+        return &_shader_pipeline_manager;
+    }
+
     kege::GraphicsWindow* Graphics::getWindow()
     {
         return _window.ref();
@@ -458,16 +294,6 @@ namespace kege{
     bool Graphics::windowIsOpen()const
     {
         return !_window->shouldClose();
-    }
-
-    kege::ShaderPipelineManager* Graphics::getShaderPipelineManager()
-    {
-        return &_shader_pipeline_manager;
-    }
-
-    kege::ShaderResourceManager* Graphics::getShaderResourceManager()
-    {
-        return &_shader_resource_manager;
     }
 
     int Graphics::beginFrame()
@@ -628,51 +454,6 @@ namespace kege{
         _shader_pipeline_manager.initalize( this );
         _shader_resource_manager.initalize( _device );
         return true;
-    }
-
-    bool Graphics::initalize()
-    {
-//        kege::WindowCreateInfo create_window_info = {};
-//        create_window_info.title = _info.title;
-//        create_window_info.width = _info.width;
-//        create_window_info.height = _info.height;
-//        create_window_info.visible = true;
-//        create_window_info.resizable = true;
-//        create_window_info.fullscreen = _info.fullscreen;
-//        create_window_info.maximized = false;
-//        create_window_info.decorated = true;
-//        create_window_info.vsync = _info.vsync;
-//
-//        kege::Ref< kege::GraphicsWindow > window = new kege::GlfwWindow();
-//        if ( !window->create( create_window_info ) )
-//        {
-//            KEGE_LOG_ERROR << "Failed to initialize GraphicsWindow."<<Log::nl;
-//            return 0;
-//        }
-//
-//        kege::DeviceInitializationInfo device_init_info = {};
-//        device_init_info.window = window.ref();
-//        device_init_info.preferred_API = _info.api;
-//        device_init_info.enable_raytracing = _info.enable_raytracing;
-//        device_init_info.prefer_discrete_gpu = true;
-//        device_init_info.prefer_higher_api_version = true;
-//        device_init_info.require_shader_float64 = _info.require_shader_float64;
-//        device_init_info.engine = "KEGE";
-//        device_init_info.name = _info.title;
-//
-//        kege::SwapchainDesc swapchain_create_info = {};
-//        swapchain_create_info.debug_name = "swapchain";
-//        swapchain_create_info.width = _info.width;
-//        swapchain_create_info.height = _info.height;
-//        swapchain_create_info.image_count = _info.frames_in_flight;
-//        swapchain_create_info.color_format = _info.color_format;
-//        swapchain_create_info.depth_format = _info.depth_format;
-//        swapchain_create_info.present_mode = kege::PresentMode::Fifo;
-//        swapchain_create_info.present_queue_type = kege::QueueType::Graphics;
-//        swapchain_create_info.image_usage = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::CopyDst;
-//
-//        return initalize( window, device_init_info, swapchain_create_info );
-        return false;
     }
 
     void Graphics::shutdown()

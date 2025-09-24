@@ -48,7 +48,7 @@ namespace kege{
         return _render_manager;
     }
 
-    kege::AssetSystem& Engine::assetSystem()
+    kege::AssetManager& Engine::getAssetManager()
     {
         return _asset_system;
     }
@@ -106,6 +106,7 @@ namespace kege{
 
     bool Engine::initialize()
     {
+        _asset_system.initalize();
         _root_directory = "/Users/kae/Developer/xcode/KE-GE/kege";
 
         if ( !initalizeCoreSystems() )
@@ -172,9 +173,11 @@ namespace kege{
                     _lag -= _fixed_delta_time;
                 }
 
+                _esm->render( _fixed_delta_time );
+
                 if ( 0 <= _graphics->beginFrame() )
                 {
-                    _render_graph->execute();
+                    //TODO: _render_manager->execute( _fixed_delta_time );
                     if ( !_graphics->endFrame() )
                     {
                         KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;

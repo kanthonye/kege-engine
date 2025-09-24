@@ -800,9 +800,9 @@ namespace kege::vk{
         }
 
         // Set Debug Name (requires VK_EXT_debug_utils)
-        if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
+        if ( _instance->isValidationEnabled() && !desc.name.empty() )
         {
-            debugSetObjectName( (uint64_t)texr->image, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+            debugSetObjectName( (uint64_t)texr->image, VK_OBJECT_TYPE_IMAGE, desc.name.c_str() );
         }
 
 
@@ -924,9 +924,9 @@ namespace kege::vk{
         /**
          * For debug purposes, assign a name to buffer handle if a name id present.
          */
-        if ( _instance->isValidationEnabled() && desc.debug_name )
+        if ( _instance->isValidationEnabled() && desc.name )
         {
-            debugSetObjectName( (uint64_t)buffer->buffer, VK_OBJECT_TYPE_BUFFER, desc.debug_name );
+            debugSetObjectName( (uint64_t)buffer->buffer, VK_OBJECT_TYPE_BUFFER, desc.name );
         }
 
         /**
@@ -1045,9 +1045,9 @@ namespace kege::vk{
         *_samplers.get( handle.id ) = sampler;
 
         // Set Debug Name (requires VK_EXT_debug_utils)
-        if ( _instance->isValidationEnabled() && desc.debug_name )
+        if ( _instance->isValidationEnabled() && desc.name )
         {
-            debugSetObjectName( (uint64_t)sampler.sampler, VK_OBJECT_TYPE_SAMPLER, desc.debug_name );
+            debugSetObjectName( (uint64_t)sampler.sampler, VK_OBJECT_TYPE_SAMPLER, desc.name );
         }
 
         return handle;
@@ -1086,9 +1086,9 @@ namespace kege::vk{
         }
 
         // Set Debug Name (requires VK_EXT_debug_utils)
-        if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
+        if ( _instance->isValidationEnabled() && !desc.name.empty() )
         {
-            debugSetObjectName( (uint64_t)shader->shader_module, VK_OBJECT_TYPE_SHADER_MODULE, shader->desc.debug_name.data() );
+            debugSetObjectName( (uint64_t)shader->shader_module, VK_OBJECT_TYPE_SHADER_MODULE, shader->desc.name.data() );
         }
 
         return handle;
@@ -1109,7 +1109,7 @@ namespace kege::vk{
     kege::PipelineLayoutHandle Device::createPipelineLayout( const kege::PipelineLayoutDesc& desc )
     {
         if ( _device == VK_NULL_HANDLE ) return {-1};
-        return { _pipeline_layout_manager.createPipelineLayout( desc ) };
+        return {};// { _pipeline_layout_manager.createPipelineLayout( desc.name.data(), desc.descriptor_set_layouts, desc.push_constant_ranges ) };
     }
 
     const vk::PipelineLayout* Device::getPipelineLayout( int32_t pipeline_layout_id ) const
@@ -1120,6 +1120,274 @@ namespace kege::vk{
     void Device::destroyPipelineLayout( kege::PipelineLayoutHandle handle )
     {
         return _pipeline_layout_manager.destroyPipelineLayout( handle.id );
+    }
+
+    std::vector< PipelineHandle > Device::createGraphicsPipeline( const CreateShaderPipelineInfo& desc )
+    {
+        if ( _device == VK_NULL_HANDLE ) return {};
+        std::vector< PipelineHandle > pipelines;
+
+        for (int i=0; i<desc.pipelines.size(); ++i)
+        {
+            const kege::PipelineInfo& info = desc.pipelines[i];
+
+            int pipeline_layout_handle = _pipeline_layout_manager.createPipelineLayout
+            ( info.name.data(), info.layouts, info.push_constants );
+
+            if ( pipeline_layout_handle < 0 )
+            {
+                KEGE_LOG_ERROR << "Invalid pipeline-layout in createGraphicsPipeline!"<<Log::nl;
+                return {};
+            }
+
+            // --- Translate Desc to Vulkan Structures ---
+            VkGraphicsPipelineCreateInfo graphics_create = {};
+            graphics_create.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // 1. Shader Stages
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+            std::vector< VkPipelineShaderStageCreateInfo > shader_stages;
+            for (int k=0; k<info.stages.size(); ++k)
+            {
+                Shader* shader = _shaders.get( desc.stages[ info.stages[k] ].id );
+
+                shader_stages.push_back
+                ({
+                    VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
+                    convertShaderStage( shader->desc.stage ),
+                    shader->shader_module,
+                    shader->desc.entry_point.data()
+                });
+            }
+            // Add other stages (Geometry, Tessellation) if present in desc...
+            graphics_create.stageCount = static_cast< uint32_t >( shader_stages.size() );
+            graphics_create.pStages = shader_stages.data();
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // 2. Vertex Input State
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+            std::vector< VkVertexInputBindingDescription > vertex_bindings;
+            std::vector< VkVertexInputAttributeDescription > vertex_attributes;
+            for (int i=0; i<info.vertex_input.attributes.size(); ++i)
+            {
+                vertex_attributes.push_back
+                ({
+                    .location = info.vertex_input.attributes[i].location,
+                    .offset   = info.vertex_input.attributes[i].offset,
+                    .format   = convertFormat( info.vertex_input.attributes[i].format ),
+                    .binding  = info.vertex_input.attributes[i].binding
+                });
+            }
+            for (int i=0; i<info.vertex_input.bindings.size(); ++i)
+            {
+                vertex_bindings.push_back
+                ({
+                    .stride    = info.vertex_input.bindings[i].stride,
+                    .inputRate = convertVertexInputRate( info.vertex_input.bindings[i].input_rate ),
+                    .binding   = info.vertex_input.bindings[i].binding
+                });
+            }
+            VkPipelineVertexInputStateCreateInfo vertexInputInfo = { VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
+            vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertex_bindings.size());
+            vertexInputInfo.pVertexBindingDescriptions = vertex_bindings.empty() ? nullptr : vertex_bindings.data();
+            vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertex_attributes.size());
+            vertexInputInfo.pVertexAttributeDescriptions = vertex_attributes.empty() ? nullptr : vertex_attributes.data();
+            graphics_create.pVertexInputState = &vertexInputInfo;
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // 3. Input Assembly
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+            VkPipelineInputAssemblyStateCreateInfo input_assembly_info = { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
+            input_assembly_info.primitiveRestartEnable = info.states.input_assembly.primitive_restart_enable;
+            input_assembly_info.topology = convertPrimitiveTopology( info.states.input_assembly.topology );
+            graphics_create.pInputAssemblyState = &input_assembly_info;
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // 4. Viewport State (can be dynamic)
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // Assuming non-dynamic for now
+            VkPipelineViewportStateCreateInfo viewport_state = { VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO };
+            viewport_state.viewportCount = 1;
+            viewport_state.pViewports = nullptr; // Set via dynamic state or provide dummy
+            viewport_state.scissorCount = 1;
+            viewport_state.pScissors = nullptr; // Set via dynamic state or provide dummy
+            graphics_create.pViewportState = &viewport_state;
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // 5. Rasterization State
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+            VkPipelineRasterizationStateCreateInfo rasterization_info = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
+            rasterization_info.lineWidth = info.states.rasterization.line_width;
+            rasterization_info.rasterizerDiscardEnable = info.states.rasterization.rasterizer_discard_enable;
+            rasterization_info.depthClampEnable = info.states.rasterization.depth_clamp_enable;
+            rasterization_info.depthBiasEnable = info.states.rasterization.depth_bias_enable;
+            rasterization_info.depthBiasClamp = info.states.rasterization.depth_bias_clamp;
+            rasterization_info.cullMode = VK_CULL_MODE_NONE;///convertCullMode( desc.rasterization_state.cull_mode );
+            rasterization_info.frontFace = convertFrontFace( info.states.rasterization.front_face );
+            rasterization_info.depthBiasConstantFactor = info.states.rasterization.depth_bias_constant_factor;
+            rasterization_info.depthBiasSlopeFactor = info.states.rasterization.depth_bias_slope_factor;
+            rasterization_info.polygonMode = convertPolygonMode( info.states.rasterization.polygon_mode );
+            graphics_create.pRasterizationState = &rasterization_info;
+
+            // 6. Multisample State
+            VkPipelineMultisampleStateCreateInfo multisample_info = { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
+            multisample_info.sampleShadingEnable = info.states.multisample.sample_shading_enable;
+            multisample_info.rasterizationSamples = convertSampleCount( info.states.multisample.rasterization_samples );// VK_SAMPLE_COUNT_1_BIT;
+            multisample_info.minSampleShading = info.states.multisample.min_sample_shading;
+            multisample_info.pSampleMask = 0;
+            multisample_info.alphaToCoverageEnable = info.states.multisample.alpha_to_coverage_enable;
+            multisample_info.alphaToOneEnable = info.states.multisample.alpha_to_one_enable;
+            multisample_info.flags = 0;
+            graphics_create.pMultisampleState = &multisample_info;
+
+            // 7. Depth Stencil State
+            VkPipelineDepthStencilStateCreateInfo depth_stencil_info = {};
+            depth_stencil_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+            depth_stencil_info.depthTestEnable       = info.states.depth_stencil.depth_test_enable;
+            depth_stencil_info.depthWriteEnable      = info.states.depth_stencil.depth_write_enable;
+            depth_stencil_info.depthCompareOp        = convertCompareOp( info.states.depth_stencil.depth_compare_op );
+
+            depth_stencil_info.depthBoundsTestEnable = VK_FALSE;
+            depth_stencil_info.minDepthBounds       = 0.0;
+            depth_stencil_info.maxDepthBounds       = 1.0;
+
+            if ( info.states.depth_stencil.stencil_test_enable )
+            {
+                depth_stencil_info.stencilTestEnable    = VK_TRUE;
+                depth_stencil_info.front.compareMask    = info.states.depth_stencil.front_op.compare_mask;
+                depth_stencil_info.front.compareOp      = convertCompareOp( info.states.depth_stencil.front_op.compare_op );
+                depth_stencil_info.front.depthFailOp    = convertStencilOp( info.states.depth_stencil.front_op.depth_fail_op );
+                depth_stencil_info.front.failOp         = convertStencilOp( info.states.depth_stencil.front_op.fail_op );
+                depth_stencil_info.front.passOp         = convertStencilOp( info.states.depth_stencil.front_op.pass_op );
+                depth_stencil_info.front.reference      = info.states.depth_stencil.front_op.reference;
+                depth_stencil_info.front.writeMask      = info.states.depth_stencil.front_op.write_mask;
+                depth_stencil_info.back.depthFailOp     = convertStencilOp( info.states.depth_stencil.back_op.depth_fail_op );
+                depth_stencil_info.back.compareOp       = convertCompareOp( info.states.depth_stencil.back_op.compare_op );
+                depth_stencil_info.back.failOp          = convertStencilOp( info.states.depth_stencil.back_op.fail_op );
+                depth_stencil_info.back.passOp          = convertStencilOp( info.states.depth_stencil.back_op.pass_op );
+                depth_stencil_info.back.reference       = info.states.depth_stencil.back_op.reference;
+                depth_stencil_info.back.writeMask       = info.states.depth_stencil.back_op.write_mask;
+            }
+            else
+            {
+                depth_stencil_info.stencilTestEnable = VK_FALSE;
+                depth_stencil_info.front = {};
+                depth_stencil_info.back = {};
+            }
+            graphics_create.pDepthStencilState      = &depth_stencil_info;
+
+            // 8. Color Blend State
+            std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states;
+            for ( int i=0; i<info.states.color_blend.attachments.size(); i++ )
+            {
+                VkPipelineColorBlendAttachmentState attachment = {};
+                attachment.blendEnable         = (info.states.color_blend.attachments[i].blend_enable)? VK_TRUE : VK_FALSE;
+
+                attachment.colorBlendOp        = convertBlendOp( info.states.color_blend.attachments[i].color_blend_op );
+                attachment.srcColorBlendFactor = convertBlendFactor( info. states.color_blend.attachments[i].src_color_blend_factor );
+                attachment.dstColorBlendFactor = convertBlendFactor( info.states.color_blend.attachments[i].dst_color_blend_factor );
+
+                attachment.alphaBlendOp        = convertBlendOp( info.states.color_blend.attachments[i].alpha_blend_op );
+                attachment.dstAlphaBlendFactor = convertBlendFactor( info.states.color_blend.attachments[i].dst_alpha_blend_factor );
+                attachment.srcAlphaBlendFactor = convertBlendFactor( info.states.color_blend.attachments[i].src_alpha_blend_factor );
+
+                attachment.colorWriteMask      = convertColorComponentMask( info.states.color_blend.attachments[i].color_write_mask );
+                color_blend_attachment_states.push_back( attachment );
+            }
+            VkPipelineColorBlendStateCreateInfo color_blend_info = { VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };
+            color_blend_info.attachmentCount = static_cast< int >( color_blend_attachment_states.size() );
+            color_blend_info.pAttachments = color_blend_attachment_states.data();
+            color_blend_info.logicOpEnable = (info.states.color_blend.logic_op_enable) ? VK_TRUE : VK_FALSE;
+            color_blend_info.logicOp = vk::convertLogicOp( info.states.color_blend.logic_op );
+            graphics_create.pColorBlendState = &color_blend_info;
+
+            // 9. Dynamic State (Optional but common for viewport/scissor)
+            std::vector< VkDynamicState > dynamic_states = std::vector< VkDynamicState >
+            {
+                VK_DYNAMIC_STATE_VIEWPORT,
+                VK_DYNAMIC_STATE_SCISSOR,
+                //VK_DYNAMIC_STATE_LINE_WIDTH
+            };
+            VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {};
+            dynamic_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+            dynamic_state_create_info.dynamicStateCount = static_cast< uint32_t >( dynamic_states.size() );
+            dynamic_state_create_info.pDynamicStates = dynamic_states.data();
+            graphics_create.pDynamicState = &dynamic_state_create_info;
+
+            // 10. Pipeline Layout
+            graphics_create.layout = _pipeline_layout_manager.getPipelineLayout( pipeline_layout_handle )->layout;
+
+            // 11. Render Pass / Rendering Info (Crucial!)
+            // We'll use Dynamic Rendering (VK_KHR_dynamic_rendering) as it's simpler for a render graph
+            // Check if dynamic rendering is supported first!
+            std::vector< VkFormat > color_attachmen_formats;
+            for(Format fmt : info.outputs.color_attachment_formats )
+            {
+                VkFormat vk_fmt = convertFormat(fmt);
+                if (vk_fmt == VK_FORMAT_UNDEFINED)
+                {
+                    KEGE_LOG_ERROR << "Invalid format passed for color attachment!"<<Log::nl;
+                    _pipeline_layout_manager.destroyPipelineLayout( pipeline_layout_handle );
+                    for (int k=0; k<info.stages.size(); ++k)
+                    {
+                        destroyShader( desc.stages[ info.stages[k] ] );
+                    }
+                    return {};
+                }
+                color_attachmen_formats.push_back( vk_fmt );
+            }
+            VkPipelineRenderingCreateInfoKHR rendering_info{VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR};
+            rendering_info.stencilAttachmentFormat = convertFormat(info.outputs.stencil_attachment_format);
+            rendering_info.depthAttachmentFormat = convertFormat(info.outputs.depth_attachment_format);
+            rendering_info.colorAttachmentCount = static_cast< uint32_t >( color_attachmen_formats.size() );
+            rendering_info.pColorAttachmentFormats = ( !color_attachmen_formats.empty() ) ? color_attachmen_formats.data() : nullptr;
+            // Chain this to pipelineInfo.pNext
+            graphics_create.pNext = &rendering_info;
+            graphics_create.renderPass = VK_NULL_HANDLE; // Must be NULL for dynamic rendering
+
+            // 12. Base Pipeline (for derivatives, ignore for now)
+            graphics_create.basePipelineHandle = VK_NULL_HANDLE;
+            graphics_create.basePipelineIndex = -1;
+
+            // --- Create Pipeline ---
+            VkPipeline handle;
+            VkResult result = vkCreateGraphicsPipelines( _device, VK_NULL_HANDLE, 1, &graphics_create, nullptr, &handle );
+            if ( result != VK_SUCCESS )
+            {
+                KEGE_LOG_ERROR <<"createGraphicsPipeline" <<Log::nl;
+                _pipeline_layout_manager.destroyPipelineLayout( pipeline_layout_handle );
+                for (int k=0; k<info.stages.size(); ++k)
+                {
+                    destroyShader( desc.stages[ info.stages[k] ] );
+                }
+                return {};
+            }
+
+            // Add to runtime map and cache
+            int id = _graphics_pipelines.gen();
+            {
+                vk::GraphicsPipeline* pipeline = _graphics_pipelines.get( id );
+                pipeline->bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
+                pipeline->pipeline = handle;
+                pipeline->pipeline_layout_id = pipeline_layout_handle;
+            }
+
+            if ( _instance->isValidationEnabled() && !info.name.empty() )
+            {
+                debugSetObjectName( (uint64_t)handle, VK_OBJECT_TYPE_IMAGE, info.name.c_str() );
+            }
+            pipelines.push_back({ id });
+        }
+        for (int k=0; k<desc.stages.size(); ++k)
+        {
+            destroyShader({ desc.stages[k] });
+        }
+        return pipelines;
     }
 
     kege::PipelineHandle Device::createGraphicsPipeline( const kege::GraphicsPipelineDesc& desc )
@@ -1226,27 +1494,6 @@ namespace kege::vk{
 
         // 7. Depth Stencil State
         VkPipelineDepthStencilStateCreateInfo depth_stencil_info = { VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
-        depth_stencil_info.depthTestEnable       = desc.depth_stencil_state.depth_test_enable;
-        depth_stencil_info.depthWriteEnable      = desc.depth_stencil_state.depth_write_enable;
-        depth_stencil_info.depthBoundsTestEnable = desc.depth_stencil_state.depth_bounds_test_enable;
-        depth_stencil_info.depthCompareOp       = convertCompareOp( desc.depth_stencil_state.depth_compare_op );
-        depth_stencil_info.minDepthBounds       = desc.depth_stencil_state.min_depth_bounds;
-        depth_stencil_info.maxDepthBounds       = desc.depth_stencil_state.max_depth_bounds;
-        depth_stencil_info.stencilTestEnable    = desc.depth_stencil_state.stencil_test_enable;
-        depth_stencil_info.front.compareMask    = desc.depth_stencil_state.front_op.compare_mask;
-        depth_stencil_info.front.compareOp      = convertCompareOp( desc.depth_stencil_state.front_op.compare_op );
-        depth_stencil_info.front.depthFailOp    = convertStencilOp( desc.depth_stencil_state.front_op.depth_fail_op );
-        depth_stencil_info.front.failOp         = convertStencilOp( desc.depth_stencil_state.front_op.fail_op );
-        depth_stencil_info.front.passOp         = convertStencilOp( desc.depth_stencil_state.front_op.pass_op );
-        depth_stencil_info.front.reference      = desc.depth_stencil_state.front_op.reference;
-        depth_stencil_info.front.writeMask      = desc.depth_stencil_state.front_op.write_mask;
-        depth_stencil_info.back.depthFailOp     = convertStencilOp( desc.depth_stencil_state.back_op.depth_fail_op );
-        depth_stencil_info.back.compareOp       = convertCompareOp( desc.depth_stencil_state.back_op.compare_op );
-        depth_stencil_info.back.failOp          = convertStencilOp( desc.depth_stencil_state.back_op.fail_op );
-        depth_stencil_info.back.passOp          = convertStencilOp( desc.depth_stencil_state.back_op.pass_op );
-        depth_stencil_info.back.reference       = desc.depth_stencil_state.back_op.reference;
-        depth_stencil_info.back.writeMask       = desc.depth_stencil_state.back_op.write_mask;
-        graphics_create.pDepthStencilState      = &depth_stencil_info;
 
         // 8. Color Blend State
         std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states;
@@ -1336,13 +1583,14 @@ namespace kege::vk{
         {
             vk::GraphicsPipeline* pipeline = _graphics_pipelines.get( id );
             pipeline->bind_point = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            pipeline->pipeline_layout_id = desc.pipeline_layout.id;
             pipeline->pipeline = handle;
             pipeline->desc = desc;
         }
 
-        if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
+        if ( _instance->isValidationEnabled() && !desc.name.empty() )
         {
-            debugSetObjectName( (uint64_t)handle, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+            debugSetObjectName( (uint64_t)handle, VK_OBJECT_TYPE_IMAGE, desc.name.c_str() );
         }
         return {id};
     }
@@ -1419,64 +1667,60 @@ namespace kege::vk{
         }
     }
 
-//    bool Device::updateDescriptorSets( const std::vector< kege::WriteDescriptorSet >& writes )
-//    {
-//        return _pipeline_layout_manager.updateDescriptorSets( writes );
-//    }
-
-
-    bool Device::allocateDescriptors
-    (
-        const UniformSetLayout& layout,
-        uint quantity,
-        int32_t* descriptor_ids
-    )
+    UniformSetLayout Device::getUniformSetLayout( const UniformSetDesc& desc )
     {
-        return _pipeline_layout_manager.allocateDescriptors( layout, quantity, descriptor_ids );
+        return { _pipeline_layout_manager.getDescriptorSetLayoutID( desc, false ) };
     }
 
-    bool Device::updateDescriptor
-    (
-        int32_t descriptor_id,
-        const UniformBindingElements& elements
-    )
+    UniformSetLayout Device::createUniformSetLayout( const UniformSetDesc& desc )
     {
-        return _pipeline_layout_manager.updateDescriptorSet( descriptor_id, elements );
-    }
-
-    void Device::freeDescriptor( int32_t descriptor_id )
-    {
-        _pipeline_layout_manager.freeDescriptorSet( descriptor_id );
-    }
-
-    const vk::DescriptorSet* Device::getDescriptorSet( int32_t descriptor_id ) const
-    {
-        return _pipeline_layout_manager.getDescriptorSet( descriptor_id );
-    }
-
-
-
-    
-    UniformSetLayout Device::getUniformSetLayout( const UniformLayoutDescription& descriptors, bool create )
-    {
-        return { _pipeline_layout_manager.getDescriptorSetLayoutID( descriptors, create ) };
-    }
-
-    UniformSetLayout Device::createUniformSetLayout( const UniformLayoutDescription& descriptors )
-    {
-        return { _pipeline_layout_manager.createDescriptorSetLayout( descriptors ) };
+        return { _pipeline_layout_manager.createUniformSetLayout( desc ) };
     }
 
     void Device::destroyUniformSetLayout( const UniformSetLayout& layout )
     {
         _pipeline_layout_manager.destroyDescriptorSetLayout( layout.id );
     }
+    
 
     const vk::DescriptorSetLayout* Device::getDescriptorSetLayout( int32_t layout )
     {
         return _pipeline_layout_manager.getDescriptorSetLayout( layout );
     }
 
+    //-------------------------------------------------------------------------
+    // Descriptor Set Lifecycle
+    //-------------------------------------------------------------------------
+
+    bool Device::updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )
+    {
+        return _pipeline_layout_manager.updateUniformSets( handles, resource_sets );
+    }
+
+    bool Device::updateUniformSet( int handle, const UniformSet& resource_set )
+    {
+        return _pipeline_layout_manager.updateUniformSet( handle, resource_set );
+    }
+
+    std::vector< int > Device::allocateUniformSets( const UniformSetsDesc& desc )
+    {
+        return _pipeline_layout_manager.allocateUniformSets( desc );
+    }
+
+    int Device::allocateUniformSet( const UniformSetDesc& desc )
+    {
+        return _pipeline_layout_manager.allocateUniformSet( desc );
+    }
+
+    void Device::freeUniformSet( int32_t descriptor_id )
+    {
+        _pipeline_layout_manager.freeUniformSet( descriptor_id );
+    }
+
+    const vk::DescriptorSet* Device::getDescriptorSet( int32_t descriptor_id ) const
+    {
+        return _pipeline_layout_manager.getDescriptorSet( descriptor_id );
+    }
 //    kege::UniformSetLayout Device::createDescriptorSetLayout( const std::vector< kege::UniformDesc >& bindings )
 //    {
 //        return _pipeline_layout_manager.createDescriptorSetLayout( bindings );

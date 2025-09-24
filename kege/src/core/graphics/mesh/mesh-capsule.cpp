@@ -178,5 +178,6 @@ namespace kege{
     {
         generateCapsuleVertices( height, radius, columns, rings, vertices );
         generateCapsuleIndices( columns, rings, indices );
+        drawcount = static_cast< int >( indices.size() );
     }
 }

@@ -63,12 +63,12 @@ namespace kege{
         struct Params
         {
             Scene* scene;
-            AssetSystem* assets;
+            AssetManager* assets;
             std::string id;
             std::string type;
         };
 
-        typedef std::function< Ref< Mesh >( AssetSystem* assets, Json json ) > MeshParserFunct;
+        typedef std::function< Ref< Mesh >( AssetManager* assets, Json json ) > MeshParserFunct;
         typedef std::map< std::string, MeshParserFunct > MeshParserFunctMap;
 
         typedef std::function< void( Params* params, Entity* entity, Json json ) > ResourceParserFunct;
@@ -88,7 +88,7 @@ namespace kege{
 
     private:
 
-        static void resourceManager( Params* params, Entity* entity, Json json );
+        static void getAssetManager( Params* params, Entity* entity, Json json );
         static void meta( Params* params, Entity* entity, Json json );
 
         static void cameraController( Params* params, Entity* entity, Json json );

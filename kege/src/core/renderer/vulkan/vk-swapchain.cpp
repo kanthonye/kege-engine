@@ -281,7 +281,7 @@ namespace kege::vk{
             color_image->desc.sample_count = SampleCount::Count1;
             color_image->desc.usage = desc.image_usage; // Store intended usage
             color_image->desc.memory_usage = MemoryUsage::GpuOnly; // Implicitly GPU only
-            color_image->desc.debug_name = "swapchain-image-" + std::to_string(i);
+            color_image->desc.name = "swapchain-image-" + std::to_string(i);
             color_image->current_layout = VK_IMAGE_LAYOUT_UNDEFINED; // Swapchain images start as undefined
         }
 
@@ -299,7 +299,7 @@ namespace kege::vk{
                 depth_info.sample_count = SampleCount::Count1;
                 depth_info.usage = ImageUsageFlags::DepthStencilAttachment;
                 depth_info.memory_usage = MemoryUsage::GpuOnly;
-                depth_info.debug_name = "swapchain-depth-image-" + std::to_string(i);
+                depth_info.name = "swapchain-depth-image-" + std::to_string(i);
                 _depth_images.push_back( _device->createImage( depth_info ) );
             }
         }

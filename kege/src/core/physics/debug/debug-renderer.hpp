@@ -8,9 +8,9 @@
 #ifndef debug_renderer_hpp
 #define debug_renderer_hpp
 
-#include "../../../core/graphics/render-graph/render-graph.hpp"
-#include "../../../core/system/system.hpp"
-#include "../../../core/engine/engine.hpp"
+#include "../../graphics/render/graph/render-graph.hpp"
+#include "../../system/system.hpp"
+#include "../../engine/engine.hpp"
 #include "draw-commands.hpp"
 
 namespace kege {
@@ -21,7 +21,7 @@ namespace kege {
 
         enum{ MAX_VERTEX_COUNT = 32768, MAX_INDICE_COUNT = 65536 };
 
-        void operator()( kege::RenderPassContext* context );
+        //void operator()( kege::RenderPassContext* context );
         void operator()( const MsgDrawRect& command );
         void operator()( const MsgDrawLine& command );
         void operator()( const MsgDrawAABB& command );

@@ -11,6 +11,7 @@ namespace kege{
     IcosahedronMesh::IcosahedronMesh( float radius )
     {
         generateIcosahedronMesh( radius, vertices, indices );
+        drawcount = static_cast< int >( indices.size() );
     }
 
     void generateIcosahedronMesh( float radius, std::vector<Vertex>& out_vertices, std::vector<uint32_t>& out_indices )

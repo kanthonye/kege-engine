@@ -9,22 +9,22 @@
 
 namespace kege {
 
-    void DebugLineRenderSystem::operator()( kege::RenderPassContext* context )
-    {
-        kege::PipelineHandle pipeline = context->getGraphics()->getShaderPipelineManager()->get( "line-shader" );
-        if ( !pipeline ) return;
-
-        ShaderResource camera_descriptor;
-        if ( !pipeline ) return;
-
-        CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
-        encoder->bindGraphicsPipeline( pipeline );
-        encoder->bindShaderResource( camera_descriptor, false );
-        encoder->bindVertexBuffers( 0, { _vbo }, { 0 } );
-        encoder->bindIndexBuffer( _ibo, 0, false );
-        encoder->drawIndexed( _icount, 1, 0, 0, 0 );
-        reset();
-    }
+//    void DebugLineRenderSystem::operator()( kege::RenderPassContext* context )
+//    {
+//TODO:        kege::PipelineHandle pipeline = context->getGraphics()->getShaderPipelineManager()->get( "line-shader" );
+//        if ( !pipeline ) return;
+//
+//        ShaderResource camera_descriptor;
+//        if ( !pipeline ) return;
+//
+//        CommandEncoder* encoder = context->getCommandBuffer()->createCommandEncoder();
+//        encoder->bindGraphicsPipeline( pipeline );
+//        encoder->bindShaderResource( camera_descriptor );
+//        encoder->bindVertexBuffers( 0, { _vbo }, { 0 } );
+//        encoder->bindIndexBuffer( _ibo, 0, false );
+//        encoder->drawIndexed( _icount, 1, 0, 0, 0 );
+//        reset();
+//    }
 
     void DebugLineRenderSystem::operator()( const MsgDrawRect& command )
     {
@@ -184,7 +184,7 @@ namespace kege {
 
     bool DebugLineRenderSystem::initialize()
     {
-        Communication::add< kege::RenderPassContext*, DebugLineRenderSystem>( this );
+        //Communication::add< kege::RenderPassContext*, DebugLineRenderSystem>( this );
         Communication::add< const MsgDrawRect&, DebugLineRenderSystem >( this );
         Communication::add< const MsgDrawLine&, DebugLineRenderSystem >( this );
         Communication::add< const MsgDrawAABB&, DebugLineRenderSystem >( this );
@@ -213,7 +213,7 @@ namespace kege {
 
     void DebugLineRenderSystem::shutdown()
     {
-        Communication::remove< kege::RenderPassContext*, DebugLineRenderSystem >( this );
+        //Communication::remove< kege::RenderPassContext*, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawRect&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawLine&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawAABB&, DebugLineRenderSystem >( this );

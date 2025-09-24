@@ -304,25 +304,29 @@ namespace kege::vk{
 
     bool vk::CommandBuffer::bindShaderResource( const ShaderResource& resource )
     {
-        const DescriptorSet* set = _device->getDescriptorSet( *resource );
-        const DescriptorSetLayout* dsl = _device->getDescriptorSetLayout( set->layout_id );
-        const VkDescriptorSet sets[] = { set->set };
+        if( _current_pipeline_layout == nullptr ) return false;
 
-        if( dsl->resource_index < 0 )
+        for ( int i=0; i<resource->size(); ++i )
         {
-            KEGE_LOG_ERROR << "Invalid binding location "<< dsl->resource_index << " for descriptor set -> " << dsl->name << "" <<Log::nl;
-            return false;
-        }
+            const DescriptorSet* set = _device->getDescriptorSet( resource->at(i) );
+            const DescriptorSetLayout* dsl = _device->getDescriptorSetLayout( set->layout_id );
+            const VkDescriptorSet sets[] = { set->set };
 
-        if( _current_pipeline_layout != nullptr )
-        {
-            auto i = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
+            auto itr = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
+
+            if ( itr == _current_pipeline_layout->descriptor_set_index_map.end() )
+            {
+                Log::error << "DescriptorSet -> " << dsl->name
+                << " does not have an binding_locations binding_index associated with the currently bound pipeline."
+                << Log::nl;
+                return false;
+            }
             vkCmdBindDescriptorSets
             (
                 _handle,
                 _current_pipeline_bindpoint,
                 _current_pipeline_layout->layout,
-                i->second, 1, sets, 0, nullptr
+                itr->second, 1, sets, 0, nullptr
             );
         }
         return true;

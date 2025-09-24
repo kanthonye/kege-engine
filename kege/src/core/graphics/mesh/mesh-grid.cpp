@@ -57,6 +57,7 @@ namespace kege{
                 indices[ count++ ] = a;
             }
         }
+        drawcount = static_cast< int >( indices.size() );
     }
 
 }

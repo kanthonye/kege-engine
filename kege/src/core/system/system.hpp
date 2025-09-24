@@ -11,14 +11,15 @@
 #include "../memory/ref.hpp"
 #include "../utils/log.hpp"
 #include "../utils/communication.hpp"
+#include "../math/algebra/vectors.hpp"
+#include "../math/algebra/matrices.hpp"
+#include "../math/algebra/quaternion.hpp"
+#include "../math/algebra/transform.hpp"
+#include "../renderer/core/graphics.hpp"
+#include "../input/input-context-manager.hpp"
+#include "../graphics/render/graph/render-graph.hpp"
+
 #include "settings.hpp"
-#include "../../../src/core/math/algebra/vectors.hpp"
-#include "../../../src/core/math/algebra/matrices.hpp"
-#include "../../../src/core/math/algebra/quaternion.hpp"
-#include "../../../src/core/math/algebra/transform.hpp"
-#include "../../../src/core/renderer/core/graphics.hpp"
-#include "../../../src/core/graphics/render-graph/render-graph.hpp"
-#include "../../../src/core/input/input-context-manager.hpp"
 
 namespace kege{
 

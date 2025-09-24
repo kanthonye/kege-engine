@@ -35,7 +35,7 @@ namespace kege{
         void addModule( kege::Module* module );
 
 
-        kege::AssetSystem& assetSystem();
+        kege::AssetManager& getAssetManager();
 
         kege::RenderManagerModule& renderManager();
         kege::CoreRenderGraph& renderGraph();
@@ -79,7 +79,7 @@ namespace kege{
         kege::VirtualDirectoryModule _vfs;
         kege::SceneManager _scene_manager;
         kege::RenderManagerModule _render_manager;
-        kege::AssetSystem _asset_system;
+        kege::AssetManager _asset_system;
 
         std::vector< kege::Module* > _modules;
 

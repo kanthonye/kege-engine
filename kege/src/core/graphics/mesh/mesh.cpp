@@ -72,10 +72,9 @@ namespace kege{
     {
         if ( graphics )
         {
-            for ( InstanceBuffer& instance : buffers )
+            for ( InstanceBuffer& buffer : buffers )
             {
-                graphics->destroyBuffer( instance.buffer );
-                graphics->freeShaderResource( 1, &instance.shader_resource );
+                graphics->destroyBuffer( buffer.buffer );
             }
             buffers.clear();
             graphics = nullptr;
@@ -114,6 +113,13 @@ namespace kege{
 
 
 
+
+//    void MeshPrimitive::upload( Graphics* graphics )
+//    {}
+//
+//    void MeshPrimitive::unload( Graphics* graphics )
+//    {}
+//    
     MeshPrimitive::MeshPrimitive
     (
         const std::vector< Vertex >& vertices,
@@ -131,10 +137,6 @@ namespace kege{
 
     MeshPrimitive::~MeshPrimitive()
     {
-        if ( this->graphics )
-        {
-            unload( this->graphics );
-        }
         vertices.clear();
         indices.clear();
     }
@@ -147,10 +149,10 @@ namespace kege{
     {
         if ( vertex_buffer ) graphics->destroyBuffer( vertex_buffer );
         if ( index_buffer ) graphics->destroyBuffer( index_buffer );
-        this->graphics = graphics;
+        //this->graphics = graphics;
     }
 
-    void MeshPrimitive::upload()
+    void MeshPrimitive::upload( kege::Graphics* graphics )
     {
         vertex_buffer = graphics->createBuffer
         ({
@@ -174,6 +176,20 @@ namespace kege{
 
 
 
+    void MeshSource::upload( Graphics* graphics )
+    {
+        if (primative)
+        {
+            primative->upload( graphics );
+        }
+    }
+    void MeshSource::unload( Graphics* graphics )
+    {
+        if (primative)
+        {
+            primative->unload( graphics );
+        }
+    }
     MeshSource::MeshSource
     (
         Ref< MeshPrimitive > primative,
@@ -197,7 +213,6 @@ namespace kege{
     ,   first_instance( 0 )
     ,   first_index( 0 )
     ,   index_count( 0 )
-    ,   material_index( -1 )
     {}
 
 

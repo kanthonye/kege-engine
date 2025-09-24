@@ -798,7 +798,7 @@
 //            return {int( i->second )};
 //        }
 //
-//        std::string debug_name;
+//        std::string name;
 //        
 //        /**
 //         * @brief Create a vector of VkDescriptorSetLayoutBinding from the bindings.
@@ -815,7 +815,7 @@
 //            dslb.stageFlags = convertShaderStageMask( binding.stage_flags );
 //            vk_bindings.push_back( dslb );
 //
-//            debug_name += (debug_name.empty()) ? binding.name : "-" + binding.name;
+//            name += (name.empty()) ? binding.name : "-" + binding.name;
 //        }
 //
 //        /**
@@ -841,9 +841,9 @@
 //            return { -1 };
 //        }
 //
-//        if ( _instance->isValidationEnabled() && !debug_name.empty() )
+//        if ( _instance->isValidationEnabled() && !name.empty() )
 //        {
-//            _device->debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debug_name.c_str() );
+//            _device->debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, name.c_str() );
 //        }
 //
 //        // ... Store handle ...
@@ -882,7 +882,7 @@
 //         * @brief Assign the descriptor set layout its assigned debug name.
 //         * This is used for debugging purposes and can be set to an empty string if not needed.
 //         */
-//        dsl->name = debug_name;
+//        dsl->name = name;
 //
 //        /**
 //         * @brief Assign the descriptor set layout its id.
@@ -1029,9 +1029,9 @@
 //            return {-1};
 //        }
 //
-//        if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
+//        if ( _instance->isValidationEnabled() && !desc.name.empty() )
 //        {
-//            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+//            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, desc.name.c_str() );
 //        }
 //
 //        /**

@@ -11,17 +11,47 @@
 #include <cstdint>
 #include "../../memory/ref.hpp"
 #include "../../renderer/core/graphics.hpp"
-#include "../render-graph/render-pass.hpp"
+#include "../render/graph/render-pass.hpp"
 
 namespace kege{
 
     struct MaterialSource : public kege::RefCounter
     {
-        std::vector< ShaderResource > descriptors;
+        MaterialSource
+        (
+            const ShaderPipeline& p,
+            bool receive_shadows,
+            bool casts_shadows,
+            std::vector< ShaderResource > resources,
+            std::vector< RenderPassType > pass
+        )
+        :   pipeline(p)
+        ,   receive_shadows( receive_shadows )
+        ,   casts_shadows( casts_shadows )
+        ,   resources( resources )
+        ,   pass( pass )
+        {}
+
+        MaterialSource
+        (
+            const ShaderPipeline& p,
+            bool receive_shadows,
+            bool casts_shadows,
+            std::vector< RenderPassType > pass
+        )
+        :   pipeline(p)
+        ,   receive_shadows( receive_shadows )
+        ,   casts_shadows( casts_shadows )
+        ,   pass( pass )
+        {}
+
+        MaterialSource(){}
+
+        std::vector< ShaderResource > resources;
         std::vector< RenderPassType > pass;
 
-        PipelineHandle pipeline;
-        
+        ShaderPipeline pipeline;
+
         bool receive_shadows = true;
         bool casts_shadows = true;
     };
@@ -29,6 +59,9 @@ namespace kege{
 
     struct Material : public kege::RefCounter
     {
+        Material( const std::vector< Ref< MaterialSource > >& s ): sources(s) {}
+        Material(){}
+
         std::vector< Ref< MaterialSource > > sources;
     };
     

@@ -20,7 +20,7 @@ namespace kege::vk{
         return _pipeline_layouts.get( pipeline_layout_id );
     }
 
-    int32_t PipelineLayoutManager::createPipelineLayout( const kege::PipelineLayoutDesc& desc )
+    int32_t PipelineLayoutManager::createPipelineLayout( const char* name, const UniformSetsDesc& layouts, const std::vector< PushConstantInfo >& push_constants )
     {
         if ( _device == VK_NULL_HANDLE ) return -1;
 
@@ -29,19 +29,22 @@ namespace kege::vk{
         {
             std::lock_guard<std::mutex> lock(_resource_mutex); // Assuming layouts might be shared/cached
             pipeline_layout = _pipeline_layouts.get( pipeline_layout_id );
+            pipeline_layout->name = name;
         }
 
         //pipeline_layout->descriptor_set_layouts.reserve( desc.descriptor_set_layouts.size() );
 
         int binding_index = 0;
         std::vector< VkDescriptorSetLayout > vk_descriptor_set_layouts;
-        for (const auto& descriptor_set_layout : desc.descriptor_set_layouts)
+        vk_descriptor_set_layouts.reserve( layouts.size() );
+        for (const auto& layout : layouts)
         {
             /**
              * @brief Get the descriptor set layout from the cache.
              * If the descriptor set layout is not found, log an error and return an invalid handle
              */
-            vk::DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor_set_layout.id );
+            int layout_id = createUniformSetLayout( layout );
+            const vk::DescriptorSetLayout* dsl = getDescriptorSetLayout( layout_id );
             if ( dsl == nullptr )
             {
                 KEGE_LOG_ERROR << "Invalid kege::UniformSetLayout provided!";
@@ -68,14 +71,14 @@ namespace kege::vk{
          * This is used to specify the push constants that can be used in the pipeline.
          */
         std::vector<VkPushConstantRange> push_constant_ranges;
-        push_constant_ranges.reserve(desc.push_constant_ranges.size());
-        for (const auto& range : desc.push_constant_ranges)
+        push_constant_ranges.reserve( push_constants.size() );
+        for ( const auto& range : push_constants )
         {
-            VkPushConstantRange vkRange = {};
-            vkRange.stageFlags = vk::convertShaderStageMask(range.stage_flags);
-            vkRange.offset = range.offset;
-            vkRange.size = range.size;
-            push_constant_ranges.push_back(vkRange);
+            VkPushConstantRange constant = {};
+            constant.stageFlags = vk::convertShaderStageMask( range.stages );
+            constant.offset = range.offset;
+            constant.size = range.size;
+            push_constant_ranges.push_back( constant );
         }
 
         /**
@@ -100,9 +103,9 @@ namespace kege::vk{
             return -1;
         }
 
-        if ( _instance->isValidationEnabled() && !desc.debug_name.empty() )
+        if ( _instance->isValidationEnabled() && name != nullptr )
         {
-            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, desc.debug_name.c_str() );
+            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, name );
         }
 
         return pipeline_layout_id;
@@ -126,11 +129,7 @@ namespace kege::vk{
     // Descriptor Set Layout Lifecycle
     //-------------------------------------------------------------------------
 
-    int32_t PipelineLayoutManager::getDescriptorSetLayoutID
-    (
-        const UniformSetDesc& descriptors,
-        bool create
-    )
+    int32_t PipelineLayoutManager::getDescriptorSetLayoutID( const UniformSetDesc& descriptors, bool create )
     {
         auto i = _descriptor_set_layout_indexmap.find( descriptors );
         if ( i != _descriptor_set_layout_indexmap.end() )
@@ -140,15 +139,18 @@ namespace kege::vk{
 
         if ( create )
         {
-            return createDescriptorSetLayout( descriptors );
+            return createUniformSetLayout( descriptors );
         }
         return -1;
     }
 
-    int32_t PipelineLayoutManager::createDescriptorSetLayout
-    (
-        const UniformSetDesc& descriptors
-    )
+    //TODO: createUniformSetLayouts( const UniformSetsDesc& descriptors )
+    std::vector< int > PipelineLayoutManager::createUniformSetLayouts( const UniformSetsDesc& descriptors )
+    {
+        return {};
+    }
+    
+    int32_t PipelineLayoutManager::createUniformSetLayout( const UniformSetDesc& descriptors )
     {
         auto i = _descriptor_set_layout_indexmap.find( descriptors );
         if ( i != _descriptor_set_layout_indexmap.end() )
@@ -156,14 +158,14 @@ namespace kege::vk{
             return i->second;
         }
 
-        std::string debug_name;
+        std::string name;
 
         /**
          * @brief Create a vector of VkDescriptorSetLayoutBinding from the bindings.
          * This is used to create the VkDescriptorSetLayout handle.
          * Each binding corresponds to a resource in the shader and its properties.
          */
-        std::vector< VkDescriptorSetLayoutBinding > vk_bindings;
+        std::vector< VkDescriptorSetLayoutBinding > bindings;
         for ( const kege::UniformDesc& desc : descriptors )
         {
             VkDescriptorSetLayoutBinding dslb = {};
@@ -171,9 +173,9 @@ namespace kege::vk{
             dslb.descriptorCount = desc.count;
             dslb.descriptorType = vk::convertDescriptorType( desc.descriptor_type );
             dslb.stageFlags = vk::convertShaderStageMask( desc.stage_flags );
-            vk_bindings.push_back( dslb );
+            bindings.push_back( dslb );
 
-            debug_name += (debug_name.empty()) ? desc.name : "-" + desc.name;
+            name += (name.empty()) ? desc.name : "-" + desc.name;
         }
 
         /**
@@ -184,7 +186,7 @@ namespace kege::vk{
         VkDescriptorSetLayoutCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         create_info.bindingCount = static_cast<int>( descriptors.size() );
-        create_info.pBindings = vk_bindings.data();
+        create_info.pBindings = bindings.data();
 
         /**
          * @brief Create the VkDescriptorSetLayout.
@@ -198,9 +200,9 @@ namespace kege::vk{
             return -1;
         }
 
-        if ( _instance->isValidationEnabled() && !debug_name.empty() )
+        if ( _instance->isValidationEnabled() && !name.empty() )
         {
-            _device->debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, debug_name.c_str() );
+            _device->debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, name.c_str() );
         }
 
         // ... Store handle ...
@@ -219,6 +221,8 @@ namespace kege::vk{
          * This is useful for caching and reusing descriptor set layouts.
          */
         _descriptor_set_layout_indexmap[ descriptors ] = id;
+
+        dsl->bindings = bindings;
 
         /**
          * @brief Assign a binding location to the descriptor set layout.
@@ -241,7 +245,7 @@ namespace kege::vk{
          * @brief Assign the descriptor set layout its assigned debug name.
          * This is used for debugging purposes and can be set to an empty string if not needed.
          */
-        dsl->name = debug_name;
+        dsl->name = name;
 
         /**
          * @brief Assign the descriptor set layout its id.
@@ -444,8 +448,8 @@ namespace kege::vk{
         int layout_id = getDescriptorSetLayoutID( desc );
         if ( !allocateDescriptors( layout_id, 1, &handle ) )
         {
-            kege::Log::error << "fail to create shader resource";
-            freeDescriptorSet( handle );
+            kege::Log::error << "fail to create shader resource -> " <<desc[0].name <<kege::Log::nl;
+            freeUniformSet( handle );
             return -1;
         }
         return handle;
@@ -559,7 +563,7 @@ namespace kege::vk{
         return true;
     }
 
-    void PipelineLayoutManager::freeDescriptorSet( int32_t descriptor_id )
+    void PipelineLayoutManager::freeUniformSet( int32_t descriptor_id )
     {
         if ( _device == VK_NULL_HANDLE || descriptor_id == 0) return;
         std::lock_guard<std::mutex> lock(_resource_mutex);

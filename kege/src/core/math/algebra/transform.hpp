@@ -106,6 +106,13 @@ namespace kege
         };
     }
 
+    struct ModelMatrices
+    {
+        kege::mat44 transform;
+        kege::mat44 rotation;
+    };
+    ModelMatrices buildModelMatrice( const kege::vec3& position, const kege::quat& orientation, const kege::vec3& scale );
+
     template< typename T > inline std::ostream& operator <<(std::ostream& os, const Transf< T >& t )
     {
         os << "{\n";

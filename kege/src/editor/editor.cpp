@@ -16,7 +16,7 @@ namespace kege{
         _engine.renderGraph().add();
         _engine.renderManager().add();
         _engine.input().add();
-//        _engine.ecs().add();
+        //_engine.ecs().add();
         _engine.scene().add();
 
         if( !_engine.initialize() )
@@ -28,7 +28,7 @@ namespace kege{
         // alert systems of the scene change
 
         kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
-        PipelineHandle pipeline = PipelineLoader::load( _engine.graphics().get(), shader_file.c_str() );
+        ShaderPipeline pipeline = _engine.graphics()->getShaderPipelineManager()->load( shader_file.c_str() );
         if( !pipeline )
         {
             KEGE_LOG_ERROR << "Failed to load pipeline -> " << shader_file << Log::nl;
@@ -46,12 +46,17 @@ namespace kege{
             return false;
         }
 
-        if ( !_viewer.initialize( _engine.graphics().get(), pipeline, font ) )
+        ImageInfo scene_image_info = ImageInfo
+        {
+            .image = *_engine.renderGraph()->fetchImage( "scene_color" ),
+            .layout = ImageLayout::ShaderReadOnly,
+            .sampler = *_engine.renderGraph()->fetchSampler( "sampler-nearest-norep" )
+        };
+
+        if ( !_viewer.initialize( _engine.graphics().get(), pipeline, font, scene_image_info ) )
         {
             return false;
         }
-
-        Communication::add< kege::RenderPassContext*, Editor >( this );
 
         if( !_layout.loadStyles( kege::vfs( "root/src/editor/ui-elements/style.json" ).c_str() ) )
         {
@@ -61,7 +66,8 @@ namespace kege{
         _layout.setFont( font );
         _layout.resize( 200 );
         
-        main_panel = _layout.make({
+        main_panel = _layout.make
+        ({
             .mouseover = false,
             .style = _layout.getStyleByName( "main")
         });
@@ -70,28 +76,12 @@ namespace kege{
         _viewport_panel.init( &_engine, _layout );
         _navbar_panel.init( &_engine, _layout );
 
-        SamplerHandle sampler = *_engine.renderGraph()->getPhysicalSampler( "sampler-nearest-norep" );
-        _viewer.setUiImages
-        ({
-            ImageInfo
-            {
-                .image = _viewer.getDefaultTexture(),
-                .sampler = sampler,
-                .layout = ImageLayout::ShaderReadOnly
-            },
-            ImageInfo
-            {
-                .image = _engine.renderGraph()->getPhysicalImages( "scene_color" )->at(0),
-                .sampler = sampler,
-                .layout = ImageLayout::ShaderReadOnly
-            }
-        });
         return true;
     }
 
     void Editor::shutdown()
     {
-        _viewer.shutdow();
+        _viewer.shutdown();
         _engine.shutdown();
     }
 
@@ -102,46 +92,24 @@ namespace kege{
         {
             _engine.tick();
             _engine.input()->updateCurrentInputs();
-
             _input.processInputs( _engine.input()->getCurrentInputs() );
-
-            _layout.begin( &_input );
-            _layout.push( main_panel );
-            {
-                _navbar_panel.put( _layout );
-
-                _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "content" ) }) );
-                {
-                    _viewport_panel.put( _layout );
-
-                    _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "side-panel" ) }) );
-                    {
-                        _hierarchy_panel.put( _layout );
-
-                        _layout.push( _layout.make({ .style = _layout.getStyleByName( "inspector-panel" ) }) );
-                        {
-                            _inspector_panel.put( _layout );
-                        }
-                    }
-                    _layout.pop();
-                }
-                _layout.pop();
-            }
-            _layout.pop();
-            _layout.end();
-
             Communication::broadcast< const MappedInputs& >( _engine.input()->getMappedInputs() );
+
+            buildLayout();
 
             // 4. Step engine/game systems
             if ( !_paused )
             {
                 _engine.scene().update( _engine.dms() );
             }
-            _engine.scene()._entity_systems->render(0);
+            _engine.scene().render(0);
+
 
             if ( 0 <= _engine.graphics()->beginFrame() )
             {
-                _engine.renderManager()->execute( 0.f );
+                _engine.renderGraph()->execute( *_engine.renderManager().getModule() );
+                _engine.renderManager()->clear();
+                
                 if ( !_engine.graphics()->endFrame() )
                 {
                     KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;
@@ -171,22 +139,34 @@ namespace kege{
         return 0;
     }
 
-    void Editor::buildEditorPanels()
+    void Editor::buildLayout()
     {
-    }
-
-    void Editor::operator()( kege::RenderPassContext* context )
-    {
-        if( context->name() != "final-pass" )
+        _layout.begin( &_input );
+        _layout.push( main_panel );
         {
-            return;
+            _navbar_panel.put( _layout );
+
+            _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "content" ) }) );
+            {
+                _viewport_panel.put( _layout );
+
+                _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "side-panel" ) }) );
+                {
+                    _hierarchy_panel.put( _layout );
+
+                    _layout.push( _layout.make({ .style = _layout.getStyleByName( "inspector-panel" ) }) );
+                    {
+                        _inspector_panel.put( _layout );
+                    }
+                }
+                _layout.pop();
+            }
+            _layout.pop();
         }
-
-        kege::CommandEncoder* encoder = context->getCommandEncoder();
-
-        _viewer.begin( encoder );
-        _viewer.draw( _layout, 1, _layout[1]->rect );
-        _viewer.end();
+        _layout.pop();
+        _layout.end();
+        
+        _viewer.collectVisibleWidgets( _engine.renderManager().getModule(), _layout );
     }
 
     Editor::Editor()

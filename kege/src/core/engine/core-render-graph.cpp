@@ -23,7 +23,7 @@ namespace kege{
         }
 
         kege::string shader_file = kege::vfs( "graphics-shaders/copy/copy-color-depth.json" );
-        if( !_engine->graphics()->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
+        if( !_engine->graphics()->getShaderPipelineManager()->load( shader_file.c_str() ) )
         {
             kege::Log::error << "( LOADING_FAILED ) -> graphics-shaders/copy/copy-color-depth.json" << Log::nl;
             return false;
@@ -39,42 +39,65 @@ namespace kege{
 
         // ------- Setup Image Sampler Resources -------
 
-        kege::SamplerDesc desc = {};
-        desc.mag_filter = kege::Filter::Nearest;
-        desc.min_filter = kege::Filter::Nearest;
-        desc.mipmap_mode = kege::MipmapMode::Nearest;
-        desc.address_mode_u = kege::AddressMode::ClampToEdge;
-        desc.address_mode_v = kege::AddressMode::ClampToEdge;
-        desc.address_mode_w = kege::AddressMode::ClampToEdge;
-        _module->defineSampler( "sampler-nearest-norep", desc );
+        _module->defnSampler
+        ({
+            .name =  "sampler-nearest-norep",
+            .desc = kege::SamplerDesc
+            {
+                .mag_filter = kege::Filter::Nearest,
+                .min_filter = kege::Filter::Nearest,
+                .mipmap_mode = kege::MipmapMode::Nearest,
+                .address_mode_u = kege::AddressMode::ClampToEdge,
+                .address_mode_v = kege::AddressMode::ClampToEdge,
+                .address_mode_w = kege::AddressMode::ClampToEdge,
+            }
+        });
 
-        desc.mag_filter = kege::Filter::Nearest;
-        desc.min_filter = kege::Filter::Nearest;
-        desc.mipmap_mode = kege::MipmapMode::Nearest;
-        desc.address_mode_u = kege::AddressMode::Repeat;
-        desc.address_mode_v = kege::AddressMode::Repeat;
-        desc.address_mode_w = kege::AddressMode::Repeat;
-        _module->defineSampler( "sampler-nearest-rep", desc );
+        _module->defnSampler
+        ({
+            .name =  "sampler-nearest-rep",
+            .desc = kege::SamplerDesc
+            {
+                .mag_filter = kege::Filter::Nearest,
+                .min_filter = kege::Filter::Nearest,
+                .mipmap_mode = kege::MipmapMode::Nearest,
+                .address_mode_u = kege::AddressMode::Repeat,
+                .address_mode_v = kege::AddressMode::Repeat,
+                .address_mode_w = kege::AddressMode::Repeat,
+            }
+        });
 
-        desc.mag_filter = kege::Filter::Linear;
-        desc.min_filter = kege::Filter::Linear;
-        desc.mipmap_mode = kege::MipmapMode::Linear;
-        desc.address_mode_u = kege::AddressMode::ClampToEdge;
-        desc.address_mode_v = kege::AddressMode::ClampToEdge;
-        desc.address_mode_w = kege::AddressMode::ClampToEdge;
-        _module->defineSampler( "sampler-linear-norep", desc );
+        _module->defnSampler
+        ({
+            .name =  "sampler-linear-rep",
+            .desc = kege::SamplerDesc
+            {
+                .mag_filter = kege::Filter::Linear,
+                .min_filter = kege::Filter::Linear,
+                .mipmap_mode = kege::MipmapMode::Nearest,
+                .address_mode_u = kege::AddressMode::Repeat,
+                .address_mode_v = kege::AddressMode::Repeat,
+                .address_mode_w = kege::AddressMode::Repeat,
+            }
+        });
 
-        desc.mag_filter = kege::Filter::Linear;
-        desc.min_filter = kege::Filter::Linear;
-        desc.mipmap_mode = kege::MipmapMode::Linear;
-        desc.address_mode_u = kege::AddressMode::Repeat;
-        desc.address_mode_v = kege::AddressMode::Repeat;
-        desc.address_mode_w = kege::AddressMode::Repeat;
-        _module->defineSampler( "sampler-linear-rep", desc );
+        _module->defnSampler
+        ({
+            .name =  "sampler-linear-norep",
+            .desc = kege::SamplerDesc
+            {
+                .mag_filter = kege::Filter::Linear,
+                .min_filter = kege::Filter::Linear,
+                .mipmap_mode = kege::MipmapMode::Nearest,
+                .address_mode_u = kege::AddressMode::ClampToEdge,
+                .address_mode_v = kege::AddressMode::ClampToEdge,
+                .address_mode_w = kege::AddressMode::ClampToEdge,
+            }
+        });
 
         // ------- Setup Swapchain Render Targets -------
 
-        _module->defineImage
+        _module->defnImage
         ({
             .name = "swapchain_color_output",
             .frames_in_flight = graphics->getSwapchainImageCount(),
@@ -88,7 +111,7 @@ namespace kege{
             },
             .physical_handle = graphics->getSwapchainColorImages(),
         });
-        _module->defineImage
+        _module->defnImage
         ({
             .name = "swapchain_depth_output",
             .frames_in_flight = graphics->getSwapchainImageCount(),
@@ -105,7 +128,7 @@ namespace kege{
 
         // ------- Scene Render Targets -------
 
-        _module->defineImage
+        _module->defnImage
         ({
             .name = "scene_color",
             .frames_in_flight = frames_in_flight,
@@ -118,11 +141,11 @@ namespace kege{
                 .type = kege::ImageType::Type2D
             },
         });
-        _module->defineImage
+        _module->defnImage
         ({
             .name = "scene_depth",
             .frames_in_flight = frames_in_flight,
-            .usages = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::ShaderResource,
+            .usages = kege::ImageUsageFlags::DepthStencilAttachment | kege::ImageUsageFlags::ShaderResource,
             {
                 .width  = graphics->getSwapchainExtent().width,
                 .height = graphics->getSwapchainExtent().height,
@@ -132,222 +155,227 @@ namespace kege{
             },
         });
 
-        // ------- Define Camera Buffer Resource -------
 
-        uint32_t buffer_size = 2 * sizeof( kege::mat44 ) + sizeof( kege::vec4 );
-        RgResrcHandle camera_buffer_resource = _module->defineBuffer
+        _module->defnShaderResource
         ({
-            .frames_in_flight = frames_in_flight,
-            .name = "camera-buffer",
-            .info =
+            RgShaderResrcDefn
             {
-                .size = buffer_size,
-                .data = nullptr,
-                .usage = BufferUsage::UniformBuffer,
-                .memory_usage = MemoryUsage::CpuToGpu,
+                .name = "scene-graphics",
+                .frames_in_flight = 1,
+                .bindings =
+                {
+                    kege::RgShaderResrcDesc
+                    {
+                        .count = 1,
+                        .binding = 0,
+                        .stages = ShaderStage::All,
+                        .type = kege::DescriptorType::CombinedImageSampler,
+                        .targets =
+                        {
+                            { .type = kege::RgResrcType::Image, .name = "scene_color", .sampler = "sampler-nearest-norep" }
+                        }
+                    },
+                    kege::RgShaderResrcDesc
+                    {
+                        .count = 1,
+                        .binding = 1,
+                        .stages = ShaderStage::All,
+                        .type = kege::DescriptorType::CombinedImageSampler,
+                        .targets =
+                        {
+                            { .type = kege::RgResrcType::Image, .name = "scene_depth", .sampler = "sampler-nearest-norep" }
+                        }
+                    },
+                }
             }
         });
 
-        // ------- Define Camera Shader Resource -------
 
-        kege::RgResrcHandle camera_descriptor_resource = _module->defineShaderResource
-        (
-            "camera-descriptor",
-            frames_in_flight,
+
+        _module->defnBuffer
+        ({
+            .name = "camera-buffer",
+            .frames_in_flight = frames_in_flight,
+            .info = BufferDesc
             {
-                kege::UniformDesc
-                {
-                    .name = "CameraBlock",
-                    .binding = 0,
-                    .count = 1,
-                    .descriptor_type = kege::DescriptorType::UniformBuffer,
-                    .stage_flags = kege::ShaderStage::Vertex
-                }
-            }
-        );
-        _module->updateShaderResource
-        (
-            camera_descriptor_resource,
-            std::vector< RgShaderResource >
+                .name = "camera-buffer",
+                .size =  2 * sizeof( mat44 ) + sizeof( vec4 ),
+                .memory_usage = MemoryUsage::CpuToGpu,
+                .usage = BufferUsage::UniformBuffer,
+                .data = nullptr,
+            },
+        });
+        _module->defnShaderResource
+        ({
+            RgShaderResrcDefn
             {
-                std::vector< kege::RgBufferInfo >
+                .name = "camera-buffer",
+                .frames_in_flight = frames_in_flight,
+                .bindings =
                 {
-                    kege::RgBufferInfo
+                    kege::RgShaderResrcDesc
                     {
-                        .offset = 0,
-                        .range = buffer_size,
-                        .buffer = camera_buffer_resource,
-                    }
+                        .count = 1,
+                        .binding = 0,
+                        .stages = ShaderStage::All,
+                        .type = kege::DescriptorType::UniformBuffer,
+                        .targets = {{ .type = kege::RgResrcType::Buffer, .name = "camera-buffer" }}
+                    },
                 }
             }
-        );
+        });
+
+        _module->defnBuffer
+        ({
+            .name = "light-buffer",
+            .frames_in_flight = frames_in_flight,
+            .info = BufferDesc
+            {
+                .name = "light-buffer",
+                .size =  100 * sizeof( Light ),
+                .memory_usage = MemoryUsage::CpuToGpu,
+                .usage = BufferUsage::UniformBuffer,
+                .data = nullptr,
+            },
+        });
+        _module->defnShaderResource
+        ({
+            RgShaderResrcDefn
+            {
+                .name = "light-buffer",
+                .frames_in_flight = frames_in_flight,
+                .bindings =
+                {
+                    kege::RgShaderResrcDesc
+                    {
+                        .count = 1,
+                        .binding = 0,
+                        .stages = ShaderStage::All,
+                        .type = kege::DescriptorType::UniformBuffer,
+                        .targets = {{ .type = kege::RgResrcType::Buffer, .name = "light-buffer" }}
+                    },
+                }
+            }
+        });
+
+
+
+
+
+
+        _module->defnShaderResource
+        ({
+            RgShaderResrcDefn
+            {
+                .name = "scene-color",
+                .frames_in_flight = 1,
+                .bindings =
+                {
+                    kege::RgShaderResrcDesc
+                    {
+                        .count = 1,
+                        .binding = 0,
+                        .stages = ShaderStage::Fragment,
+                        .type = kege::DescriptorType::CombinedImageSampler,
+                        .targets = {{ .type = kege::RgResrcType::Image, .name = "scene_color" }}
+                    },
+                }
+            }
+        });
 
         // ------- Add Render Passes -------
-
-        _module->add
+        _module->addPass
         ({
-            .add_resources = []( kege::RenderGraph* graph )
+            .type = QueueType::Graphics,
+            .pass = RenderPassType::UI,
+            .name = "final-pass",
+            .reads =
             {
-                uint32_t frames_in_flight = 2;
-
-                kege::RgResrcHandle shader_resource = graph->defineShaderResource
-                (
-                    "scene-frame-descriptor", frames_in_flight,
-                    {
-                        kege::UniformDesc
-                        {
-                            .name = "src_color",
-                            .binding = 0,
-                            .count = 1,
-                            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                            .stage_flags = kege::ShaderStage::Fragment
-                        },
-                        kege::UniformDesc
-                        {
-                            .name = "src_depth",
-                            .binding = 1,
-                            .count = 1,
-                            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                            .stage_flags = kege::ShaderStage::Fragment
-                        }
-                    }
-                );
-                graph->updateShaderResource
-                (
-                    shader_resource,
-                    {
-                        kege::RgShaderResource
-                        {{
-                            kege::RgImageInfo
-                            {
-                                graph->getImageRgResrc( "scene_color" ),
-                                graph->getSamplerRgResrc( "sampler-nearest-norep" )
-                            }
-                        }},
-                        kege::RgShaderResource
-                        {{
-                            kege::RgImageInfo
-                            {
-                                graph->getImageRgResrc( "scene_depth" ),
-                                graph->getSamplerRgResrc( "sampler-nearest-norep" )
-                            }
-                        }},
-                    }
-                );
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene_color",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::ShaderRead,
+                    .stage = kege::PipelineStageFlag::FragmentShader,
+                },
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene_depth",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::ShaderRead,
+                    .stage = kege::PipelineStageFlag::FragmentShader,
+                },
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene-graphics",
+                    .type = kege::RgResrcType::ShaderResource,
+                    .access = kege::AccessFlags::ShaderRead,
+                    .stage = kege::PipelineStageFlag::FragmentShader,
+                },
             },
-
-            .add_passes = []( kege::RenderGraph* graph )
+            .writes =
             {
-                graph->addGraphicsPass
-                ({
-                    .pass = RenderPassType::ForwardOpaque,
-                    .name = "final-pass",
-                    .reads =
-                    {
-                        kege::RgReadResrcDesc
-                        {
-                            .name = "scene_color",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::ShaderRead,
-                            .stage = kege::PipelineStageFlag::FragmentShader,
-                            //.handle = graph->getImageIndex( "scene_color" )
-                        },
-                        kege::RgReadResrcDesc
-                        {
-                            .name = "scene_depth",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::ShaderRead,
-                            .stage = kege::PipelineStageFlag::FragmentShader,
-                            //.handle = graph->getImageIndex( "scene_depth" )
-                        }
-                    },
-                    .writes =
-                    {
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "swapchain_color_output",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::ColorAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } }
-                        },
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "swapchain_depth_output",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::FragmentShader,
-                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f } }
-                        }
-                    },
-                    .execute = [ graph ]( kege::RenderPassContext* context )
-                    {
-                        Communication::broadcast< kege::RenderPassContext* >( context );
-
-//                        kege::ShaderPipelineManager* pipelines = graph->getGraphics()->getShaderPipelineManager();
-//                        kege::PipelineHandle pipeline = pipelines->get( "copy-shader" );
-//                        if ( !pipeline )
-//                        {
-//                            KEGE_LOG_ERROR << "copy-shader not found." <<Log::nl;
-//                            return;
-//                        }
-//
-//                        kege::ShaderResource descriptor_set = context->getPhysicalDescriptorSet( "scene-frame-descriptor" );
-//                        if ( !descriptor_set )
-//                        {
-//                            KEGE_LOG_ERROR << "descriptor_set not found." <<Log::nl;
-//                            return;
-//                        }
-//
-//                        kege::CommandEncoder* encoder = context->getCommandEncoder();
-//                        encoder->bindGraphicsPipeline( pipeline );
-//                        encoder->bindShaderResource( descriptor_set );
-//                        encoder->draw( 4, 1, 0, 0 );
-                    }
-                });
-
-                graph->addGraphicsPass
-                ({
-                    "scene-output",
-                    .pass = RenderPassType::Geometry,
-                    .reads =
-                    {
-                    },
-                    .writes =
-                    {
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "scene_color",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::ColorAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                            .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
-                        },
-                        kege::RgWriteResrcDesc
-                        {
-                            .name = "scene_depth",
-                            .type = kege::RgResrcType::Image,
-                            .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-                            .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                            .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
-                        }
-                    },
-                    .execute = []( kege::RenderPassContext* context )
-                    {
-                        Communication::broadcast< kege::RenderPassContext* >( context );
-                    }
-                });
-            }
+                kege::RgWriteResrcDesc
+                {
+                    .name = "swapchain_color_output",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::ColorAttachmentWrite,
+                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                    .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } }
+                },
+                kege::RgWriteResrcDesc
+                {
+                    .name = "swapchain_depth_output",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::DepthStencilAttachmentWrite,
+                    .stage = kege::PipelineStageFlag::FragmentShader,
+                    .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f } }
+                }
+            },
         });
 
+
+        _module->addPass
+        ({
+            "scene-output",
+            .type = QueueType::Graphics,
+            .pass = RenderPassType::Geometry,
+            .reads =
+            {
+                kege::RgReadResrcDesc
+                {
+                    .name = "camera-buffer",
+                    .type = kege::RgResrcType::ShaderResource,
+                    .access = kege::AccessFlags::ShaderRead,
+                    .stage = kege::PipelineStageFlag::AllGraphics,
+                },
+            },
+            .writes =
+            {
+                kege::RgWriteResrcDesc
+                {
+                    .name = "scene_color",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::ColorAttachmentWrite,
+                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                    .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
+                },
+                kege::RgWriteResrcDesc
+                {
+                    .name = "scene_depth",
+                    .type = kege::RgResrcType::Image,
+                    .access = kege::AccessFlags::DepthStencilAttachmentWrite,
+                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                    .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
+                }
+            }
+        });
 
         if( !_module->compile() )
         {
             return false;
         }
 
-
-//        _module->addRenderDrfn
         return true;
     }
 
@@ -365,7 +393,6 @@ namespace kege{
         kege::Log::info << "CoreRenderGraph module added to engine" << Log::nl;
     }
 
-//    KEGE_REGISTER_SYSTEM( RenderGraphSystem, "render-graph" );
 }
 
 
@@ -397,6 +424,11 @@ namespace kege{
 
 
         return true;
+    }
+
+    kege::RenderManager * RenderManagerModule::getModule()
+    {
+        return _module.ref();
     }
 
     void RenderManagerModule::shutdown()

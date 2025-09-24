@@ -49,7 +49,7 @@ namespace kege::vk{
         /** @brief Native Vulkan pipeline layout handle */
         VkPipelineLayout layout = VK_NULL_HANDLE;
 
-        std::string debug_name;
+        std::string name;
     };
 
     /**
@@ -181,16 +181,7 @@ namespace kege::vk{
     {
     public:
 
-        /**
-         * @brief Create a pipeline layout
-         *
-         * Creates a VkPipelineLayout based on the provided descriptor set layouts
-         * and push constant ranges.
-         *
-         * @param desc Description of the pipeline layout to create
-         * @return Handle to the newly created pipeline layout
-         */
-        int32_t createPipelineLayout( const kege::PipelineLayoutDesc& desc );
+        int32_t createPipelineLayout( const char* name, const UniformSetsDesc& layouts, const std::vector< PushConstantInfo >& push_constants );
 
         /**
          * @brief Get a pipeline layout
@@ -218,6 +209,16 @@ namespace kege::vk{
         std::vector< int > createUniformSetLayouts( const UniformSetsDesc& description );
 
         /**
+         * @brief Create a descriptor set layout
+         *
+         * Creates a VkDescriptorSetLayout based on the provided bindings.
+         *
+         * @param description The bindings of the descriptor set layout to create
+         * @return Handle to the newly created descriptor set layout
+         */
+        int32_t createUniformSetLayout( const UniformSetDesc& description );
+
+        /**
          * @brief Get a descriptor-set-layout
          *
          * Get index of a descriptor-set-layout based on the provided descriptor set layout bindings.
@@ -227,16 +228,6 @@ namespace kege::vk{
          * @return Handle to the descriptor set layout
          */
         int32_t getDescriptorSetLayoutID( const UniformSetDesc& description, bool create = false );
-
-        /**
-         * @brief Create a descriptor set layout
-         *
-         * Creates a VkDescriptorSetLayout based on the provided bindings.
-         *
-         * @param description The bindings of the descriptor set layout to create
-         * @return Handle to the newly created descriptor set layout
-         */
-        int32_t createDescriptorSetLayout( const UniformSetDesc& description );
 
         /**
          * @brief Get a descriptor-set-layout
@@ -261,10 +252,34 @@ namespace kege::vk{
         // Descriptor Set Lifecycle
         //-------------------------------------------------------------------------
 
+        /**
+         * @brief Update multiple descriptor sets with new resource bindings.
+         * @param handles Vector of descriptor set handles to update.
+         * @param resource_sets Vector of resource sets containing the new bindings.
+         * @return True if all updates succeeded, false otherwise.
+         */
         bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets );
+
+        /**
+         * @brief Update a single descriptor set with new resource bindings.
+         * @param handle Handle of the descriptor set to update.
+         * @param resource_set Resource set containing the new bindings.
+         * @return True if the update succeeded, false otherwise.
+         */
         bool updateUniformSet( int handle, const UniformSet& resource_set );
 
+        /**
+         * @brief Allocate multiple descriptor sets from layouts.
+         * @param description Descriptions of the descriptor set layouts to allocate from.
+         * @return Vector of handles to the newly allocated descriptor sets.
+         */
         std::vector< int > allocateUniformSets( const UniformSetsDesc& description );
+        
+        /**
+         * @brief Allocate a single descriptor set from a layout.
+         * @param description Description of the descriptor set layout to allocate from.
+         * @return Handle to the newly allocated descriptor set.
+         */
         int allocateUniformSet( const UniformSetDesc& description );
 
         /**
@@ -290,7 +305,7 @@ namespace kege::vk{
          * @brief Free a descriptor set
          * @param descriptor_id Handle to the descriptor set to free
          */
-        void freeDescriptorSet( int32_t descriptor_id );
+        void freeUniformSet( int32_t descriptor_id );
 
         //-------------------------------------------------------------------------
         // SHutdown And Initialization

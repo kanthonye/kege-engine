@@ -31,6 +31,7 @@ namespace kege{
         void addSystem( const std::string& name );
         void update( double dms );
         void render( double dms );
+        void input( double dms );
         void onSceneChange();
         bool initialize();
         void shutdown();

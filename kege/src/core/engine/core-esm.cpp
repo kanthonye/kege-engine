@@ -35,7 +35,7 @@ namespace kege{
         _module->addSystem( "rigidbody-to-transform" );
 
         _module->addSystem( "terrain" );
-        _module->addSystem( "camera" );
+        _module->addSystem( "update-scene-camera" );
         _module->addSystem( "mesh-rendering" );
 
         //_module->addSystem( "entity-factory" );

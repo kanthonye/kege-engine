@@ -12,8 +12,8 @@ namespace kege{
 
     SceneModule::SceneModule( kege::Engine* engine )
     :   kege::Module( engine, "SceneModule" )
-    ,   _module( nullptr )
     ,   _scene_files({ "assets/scene/scene.json" })
+    ,   _module( nullptr )
     {}
 
     const kege::Scene* SceneModule::operator ->()const

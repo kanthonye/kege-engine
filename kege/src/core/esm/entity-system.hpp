@@ -31,9 +31,9 @@ namespace kege{
 
         EntitySystem( kege::Engine* engine, const std::string& name, uint32_t requirements );
 
-        virtual void input( const std::vector< Input >& inputs );
         virtual void update( double dms );
         virtual void render( double dms );
+        virtual void input( double dms );
 
         virtual bool initialize();
         virtual void shutdown();

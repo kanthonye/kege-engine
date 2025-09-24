@@ -24,6 +24,9 @@ namespace kege{
         void shutdown();
 
         MeshRenderingSystem( kege::Engine* engine );
+
+
+        Ref< Material > _default_material;
     };
     
 }

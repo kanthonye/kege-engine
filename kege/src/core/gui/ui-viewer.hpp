@@ -10,18 +10,69 @@
 
 #include "font.hpp"
 #include "ui-layout.hpp"
+#include "../graphics/mesh/mesh.hpp"
 
 namespace kege::ui{
+
+    class UIMeshSource : public kege::MeshSource
+    {
+    public:
+        
+        UIMeshSource( kege::Graphics* graphics, int _max_render_instances )
+        {
+            size_t size = _max_render_instances * sizeof( kege::ui::DrawElem );
+
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+            // create and setup the ui instance buffer shader resources
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+            instance_buffer_list = new kege::InstanceBufferList(nullptr, {});
+            kege::InstanceBuffer instance = kege::InstanceBuffer
+            {
+                .buffer = graphics->createBuffer
+                ({
+                    .size = size,
+                    .usage = kege::BufferUsage::StorageBuffer,
+                    .memory_usage = kege::MemoryUsage::CpuToGpu,
+                    .data = nullptr
+                }),
+                .shader_resource = graphics->allocateUniformSet(kege::UniformSetDesc{
+                    kege::UniformDesc
+                    {
+                        .descriptor_type = kege::DescriptorType::StorageBuffer,
+                        .stage_flags = kege::ShaderStage::Vertex,
+                        .name = "UIViewBuffer",
+                        .binding = 0,
+                        .count = 1,
+                    }
+                })
+            };
+            instance.shader_resource[0][0] = kege::UniformBinding
+            {
+                .binding = 0,
+                .uniform = kege::BufferBindings
+                {{
+                    .buffer = instance.buffer,
+                    .offset = 0,
+                    .range = size
+                }}
+            };
+            instance.shader_resource.update({});
+
+            instance_buffer_list = new kege::InstanceBufferList( graphics, { instance });
+
+            first_instance = 0;
+            first_index = 0;
+            index_count = 4;
+            instance_count = 0;
+            material_index = 0;
+        }
+    };
+
 
     class Viewer
     {
     public:
-
-        struct PushConstant
-        {
-            kege::mat44 projection;
-            kege::vec4 resolution;
-        };
 
         kege::vec2 drawText
         (
@@ -45,9 +96,11 @@ namespace kege::ui{
 
         void drawsort( ui::Layout& layout, int pid );
 
+        void collectVisibleWidgets( RenderManager* manager, ui::Layout& layout );
+
         /**
          */
-        void begin( kege::CommandEncoder* command );
+        void begin();
         void end();
 
         /**
@@ -69,45 +122,49 @@ namespace kege::ui{
          *
          * @return true if initialization is successful, false otherwise.
          */
-        bool initialize( Graphics* graphics, kege::PipelineHandle pipeline, kege::Font font );
-
-        /**
-         * Uninitializes the Core object, releasing any allocated resources.
-         */
-        void setUiImages( std::vector< kege::ImageInfo > images );
-
+        bool initialize( Graphics* graphics, kege::ShaderPipeline pipeline, kege::Font font, ImageInfo& scene_image_info );
 
         kege::ImageHandle getDefaultTexture();
 
         /**
          * Uninitializes the Core object, releasing any allocated resources.
          */
-        void shutdow();
+        void shutdown();
 
         void flush();
         
+        ~Viewer();
         Viewer();
 
     private:
 
+        ImageInfo _scene_image_info;
+
+        kege::Ref< MaterialSource > createMaterial();
+        kege::Ref< MeshSource > createMesh();
+
         std::vector< kege::ui::DrawElem > _drawbuffer;
-        uint32_t _count;
         kege::Font _font; // The current font used for rendering text.
 
         const int _max_render_instances;
 
-        BufferHandle   _indirect_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
-        ShaderResource _storage_buffer_resource[ kege::MAX_FRAMES_IN_FLIGHT ];
-        ShaderResource _ui_texture_shader_resource;
-        ShaderResource _font_shader_resource;
+        //BufferHandle   _indirect_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
+        //ShaderResource _storage_buffer_resource[ kege::MAX_FRAMES_IN_FLIGHT ];
+        //ShaderResource _ui_texture_shader_resource;
+        //ShaderResource _font_shader_resource;
         ImageHandle _default_texture;
-        kege::PipelineHandle _pipeline;
+        kege::ShaderPipeline _pipeline;
 
         kege::CommandEncoder* _encoder;
         Graphics* _graphics;
 
-        PushConstant _push_constant;
+        PushConstantBlock _push_constant;
         Extent2D _fbo_size;
+
+        std::vector< kege::Ref< MeshSource > > _meshes[2];
+        Ref< kege::MaterialSource > _material;
+        uint32_t _curr_mesh_index;
+        uint32_t _draw_count;
     };
 
 }

@@ -27,7 +27,7 @@ namespace kege{
 
         Params params;
         params.scene = scene.ref();
-        params.assets = &scene->getAssetSystem();
+        params.assets = &scene->getResourceManager();
 
         for (int i = 0; i < json.count(); ++i )
         {
@@ -43,7 +43,7 @@ namespace kege{
         return scene;
     }
 
-    void SceneLoader::resourceManager( Params* params, Entity* entity, Json json )
+    void SceneLoader::getAssetManager( Params* params, Entity* entity, Json json )
     {
         for (int i = 0; i < json.count(); ++i )
         {
@@ -606,7 +606,7 @@ namespace kege{
 
     void SceneLoader::sourceEffect( Params* params, Entity* entity, Json json )
     {
-        ParticleEffect* resource = params->assets->getAsset< ParticleEffect >( json[ "id" ].value() );
+        ParticleEffect* resource = params->assets->fetch< ParticleEffect >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< ParticleEffect >( *resource );
@@ -614,7 +614,7 @@ namespace kege{
     }
     void SceneLoader::sourceAtmosphere( Params* params, Entity* entity, Json json )
     {
-        Atmosphere* resource = params->assets->getAsset< Atmosphere >( json[ "id" ].value() );
+        Atmosphere* resource = params->assets->fetch< Atmosphere >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Atmosphere >( *resource );
@@ -622,7 +622,7 @@ namespace kege{
     }
     void SceneLoader::sourceTerrain( Params* params, Entity* entity, Json json )
     {
-//        Ref< ParticleEffect >* resource = assets->getAsset< Ref< Atmosphere > >( json[ "id" ].value() );
+//        Ref< ParticleEffect >* resource = assets->fetch< Ref< Atmosphere > >( json[ "id" ].value() );
 //        if ( resource )
 //        {
 //            entity->add< Ref< ParticleEffect > >( *resource );
@@ -630,7 +630,7 @@ namespace kege{
     }
     void SceneLoader::sourcePlanet( Params* params, Entity* entity, Json json )
     {
-//        Ref< ParticleEffect >* resource = assets->getAsset< Ref< ParticleEffect > >( json[ "id" ].value() );
+//        Ref< ParticleEffect >* resource = assets->fetch< Ref< ParticleEffect > >( json[ "id" ].value() );
 //        if ( resource )
 //        {
 //            entity->add< Ref< ParticleEffect > >( *resource );
@@ -638,7 +638,7 @@ namespace kege{
     }
     void SceneLoader::sourceLight( Params* params, Entity* entity, Json json )
     {
-        Ref< Light >* resource = params->assets->getAsset< Ref< Light > >( json[ "id" ].value() );
+        Ref< Light >* resource = params->assets->fetch< Ref< Light > >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Ref< Light > >( *resource );
@@ -646,7 +646,7 @@ namespace kege{
     }
     void SceneLoader::sourceTexture( Params* params, Entity* entity, Json json )
     {
-        Ref< Light >* resource = params->assets->getAsset< Ref< Light > >( json[ "id" ].value() );
+        Ref< Light >* resource = params->assets->fetch< Ref< Light > >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Ref< Light > >( *resource );
@@ -654,7 +654,7 @@ namespace kege{
     }
     void SceneLoader::sourceCamera( Params* params, Entity* entity, Json json )
     {
-        Ref< Projection >* resource = params->assets->getAsset< Ref< Projection > >( json[ "id" ].value() );
+        Ref< Projection >* resource = params->assets->fetch< Ref< Projection > >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Camera >({ .projection = (*resource).ref() });
@@ -662,7 +662,7 @@ namespace kege{
     }
     void SceneLoader::sourceCollider( Params* params, Entity* entity, Json json )
     {
-        Ref< Collider >* resource = params->assets->getAsset< Ref< Collider > >( json[ "id" ].value() );
+        Ref< Collider >* resource = params->assets->fetch< Ref< Collider > >( json[ "id" ].value() );
         if ( resource )
         {
             if ( !entity->has< Rigidbody >() )
@@ -674,7 +674,7 @@ namespace kege{
     }
     void SceneLoader::sourceMaterial( Params* params, Entity* entity, Json json )
     {
-        Ref< Material >* resource = params->assets->getAsset< Ref< Material > >( json[ "id" ].value() );
+        Ref< Material >* resource = params->assets->fetch< Ref< Material > >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Ref< Material > >( *resource );
@@ -682,7 +682,7 @@ namespace kege{
     }
     void SceneLoader::sourceSkeleton( Params* params, Entity* entity, Json json )
     {
-//        Ref< ParticleEffect >* resource = assets->getAsset< Ref< ParticleEffect > >( json[ "id" ].value() );
+//        Ref< ParticleEffect >* resource = assets->fetch< Ref< ParticleEffect > >( json[ "id" ].value() );
 //        if ( resource )
 //        {
 //            entity->add< Ref< ParticleEffect > >( *resource );
@@ -690,7 +690,7 @@ namespace kege{
     }
     void SceneLoader::sourceMesh( Params* params, Entity* entity, Json json )
     {
-        Ref< Mesh >* resource = params->assets->getAsset< Ref< Mesh > >( json[ "id" ].value() );
+        Ref< Mesh >* resource = params->assets->fetch< Ref< Mesh > >( json[ "id" ].value() );
         if ( resource )
         {
             entity->add< Ref< Mesh > >( *resource );
@@ -860,7 +860,7 @@ namespace kege{
             }
             else
             {
-                Ref< Collider >* res = params->assets->getAsset< Ref< Collider > >( params->id );
+                Ref< Collider >* res = params->assets->fetch< Ref< Collider > >( params->id );
                 if ( res )
                 {
                     collider = *res;
@@ -1187,14 +1187,14 @@ namespace kege{
         _resource_parsers[ "components" ] = components;
         _resource_parsers[ "entity" ] = entity;
 
-        _resource_parsers[ "entities" ] = resourceManager;
-        _resource_parsers[ "animations" ] = resourceManager;
-        _resource_parsers[ "materials" ] = resourceManager;
-        _resource_parsers[ "textures" ] = resourceManager;
-        _resource_parsers[ "effects" ] = resourceManager;
-        _resource_parsers[ "cameras" ] = resourceManager;
-        _resource_parsers[ "lights" ] = resourceManager;
-        _resource_parsers[ "meshs" ] = resourceManager;
+        _resource_parsers[ "entities" ] = getAssetManager;
+        _resource_parsers[ "animations" ] = getAssetManager;
+        _resource_parsers[ "materials" ] = getAssetManager;
+        _resource_parsers[ "textures" ] = getAssetManager;
+        _resource_parsers[ "effects" ] = getAssetManager;
+        _resource_parsers[ "cameras" ] = getAssetManager;
+        _resource_parsers[ "lights" ] = getAssetManager;
+        _resource_parsers[ "meshs" ] = getAssetManager;
         _resource_parsers[ "meta" ] = meta;
     }
 }

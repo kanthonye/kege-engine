@@ -37,7 +37,7 @@ namespace kege{
             .data = _cubemesh.face_vertices,
             .usage = BufferUsage::UniformBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
-            .debug_name = "terrain_cube_mesh_vertices"
+            .name = "terrain_cube_mesh_vertices"
         });
         
         _indices_uniform_buffer = _graphics->createBuffer
@@ -46,7 +46,7 @@ namespace kege{
             .data = cube_face_indices,
             .usage = BufferUsage::UniformBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
-            .debug_name = "terrain_cube_mesh_indices"
+            .name = "terrain_cube_mesh_indices"
         });
 
 //        _mesh_shader_resource = _graphics->allocateDescriptorSet
@@ -206,7 +206,7 @@ namespace kege{
                 .data = _draw_param_buffer,
                 .usage = BufferUsage::UniformBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .debug_name = "terrain_draw_buffer"
+                .name = "terrain_draw_buffer"
             });
 
             buffer.patch_buffer = _graphics->createBuffer
@@ -215,7 +215,7 @@ namespace kege{
                 .data = _patch_buffer,
                 .usage = BufferUsage::UniformBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .debug_name = "terrain_patch_buffer"
+                .name = "terrain_patch_buffer"
             });
 
 //            buffer.descriptor_set = _graphics->allocateDescriptorSet
@@ -260,7 +260,7 @@ namespace kege{
                     .data = _draw_param_buffer,
                     .usage = BufferUsage::UniformBuffer,
                     .memory_usage = MemoryUsage::CpuToGpu,
-                    .debug_name = "terrain_draw_buffer"
+                    .name = "terrain_draw_buffer"
                 });
 
                 buffer.patch_buffer = _graphics->createBuffer
@@ -269,7 +269,7 @@ namespace kege{
                     .data = _patch_buffer,
                     .usage = BufferUsage::UniformBuffer,
                     .memory_usage = MemoryUsage::CpuToGpu,
-                    .debug_name = "terrain_patch_buffer"
+                    .name = "terrain_patch_buffer"
                 });
 
 //                _graphics->updateDescriptorSets

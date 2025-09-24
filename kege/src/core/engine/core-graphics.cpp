@@ -48,7 +48,7 @@ namespace kege{
 
         kege::SwapchainDesc swapchain_create_info = {};
         swapchain_create_info.image_count = kege::MAX_FRAMES_IN_FLIGHT + 1;
-        swapchain_create_info.debug_name = "swapchain";
+        swapchain_create_info.name = "swapchain";
         swapchain_create_info.width = window->getWidth();
         swapchain_create_info.height = window->getHeight();
         swapchain_create_info.color_format = kege::Format::bgra_u8_norm;
@@ -63,19 +63,17 @@ namespace kege{
             kege::Log::error << "( INITIALIZATION_FAILED ) -> Graphics" << Log::nl;
             return false;
         }
-        //System::setGraphics( graphics );
 
-
-         kege::string shader_file = kege::vfs( "graphics-shaders/copy/copy-color-depth.json" );
-         if( !_module->getShaderPipelineManager()->load( "copy-shader", shader_file.c_str() ) )
-         {
-             return false;
-         }
-         shader_file = kege::vfs( "graphics-shaders/basic/shader.json" );
-         if( !_module->getShaderPipelineManager()->load( "basic-shader", shader_file.c_str() ) )
-         {
-             return false;
-         }
+//        kege::string shader_file = kege::vfs( "graphics-shaders/copy/copy-color-depth.json" );
+//        if( !_module->getShaderPipelineManager()->load( shader_file.c_str() ) )
+//        {
+//            return false;
+//        }
+        kege::string shader_file = kege::vfs( "graphics-shaders/basic/basic.json" );
+        if( !_module->getShaderPipelineManager()->load( shader_file.c_str() ) )
+        {
+            return false;
+        }
 
         return true;
     }

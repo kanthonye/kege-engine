@@ -87,6 +87,7 @@ namespace kege{
             20, 21, 22,
             22, 23, 20
         };
+        drawcount = static_cast< int >( indices.size() );
     }
     
 }

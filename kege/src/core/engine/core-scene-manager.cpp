@@ -65,6 +65,16 @@ namespace kege{
         _entity_systems->update( dms );
     }
 
+    void SceneManager::render( double dms )
+    {
+        _entity_systems->render( dms );
+    }
+
+    void SceneManager::input( double dms )
+    {
+        _entity_systems->input( dms );
+    }
+
     bool SceneManager::initialize()
     {
         _entity_manager = new kege::EntityManager;
@@ -93,7 +103,7 @@ namespace kege{
         _entity_systems->addSystem( "rigidbody-to-transform" );
 
         _entity_systems->addSystem( "terrain" );
-        _entity_systems->addSystem( "camera" );
+        _entity_systems->addSystem( "camera-controller" );
         _entity_systems->addSystem( "mesh-rendering" );
 
         //_module->addSystem( "entity-factory" );

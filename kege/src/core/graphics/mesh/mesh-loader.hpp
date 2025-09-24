@@ -9,14 +9,14 @@
 #define mesh_loader_hpp
 
 #include "../../graphics/mesh/mesh.hpp"
-#include "../../utils/asset-system.hpp"
+#include "../../utils/asset-manager.hpp"
 
 namespace kege{
 
     class MeshLoader {
     public:
 
-        static bool load( kege::AssetSystem* assets, const std::string& filename );
+        static bool load( kege::AssetManager* assets, const std::string& filename );
     };
 
 }

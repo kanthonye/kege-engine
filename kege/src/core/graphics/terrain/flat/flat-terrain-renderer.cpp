@@ -31,11 +31,11 @@ namespace kege{
         _encoder->bindVertexBuffers(0, { _vertex_buffer }, { 0 });
         _encoder->bindIndexBuffer( _index_buffer, 0, false );
         _encoder->setPushConstants( kege::ShaderStage::Vertex, 0, sizeof(m), m );
-        _encoder->bindShaderResource( resource, false );
+        _encoder->bindShaderResource( resource );
 
         for ( int i=0; i<_batch_count; ++i )
         {
-            _encoder->bindShaderResource( _batchs[i].resource_set, false );
+            _encoder->bindShaderResource( _batchs[i].resource_set );
             _encoder->drawIndirect( _batchs[i].draw_buffer, 0, _batchs[i].instance_count, sizeof( VertexDrawCommand ) );
             //_instances += _batchs[i].instance_count;
         }
@@ -89,7 +89,7 @@ namespace kege{
                 .data = nullptr,
                 .usage = BufferUsage::StorageBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .debug_name = "terrain-storage-buffer"
+                .name = "terrain-storage-buffer"
             });
 
             batch.instance_count = 0;
@@ -99,56 +99,58 @@ namespace kege{
                 .data = nullptr,
                 .usage = BufferUsage::IndirectBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .debug_name = "terrain-draw-command-buffer"
+                .name = "terrain-draw-command-buffer"
             });
 
-            UniformLayoutDescription descriptors =
-            {
-                {
-                    .binding = 0,
-                    .count = 1,
-                    .descriptor_type = DescriptorType::StorageBuffer,
-                    .stage_flags = ShaderStage::Vertex
-                }
-            };
-            _graphics->allocateShaderResources( descriptors, 1, &batch.resource_set );
-            batch.resource_set[0] = BufferBinding
-            {
-                .binding = 0,
-                .buffers =
-                {{
-                    .buffer = batch.storage_buffer,
-                    .range  = storage_buffer_size,
-                    .offset = 0,
-                }}
-            };
-            _graphics->updateShaderResource( _batchs[ _batch_count ].resource_set );
-
-//            ( layout_config, 1, &batch.resource_set );
-//            const std::vector< kege::Uniform > resource_bindings =
-//            {{{
+//TODO:            UniformLayoutDescription descriptors =
+//            {
 //                {
+//                    .binding = 0,
+//                    .count = 1,
+//                    .descriptor_type = DescriptorType::StorageBuffer,
+//                    .stage_flags = ShaderStage::Vertex
+//                }
+//            };
+//            _graphics->allocateShaderResources( descriptors, 1, &batch.resource_set );
+//            batch.resource_set[0] = BufferBinding
+//            {
+//                .binding = 0,
+//                .buffers =
+//                {{
 //                    .buffer = batch.storage_buffer,
 //                    .range  = storage_buffer_size,
 //                    .offset = 0,
-//                }
-//            }}};
+//                }}
+//            };
+//            _graphics->updateShaderResource( _batchs[ _batch_count ].resource_set );
 
-//            _graphics->updateDescriptorSets
-//            ({
-//                {
-//                    .set = _batchs[ _batch_count ].resource_set,
-//                    .binding = 0,
-//                    .array_element = 0,
-//                    .descriptor_type = DescriptorType::StorageBuffer,
-//                    .buffer_info =
-//                    {{
-//                        .buffer = _batchs[ _batch_count ].storage_buffer,
-//                        .range  = storage_buffer_size,
-//                        .offset = 0,
-//                    }}
-//                }
-//            });
+            /*
+            ( layout_config, 1, &batch.resource_set );
+            const std::vector< kege::Uniform > resource_bindings =
+            {{{
+                {
+                    .buffer = batch.storage_buffer,
+                    .range  = storage_buffer_size,
+                    .offset = 0,
+                }
+            }}};
+
+            _graphics->updateDescriptorSets
+            ({
+                {
+                    .set = _batchs[ _batch_count ].resource_set,
+                    .binding = 0,
+                    .array_element = 0,
+                    .descriptor_type = DescriptorType::StorageBuffer,
+                    .buffer_info =
+                    {{
+                        .buffer = _batchs[ _batch_count ].storage_buffer,
+                        .range  = storage_buffer_size,
+                        .offset = 0,
+                    }}
+                }
+            });
+             */
 
             _batchs[ _batch_count ].params = (VertexDrawCommand*) _graphics->mapBuffer( _batchs[ _batch_count ].draw_buffer );
             _batchs[ _batch_count ].patchs = (FlatTerrainPatch*) _graphics->mapBuffer( _batchs[ _batch_count ].storage_buffer );
@@ -165,16 +167,16 @@ namespace kege{
 
     bool FlatTerrainRenderer::initialize( const kege::TerrainSettings* settings )
     {
-        _shader_pipeline = PipelineLoader::load( _graphics, kege::vfs( "graphics-shaders/terrain/flat/shader.json" ).c_str() );
-        if ( !_shader_pipeline )
-        {
-            return false;
-        }
-
-        _batchs.resize( MAX_INSTANCE_BUFFER_COUNT );
-        _batchs[0].instance_count = 0;
-        _batchs[0].image_index = 0;
-
+//TODO:        _shader_pipeline = PipelineLoader::load( _graphics, kege::vfs( "graphics-shaders/terrain/flat/shader.json" ).c_str() );
+//        if ( !_shader_pipeline )
+//        {
+//            return false;
+//        }
+//
+//        _batchs.resize( MAX_INSTANCE_BUFFER_COUNT );
+//        _batchs[0].instance_count = 0;
+//        _batchs[0].image_index = 0;
+//
         bool init = _image_layer_manager.initialize
         (
             _settings->heightmap_diameter,
@@ -632,7 +634,7 @@ namespace kege{
             .data = indices.data(),
             .usage = BufferUsage::IndexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
-            .debug_name = "IndexBuffers"
+            .name = "IndexBuffers"
         });
 
         const uint1 vertex_count = 9;
@@ -654,7 +656,7 @@ namespace kege{
             .data = vertex,
             .usage = BufferUsage::VertexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
-            .debug_name = "IndexBuffers"
+            .name = "IndexBuffers"
         });
 
         return true;

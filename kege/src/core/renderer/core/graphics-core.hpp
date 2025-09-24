@@ -623,6 +623,16 @@ namespace kege{
         return a;
     }
 
+    inline constexpr bool operator==(ShaderStage& a, ShaderStage b)
+    {
+        return (static_cast<uint32_t>(a) == static_cast<uint32_t>(b));
+    }
+
+    inline constexpr bool operator!=(ShaderStage& a, ShaderStage b)
+    {
+        return (static_cast<uint32_t>(a) != static_cast<uint32_t>(b));
+    }
+
 
     struct Offset2D
     {
@@ -733,7 +743,7 @@ namespace kege{
         SampleCount sample_count = SampleCount::Count1;     ///< MSAA sample count
         ImageUsageFlags usage = ImageUsageFlags::None;  ///< Allowed usages
         MemoryUsage memory_usage = MemoryUsage::GpuOnly;    ///< Memory placement strategy
-        std::string debug_name = "";                        ///< Debug label (visible in tools like RenderDoc)
+        std::string name = "";                        ///< Debug label (visible in tools like RenderDoc)
 
         const void* data =  nullptr;
         /**
@@ -868,7 +878,7 @@ namespace kege{
         const void* data = nullptr;
         BufferUsage usage = BufferUsage::None; ///< Allowed usages
         MemoryUsage memory_usage = MemoryUsage::GpuOnly; ///< Memory placement strategy
-        const char* debug_name = "";                ///< Debug label
+        const char* name = "";                ///< Debug label
     };
 
     /**
@@ -1013,7 +1023,7 @@ namespace kege{
         BorderColor border_color = BorderColor::FloatTransparentBlack; ///< Border color
         bool anisotropy_enable = false;           ///< Enable anisotropic filtering
         float max_anisotropy = 1.0f;             ///< Maximum anisotropy level (1-16)
-        const char* debug_name;
+        const char* name;
     };
 
 
@@ -1094,7 +1104,7 @@ namespace kege{
          * Visible in graphics debuggers like RenderDoc or NVIDIA Nsight.
          * Highly recommended for better debugging experience.
          */
-        std::string debug_name = "";
+        std::string name = "";
     };
 
 
@@ -1113,14 +1123,14 @@ namespace kege{
      * @param entry Entry point name (defaults to "main")
      * @return Configured ShaderDesc
      */
-    inline ShaderDesc createCompute(const std::vector<uint32_t>& code, std::string debug_name = "ComputeShader", const std::string& entry = "main")
+    inline ShaderDesc createCompute(const std::vector<uint32_t>& code, std::string name = "ComputeShader", const std::string& entry = "main")
     {
         return ShaderDesc
         {
             .byte_code = code,
             .entry_point = entry,
             .stage = ShaderStage::Compute,
-            .debug_name = debug_name
+            .name = name
         };
     }
 
@@ -1440,7 +1450,7 @@ namespace kege{
          * - 0.0: Implementation-defined minimum
          * - 1.0: Full per-sample shading
          */
-        float min_sample_shading = 0.0f;
+        float min_sample_shading = 1.0f;
 
         /**
          * @brief Enable alpha-to-coverage.
@@ -1471,7 +1481,7 @@ namespace kege{
         /**
          * @brief Operation when stencil test passes but depth fails.
          */
-        StencilOp depth_fail_op = StencilOp::Keep;
+        StencilOp depth_fail_op = StencilOp::Replace;
 
         /**
          * @brief Operation when both stencil and depth tests pass.
@@ -1481,7 +1491,7 @@ namespace kege{
         /**
          * @brief Comparison operator for stencil test.
          */
-        CompareOp compare_op = CompareOp::Always;
+        CompareOp compare_op = CompareOp::Equal;
 
         /**
          * @brief Bitmask for stencil comparison.
@@ -1496,7 +1506,7 @@ namespace kege{
         /**
          * @brief Reference value for stencil comparison.
          */
-        uint32_t reference = 0;
+        uint32_t reference = 1;
     };
 
     /**
@@ -1522,14 +1532,6 @@ namespace kege{
         CompareOp depth_compare_op = CompareOp::Less;
 
         /**
-         * @brief Enable depth bounds testing.
-         *
-         * Requires GPU feature `depthBounds`. Fragments outside
-         * [minDepthBounds,maxDepthBounds] are discarded.
-         */
-        bool depth_bounds_test_enable = false;
-
-        /**
          * @brief Enable stencil testing.
          */
         bool stencil_test_enable = false;
@@ -1543,16 +1545,6 @@ namespace kege{
          * @brief Stencil operations for back-facing polygons.
          */
         StencilOpState back_op;
-
-        /**
-         * @brief Minimum depth bound for depth bounds test.
-         */
-        float min_depth_bounds = 0.0f;
-
-        /**
-         * @brief Maximum depth bound for depth bounds test.
-         */
-        float max_depth_bounds = 1.0f;
     };
 
     /**
@@ -1838,7 +1830,7 @@ namespace kege{
         /**
          * @brief Debug name for graphics debugging tools.
          */
-        std::string debug_name = "";
+        std::string name = "";
 
         /**
          * @brief Validates that the layout is properly configured.
@@ -1875,7 +1867,7 @@ namespace kege{
         ColorBlendStateDesc color_blend_state;
 
         // Render target information
-        std::vector<Format> color_attachment_formats; ///< Must match render pass
+        std::vector< Format > color_attachment_formats; ///< Must match render pass
         Format depth_attachment_format = Format::depth_32;
         Format stencil_attachment_format = Format::undefined;
         SampleCount render_sample_count = SampleCount::Count1;
@@ -1883,7 +1875,7 @@ namespace kege{
         /**
          * @brief Debug name for graphics debugging tools.
          */
-        std::string debug_name = "";
+        std::string name = "";
     };
 
     /**
@@ -1893,7 +1885,7 @@ namespace kege{
     {
         PipelineLayoutHandle pipeline_layout;  ///< Resource bindings layout
         ShaderHandle compute_shader;           ///< Required compute shader
-        std::string debug_name = "";           ///< Debug identifier
+        std::string name = "";           ///< Debug identifier
 
         /**
          * @brief Validates that the description is complete.
@@ -2034,7 +2026,7 @@ namespace kege{
          *
          * Provides a meaningful name in graphics debuggers and profilers.
          */
-        std::string debug_name = "";
+        std::string name = "";
     };
 
     /**
@@ -3011,6 +3003,15 @@ namespace kege{
 
 
 
+    /**
+     * @brief Describes the usage of a member within a push constant block.
+     */
+    enum struct MemberType : char
+    {
+        Sint, Uint, Float, Double, Vec2, Vec3, Vec4, Mat2, Mat3, Mat4
+    };
+
+    
 //    /**
 //     * @brief Enumeration of pipeline stages where synchronization can occur.
 //     *

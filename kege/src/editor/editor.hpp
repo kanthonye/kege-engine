@@ -23,6 +23,7 @@ namespace kege{
     class Editor
     {
     public:
+        
         /**
          * @brief Run the editor application
          *
@@ -40,9 +41,7 @@ namespace kege{
 
     public:
 
-        void operator()( kege::RenderPassContext* context );
-
-        void buildEditorPanels();
+        void buildLayout();
         void initLayout();
         bool initalize();
         void shutdown();

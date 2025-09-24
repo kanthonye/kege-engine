@@ -20,7 +20,7 @@ namespace kege{
         return (_requirements & flag) == flag;
     }
 
-    void EntitySystem::input( const std::vector< Input >& inputs )
+    void EntitySystem::input( double dms )
     {
     }
 

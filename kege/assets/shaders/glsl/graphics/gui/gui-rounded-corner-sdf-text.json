@@ -1,117 +1,161 @@
 {
-    "name": "gui-shader",
-    "pipeline": "graphics",
-    "primatives": ["triangle-strip"],
-
-    "vertex_bindings":
-    [],
-
-    "vertex_inputs":
-    [],
-
-    "stages":
-    [
-        {
-            "type": "fragment",
-            "file":  "gui-rounded-corner-sdf-text.frag",
-            "entry-point": "main",
-            "debug-name": "gui.frag"
-        },
-        {
-            "type": "vertex",
-            "file": "gui-rounded-corner-sdf-text.vert",
-            "entry-point": "main",
-            "debug-name": "gui.frag"
-        }
-    ],
-
-    "descriptor_set_layouts":
-    [
-        {
-            "name": "UIViewBuffer",
-            "type": "storage-buffer",
-            "binding" : 0,
-            "count" : 1,
-            "set" : 0,
-            "stages": [ "vertex" ]
-        },
-        {
-            "name": "sdf_font_texture",
-            "type": "combined-image-sampler",
-            "binding" : 0,
-            "count" : 1,
-            "set" : 1,
-            "stages": [ "fragment" ]
-        },
-        {
-            "name": "ui_textures",
-            "type": "combined-image-sampler",
-            "binding" : 0,
-            "count" : 16,
-            "set" : 2,
-            "stages": [ "fragment" ]
-        }
-    ],
-
-    "push_constants_ranges":
-    [
-        {
-            "sid": "Camera2D",
-            "offset": 0,
-            "size": 80,
-            "stages": [ "vertex", "fragment" ]
-        },
-    ],
-
-    "rasterization_state":
+    "asset":
     {
-        "rasterizer_discard_enable": "false",
-        "polygon_mode": "fill",
-        "cull_mode": "none",
-        "front_face": "ccw",
-        "line_width": 1.0f,
-        "depth_clamp_enable": "false",
-        "depth_bias_enable": "false",
-        "depth_bias_constant_factor": 0.0f,
-        "depth_bias_clamp": 0.0f,
-        "depth_bias_slope_factor": 0.0f,
+        "version": "1.0",
+        "generator": "KEGE",
+        "name": "gui",
     },
 
-    "rendering_output":
-    {
-        "color_output_formats":[ "bgra_u8_norm" ],
-        "depth_output_format": "depth_32"
-    },
+    "shaders":
+    [
+        { "name": "gui.vert", "entry-point": "main", "type": "vertex",   "uri": "gui-rounded-corner-sdf-text.vert" },
+        { "name": "gui.frag", "entry-point": "main", "type": "fragment", "uri": "gui-rounded-corner-sdf-text.frag" },
+    ],
 
-
-    "depth_stencil_state":
-    {
-        "depth_test_enable":  "false",
-        "depth_write_enable": "true",
-        "depth_compare_op": "less",
-        "depth_bounds_test_enable": "false",
-        "stencil_test_enable": "false",
-        "front_op":
+    "pipelines":
+    [
         {
-            "fail_op": "keep",
-            "depth_fail_op": :"keep",
-            "pass_op": "keep",
-            "compare_op": "always",
-            "compare_mask": "0xFFFFFFFF",
-            "write_mask": "0xFFFFFFFF",
-            "reference": 0,
+            "name": "gui-pipeline",
+            "stages": [0, 1],
+            "states":
+            {
+                "rasterizer":
+                {
+                    "cull_mode": "back",
+                    "front_face": "ccw",
+                    "polygon_mode": "fill",
+                    "rasterizer_discard_enable": "false",
+                },
+                "depth_stencil":
+                {
+                    "depth_test": "false",
+                    "depth_write": "true",
+                    "depth_compare_op": "less"
+                },
+                "color_blend":
+                {
+                    "logic_op_enable": "false",
+                    "logic_op": "copy",
+                    "color_blend_attachments":
+                    [
+                        {
+                            "blend_enable": "true",
+
+                            "color_blend_op": "add",
+                            "src_color_blend_factor": "src-alpha",
+                            "dst_color_blend_factor": "one-minus-src-alpha",
+
+                            "alpha_blend_op": "add",
+                            "src_alpha_blend_factor": "one",
+                            "dst_alpha_blend_factor": "zero",
+                        }
+                    ],
+                },
+                "input_assembly":
+                {
+                    "topology": "triangle-strip"
+                }
+            },
+            
+            "layouts":
+            [
+                {
+                    "name": "WidgetBuffer",
+                    "set": 0,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "WidgetBuffer",
+                            "type": "storage-buffer",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                },
+                {
+                    "name": "Theme",
+                    "set": 1,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "_theme",
+                            "type": "combined-image-sampler",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                },
+                {
+                    "name": "Font",
+                    "set": 2,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "_font",
+                            "type": "combined-image-sampler",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                },
+                {
+                    "name": "Scene",
+                    "set": 3,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "_scene",
+                            "type": "combined-image-sampler",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                }
+            ],
+
+            "push_constants":
+            [
+                {
+                    "name": "Camera2D",
+                    "offset": 0,
+                    "size": 80,
+                    "stages": [ "vertex", "fragment" ]
+                    "fields":
+                    [
+                        {
+                            "name": "projection",
+                            "type": "mat4",
+                            "offset": 0,
+                            "size": 64,
+                            "usage":
+                            {
+                                "target": "UICamera",
+                                "source": "projection"
+                            }
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "vec4",
+                            "offset": 64,
+                            "size": 12,
+                        }
+                    ]
+                },
+            ],
+
+            "outputs":
+            [
+                {
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "final_color"
+                }
+            ],
         },
-        "back_op":
-        {
-            "fail_op": "keep",
-            "depth_fail_op": :"keep",
-            "pass_op": "keep",
-            "compare_op": "always",
-            "compare_mask": "0xFFFFFFFF",
-            "write_mask": "0xFFFFFFFF",
-            "reference": 0,
-        },,
-        "min_depth_bounds": 0.0f,
-        "max_depth_bounds": 1.0f
-    },
+    ]
 }

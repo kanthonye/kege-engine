@@ -159,6 +159,8 @@ namespace kege{
         indices[ index + 1 ] = w[0];
         //std::cout <<std::setw(2) <<index <<": "<< indices[ index ].a <<", " << indices[ index ].b <<", " << indices[ index ].c <<"\n";
         index += 3;
+        
+        drawcount = static_cast< int >( indices.size() );
     }
 
 }

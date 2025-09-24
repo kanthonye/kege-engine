@@ -100,6 +100,6 @@ namespace kege{
     ConeMesh::ConeMesh( float radius, float height, uint32_t columns )
     {
         generateConeVertices( radius, height, columns, vertices );
-        generateConeIndices( columns, indices );
+        drawcount = static_cast< int >( indices.size() );
     }
 }

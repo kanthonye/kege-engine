@@ -1,63 +1,114 @@
 {
-    "name": "copy-color-shader",
-    "pipeline": "graphics",
-    "primatives": ["triangle-strip"],
-    "polygon-modes": ["fill"],
+    "asset":
+    {
+        "version": "1.0",
+        "generator": "KEGE",
+        "name": "copier",
+    },
 
-    "stages":
+    "shaders":
     [
         {
-            "type": "fragment",
-            "file": "copy-color-depth.frag",
-            "debug-name": "copy-color-depth-fs",
-            "entry-point": "main"
-        },
-        {
+            "entry-point": "main",
+            "name": "copy-color-depth.vert",
+            "uri": "copy-color-depth.vert",
             "type": "vertex",
-            "file": "copy-color-depth.vert",
-            "debug-name": "copy-color-depth-vs",
-            "entry-point": "main"
-        }
-    ],
-
-    "descriptor_set_layouts":
-    [
-        {
-            "name": "src_color",
-            "type": "combined-image-sampler",
-            "binding": 0,
-            "count": 1,
-            "set": 0,
-            "stages": [ "fragment" ]
         },
         {
-            "name": "src_depth",
-            "type": "combined-image-sampler",
-            "binding": 1,
-            "count": 1,
-            "set": 0,
-            "stages": [ "fragment" ]
-        }
+            "entry-point": "main",
+            "name": "copy-color-depth.frag",
+            "uri": "copy-color-depth.frag",
+            "type": "fragment",
+        },
     ],
 
+    "pipelines":
+    [
+        {
+            "name": "copy-color-depth",
+            "stages": [0, 1],
+            "states":
+            {
+                "rasterizer":
+                {
+                    "cull_mode": "back",
+                    "front_face": "ccw",
+                    "polygon_mode": "fill",
+                    "rasterizer_discard_enable": "false",
+                },
+                "depth_stencil":
+                {
+                    "depth_test": true,
+                    "depth_write": true,
+                    "depth_compare_op": "less"
+                },
+                "color_blend":
+                {
+                    "logic_op_enable": "false",
+                    "logic_op": "copy",
+                    "color_blend_attachments":
+                    [
+                        {
+                            "blend_enable": "true",
 
-    "rasterization_state",
-    {
-        "rasterizer_discard_enable": "false",
-        "polygon_mode": "fill",
-        "cull_mode": "back",
-        "front_face": "ccw",
-        "line_width": 1.0f,
-        "depth_clamp_enable": "false",
-        "depth_bias_enable": "false",
-        "depth_bias_constant_factor": 0.0f,
-        "depth_bias_clamp": 0.0f,
-        "depth_bias_slope_factor": 0.0f,
-    },
+                            "color_blend_op": "add",
+                            "src_color_blend_factor": "src-alpha",
+                            "dst_color_blend_factor": "one-minus-src-alpha",
 
-    "rendering_output":
-    {
-        "color_output_formats":[ "bgra_u8_norm" ],
-        "depth_output_format": "depth_32"
-    },
+                            "alpha_blend_op": "add",
+                            "src_alpha_blend_factor": "one",
+                            "dst_alpha_blend_factor": "zero",
+                        }
+                    ],
+                },
+                "input_assembly":
+                {
+                    "topology": "triangle-strip"
+                }
+            },
+            "layouts":
+            [
+                {
+                    "name": "texture-sources",
+                    "set": 0,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "color-source",
+                            "type": "combined-image-sampler",
+                            "stages": [ "all" ],
+                        },
+                        {
+                            "count" : 1,
+                            "binding" : 1,
+                            "name": "depth-source",
+                            "type": "combined-image-sampler",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                }
+            ],
+            "push_constants":[],
+            "vertex_input":{},
+            "outputs":
+            [
+                {
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "outColor"
+                }
+            ],
+
+            "globals":
+            [
+                {
+                    "target": "texture-sources",
+                    "type": "SHADER_RESOURCE"
+                }
+            ]
+        },
+    ]
 }

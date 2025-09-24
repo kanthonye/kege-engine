@@ -45,8 +45,6 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-renderer.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/entity-system.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/render-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/esm/render-queue.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
@@ -58,12 +56,12 @@ file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/k
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/atmosphere/atmosphere.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/camera-controller.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/camera-system.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/camera.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/follow-system.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/frustum.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/lookat-system.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/movement-system.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/camera/update-scene-camera.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-creator.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font-loader.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/font/font.cpp"
@@ -107,14 +105,19 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/particle/emitter/emitter-sphere.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/particle/emitter/emitter-triangle.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/particle/emitter/emitter.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/pipeline/pipeline-loader.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/pipeline/shader-pipeline-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/pipeline/shader-pipeline.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/pipeline/string-to-enum-types.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render-graph/render-graph-loader.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render-graph/render-graph.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render-graph/render-pass-context.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render-graph/render-pass.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-graph-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-graph.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-pass-context.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-pass.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/manager/render-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/manager/render-queue.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-pipeline-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-pipeline.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-resource-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-resource.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/string-to-enum-types.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/uniform-resource.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-renderer.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-tile.cpp"
@@ -236,7 +239,7 @@ endif()
 # UTILS_SOURCES at CMakeLists.txt:31 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/*.cpp")
 set(OLD_GLOB
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/asset-system.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/asset-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/bitvec.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/communication.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/json-lexer.cpp"
@@ -244,7 +247,6 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/kege-string.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/lexer.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/log.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/resource-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/time.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")

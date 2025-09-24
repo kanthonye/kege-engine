@@ -22,15 +22,17 @@ namespace kege::vk{
 
     bool CommandEncoder::bindShaderResource( const ShaderResource& resource )
     {
-        const DescriptorSet* set = _command_buffer->_device->getDescriptorSet( *resource );
-        const DescriptorSetLayout* dsl = _command_buffer->_device->getDescriptorSetLayout( set->layout_id );
-        const VkDescriptorSet sets[] = { set->set };
+        if( _current_pipeline_layout == nullptr ) return false;
 
-        if( _current_pipeline_layout != nullptr )
+        for ( int i=0; i<resource->size(); ++i )
         {
-            auto i = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
+            const DescriptorSet* set = _command_buffer->_device->getDescriptorSet( resource->at(i) );
+            const DescriptorSetLayout* dsl = _command_buffer->_device->getDescriptorSetLayout( set->layout_id );
+            const VkDescriptorSet sets[] = { set->set };
 
-            if ( i == _current_pipeline_layout->descriptor_set_index_map.end() )
+            auto itr = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
+
+            if ( itr == _current_pipeline_layout->descriptor_set_index_map.end() )
             {
                 Log::error << "DescriptorSet -> " << dsl->name
                 << " does not have an binding_locations binding_index associated with the currently bound pipeline."
@@ -42,7 +44,7 @@ namespace kege::vk{
                 _handle,
                 _current_pipeline_bindpoint,
                 _current_pipeline_layout->layout,
-                i->second, 1, sets, 0, nullptr
+                itr->second, 1, sets, 0, nullptr
             );
         }
         return true;
@@ -60,7 +62,7 @@ namespace kege::vk{
         vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline );
 
         // Store layout for subsequent binds/push constants
-        _current_pipeline_layout = _command_buffer->_device->getPipelineLayout( pipeline->desc.pipeline_layout.id );
+        _current_pipeline_layout = _command_buffer->_device->getPipelineLayout( pipeline->pipeline_layout_id );
         _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     }
 

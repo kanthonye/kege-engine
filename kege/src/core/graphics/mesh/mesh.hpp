@@ -35,31 +35,6 @@ namespace kege{
         kege::fvec4 joints;
     };
 
-    struct ModelMatrices
-    {
-        void operator()( const kege::vec3& position, const kege::quat& orientation, const kege::vec3& scale )
-        {
-            rotation = kege::quatToM44( orientation );
-            transform[ 0 ] = kege::vec4( rotation[ 0 ].xyz * scale.x, 0.0 );
-            transform[ 1 ] = kege::vec4( rotation[ 1 ].xyz * scale.y, 0.0 );
-            transform[ 2 ] = kege::vec4( rotation[ 2 ].xyz * scale.z, 0.0 );
-            transform[ 3 ] = kege::vec4( position, 1.0 );
-        }
-        ModelMatrices( const kege::vec3& position, const kege::quat& qrotation, const kege::vec3& scale )
-        {
-            operator()( position, qrotation, scale );
-        }
-        ModelMatrices( const kege::Transform& transform )
-        {
-            operator()( transform.position, transform.orientation, transform.scale );
-        }
-        ModelMatrices()
-        {}
-
-        kege::mat44 transform;
-        kege::mat44 rotation;
-    };
-
 }
 
 
@@ -158,7 +133,7 @@ namespace kege{
         MeshPrimitive();
 
         void unload( kege::Graphics* graphics );
-        void upload();
+        void upload( kege::Graphics* graphics );
 
         std::vector< Vertex > vertices;
         std::vector< uint32_t > indices;
@@ -172,7 +147,6 @@ namespace kege{
         kege::vec3 aabb_min;
         kege::vec3 aabb_max;
         
-        kege::Graphics* graphics;
         uint32_t drawcount;
     };
 
@@ -180,6 +154,9 @@ namespace kege{
 
     struct MeshSource : public kege::RefCounter
     {
+        void upload( Graphics* graphics );
+        void unload( Graphics* graphics );
+
         MeshSource
         (
             Ref< MeshPrimitive > primative,
@@ -216,10 +193,56 @@ namespace kege{
         kege::vec3 aabb_max;
     };
 
+
+
+
+    enum struct Matrix : char
+    {
+        SCALE           = 1 << 0,
+        ROTATION        = 1 << 1,
+        TRANSLATION     = 1 << 2,
+        PERSPECTIVE     = 1 << 3,
+        ORTHOGRAPHIC    = 1 << 4
+    };
+
+    inline constexpr Matrix operator|(Matrix a, Matrix b)
+    {
+        return static_cast< Matrix >(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+    }
+
+    inline constexpr Matrix& operator|=(Matrix& a, Matrix b)
+    {
+        return a = a | b;
+    }
+
+    inline constexpr Matrix operator&(Matrix a, Matrix b)
+    {
+        return static_cast< Matrix >(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+    }
+
+    inline constexpr Matrix& operator&=(Matrix& a, Matrix b)
+    {
+        return a = a & b;
+    }
+    enum struct ShaderInput : char
+    {
+        NONE,
+        BUFFER,
+        PUSH_CONSTANT,
+    };
+
+    struct Procedure
+    {
+        ShaderInput input_type = ShaderInput::PUSH_CONSTANT;
+        Matrix transform = Matrix::SCALE | Matrix::ROTATION | Matrix::TRANSLATION;
+        Matrix rotation = Matrix::ROTATION;
+    };
+
     struct Geometry
     {
         Ref< Mesh > mesh;
         Ref< Material > material;
+        Procedure object_transform;
     };
 
     void computeTangentBitangent( std::vector< kege::Vertex >& vertices, const std::vector< uint32_t >& indices );

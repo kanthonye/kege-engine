@@ -52,7 +52,7 @@ namespace kege{
     
     void EntitySystemManager::update( double dms )
     {
-        for (kege::Ref< kege::EntitySystem > system : _systems )
+        for ( kege::EntitySystem* system : _system_updates )
         {
             system->update( dms );
         }
@@ -60,9 +60,17 @@ namespace kege{
 
     void EntitySystemManager::render( double dms )
     {
-        for (kege::Ref< kege::EntitySystem > system : _systems )
+        for ( kege::EntitySystem* system : _system_renders )
         {
             system->render( dms );
+        }
+    }
+
+    void EntitySystemManager::input( double dms )
+    {
+        for ( kege::EntitySystem* system : _system_inputs )
+        {
+            system->input( dms );
         }
     }
 

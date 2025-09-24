@@ -58,6 +58,7 @@ namespace kege{
     {
         generateCircleVertices( vertices, center, radius, segments );
         generateCircleIndices( indices, segments );
+        drawcount = static_cast< int >( indices.size() );
     }
 
 }

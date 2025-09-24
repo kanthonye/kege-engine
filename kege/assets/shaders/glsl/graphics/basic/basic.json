@@ -1,0 +1,160 @@
+{
+    "asset":
+    {
+        "version": "1.0",
+        "generator": "KEGE",
+        "name": "basic-pipeline",
+    },
+
+    "shaders":
+    [
+        {
+            "entry-point": "main",
+            "name": "basic.vert",
+            "type": "vertex",
+            "uri": "basic.vert"
+        },
+        {
+            "entry-point": "main",
+            "name": "basic.frag",
+            "type": "fragment",
+            "uri": "basic.frag"
+        },
+    ],
+
+    "pipelines":
+    [
+        {
+            "name": "basic-pipeline",
+            "stages": [0, 1],
+            "states":
+            {
+                "rasterizer":
+                {
+                    "cull_mode": "cull_node",
+                    "front_face": "ccw",
+                    "polygon_mode": "line",
+                    "rasterizer_discard_enable": "false",
+                },
+                "depth_stencil":
+                {
+                    "depth_test": "true",
+                    "depth_write": "true",
+                    "depth_compare_op": "less"
+                },
+                "color_blend":
+                {
+                    "logic_op_enable": "false",
+                    "logic_op": "copy",
+                    "color_blend_attachments":
+                    [
+                        {
+                            "blend_enable": "true",
+
+                            "color_blend_op": "add",
+                            "src_color_blend_factor": "src-alpha",
+                            "dst_color_blend_factor": "one-minus-src-alpha",
+
+                            "alpha_blend_op": "add",
+                            "src_alpha_blend_factor": "one",
+                            "dst_alpha_blend_factor": "zero",
+                        }
+                    ],
+                },
+                "input_assembly":
+                {
+                    "topology": "triangle-list"
+                }
+            },
+            "layouts":
+            [
+                {
+                    "name": "camera-buffer",
+                    "set": 0,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "camera-buffer",
+                            "type": "uniform-buffer",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                }
+            ],
+            
+            "push_constants":
+            [
+                {
+                    "name": "ObjectMatrices",
+                    "offset": 0,
+                    "size": 128,
+                    "stages": ["vertex"],
+                    "fields":
+                    [
+                        {
+                            "name": "transform",
+                            "type": "mat4",
+                            "offset": 0,
+                            "size": 64,
+                        },
+                        {
+                            "name": "rotation",
+                            "type": "mat4",
+                            "offset": 64,
+                            "size": 64,
+                        }
+                    ]
+                },
+            ],
+
+            "vertex_input":
+            {
+                "attributes":
+                [
+                    {
+                        "binding": 0,
+                        "location": 0,
+                        "format": "vec3",
+                        "semantic": "POSITION",
+                        "name": "_position"
+                    },
+                    {
+                        "binding": 0,
+                        "location": 1,
+                        "format": "vec3",
+                        "semantic": "NORMAL",
+                        "name": "_normal"
+                    }
+                ],
+                "bindings":
+                [
+                    {
+                        "binding": 0,
+                        "stride": 24,
+                        "input_rate": "vertex"
+                    },
+                ],
+            },
+
+            "outputs":
+            [
+                { 
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "out_color"
+                }
+            ],
+
+            "globals":
+            [
+                {
+                    "name": "camera-buffer",
+                    "type": "SHADER_RESOURCE"
+                }
+            ]
+        },
+    ]
+}

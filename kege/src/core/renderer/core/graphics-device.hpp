@@ -10,6 +10,7 @@
 
 #include "graphics-core.hpp"
 #include "graphics-physical-device.hpp"
+#include "shader-pipeline-manager.hpp"
 #include "shader-resource-manager.hpp"
 
 namespace kege{
@@ -224,6 +225,13 @@ namespace kege{
         /**
          * @brief Creates a graphics rendering pipeline.
          * @param desc Complete graphics pipeline state description.
+         * @return Handle to the created pipelines.
+         */
+        virtual std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc ) = 0;
+
+        /**
+         * @brief Creates a graphics rendering pipeline.
+         * @param desc Complete graphics pipeline state description.
          * @return Handle to the created pipeline.
          */
         virtual kege::PipelineHandle createGraphicsPipeline( const kege::GraphicsPipelineDesc& desc ) = 0;
@@ -333,19 +341,18 @@ namespace kege{
         //-------------------------------------------------------------------------
 
         /**
-         * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param descriptors Description of binding points for resources.
-         * @param create Whether to create the layout if it does not exist.
-         * @return Handle to the descriptor set layout.
-         */
-        virtual UniformSetLayout getUniformSetLayout( const UniformLayoutDescription& descriptors, bool create ) = 0;
-
-        /**
          * @brief Creates a descriptor set layout.
          * @param descriptors Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        virtual UniformSetLayout createUniformSetLayout( const UniformLayoutDescription& descriptors ) = 0;
+        virtual UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors ) = 0;
+
+        /**
+         * @brief Retrieves or creates a descriptor set layout based on bindings.
+         * @param descriptors Description of binding points for resources.
+         * @return Handle to the descriptor set layout.
+         */
+        virtual UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors ) = 0;
 
         /**
          * @brief Destroys a descriptor set layout.
@@ -355,25 +362,44 @@ namespace kege{
         virtual void destroyUniformSetLayout( const UniformSetLayout& layout ) = 0;
 
         //-------------------------------------------------------------------------
-        // Dexcriptor Life Cycle
+        // Descriptor Set Lifecycle
         //-------------------------------------------------------------------------
 
-        virtual bool allocateDescriptors
-        (
-            const UniformSetLayout& layout,
-            uint32_t quantity,
-            int32_t* descriptor_ids
-        )
-        = 0;
-        
-        virtual bool updateDescriptor( int32_t descriptor_id, const UniformBindingElements& elements )= 0;
+        /**
+         * @brief Update multiple descriptor sets with new resource bindings.
+         * @param handles Vector of descriptor set handles to update.
+         * @param resource_sets Vector of resource sets containing the new bindings.
+         * @return True if all updates succeeded, false otherwise.
+         */
+        virtual bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets ) = 0;
 
         /**
-         * @brief Frees a descriptor set.
-         * @param descriptor_id Handle to the descriptor set to free.
-         * @note The descriptor set handle becomes invalid after this call.
+         * @brief Update a single descriptor set with new resource bindings.
+         * @param handle Handle of the descriptor set to update.
+         * @param resource_set Resource set containing the new bindings.
+         * @return True if the update succeeded, false otherwise.
          */
-        virtual void freeDescriptor( int32_t descriptor_id ) = 0;
+        virtual bool updateUniformSet( int handle, const UniformSet& resource_set ) = 0;
+
+        /**
+         * @brief Allocate multiple descriptor sets from layouts.
+         * @param description Descriptions of the descriptor set layouts to allocate from.
+         * @return Vector of handles to the newly allocated descriptor sets.
+         */
+        virtual std::vector< int > allocateUniformSets( const UniformSetsDesc& description ) = 0;
+
+        /**
+         * @brief Allocate a single descriptor set from a layout.
+         * @param description Description of the descriptor set layout to allocate from.
+         * @return Handle to the newly allocated descriptor set.
+         */
+        virtual int allocateUniformSet( const UniformSetDesc& description ) = 0;
+
+        /**
+         * @brief Free a descriptor set
+         * @param descriptor_id Handle to the descriptor set to free
+         */
+        virtual void freeUniformSet( int32_t descriptor_id ) = 0;
 
         //-------------------------------------------------------------------------
         // CommandBuffer Life Cycle

@@ -8,8 +8,8 @@
 #ifndef kege_render_graph_system_hpp
 #define kege_render_graph_system_hpp
 
-#include "../graphics/render-graph/render-graph.hpp"
-#include "../graphics/pipeline/pipeline-loader.hpp"
+#include "../graphics/render/graph/render-graph.hpp"
+#include "../graphics/render/pipeline/pipeline-loader.hpp"
 #include "module.hpp"
 
 namespace kege{
@@ -36,7 +36,7 @@ namespace kege{
 
 }
 
-#include "../esm/render-manager.hpp"
+#include "../graphics/render/manager/render-manager.hpp"
 namespace kege{
 
     class RenderManagerModule : public Module
@@ -52,6 +52,7 @@ namespace kege{
 
         const kege::Ref< kege::RenderManager > operator ->() const { return _module; }
         kege::Ref< kege::RenderManager > operator ->() { return _module; }
+        kege::RenderManager * getModule();
 
     private:
 
