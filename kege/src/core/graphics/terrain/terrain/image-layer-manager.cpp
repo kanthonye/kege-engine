@@ -46,7 +46,7 @@ namespace kege{
     {
         if ( layer.image_index < 0 || data == nullptr ) return;
 
-        size_t size = sq( _image_width );
+//        size_t size = sq( _image_width );
 //        _graphics->copyBufferToImage(sizeof(float) * size, data[0], layer.image_layer, 0 );
 //        _graphics->copyBufferToImage(4 * size, data[1], layer.image_layer, 0 );
 //        _resource_binding_sets[ _current_image_index ].resources[0].image->copyFrom(sizeof(float) * size, data[0], layer.image_layer, 0 );
@@ -70,7 +70,7 @@ namespace kege{
 
     std::vector< ImageInfo > ImageLayerManager::createNewImageArray( int width, int height, int layers )
     {
-        size_t size = sq( _image_width ) * _image_layers;
+//        size_t size = sq( _image_width ) * _image_layers;
 
         std::vector< ImageInfo > bindings =
         {

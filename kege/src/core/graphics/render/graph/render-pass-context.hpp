@@ -105,14 +105,16 @@ namespace kege{
         std::vector< RgShaderResrcInfo > targets;
     };
 
+    typedef std::vector< kege::Ref< ShaderResrc > > ShaderResrcs;
     struct RgShaderResrcDefn
     {
         std::string name;
+        uint32_t set_index;
         uint32_t frames_in_flight;
-        std::vector< RgShaderResrcDesc > bindings;
+            std::vector< RgShaderResrcDesc > bindings;
 
         RgResrcHandle handle = {};
-        std::vector< kege::ShaderResource > physical_handles;
+        ShaderResrcs physical_handles;
     };
 
 

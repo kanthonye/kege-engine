@@ -10,7 +10,7 @@
 
 namespace kege{
 
-    kege::RgResrcHandle RenderGraph::importShaderResource( std::string name, const std::vector< kege::ShaderResource >& handles )
+    kege::RgResrcHandle RenderGraph::importShaderResource( std::string name, const ShaderResrcs& handles )
     {
         RgShaderResrcDefn defn;
         defn.name = name;
@@ -18,18 +18,18 @@ namespace kege{
         return defnShaderResource( defn );
     }
 
-    const kege::ShaderResource* RenderGraph::fetchShaderResource( const std::string& name )const
+    const kege::ShaderResrc* RenderGraph::fetchShaderResource( const std::string& name )const
     {
         const RgShaderResrcDefn* defn = _asset_manager.fetch< RgShaderResrcDefn >( name );
         uint32_t frame_index = _graphics->getCurrFrameIndex() % defn->physical_handles.size();
-        return &defn->physical_handles[ frame_index ];
+        return defn->physical_handles[ frame_index ].ref();
     }
 
-    const kege::ShaderResource* RenderGraph::getShaderResource( const RgResrcHandle& handle )const
+    const kege::ShaderResrc* RenderGraph::getShaderResource( const RgResrcHandle& handle )const
     {
         const RgShaderResrcDefn* resrc = _asset_manager.get< RgShaderResrcDefn >( handle.index );
         uint32_t frame_index = _graphics->getCurrFrameIndex() % resrc->physical_handles.size();
-        return &resrc->physical_handles[ frame_index ];
+        return resrc->physical_handles[ frame_index ].ref();
     }
 
     kege::RgResrcHandle RenderGraph::defnShaderResource( const RgShaderResrcDefn& defn )
@@ -539,33 +539,28 @@ namespace kege{
 
     void RenderGraph::createShaderResource( RgShaderResrcDefn* def )
     {
-        UniformSetDesc description;
-        description.reserve( def->bindings.size() );
-        for ( auto& binding : def->bindings )
-        {
-            description.push_back
-            ({
-                .descriptor_type = binding.type,
-                .stage_flags = binding.stages,
-                .binding = binding.binding,
-                .count = binding.count,
-                .name = binding.name,
-            });
-        }
-
         def->physical_handles.resize( def->frames_in_flight );
         for (int frame=0; frame<def->frames_in_flight; ++frame)
         {
-            def->physical_handles[frame] = _graphics->allocateUniformSet( description );
+            UniformResourceSet resources;
+            UniformDescriptorSet descriptors;
 
+            descriptors.set = def->set_index;
             for ( auto& binding : def->bindings )
             {
-                def->physical_handles[frame][0][binding.binding].binding = binding.binding;
+                descriptors.descriptors.push_back
+                ({
+                    .descriptor_type = binding.type,
+                    .binding = binding.binding,
+                    .count = binding.count,
+                    .name = binding.name,
+                });
+
                 switch ( binding.targets[0].type )
                 {
                     case RgResrcType::Image:
                     {
-                        std::vector< ImageInfo > images;
+                        ImageBindings images( binding.targets.size() );
                         for (int i=0; i<binding.targets.size(); ++i)
                         {
                             ImageDefn* image = _asset_manager.fetch< kege::ImageDefn >( binding.targets[i].name );
@@ -573,26 +568,31 @@ namespace kege{
                             {
                                 createImage( *image );
                             }
+
                             SamplerDefn* sampler = _asset_manager.fetch< kege::SamplerDefn >( binding.targets[i].sampler );
                             if ( !sampler->physical_handle )
                             {
                                 createSampler( *sampler );
                             }
+
                             int index = image->physical_handle.size() % def->frames_in_flight;
-                            images.push_back
-                            ({
+
+                            images[i] = ImageInfo
+                            {
                                 .image = image->physical_handle[ index ],
                                 .sampler = sampler->physical_handle,
                                 .layout = ImageLayout::ShaderReadOnly
-                            });
+                            };
                         }
-                        def->physical_handles[frame][0][binding.binding].uniform = images;
+                        UniformResource ur{ .binding = binding.binding, .uniform = images };
+                        resources.push_back(ur);
                         break;
                     }
 
                     case RgResrcType::Buffer:
                     {
-                        std::vector< BufferInfo > buffers;
+                        BufferBindings buffers( binding.targets.size() );
+
                         for (int i=0; i<binding.targets.size(); ++i)
                         {
                             BufferDefn* buffer = _asset_manager.fetch< kege::BufferDefn >( binding.targets[i].name );
@@ -600,15 +600,18 @@ namespace kege{
                             {
                                 createBuffer( *buffer );
                             }
+
                             int index = buffer->physical_handle.size() % def->frames_in_flight;
-                            buffers.push_back
-                            ({
+
+                            buffers[i] = BufferInfo
+                            {
                                 .buffer = buffer->physical_handle[ index ],
                                 .offset = 0,
                                 .range = buffer->info.size
-                            });
+                            };
                         }
-                        def->physical_handles[frame][0][binding.binding].uniform = buffers;
+                        UniformResource ur{ .binding = binding.binding, .uniform = buffers };
+                        resources.push_back(ur);
                         break;
                     }
 
@@ -616,7 +619,12 @@ namespace kege{
                 }
             }
 
-            def->physical_handles[frame].update();
+            def->physical_handles[ frame ] = new ShaderResrc
+            ({
+                .descriptors = { descriptors },
+                .resources = { resources },
+                .graphics = _graphics
+            });
         }
     }
 
@@ -789,7 +797,7 @@ namespace kege{
         RgResrcUsage* current_state_ptr = nullptr;
         kege::ImageHandle  img_handle = {};
         kege::BufferHandle buf_handle = {};
-        kege::ShaderResource sr_handle = {};
+        kege::Ref< ShaderResrc > sr_handle = {};
         bool is_image = (type == RgResrcType::Image);
 
         // Simplified: Use only the first handle for barrier calculation
@@ -798,7 +806,7 @@ namespace kege{
         const void* definition_ptr = nullptr; // Generic pointer to definition
         const std::vector< kege::ImageHandle >*  image_handles_ptr  = nullptr;
         const std::vector< kege::BufferHandle >* buffer_handles_ptr = nullptr;
-        const std::vector< kege::ShaderResource >* sr_handles_ptr = nullptr;
+        const std::vector< Ref< kege::ShaderResrc > >* sr_handles_ptr = nullptr;
 
         switch ( type )
         {
@@ -955,11 +963,8 @@ namespace kege{
             ResourceManagerT< RgShaderResrcDefn >* resources = _asset_manager.get< RgShaderResrcDefn >();
             for (int i=0; i<resources->begin(); ++i)
             {
-                std::vector< kege::ShaderResource >& handles = resources->get( i ).physical_handles;
-                for (int i=0; i<handles.size(); ++i)
-                {
-                    _graphics->freeUniformSet( handles[i] );
-                }
+                std::vector< kege::Ref< ShaderResrc > >& handles = resources->get( i ).physical_handles;
+                handles.clear();
             }
 
             ResourceManagerT< BufferDefn >* buffers = _asset_manager.get< BufferDefn >();

@@ -29,7 +29,7 @@ namespace kege{
     bool CircleOrientedRectangle(const Circle& circle, const OBB2D& obb)
     {
         vec2 r = circle.center - obb.center;
-        mat22 rot = rot2D< float >( -DEG2RAD( obb.rotation ) );
+        //mat22 rot = rot2D< float >( -DEG2RAD( obb.rotation ) );
         Circle local_circle(r + obb.extents, circle.radius);
         AABB2D local_rect(Point2D(), obb.extents * 2.0f);
         return CircleAABB2D( local_circle, local_rect );

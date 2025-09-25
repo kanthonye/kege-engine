@@ -710,6 +710,58 @@ namespace kege::vk{
         return command_buffer;
     }
 
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    // Shader Resource Set Lifecycle
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+    int  Device::makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )
+    {
+        return _pipeline_layout_manager.makeSet( descriptors, resources );
+    }
+
+    bool Device::updateSet( int handle, const UniformResourceSet& resources )
+    {
+        return _pipeline_layout_manager.updateSet( handle, resources );
+    }
+
+    int  Device::allocateSet( const UniformDescriptorSet& descriptors )
+    {
+        return _pipeline_layout_manager.allocateSet( descriptors );
+    }
+
+    void Device::freeSet( int set )
+    {
+        return _pipeline_layout_manager.freeSet( set );
+    }
+
+    const vk::DescriptorSet* Device::getSet( int32_t descriptor_id ) const
+    {
+        return _pipeline_layout_manager.getSet( descriptor_id );
+    }
+    
+    //-------------------------------------------------------------------------
+    // Descriptor Set Layout Lifecycle
+    //-------------------------------------------------------------------------
+
+    UniformSetLayout Device::getUniformSetLayout( const UniformDescriptors& desc )
+    {
+        return { _pipeline_layout_manager.getDescriptorSetLayoutID( desc, false ) };
+    }
+
+    UniformSetLayout Device::createUniformSetLayout( const UniformDescriptors& desc )
+    {
+        return { _pipeline_layout_manager.createUniformSetLayout( desc ) };
+    }
+
+    void Device::destroyUniformSetLayout( const UniformSetLayout& layout )
+    {
+        _pipeline_layout_manager.destroyDescriptorSetLayout( layout.id );
+    }
+    
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    // Image / Texture Resources
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
     kege::ImageHandle Device::createImage( const kege::ImageDesc& desc )
     {
         if ( _device == VK_NULL_HANDLE ) return {-1};
@@ -851,16 +903,21 @@ namespace kege::vk{
         {
             waitIdle();
             Image* texture = _textures.get( handle.id );
-            vkDestroyImageView( _device, texture->view, nullptr );
+
             if ( texture->memory != VK_NULL_HANDLE )
             {
                 vkFreeMemory( _device, texture->memory, nullptr );
                 vkDestroyImage( _device, texture->image, nullptr );
+                texture->memory = VK_NULL_HANDLE;
+                texture->image = VK_NULL_HANDLE;
             }
+
             if ( texture->view != VK_NULL_HANDLE )
             {
                 vkDestroyImageView( _device, texture->view, nullptr );
+                texture->view = VK_NULL_HANDLE;
             }
+            
             _textures.free( handle.id );
         }
         else
@@ -1006,6 +1063,9 @@ namespace kege::vk{
             _buffers.free( handle.id );
         }
     }
+
+    void Device::destroyBufferView(kege::BufferViewHandle handle)
+    {}
 
     kege::SamplerHandle Device::createSampler(const kege::SamplerDesc& desc)
     {
@@ -1223,7 +1283,7 @@ namespace kege::vk{
 
             VkPipelineRasterizationStateCreateInfo rasterization_info = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
             rasterization_info.lineWidth = info.states.rasterization.line_width;
-            rasterization_info.rasterizerDiscardEnable = info.states.rasterization.rasterizer_discard_enable;
+            rasterization_info.rasterizerDiscardEnable = info.states.rasterization.rasterizer_disable;
             rasterization_info.depthClampEnable = info.states.rasterization.depth_clamp_enable;
             rasterization_info.depthBiasEnable = info.states.rasterization.depth_bias_enable;
             rasterization_info.depthBiasClamp = info.states.rasterization.depth_bias_clamp;
@@ -1470,7 +1530,7 @@ namespace kege::vk{
         // 5. Rasterization State
         VkPipelineRasterizationStateCreateInfo rasterization_info = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
         rasterization_info.lineWidth = desc.rasterization_state.line_width;
-        rasterization_info.rasterizerDiscardEnable = desc.rasterization_state.rasterizer_discard_enable;
+        rasterization_info.rasterizerDiscardEnable = desc.rasterization_state.rasterizer_disable;
         rasterization_info.depthClampEnable = desc.rasterization_state.depth_clamp_enable;
         rasterization_info.depthBiasEnable = desc.rasterization_state.depth_bias_enable;
         rasterization_info.depthBiasClamp = desc.rasterization_state.depth_bias_clamp;
@@ -1493,7 +1553,7 @@ namespace kege::vk{
         graphics_create.pMultisampleState = &multisample_info;
 
         // 7. Depth Stencil State
-        VkPipelineDepthStencilStateCreateInfo depth_stencil_info = { VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
+        //VkPipelineDepthStencilStateCreateInfo depth_stencil_info = { VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
 
         // 8. Color Blend State
         std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states;
@@ -1666,21 +1726,6 @@ namespace kege::vk{
             _compute_pipelines.free( handle.id );
         }
     }
-
-    UniformSetLayout Device::getUniformSetLayout( const UniformSetDesc& desc )
-    {
-        return { _pipeline_layout_manager.getDescriptorSetLayoutID( desc, false ) };
-    }
-
-    UniformSetLayout Device::createUniformSetLayout( const UniformSetDesc& desc )
-    {
-        return { _pipeline_layout_manager.createUniformSetLayout( desc ) };
-    }
-
-    void Device::destroyUniformSetLayout( const UniformSetLayout& layout )
-    {
-        _pipeline_layout_manager.destroyDescriptorSetLayout( layout.id );
-    }
     
 
     const vk::DescriptorSetLayout* Device::getDescriptorSetLayout( int32_t layout )
@@ -1694,33 +1739,24 @@ namespace kege::vk{
 
     bool Device::updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )
     {
-        return _pipeline_layout_manager.updateUniformSets( handles, resource_sets );
+        return 0;//_pipeline_layout_manager.updateUniformSets( handles, resource_sets );
     }
 
     bool Device::updateUniformSet( int handle, const UniformSet& resource_set )
     {
-        return _pipeline_layout_manager.updateUniformSet( handle, resource_set );
+        return 0;//_pipeline_layout_manager.updateUniformSet( handle, resource_set );
     }
 
     std::vector< int > Device::allocateUniformSets( const UniformSetsDesc& desc )
     {
-        return _pipeline_layout_manager.allocateUniformSets( desc );
+        return {};//_pipeline_layout_manager.allocateUniformSets( desc );
     }
 
     int Device::allocateUniformSet( const UniformSetDesc& desc )
     {
-        return _pipeline_layout_manager.allocateUniformSet( desc );
+        return 0;//_pipeline_layout_manager.allocateUniformSet( desc );
     }
 
-    void Device::freeUniformSet( int32_t descriptor_id )
-    {
-        _pipeline_layout_manager.freeUniformSet( descriptor_id );
-    }
-
-    const vk::DescriptorSet* Device::getDescriptorSet( int32_t descriptor_id ) const
-    {
-        return _pipeline_layout_manager.getDescriptorSet( descriptor_id );
-    }
 //    kege::UniformSetLayout Device::createDescriptorSetLayout( const std::vector< kege::UniformDesc >& bindings )
 //    {
 //        return _pipeline_layout_manager.createDescriptorSetLayout( bindings );

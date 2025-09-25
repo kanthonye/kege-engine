@@ -106,7 +106,7 @@ namespace kege{
         /**
          * @brief Descriptor set layouts used by this pipeline.
          */
-        UniformSetsDesc layouts;
+        UniformDescriptorSets layouts;
 
         /**
          * @brief Push constant ranges used by this pipeline.

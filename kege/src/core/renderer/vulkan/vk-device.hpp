@@ -92,7 +92,49 @@ namespace kege::vk{
 
         void endTransferQueueCommandBuffer( VkCommandBuffer command_buffer );
         VkCommandBuffer beginTransferQueueCommandBuffer();
-        
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Shader Resource Set Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+        int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )override;
+        bool updateSet( int handle, const UniformResourceSet& resources )override;
+        int  allocateSet( const UniformDescriptorSet& descriptors )override;
+        void freeSet( int set )override;
+
+
+        /**
+         * @brief Get the internal Vulkan descriptor-set object
+         * @param descriptor_id Handle to the descriptor-set
+         * @return Pointer to the internal DescriptorSet object
+         */
+        const DescriptorSet* getSet( int32_t descriptor_id ) const;
+
+        //-------------------------------------------------------------------------
+        // Descriptor Set Layout Lifecycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a descriptor set layout.
+         * @param descriptors Description of binding points for resources.
+         * @return Handle to the created descriptor set layout.
+         */
+        UniformSetLayout createUniformSetLayout( const UniformDescriptors& descriptors )override;
+
+        /**
+         * @brief Retrieves or creates a descriptor set layout based on bindings.
+         * @param descriptors Description of binding points for resources.
+         * @return Handle to the descriptor set layout.
+         */
+        UniformSetLayout getUniformSetLayout( const UniformDescriptors& descriptors )override;
+
+        /**
+         * @brief Destroys a descriptor set layout.
+         * @param layout Handle to the layout to destroy.
+         * @warning Ensure no descriptor sets or pipelines are using this layout.
+         */
+        void destroyUniformSetLayout( const UniformSetLayout& layout )override;
+
         //-------------------------------------------------------------------------
         // Resource Creation Methods
         //-------------------------------------------------------------------------
@@ -215,6 +257,7 @@ namespace kege::vk{
          * @param handle Handle to the buffer to destroy
          */
         void destroyBuffer(kege::BufferHandle handle) override;
+        void destroyBufferView(kege::BufferViewHandle handle) override;
 
         /**
          * @brief Destroy a sampler object
@@ -262,29 +305,8 @@ namespace kege::vk{
         void destroyComputePipeline(kege::PipelineHandle handle) override;
 
         //-------------------------------------------------------------------------
-        // Descriptor Set Layout Lifecycle
+        //
         //-------------------------------------------------------------------------
-
-        /**
-         * @brief Creates a descriptor set layout.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the created descriptor set layout.
-         */
-        UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors )override;
-
-        /**
-         * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the descriptor set layout.
-         */
-        UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors )override;
-
-        /**
-         * @brief Destroys a descriptor set layout.
-         * @param layout Handle to the layout to destroy.
-         * @warning Ensure no descriptor sets or pipelines are using this layout.
-         */
-        void destroyUniformSetLayout( const UniformSetLayout& layout )override;
 
         const vk::DescriptorSetLayout* getDescriptorSetLayout(int32_t layout );
 
@@ -321,19 +343,6 @@ namespace kege::vk{
          * @return Handle to the newly allocated descriptor set.
          */
         int allocateUniformSet( const UniformSetDesc& description )override;
-
-        /**
-         * @brief Free a descriptor set
-         * @param descriptor_id Handle to the descriptor set to free
-         */
-        void freeUniformSet( int32_t descriptor_id )override;
-
-        /**
-         * @brief Get the internal Vulkan descriptor-set object
-         * @param descriptor_id Handle to the descriptor-set
-         * @return Pointer to the internal DescriptorSet object
-         */
-        const DescriptorSet* getDescriptorSet( int32_t descriptor_id ) const;
 
         //-------------------------------------------------------------------------
         // Synchronization Primitives

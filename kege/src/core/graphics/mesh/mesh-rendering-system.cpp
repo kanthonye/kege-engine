@@ -53,6 +53,7 @@ namespace kege{
                         m[0] = kege::quatToM44( transform->orientation );
                     }
                     object.constant.size = 2 * sizeof( kege::mat44 );
+                    object.constant.stages = ShaderStage::Vertex;
                 }
 
                 if ( source->primative )
@@ -89,7 +90,7 @@ namespace kege{
                 kege::vfs( "graphics-shaders/basic/basic.json" ).c_str()
             );
 
-            _default_material = new Material({ new MaterialSource(pipeline, false, false, { RenderPassType::Geometry }) });
+            _default_material = new Material({ new MaterialSource(RenderPassType::Geometry, pipeline, false, false, {}) });
             _engine->getAssetManager().add< Ref< Material > >( "default-material", _default_material );
         }
         else

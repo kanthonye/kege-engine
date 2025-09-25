@@ -42,7 +42,7 @@ namespace kege{
     }
 
     UpdateSceneCamera::UpdateSceneCamera( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "camera-system", REQUIRE_UPDATE )
+    :   kege::EntitySystem( engine, "update-scene-camera", REQUIRE_UPDATE )
     {
         _signature = createEntitySignature< Camera, kege::Transform >();
     }

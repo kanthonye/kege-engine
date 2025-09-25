@@ -34,8 +34,8 @@
 namespace kege{
 
     enum{ MAX_FRAMES_IN_FLIGHT = 2};
-    
-    // Forward Declarations
+
+    class Graphics;
     class GraphicsInstance;
     class GraphicsDevice;
     class GraphicsWindow;
@@ -1364,7 +1364,7 @@ namespace kege{
          * - No fragments are generated
          * - Useful for transform feedback or vertex shader-only pipelines
          */
-        bool rasterizer_discard_enable = false;
+        bool rasterizer_disable = false;
 
         /**
          * @brief How to render polygons.
@@ -1786,6 +1786,14 @@ namespace kege{
         StorageBufferDynamic,  ///< SSBO with dynamic offset
         InputAttachment        ///< Framebuffer input (for subpasses)
     };
+
+    /**
+     * @brief Convert engine descriptor type to a human-readable C string
+     *
+     * @param type Engine descriptor type
+     * @return Null-terminated C string name of the descriptor type
+     */
+    const char* descriptorTypeCString( DescriptorType type );
 
     /**
      * @brief Describes a push constant range.
@@ -3154,6 +3162,14 @@ namespace kege{
         uint32_t layer_count = 1;
     };
 
+    
+    struct ShaderBinding
+    {
+        std::string name;
+        int set_index;
+        int resource;
+    };
+    typedef std::vector< ShaderBinding > ShaderBindings;
 }
 
 

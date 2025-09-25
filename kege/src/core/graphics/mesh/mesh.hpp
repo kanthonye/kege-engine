@@ -64,8 +64,10 @@ namespace kege{
 
     struct InstanceBuffer
     {
-        kege::ShaderResource shader_resource;
-        kege::BufferHandle buffer;
+        const ShaderBindings& getShaderBindings()const;
+        const BufferHandle& getBufferHandle()const;
+
+        kege::Ref< ShaderResrc > resource;
         uint32_t instance_count;
         uint32_t first_instance;
     };
@@ -73,17 +75,15 @@ namespace kege{
     {
     public:
 
-        InstanceBufferList
-        (
-            kege::Graphics* graphics,
-            const std::vector< InstanceBuffer >& buffers
-        );
+        InstanceBufferList( const std::vector< InstanceBuffer >& buffers );
+
+        const ShaderBindings& getShaderBindings( int index )const;
+        const BufferHandle& getBufferHandle( int index )const;
 
         ~InstanceBufferList();
         InstanceBufferList();
 
         std::vector< InstanceBuffer > buffers;
-        kege::Graphics* graphics;
     };
 
 

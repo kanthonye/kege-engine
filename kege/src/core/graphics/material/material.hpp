@@ -19,25 +19,25 @@ namespace kege{
     {
         MaterialSource
         (
+            RenderPassType pass,
             const ShaderPipeline& p,
             bool receive_shadows,
             bool casts_shadows,
-            std::vector< ShaderResource > resources,
-            std::vector< RenderPassType > pass
+            Ref< ShaderResrc > resource
         )
         :   pipeline(p)
         ,   receive_shadows( receive_shadows )
         ,   casts_shadows( casts_shadows )
-        ,   resources( resources )
+        ,   resource( resource )
         ,   pass( pass )
         {}
 
         MaterialSource
         (
+            RenderPassType pass,
             const ShaderPipeline& p,
             bool receive_shadows,
-            bool casts_shadows,
-            std::vector< RenderPassType > pass
+            bool casts_shadows
         )
         :   pipeline(p)
         ,   receive_shadows( receive_shadows )
@@ -47,10 +47,12 @@ namespace kege{
 
         MaterialSource(){}
 
-        std::vector< ShaderResource > resources;
-        std::vector< RenderPassType > pass;
+        //std::vector< ShaderResource > resources;
+        //std::vector< RenderPassType > pass;
 
-        ShaderPipeline pipeline;
+        kege::Ref< ShaderResrc > resource;
+        kege::ShaderPipeline pipeline;
+        kege::RenderPassType pass;
 
         bool receive_shadows = true;
         bool casts_shadows = true;

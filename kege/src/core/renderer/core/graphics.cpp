@@ -77,6 +77,10 @@ namespace kege{
     {
         _device->destroyBuffer( handle );
     }
+    void Graphics::destroyBufferView( BufferViewHandle handle )
+    {
+        _device->destroyBufferView( handle );
+    }
 
     void Graphics::updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data )
     {
@@ -158,19 +162,43 @@ namespace kege{
     // UniformSetLayout
     // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    UniformSetLayout Graphics::createUniformSetLayout( const UniformSetDesc& desc )
+    UniformSetLayout Graphics::createUniformSetLayout( const UniformDescriptors& descriptors )
     {
-        return _device->createUniformSetLayout( desc );
+        return _device->createUniformSetLayout( descriptors );
     }
 
-    UniformSetLayout Graphics::getUniformSetLayout( const UniformSetDesc& desc )
+    UniformSetLayout Graphics::getUniformSetLayout( const UniformDescriptors& descriptors )
     {
-        return _device->getUniformSetLayout( desc );
+        return _device->getUniformSetLayout( descriptors );
     }
 
     void Graphics::destroyUniformSetLayout( const UniformSetLayout& layout )
     {
         _device->destroyUniformSetLayout( layout );
+    }
+
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    // Shader Resource Set Lifecycle
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+    int  Graphics::makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )
+    {
+        return _device->makeSet( descriptors, resources );
+    }
+
+    bool Graphics::updateSet( int handle, const UniformResourceSet& resources )
+    {
+        return _device->updateSet( handle, resources );
+    }
+
+    int  Graphics::allocateSet( const UniformDescriptorSet& descriptors )
+    {
+        return _device->allocateSet( descriptors );
+    }
+    
+    void Graphics::freeSet( int set )
+    {
+        return _device->freeSet( set );
     }
 
     // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

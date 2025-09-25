@@ -109,4 +109,40 @@ namespace kege{
         return seed;
     }
 
+
+
+
+
+    std::size_t hash( const kege::UniformDescriptor& binding )
+    {
+        std::size_t seed = 0;
+
+        // Combine hashes of the relevant members
+        kege::hash_combine(seed, binding.binding);
+        // Hash the enum value directly (underlying type is usually int)
+        kege::hash_combine(seed, static_cast<int>(binding.descriptor_type));
+        kege::hash_combine(seed, binding.count);
+        // Hash the flags directly (underlying type is usually int/uint)
+        //kege::hash_combine(seed, static_cast<uint32_t>(binding.stage_flags));
+        return seed;
+    }
+    
+    std::size_t hash( const kege::UniformDescriptors& bindings )
+    {
+        std::size_t seed = 0;
+
+        // Combine hash of the size to quickly differentiate vectors of different lengths
+        kege::hash_combine(seed, bindings.size());
+
+        // Combine the hash of each element in order
+        for (const auto& binding : bindings)
+        {
+            seed ^= kege::hash( binding ) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            // Note: Using ^= directly here instead of hash_combine(seed, bindingHasher(binding))
+            //       is slightly different but still a common pattern for combining element hashes.
+            //       Using hash_combine(seed, bindingHasher(binding)) is also perfectly valid.
+        }
+        return seed;
+    }
+
 }

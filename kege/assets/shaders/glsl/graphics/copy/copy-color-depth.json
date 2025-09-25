@@ -34,7 +34,7 @@
                     "cull_mode": "back",
                     "front_face": "ccw",
                     "polygon_mode": "fill",
-                    "rasterizer_discard_enable": "false",
+                    "rasterizer_disable": "false",
                 },
                 "depth_stencil":
                 {

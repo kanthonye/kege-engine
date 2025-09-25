@@ -136,7 +136,9 @@ namespace kege::vk{
         VkInstance _instance;
 
         /** @brief Flag indicating if validation layers are enabled */
-        bool _validation_enabled = false;
+        bool _enable_debug_validation;
+        bool _enable_debug_performance;
+        bool _enable_debug_general;
 
         uint32_t _best_physical_device_index;
 

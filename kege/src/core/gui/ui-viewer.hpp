@@ -14,62 +14,6 @@
 
 namespace kege::ui{
 
-    class UIMeshSource : public kege::MeshSource
-    {
-    public:
-        
-        UIMeshSource( kege::Graphics* graphics, int _max_render_instances )
-        {
-            size_t size = _max_render_instances * sizeof( kege::ui::DrawElem );
-
-            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-            // create and setup the ui instance buffer shader resources
-            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-            instance_buffer_list = new kege::InstanceBufferList(nullptr, {});
-            kege::InstanceBuffer instance = kege::InstanceBuffer
-            {
-                .buffer = graphics->createBuffer
-                ({
-                    .size = size,
-                    .usage = kege::BufferUsage::StorageBuffer,
-                    .memory_usage = kege::MemoryUsage::CpuToGpu,
-                    .data = nullptr
-                }),
-                .shader_resource = graphics->allocateUniformSet(kege::UniformSetDesc{
-                    kege::UniformDesc
-                    {
-                        .descriptor_type = kege::DescriptorType::StorageBuffer,
-                        .stage_flags = kege::ShaderStage::Vertex,
-                        .name = "UIViewBuffer",
-                        .binding = 0,
-                        .count = 1,
-                    }
-                })
-            };
-            instance.shader_resource[0][0] = kege::UniformBinding
-            {
-                .binding = 0,
-                .uniform = kege::BufferBindings
-                {{
-                    .buffer = instance.buffer,
-                    .offset = 0,
-                    .range = size
-                }}
-            };
-            instance.shader_resource.update({});
-
-            instance_buffer_list = new kege::InstanceBufferList( graphics, { instance });
-
-            first_instance = 0;
-            first_index = 0;
-            index_count = 4;
-            instance_count = 0;
-            material_index = 0;
-        }
-    };
-
-
     class Viewer
     {
     public:

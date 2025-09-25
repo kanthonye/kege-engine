@@ -36,6 +36,10 @@ namespace kege{
 
     public:
 
+        virtual bool bind( const std::vector< ShaderBinding >& shader_bindings ) = 0;
+        virtual bool bind( const ShaderBinding& shader_binding ) = 0;
+
+
         // --- Drawing ---
 
         virtual void drawIndexIndirect( BufferHandle buffer, uint64_t offset, uint32_t draw_count, uint32_t stride ) = 0;

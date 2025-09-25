@@ -61,7 +61,9 @@ namespace kege{
          * @note Should typically be enabled in debug builds and disabled
          * in release builds for performance.
          */
-        bool request_validation = true;
+        bool enable_debug_validation = false;
+        bool enable_debug_performance = false;
+        bool enable_debug_general = false;
 
         /**
          * @brief Minimum required dedicated video memory (in MB).
@@ -317,6 +319,7 @@ namespace kege{
          * @warning Ensure the buffer is no longer in use by the GPU.
          */
         virtual void destroyBuffer( kege::BufferHandle handle ) = 0;
+        virtual void destroyBufferView( kege::BufferViewHandle handle ) = 0;
 
         /**
          * @brief Maps buffer memory for CPU access.
@@ -345,14 +348,14 @@ namespace kege{
          * @param descriptors Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        virtual UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors ) = 0;
+        virtual UniformSetLayout createUniformSetLayout( const UniformDescriptors& descriptors ) = 0;
 
         /**
          * @brief Retrieves or creates a descriptor set layout based on bindings.
          * @param descriptors Description of binding points for resources.
          * @return Handle to the descriptor set layout.
          */
-        virtual UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors ) = 0;
+        virtual UniformSetLayout getUniformSetLayout( const UniformDescriptors& descriptors ) = 0;
 
         /**
          * @brief Destroys a descriptor set layout.
@@ -360,6 +363,15 @@ namespace kege{
          * @warning Ensure no descriptor sets or pipelines are using this layout.
          */
         virtual void destroyUniformSetLayout( const UniformSetLayout& layout ) = 0;
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Shader Resource Set Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+        virtual int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources ) = 0;
+        virtual bool updateSet( int handle, const UniformResourceSet& resources ) = 0;
+        virtual int  allocateSet( const UniformDescriptorSet& descriptors ) = 0;
+        virtual void freeSet( int set ) = 0;
 
         //-------------------------------------------------------------------------
         // Descriptor Set Lifecycle
@@ -394,12 +406,6 @@ namespace kege{
          * @return Handle to the newly allocated descriptor set.
          */
         virtual int allocateUniformSet( const UniformSetDesc& description ) = 0;
-
-        /**
-         * @brief Free a descriptor set
-         * @param descriptor_id Handle to the descriptor set to free
-         */
-        virtual void freeUniformSet( int32_t descriptor_id ) = 0;
 
         //-------------------------------------------------------------------------
         // CommandBuffer Life Cycle

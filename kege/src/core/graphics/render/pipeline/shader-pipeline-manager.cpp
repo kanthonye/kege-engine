@@ -82,7 +82,7 @@ namespace kege{
             PipelineContext& context = _pipeline_objects[ index ].pipeline_contexts[i];
             context.pipeline = pipelines[ i ];
             context.name = info.pipelines[ i ].name;
-            context.layouts = info.pipelines[ i ].layouts;
+            //context.layouts = info.pipelines[ i ].layouts;
             context.push_constants = info.pipelines[ i ].push_constants;
             context.states = info.pipelines[ i ].states;
             context.vertex_input = info.pipelines[ i ].vertex_input;

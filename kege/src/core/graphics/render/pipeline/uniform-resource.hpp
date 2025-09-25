@@ -239,44 +239,6 @@ namespace kege{
 
 namespace kege{
 
-
-//    enum struct UsageSource: char
-//    {
-//        Scale,
-//        Rotation,
-//        Translation,
-//        ViewTransform,
-//        ViewPerspective,
-//        ViewOrthographics,
-//        ObjectTransform,
-//        Lights,
-//        Material,
-//        MaterialTextures,
-//        MaterialParameters,
-//        InstanceBufferList,
-//        IndirectDrawBufferList,
-//        ShadowMap,
-//        EVMap,
-//    };
-//
-//    struct UsageInfo
-//    {
-//        enum Target : char
-//        {
-//            Object, Camera, Light, Material, Mesh,
-//        };
-//
-//        enum Input : char
-//        {
-//            UBO,
-//            UniformLayout,
-//            PushConst,
-//        };
-//
-//        Target target;
-//        Input source;
-//    };
-
     struct UniformDesc
     {
        /**
@@ -316,6 +278,44 @@ namespace kege{
 
     typedef std::vector< UniformDesc > UniformSetDesc;
     typedef std::vector< UniformSetDesc > UniformSetsDesc;
+
+
+
+
+
+    struct UniformDescriptor
+    {
+        kege::DescriptorType descriptor_type;
+        uint32_t binding;
+        uint32_t count;
+        std::string name;
+    };
+    typedef std::vector< UniformDescriptor > UniformDescriptors;
+
+
+    struct UniformDescriptorSet
+    {
+        UniformDescriptors descriptors;
+        int set;
+    };
+    typedef std::vector< UniformDescriptorSet > UniformDescriptorSets;
+
+
+    struct UniformResource
+    {
+        uint32_t binding;
+        Uniform uniform;
+    };
+    typedef std::vector< UniformResource > UniformResourceSet;
+    typedef std::vector< UniformResourceSet > UniformResourceSets;
+
+    
+    struct UniformResourceLayout
+    {
+        UniformDescriptorSets descriptors;
+        UniformResourceSets resources;
+        Graphics* graphics;
+    };
 
 }
 
@@ -371,6 +371,9 @@ namespace kege{
     }
 
 
+    std::size_t hash( const kege::UniformDescriptors& bindings );
+    std::size_t hash( const kege::UniformDescriptor& binding );
+
     std::size_t hash( const std::vector< kege::UniformDesc >& bindings );
     std::size_t hash( const std::vector< kege::DescriptorType >& types );
     std::size_t hash( const kege::UniformDesc& binding );
@@ -381,6 +384,65 @@ namespace kege{
 
 
 namespace std{
+
+    template <> struct hash< kege::UniformDescriptors >
+    {
+        std::size_t operator()( const kege::UniformDescriptors& bindings ) const
+        {
+            return kege::hash( bindings );
+        }
+    };
+
+    // Define equality comparison for VkDescriptorSetLayoutBinding
+    inline bool operator==(const kege::UniformDescriptor& a, const kege::UniformDescriptor& b)
+    {
+        // Compare relevant members.
+        // IMPORTANT: Ignore pImmutableSamplers if your hash function ignores it!
+        // Comparing pointer values is usually wrong for value semantics anyway.
+        return a.binding         == b.binding &&
+               a.descriptor_type == b.descriptor_type &&
+               a.count           == b.count;
+    }
+
+    // Define none equality comparison for VkDescriptorSetLayoutBinding
+    inline bool operator!=(const kege::UniformDescriptor& a, const kege::UniformDescriptor& b)
+    {
+        // Compare relevant members.
+        // IMPORTANT: Ignore pImmutableSamplers if your hash function ignores it!
+        // Comparing pointer values is usually wrong for value semantics anyway.
+        return a.binding         != b.binding &&
+               a.descriptor_type != b.descriptor_type &&
+               a.count           != b.count;
+    }
+
+    // Define less-than comparison (needed to resolve the compiler error)
+    inline bool operator<(const kege::UniformDescriptor& a, const kege::UniformDescriptor& b)
+    {
+        // Compare members lexicographically to establish a strict weak ordering.
+        // Use std::tie to make this comparison clean and less error-prone.
+        // IMPORTANT: Use the SAME members in the SAME order as operator==, and
+        // ignore members ignored by the hash/equality functions (like pImmutableSamplers).
+        return std::tie(a.binding, a.descriptor_type, a.count) <
+               std::tie(b.binding, b.descriptor_type, b.count);
+    }
+
+    inline bool operator==(const kege::UniformDescriptors& a, const kege::UniformDescriptors& b)
+    {
+        if( a.size() != b.size() ) return false;
+        for(int i=0; i<a.size(); ++i)
+            if( a[i] != b[i] )
+                return false;
+        return true;
+    }
+}
+
+
+
+
+
+namespace std{
+
+
 
     template <> struct hash< std::vector< kege::DescriptorType > >
     {
@@ -440,6 +502,7 @@ namespace std{
         // // If all relevant members are equal, they are not less-than
         // return false;
     }
+
     inline bool operator==(const std::vector< kege::UniformDesc >& a, const std::vector< kege::UniformDesc >& b)
     {
         if( a.size() != b.size() ) return false;

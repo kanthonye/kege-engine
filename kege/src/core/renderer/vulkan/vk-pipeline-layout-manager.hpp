@@ -76,7 +76,7 @@ namespace kege::vk{
          * share the same resource index. At bind time, the system remaps the
          * differing set numbers to the proper slot index.
          */
-        int32_t resource_index;
+        //int32_t resource_index;
 
         int32_t allocator_id;
         int32_t id;
@@ -181,7 +181,7 @@ namespace kege::vk{
     {
     public:
 
-        int32_t createPipelineLayout( const char* name, const UniformSetsDesc& layouts, const std::vector< PushConstantInfo >& push_constants );
+        int32_t createPipelineLayout( const char* name, const UniformDescriptorSets& layouts, const std::vector< PushConstantInfo >& push_constants );
 
         /**
          * @brief Get a pipeline layout
@@ -206,7 +206,7 @@ namespace kege::vk{
         // Descriptor Set Layout Lifecycle
         //-------------------------------------------------------------------------
 
-        std::vector< int > createUniformSetLayouts( const UniformSetsDesc& description );
+        std::vector< int > createUniformSetLayouts( const UniformDescriptors& description );
 
         /**
          * @brief Create a descriptor set layout
@@ -216,7 +216,7 @@ namespace kege::vk{
          * @param description The bindings of the descriptor set layout to create
          * @return Handle to the newly created descriptor set layout
          */
-        int32_t createUniformSetLayout( const UniformSetDesc& description );
+        int32_t createUniformSetLayout( const UniformDescriptors& description );
 
         /**
          * @brief Get a descriptor-set-layout
@@ -227,7 +227,7 @@ namespace kege::vk{
          * @param create Whether to create the layout if it does not exist
          * @return Handle to the descriptor set layout
          */
-        int32_t getDescriptorSetLayoutID( const UniformSetDesc& description, bool create = false );
+        int32_t getDescriptorSetLayoutID( const UniformDescriptors& description, bool create = false );
 
         /**
          * @brief Get a descriptor-set-layout
@@ -248,39 +248,14 @@ namespace kege::vk{
          */
         void destroyDescriptorSetLayout( int32_t handle );
 
-        //-------------------------------------------------------------------------
-        // Descriptor Set Lifecycle
-        //-------------------------------------------------------------------------
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Shader Resource Set Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-        /**
-         * @brief Update multiple descriptor sets with new resource bindings.
-         * @param handles Vector of descriptor set handles to update.
-         * @param resource_sets Vector of resource sets containing the new bindings.
-         * @return True if all updates succeeded, false otherwise.
-         */
-        bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets );
-
-        /**
-         * @brief Update a single descriptor set with new resource bindings.
-         * @param handle Handle of the descriptor set to update.
-         * @param resource_set Resource set containing the new bindings.
-         * @return True if the update succeeded, false otherwise.
-         */
-        bool updateUniformSet( int handle, const UniformSet& resource_set );
-
-        /**
-         * @brief Allocate multiple descriptor sets from layouts.
-         * @param description Descriptions of the descriptor set layouts to allocate from.
-         * @return Vector of handles to the newly allocated descriptor sets.
-         */
-        std::vector< int > allocateUniformSets( const UniformSetsDesc& description );
-        
-        /**
-         * @brief Allocate a single descriptor set from a layout.
-         * @param description Description of the descriptor set layout to allocate from.
-         * @return Handle to the newly allocated descriptor set.
-         */
-        int allocateUniformSet( const UniformSetDesc& description );
+        int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources );
+        bool updateSet( int handle, const UniformResourceSet& resources );
+        int  allocateSet( const UniformDescriptorSet& descriptors );
+        void freeSet( int set );
 
         /**
          * @brief Get a descriptor set
@@ -290,7 +265,7 @@ namespace kege::vk{
          * @param descriptor_id Handle to the descriptor set to retrieve
          * @return Pointer to the DescriptorSet object, or nullptr if not found
          */
-        const vk::DescriptorSet* getDescriptorSet( int32_t descriptor_id )const;
+        const vk::DescriptorSet* getSet( int32_t descriptor_id )const;
 
         /**
          * @brief Allocate multiple descriptor sets from a layout.
@@ -301,11 +276,44 @@ namespace kege::vk{
          */
         bool allocateDescriptors( int32_t layout, int32_t quantity, int32_t* sets );
 
+        //-------------------------------------------------------------------------
+        // Descriptor Set Lifecycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Update multiple descriptor sets with new resource bindings.
+         * @param handles Vector of descriptor set handles to update.
+         * @param resource_sets Vector of resource sets containing the new bindings.
+         * @return True if all updates succeeded, false otherwise.
+         */
+        //bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets );
+
+        /**
+         * @brief Update a single descriptor set with new resource bindings.
+         * @param handle Handle of the descriptor set to update.
+         * @param resource_set Resource set containing the new bindings.
+         * @return True if the update succeeded, false otherwise.
+         */
+        //bool updateUniformSet( int handle, const UniformSet& resource_set );
+
+        /**
+         * @brief Allocate multiple descriptor sets from layouts.
+         * @param description Descriptions of the descriptor set layouts to allocate from.
+         * @return Vector of handles to the newly allocated descriptor sets.
+         */
+        //std::vector< int > allocateUniformSets( const UniformSetsDesc& description );
+
+        /**
+         * @brief Allocate a single descriptor set from a layout.
+         * @param description Description of the descriptor set layout to allocate from.
+         * @return Handle to the newly allocated descriptor set.
+         */
+        //int allocateUniformSet( const UniformSetDesc& description );
+
         /**
          * @brief Free a descriptor set
          * @param descriptor_id Handle to the descriptor set to free
          */
-        void freeUniformSet( int32_t descriptor_id );
 
         //-------------------------------------------------------------------------
         // SHutdown And Initialization
@@ -343,10 +351,10 @@ namespace kege::vk{
          * @param description The bindings of the descriptor set layout
          * @return Unique resource index for the layout
          */
-        int generateResourceBindingIndex
-        (
-            const UniformSetDesc& description
-        );
+//        int generateResourceBindingIndex
+//        (
+//            const UniformSetDesc& description
+//        );
 
         /**
          * @brief Create a descriptor set allocator
@@ -358,7 +366,7 @@ namespace kege::vk{
          */
         int createDescriptorSetAllocator
         (
-            const UniformSetDesc& description
+            const UniformDescriptors& description
         );
 
         /**
@@ -448,7 +456,7 @@ namespace kege::vk{
 
         bool writeDescriptor
         (
-            const UniformBinding& element,
+            const UniformResource& resource,
             VkDescriptorType descriptor_type,
             std::vector< VkDescriptorBufferInfo >& buffer_infos,
             std::vector< VkDescriptorImageInfo >& image_infos,
@@ -462,7 +470,7 @@ namespace kege::vk{
          */
         std::unordered_map
         <
-            std::vector< kege::UniformDesc >,
+            UniformDescriptors,
             uint32_t
         >
         _resource_index_map;
@@ -470,7 +478,7 @@ namespace kege::vk{
         /** @brief Map of descriptor set layout configurations to their indices */
         std::unordered_map
         <
-            std::vector< kege::UniformDesc >,
+            UniformDescriptors,
             uint32_t // descriptor set layout index
         >
         _descriptor_set_layout_indexmap;
@@ -478,7 +486,7 @@ namespace kege::vk{
         /** @brief Map of descriptor type configurations to their allocator indices */
         std::unordered_map
         <
-            std::vector< kege::UniformDesc >,
+            UniformDescriptors,
             uint32_t // descriptor allocator index
         >
         _descriptor_allocator_indexmap;

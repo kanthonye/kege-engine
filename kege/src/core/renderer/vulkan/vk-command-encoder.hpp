@@ -26,6 +26,9 @@ namespace kege::vk{
     class CommandEncoder final : public kege::CommandEncoder {
     public:
 
+        bool bind( const std::vector< kege::ShaderBinding >& shader_bindings )override;
+        bool bind( const kege::ShaderBinding& shader_binding )override;
+
         /**
          * @brief Issues a non-indexed draw command.
          *

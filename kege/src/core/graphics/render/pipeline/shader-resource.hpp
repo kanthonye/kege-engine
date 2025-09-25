@@ -103,4 +103,33 @@ namespace kege{
 
 }
 
+
+namespace kege{
+
+    class ShaderResrc : public RefCounter
+    {
+    public:
+
+        const UniformResourceSet& operator[]( int set_index )const;
+        UniformResourceSet& operator[]( int set_index );
+
+        const ShaderBindings& getShaderBindings()const;
+
+        void update( const std::vector< int >& sets = {} );
+        void updateSet( int set_index );
+        void release();
+
+        ShaderResrc( Graphics* graphics, const UniformDescriptorSets& descriptors );
+        ShaderResrc( const UniformResourceLayout& layout );
+        ShaderResrc();
+
+        ~ShaderResrc();
+
+    private:
+
+        UniformResourceLayout layout;
+        ShaderBindings bindings;
+    };
+
+}
 #endif /* shader_resource_binding_hpp */

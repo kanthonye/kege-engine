@@ -11,7 +11,7 @@
 
 namespace kege{
 
-    const kege::ShaderResource* RenderPass::getShaderResource( const RgResrcHandle& handle )const
+    const kege::ShaderResrc* RenderPass::getShaderResource( const RgResrcHandle& handle )const
     {
         return _graph->getShaderResource( handle );
     }
@@ -29,7 +29,7 @@ namespace kege{
         return _graph->getImage( handle );
     }
 
-    const kege::ShaderResource* RenderPass::fetchShaderResource( const std::string& name )const
+    const kege::ShaderResrc* RenderPass::fetchShaderResource( const std::string& name )const
     {
         return _graph->fetchShaderResource( name );
     }

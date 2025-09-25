@@ -424,13 +424,17 @@ namespace kege::vk{
 
     bool Instance::createInstance( const DeviceInitializationInfo& info )
     {
-        bool enable_validation = info.request_validation;
-        if ( enable_validation && !checkValidationLayerSupport())
+        _enable_debug_validation = info.enable_debug_validation;
+        _enable_debug_performance = info.enable_debug_performance;
+        _enable_debug_general = info.enable_debug_general;
+
+        bool enable_debug_layers = info.enable_debug_validation || info.enable_debug_performance || info.enable_debug_general;
+
+        if ( enable_debug_layers && !checkValidationLayerSupport())
         {
             KEGE_LOG_WARN << "Validation layers requested but not fully supported. Disabling validation."<<Log::nl;
-            enable_validation = false; // Proceed without validation? Or fail?
+            enable_debug_layers = false; // Proceed without validation? Or fail?
         }
-        _validation_enabled = enable_validation;
 
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -457,7 +461,7 @@ namespace kege::vk{
         VkDebugUtilsMessengerCreateInfoEXT general_messenger_info{};
         VkDebugUtilsMessengerCreateInfoEXT performance_messenger_info{};
         VkDebugUtilsMessengerCreateInfoEXT validation_messenger_info{};
-        if ( _validation_enabled )
+        if ( enable_debug_layers )
         {
             // --- Add Debug Utils Extension IF validation is enabled ---
             required_extensions.push_back( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
@@ -466,36 +470,52 @@ namespace kege::vk{
             create_info.enabledLayerCount = static_cast<uint32_t>( _validation_layers.size() );
             create_info.ppEnabledLayerNames = _validation_layers.data();
 
-            general_messenger_info = createMessengerInfo
-            (
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-                VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
-                generalDebugCallback // your function
-            );
+            std::vector< VkDebugUtilsMessengerCreateInfoEXT* > enables;
+            if( _enable_debug_validation )
+            {
+                validation_messenger_info = createMessengerInfo
+                (
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                    VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+                    validationDebugCallback // your function
+                );
+                enables.push_back( &validation_messenger_info );
+            }
 
-            performance_messenger_info = createMessengerInfo
-            (
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
-                performanceDebugCallback // your function
-            );
+            if( _enable_debug_performance )
+            {
+                performance_messenger_info = createMessengerInfo
+                (
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                    VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
+                    performanceDebugCallback // your function
+                );
+                enables.push_back( &performance_messenger_info );
+            }
 
-            validation_messenger_info = createMessengerInfo
-            (
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
-                validationDebugCallback // your function
-            );
+            if( _enable_debug_general )
+            {
+                general_messenger_info = createMessengerInfo
+                (
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                    VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT,
+                    generalDebugCallback // your function
+                );
+                enables.push_back( &general_messenger_info );
+            }
 
-            general_messenger_info.pNext = &performance_messenger_info;
-            performance_messenger_info.pNext = &validation_messenger_info;
-            create_info.pNext = &general_messenger_info;
+            for (int i=1; i<enables.size(); ++i)
+            {
+                enables[ i-1 ]->pNext = enables[i];
+            }
+            
+            create_info.pNext = enables[0];
         }
         else
         {
@@ -512,15 +532,30 @@ namespace kege::vk{
             return false;
         }
 
-        if ( _validation_enabled )
+        if ( enable_debug_layers )
         {
             auto vkCreateDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr( _instance, "vkCreateDebugUtilsMessengerEXT" );
             if ( vkCreateDebugUtilsMessenger != nullptr )
             {
-                _debug_messengers.resize(3);
-                vkCreateDebugUtilsMessenger( _instance, &general_messenger_info, nullptr, &_debug_messengers[0] );
-                vkCreateDebugUtilsMessenger( _instance, &performance_messenger_info, nullptr, &_debug_messengers[1] );
-                vkCreateDebugUtilsMessenger( _instance, &performance_messenger_info, nullptr, &_debug_messengers[2] );
+                _debug_messengers.reserve(3);
+                if( _enable_debug_general )
+                {
+                    VkDebugUtilsMessengerEXT debug_utils_messenger;
+                    vkCreateDebugUtilsMessenger( _instance, &general_messenger_info, nullptr, &debug_utils_messenger );
+                    _debug_messengers.push_back( debug_utils_messenger );
+                }
+                if( _enable_debug_performance )
+                {
+                    VkDebugUtilsMessengerEXT debug_utils_messenger;
+                    vkCreateDebugUtilsMessenger( _instance, &performance_messenger_info, nullptr, &debug_utils_messenger );
+                    _debug_messengers.push_back( debug_utils_messenger );
+                }
+                if( _enable_debug_validation )
+                {
+                    VkDebugUtilsMessengerEXT debug_utils_messenger;
+                    vkCreateDebugUtilsMessenger( _instance, &validation_messenger_info, nullptr, &debug_utils_messenger );
+                    _debug_messengers.push_back( debug_utils_messenger );
+                }
             }
 
             vkDestroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr
@@ -561,7 +596,7 @@ namespace kege::vk{
 
     bool Instance::isValidationEnabled()const
     {
-        return _validation_enabled;
+        return _enable_debug_validation || _enable_debug_performance || _enable_debug_general;
     }
 
     VkInstance Instance::getHandle()
@@ -585,11 +620,8 @@ namespace kege::vk{
         {
             for (int i=0; i<_debug_messengers.size(); ++i)
             {
-                if (_validation_enabled && _debug_messengers[i] != VK_NULL_HANDLE)
-                {
-                    vkDestroyDebugUtilsMessenger( _instance, _debug_messengers[i], nullptr );
-                    _debug_messengers[i] = VK_NULL_HANDLE;
-                }
+                vkDestroyDebugUtilsMessenger( _instance, _debug_messengers[i], nullptr );
+                _debug_messengers[i] = VK_NULL_HANDLE;
             }
             _debug_messengers.clear();
             vkDestroyDebugUtilsMessenger = nullptr;
@@ -624,7 +656,8 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
             {
-                //kegeLog[ "general" ] << callback_data->pMessage;
+                //kege::Log::msg[ "general" ]
+                kege::Log::debug <<"[ GENERAL ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -634,7 +667,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
             {
-                //kegeLog[ "info" ][ "general" ] << callback_data->pMessage;
+                kege::Log::info <<"[ GENERAL ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -644,7 +677,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
             {
-                //kegeLog[ "warning" ][ "general" ] << callback_data->pMessage <<"\n";
+                kege::Log::warning <<"[ GENERAL ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -656,7 +689,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
             {
-                //kegeLog[ "error" ][ "general" ] << callback_data->pMessage <<"\n";
+                kege::Log::error <<"[ GENERAL ] : " << callback_data->pMessage  << kege::Log::nl;
                 break;
             }
 
@@ -682,7 +715,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
             {
-                KEGE_LOG_DEBUG << callback_data->pMessage;
+                KEGE_LOG_DEBUG <<"[ PERFORMANCE ] : " << callback_data->pMessage;
                 break;
             }
 
@@ -692,7 +725,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
             {
-                KEGE_LOG_INFO << callback_data->pMessage <<Log::nl;
+                KEGE_LOG_INFO <<"[ PERFORMANCE ] : " << callback_data->pMessage <<Log::nl;
                 break;
             }
 
@@ -702,7 +735,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
             {
-                KEGE_LOG_WARN << callback_data->pMessage <<"\n";
+                KEGE_LOG_WARN <<"[ PERFORMANCE ] : " << callback_data->pMessage <<"\n";
                 break;
             }
 
@@ -714,7 +747,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
             {
-                KEGE_LOG_ERROR << callback_data->pMessage <<"\n";
+                KEGE_LOG_ERROR <<"[ PERFORMANCE ] : " << callback_data->pMessage <<"\n";
                 break;
             }
 
@@ -740,7 +773,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
             {
-                KEGE_LOG_DEBUG << callback_data->pMessage;
+                kege::Log::debug <<"[ VALIDATION ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -750,7 +783,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
             {
-                KEGE_LOG_INFO << callback_data->pMessage;
+                kege::Log::info <<"[ VALIDATION ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -760,7 +793,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
             {
-                KEGE_LOG_WARN << callback_data->pMessage <<"\n";
+                kege::Log::warning <<"[ VALIDATION ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -772,7 +805,7 @@ namespace kege::vk{
              */
             case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
             {
-                KEGE_LOG_ERROR << callback_data->pMessage <<"\n";
+                kege::Log::error <<"[ VALIDATION ] : " << callback_data->pMessage << kege::Log::nl;
                 break;
             }
 
@@ -790,6 +823,9 @@ namespace kege::vk{
     :   _surface( nullptr )
     ,   _instance( VK_NULL_HANDLE )
     ,   _best_physical_device_index( 0 )
+    ,   _enable_debug_general( false )
+    ,   _enable_debug_validation( false )
+    ,   _enable_debug_performance( false )
     {
         _self = this;
     }

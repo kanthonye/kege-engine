@@ -252,7 +252,7 @@ namespace kege{
             table[ "back" ] = kege::CullMode::Back;
             table[ "front" ] = kege::CullMode::Front;
             table[ "front_back" ] = kege::CullMode::FrontAndBack;
-            table[ "cull_node" ] = kege::CullMode::None;
+            table[ "cull_none" ] = kege::CullMode::None;
         }
         auto m = table.find( type );
         if ( m != table.end() )

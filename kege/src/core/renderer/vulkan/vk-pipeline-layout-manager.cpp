@@ -20,7 +20,12 @@ namespace kege::vk{
         return _pipeline_layouts.get( pipeline_layout_id );
     }
 
-    int32_t PipelineLayoutManager::createPipelineLayout( const char* name, const UniformSetsDesc& layouts, const std::vector< PushConstantInfo >& push_constants )
+    int32_t PipelineLayoutManager::createPipelineLayout
+    (
+        const char* name,
+        const UniformDescriptorSets& layouts,
+        const std::vector< PushConstantInfo >& push_constants
+    )
     {
         if ( _device == VK_NULL_HANDLE ) return -1;
 
@@ -34,7 +39,7 @@ namespace kege::vk{
 
         //pipeline_layout->descriptor_set_layouts.reserve( desc.descriptor_set_layouts.size() );
 
-        int binding_index = 0;
+        //int binding_index = 0;
         std::vector< VkDescriptorSetLayout > vk_descriptor_set_layouts;
         vk_descriptor_set_layouts.reserve( layouts.size() );
         for (const auto& layout : layouts)
@@ -43,7 +48,7 @@ namespace kege::vk{
              * @brief Get the descriptor set layout from the cache.
              * If the descriptor set layout is not found, log an error and return an invalid handle
              */
-            int layout_id = createUniformSetLayout( layout );
+            int layout_id = createUniformSetLayout( layout.descriptors );
             const vk::DescriptorSetLayout* dsl = getDescriptorSetLayout( layout_id );
             if ( dsl == nullptr )
             {
@@ -61,9 +66,9 @@ namespace kege::vk{
              * @brief If the descriptor set layout already has a binding location.
              * assign a binding index to that location.
              */
-            pipeline_layout->descriptor_set_index_map[ dsl->resource_index ] = binding_index;
-            Log::info << dsl->name << " [binding_location: " <<dsl->resource_index <<"] [ binding_index: " << binding_index <<"]" << Log::nl;
-            binding_index += 1;
+//            pipeline_layout->descriptor_set_index_map[ dsl->resource_index ] = binding_index;
+//            Log::info << dsl->name << " [binding_location: " <<dsl->resource_index <<"] [ binding_index: " << binding_index <<"]" << Log::nl;
+//            binding_index += 1;
         }
 
         /**
@@ -129,7 +134,7 @@ namespace kege::vk{
     // Descriptor Set Layout Lifecycle
     //-------------------------------------------------------------------------
 
-    int32_t PipelineLayoutManager::getDescriptorSetLayoutID( const UniformSetDesc& descriptors, bool create )
+    int32_t PipelineLayoutManager::getDescriptorSetLayoutID( const UniformDescriptors& descriptors, bool create )
     {
         auto i = _descriptor_set_layout_indexmap.find( descriptors );
         if ( i != _descriptor_set_layout_indexmap.end() )
@@ -144,13 +149,7 @@ namespace kege::vk{
         return -1;
     }
 
-    //TODO: createUniformSetLayouts( const UniformSetsDesc& descriptors )
-    std::vector< int > PipelineLayoutManager::createUniformSetLayouts( const UniformSetsDesc& descriptors )
-    {
-        return {};
-    }
-    
-    int32_t PipelineLayoutManager::createUniformSetLayout( const UniformSetDesc& descriptors )
+    int32_t PipelineLayoutManager::createUniformSetLayout( const UniformDescriptors& descriptors )
     {
         auto i = _descriptor_set_layout_indexmap.find( descriptors );
         if ( i != _descriptor_set_layout_indexmap.end() )
@@ -166,13 +165,13 @@ namespace kege::vk{
          * Each binding corresponds to a resource in the shader and its properties.
          */
         std::vector< VkDescriptorSetLayoutBinding > bindings;
-        for ( const kege::UniformDesc& desc : descriptors )
+        for ( const kege::UniformDescriptor& desc : descriptors )
         {
             VkDescriptorSetLayoutBinding dslb = {};
             dslb.binding = desc.binding;
             dslb.descriptorCount = desc.count;
             dslb.descriptorType = vk::convertDescriptorType( desc.descriptor_type );
-            dslb.stageFlags = vk::convertShaderStageMask( desc.stage_flags );
+            dslb.stageFlags = VK_SHADER_STAGE_ALL;// vk::convertShaderStageMask( desc.stage_flags );
             bindings.push_back( dslb );
 
             name += (name.empty()) ? desc.name : "-" + desc.name;
@@ -228,7 +227,7 @@ namespace kege::vk{
          * @brief Assign a binding location to the descriptor set layout.
          * The binding location is an index associated with the descriptor set layout's name.
          */
-        dsl->resource_index = generateResourceBindingIndex( descriptors );
+        //dsl->resource_index = generateResourceBindingIndex( descriptors );
 
         /**
          * @brief Set the allocator_id to -1, indicating that this descriptor set layout is not yet assigned
@@ -272,115 +271,40 @@ namespace kege::vk{
         }
     }
 
-    //-------------------------------------------------------------------------
-    // Descriptor Set Lifecycle
-    //-------------------------------------------------------------------------
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+    // Shader Resource Set Lifecycle
+    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-    bool PipelineLayoutManager::updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )
+    int  PipelineLayoutManager::makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )
     {
-        int buffer_count = 0, image_count = 0, write_count = 0;;
-        for (const auto& resource_set : resource_sets )
+        int set = allocateSet( descriptors );
+        if ( set < 0 )
         {
-            write_count += resource_set.size();
-            for (const auto& set : resource_set )
-            {
-                switch ( set.uniform.type )
-                {
-                    case Uniform::BUFFER:
-                    case Uniform::BUFFER_VIEW:
-                    {
-                        buffer_count += set.uniform.count();
-                        break;
-                    }
-                    case Uniform::IMAGE:
-                    {
-                        image_count += set.uniform.count();
-                        break;
-                    }
-                    case Uniform::INVALID:
-                    {
-                        kege::Log::error << "INVALID Uniform!" << kege::Log::nl;
-                        return false;
-                    }
-                }
-            }
+            kege::Log::error << "Failed to allocate a descriptor-set"<<kege::Log::nl;
+            return -1;
         }
 
-        std::vector< VkDescriptorBufferInfo > buffer_infos;
-        buffer_infos.reserve( buffer_count ); // Rough estimate
-        
-        std::vector< VkDescriptorImageInfo > image_infos;
-        image_infos.reserve( image_count ); // Rough estimate
-
-        std::vector< VkWriteDescriptorSet > descriptor_writes;
-        descriptor_writes.reserve( write_count );
-
-        for ( int set_index=0; set_index<resource_sets.size(); ++set_index )
+        if ( !updateSet( set, resources ) )
         {
-            DescriptorSet* descriptor = _descriptor_sets.get( handles[ set_index ] );
-            if (descriptor == nullptr)
-            {
-                KEGE_LOG_WARN << "Invalid kege::ShaderResource in updateDescriptorSets!";
-                return false;
-            }
-            DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor->layout_id );
-
-            const UniformSet& resource_set = resource_sets[ set_index ];
-            for ( int i=0; i<resource_set.size(); ++i )
-            {
-                VkDescriptorType descriptor_type = dsl->bindings[ resource_set[i].binding ].descriptorType;
-
-                VkWriteDescriptorSet descriptor_write = {};
-                descriptor_write.dstSet = descriptor->set;
-
-                bool state = writeDescriptor
-                (
-                    resource_set[i],
-                    descriptor_type,
-                    buffer_infos,
-                    image_infos,
-                    &descriptor_write
-                );
-                if( !state || descriptor_write.descriptorCount <= 0 )
-                {
-                    return false;
-                }
-
-                descriptor_writes.push_back( descriptor_write );
-            }
+            kege::Log::error << "Failed to update descriptor-set" <<kege::Log::nl;
+            freeSet( set );
+            set = -1;
         }
-
-        if ( !descriptor_writes.empty() )
-        {
-            write_count = static_cast< uint32_t >( descriptor_writes.size() );
-            _device->updateDescriptorSets( write_count, descriptor_writes.data(), 0, nullptr );
-        }
-
-        return true;
+        return set;
     }
 
-    std::vector< int > PipelineLayoutManager::allocateUniformSets( const UniformSetsDesc& desc )
-    {
-        std::vector< int > sets( desc.size() );
-        for( int i = 0; i < desc.size(); ++i )
-        {
-            sets[ i ] = allocateUniformSet( desc[i] );
-        }
-        return sets;
-    }
-
-    bool PipelineLayoutManager::updateUniformSet( int handle, const UniformSet& resource_set )
+    bool PipelineLayoutManager::updateSet( int handle, const UniformResourceSet& resources )
     {
         DescriptorSet* descriptor = _descriptor_sets.get( handle );
         if (descriptor == nullptr)
         {
-            KEGE_LOG_WARN << "Invalid kege::ShaderResource in updateDescriptorSets!";
+            KEGE_LOG_WARN << "Invalid ShaderResource handle in updateSet!"<<kege::Log::nl;
             return false;
         }
         DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor->layout_id );
 
         int buffer_count = 0, image_count = 0;
-        for (const auto& set : resource_set )
+        for (const auto& set : resources )
         {
             switch ( set.uniform.type )
             {
@@ -402,26 +326,26 @@ namespace kege::vk{
                 }
             }
         }
-
         std::vector< VkDescriptorBufferInfo > buffer_infos;
-        std::vector< VkDescriptorImageInfo > image_infos;
         buffer_infos.reserve( buffer_count ); // Rough estimate
+
+        std::vector< VkDescriptorImageInfo > image_infos;
         image_infos.reserve( image_count ); // Rough estimate
 
         std::vector< VkWriteDescriptorSet > descriptor_writes;
-        descriptor_writes.reserve( resource_set.size() );
+        descriptor_writes.reserve( resources.size() );
 
         //int starting_index;
-        for ( int i=0; i<resource_set.size(); ++i )
+        for ( int i=0; i<resources.size(); ++i )
         {
-            VkDescriptorType descriptor_type = dsl->bindings[ resource_set[i].binding ].descriptorType;
+            VkDescriptorType descriptor_type = dsl->bindings[ resources[i].binding ].descriptorType;
 
             VkWriteDescriptorSet descriptor_write = {};
             descriptor_write.dstSet = descriptor->set;
 
             bool state = writeDescriptor
             (
-                resource_set[i],
+                resources[i],
                 descriptor_type,
                 buffer_infos,
                 image_infos,
@@ -442,21 +366,78 @@ namespace kege::vk{
         return true;
     }
 
-    int PipelineLayoutManager::allocateUniformSet( const UniformSetDesc& desc )
+    int  PipelineLayoutManager::allocateSet( const UniformDescriptorSet& descriptors )
     {
-        int32_t handle = -1;
-        int layout_id = getDescriptorSetLayoutID( desc );
-        if ( !allocateDescriptors( layout_id, 1, &handle ) )
+        auto i = _descriptor_set_layout_indexmap.find( descriptors.descriptors );
+        if ( i == _descriptor_set_layout_indexmap.end() )
         {
-            kege::Log::error << "fail to create shader resource -> " <<desc[0].name <<kege::Log::nl;
-            freeUniformSet( handle );
+            kege::Log::error << "There are no existing descriptot-set-layout that matchs the falloowing layout \n";
+            for ( int i=0; i<descriptors.descriptors.size(); ++i)
+            {
+                kege::Log::error <<"name: " <<descriptors.descriptors[i].name << "\n";
+                kege::Log::error <<"descriptor_type: " << descriptorTypeCString( descriptors.descriptors[i].descriptor_type ) << "\n";
+                kege::Log::error <<"binding: " <<descriptors.descriptors[i].binding << "\n";
+                kege::Log::error <<"count: " <<descriptors.descriptors[i].count << "\n";
+            }
+            kege::Log::error <<kege::Log::nl;
             return -1;
         }
-        return handle;
+
+        int32_t set = -1;
+        if ( !allocateDescriptors( i->second, 1, &set ) )
+        {
+            //kege::Log::error << "fail to create shader resource -> " <<desc[0].name <<kege::Log::nl;
+            freeSet( set );
+            return -1;
+        }
+        return set;
     }
 
+    void PipelineLayoutManager::freeSet( int set )
+    {
+        if ( _device == VK_NULL_HANDLE || set == 0) return;
+        std::lock_guard<std::mutex> lock(_resource_mutex);
 
-    const vk::DescriptorSet* PipelineLayoutManager::getDescriptorSet( int32_t set )const
+        if ( _descriptor_sets.get( set ) != nullptr )
+        {
+            vk::DescriptorSet* descripor = _descriptor_sets.get( set );
+            if ( 0 <= descripor->allocator_id && 0 <= descripor->pool_id && !descripor->freed )
+            {
+                vk::DescriptorAllocator* allocator = _descriptor_allocators.get( descripor->allocator_id );
+                vk::DescriptorPool& pool = allocator->descriptor_pools[ descripor->pool_id ];
+
+                if ( !pool.linked )
+                {
+                    if ( allocator->pool.head < 0 )
+                    {
+                        allocator->pool.head = allocator->pool.tail = descripor->pool_id;
+                    }
+                    else
+                    {
+                        allocator->descriptor_pools[ allocator->pool.tail ].next_pool = descripor->pool_id;
+                        allocator->pool.head = descripor->pool_id;
+                    }
+                    pool.linked = true;
+                }
+
+                if ( allocator->descriptors.head < 0 )
+                {
+                    allocator->descriptors.head = allocator->descriptors.tail = set;
+                }
+                else
+                {
+                    descripor->next = allocator->pool.tail;
+                    allocator->pool.head = set;
+                }
+
+                pool.allocated_set_count--;
+                descripor->freed = true;
+            }
+            //_descriptor_sets.free( handle.id );
+        }
+    }
+    
+    const vk::DescriptorSet* PipelineLayoutManager::getSet( int32_t set )const
     {
         return _descriptor_sets.get( set );
     }
@@ -562,70 +543,210 @@ namespace kege::vk{
 
         return true;
     }
+    
+    //-------------------------------------------------------------------------
+    // Descriptor Set Lifecycle
+    //-------------------------------------------------------------------------
 
-    void PipelineLayoutManager::freeUniformSet( int32_t descriptor_id )
-    {
-        if ( _device == VK_NULL_HANDLE || descriptor_id == 0) return;
-        std::lock_guard<std::mutex> lock(_resource_mutex);
+//    bool PipelineLayoutManager::updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )
+//    {
+////        int buffer_count = 0, image_count = 0, write_count = 0;;
+////        for (const auto& resource_set : resource_sets )
+////        {
+////            write_count += resource_set.size();
+////            for (const auto& set : resource_set )
+////            {
+////                switch ( set.uniform.type )
+////                {
+////                    case Uniform::BUFFER:
+////                    case Uniform::BUFFER_VIEW:
+////                    {
+////                        buffer_count += set.uniform.count();
+////                        break;
+////                    }
+////                    case Uniform::IMAGE:
+////                    {
+////                        image_count += set.uniform.count();
+////                        break;
+////                    }
+////                    case Uniform::INVALID:
+////                    {
+////                        kege::Log::error << "INVALID Uniform!" << kege::Log::nl;
+////                        return false;
+////                    }
+////                }
+////            }
+////        }
+////
+////        std::vector< VkDescriptorBufferInfo > buffer_infos;
+////        buffer_infos.reserve( buffer_count ); // Rough estimate
+////        
+////        std::vector< VkDescriptorImageInfo > image_infos;
+////        image_infos.reserve( image_count ); // Rough estimate
+////
+////        std::vector< VkWriteDescriptorSet > descriptor_writes;
+////        descriptor_writes.reserve( write_count );
+////
+////        for ( int set_index=0; set_index<resource_sets.size(); ++set_index )
+////        {
+////            DescriptorSet* descriptor = _descriptor_sets.get( handles[ set_index ] );
+////            if (descriptor == nullptr)
+////            {
+////                KEGE_LOG_WARN << "Invalid kege::ShaderResource in updateDescriptorSets!";
+////                return false;
+////            }
+////            DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor->layout_id );
+////
+////            const UniformSet& resource_set = resource_sets[ set_index ];
+////            for ( int i=0; i<resource_set.size(); ++i )
+////            {
+////                VkDescriptorType descriptor_type = dsl->bindings[ resource_set[i].binding ].descriptorType;
+////
+////                VkWriteDescriptorSet descriptor_write = {};
+////                descriptor_write.dstSet = descriptor->set;
+////
+////                bool state = writeDescriptor
+////                (
+////                    resource_set[i],
+////                    descriptor_type,
+////                    buffer_infos,
+////                    image_infos,
+////                    &descriptor_write
+////                );
+////                if( !state || descriptor_write.descriptorCount <= 0 )
+////                {
+////                    return false;
+////                }
+////
+////                descriptor_writes.push_back( descriptor_write );
+////            }
+////        }
+////
+////        if ( !descriptor_writes.empty() )
+////        {
+////            write_count = static_cast< uint32_t >( descriptor_writes.size() );
+////            _device->updateDescriptorSets( write_count, descriptor_writes.data(), 0, nullptr );
+////        }
+//
+//        return true;
+//    }
+//
+//    std::vector< int > PipelineLayoutManager::allocateUniformSets( const UniformSetsDesc& desc )
+//    {
+//        std::vector< int > sets( desc.size() );
+//        for( int i = 0; i < desc.size(); ++i )
+//        {
+//            sets[ i ] = allocateUniformSet( desc[i] );
+//        }
+//        return sets;
+//    }
+//
+//    bool PipelineLayoutManager::updateUniformSet( int handle, const UniformSet& resource_set )
+//    {
+////        DescriptorSet* descriptor = _descriptor_sets.get( handle );
+////        if (descriptor == nullptr)
+////        {
+////            KEGE_LOG_WARN << "Invalid kege::ShaderResource in updateDescriptorSets!";
+////            return false;
+////        }
+////        DescriptorSetLayout* dsl = _descriptor_set_layouts.get( descriptor->layout_id );
+////
+////        int buffer_count = 0, image_count = 0;
+////        for (const auto& set : resource_set )
+////        {
+////            switch ( set.uniform.type )
+////            {
+////                case Uniform::BUFFER:
+////                case Uniform::BUFFER_VIEW:
+////                {
+////                    buffer_count += set.uniform.count();
+////                    break;
+////                }
+////                case Uniform::IMAGE:
+////                {
+////                    image_count += set.uniform.count();
+////                    break;
+////                }
+////                case Uniform::INVALID:
+////                {
+////                    kege::Log::error << "INVALID Uniform!" << kege::Log::nl;
+////                    return false;
+////                }
+////            }
+////        }
+////
+////        std::vector< VkDescriptorBufferInfo > buffer_infos;
+////        std::vector< VkDescriptorImageInfo > image_infos;
+////        buffer_infos.reserve( buffer_count ); // Rough estimate
+////        image_infos.reserve( image_count ); // Rough estimate
+////
+////        std::vector< VkWriteDescriptorSet > descriptor_writes;
+////        descriptor_writes.reserve( resource_set.size() );
+////
+////        //int starting_index;
+////        for ( int i=0; i<resource_set.size(); ++i )
+////        {
+////            VkDescriptorType descriptor_type = dsl->bindings[ resource_set[i].binding ].descriptorType;
+////
+////            VkWriteDescriptorSet descriptor_write = {};
+////            descriptor_write.dstSet = descriptor->set;
+////
+////            bool state = writeDescriptor
+////            (
+////                resource_set[i],
+////                descriptor_type,
+////                buffer_infos,
+////                image_infos,
+////                &descriptor_write
+////            );
+////            if( !state || descriptor_write.descriptorCount <= 0 )
+////            {
+////                return false;
+////            }
+////
+////            descriptor_writes.push_back( descriptor_write );
+////        }
+////
+////        if ( !descriptor_writes.empty() )
+////        {
+////            _device->updateDescriptorSets( static_cast<uint32_t>(descriptor_writes.size()), descriptor_writes.data(), 0, nullptr );
+////        }
+//        return true;
+//    }
+//
+//    int PipelineLayoutManager::allocateUniformSet( const UniformSetDesc& desc )
+//    {
+//        int32_t handle = -1;
+//        int layout_id = getDescriptorSetLayoutID( desc );
+//        if ( !allocateDescriptors( layout_id, 1, &handle ) )
+//        {
+//            kege::Log::error << "fail to create shader resource -> " <<desc[0].name <<kege::Log::nl;
+//            freeSet( handle );
+//            return -1;
+//        }
+//        return handle;
+//    }
+//
+//
 
-        if ( _descriptor_sets.get( descriptor_id ) != nullptr )
-        {
-            vk::DescriptorSet* set = _descriptor_sets.get( descriptor_id );
-            if ( 0 <= set->allocator_id && 0 <= set->pool_id && !set->freed )
-            {
-                vk::DescriptorAllocator* allocator = _descriptor_allocators.get( set->allocator_id );
-                vk::DescriptorPool& pool = allocator->descriptor_pools[ set->pool_id ];
 
-                // Assumes pool was created with VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
-                //_device->freeDescriptorSets( pool.handle, 1, &set->set );
-;
-                if ( !pool.linked )
-                {
-                    if ( allocator->pool.head < 0 )
-                    {
-                        allocator->pool.head = allocator->pool.tail = set->pool_id;
-                    }
-                    else
-                    {
-                        allocator->descriptor_pools[ allocator->pool.tail ].next_pool = set->pool_id;
-                        allocator->pool.head = set->pool_id;
-                    }
-                    pool.linked = true;
-                }
-
-                if ( allocator->descriptors.head < 0 )
-                {
-                    allocator->descriptors.head = allocator->descriptors.tail = descriptor_id;
-                }
-                else
-                {
-                    set->next = allocator->pool.tail;
-                    allocator->pool.head = descriptor_id;
-                }
-
-                pool.allocated_set_count--;
-                set->freed = true;
-            }
-            //_descriptor_sets.free( handle.id );
-        }
-    }
 
     //-------------------------------------------------------------------------
     // Helper Functions
     //-------------------------------------------------------------------------
 
-    int PipelineLayoutManager::generateResourceBindingIndex( const UniformSetDesc& description )
-    {
-        auto m = _resource_index_map.find( description );
-        if ( m == _resource_index_map.end() )
-        {
-            _resource_index_map[ description ] = _resource_index_counter;
-            return _resource_index_counter++;
-        }
-        return m->second;
-    }
+//    int PipelineLayoutManager::generateResourceBindingIndex( const UniformSetDesc& description )
+//    {
+//        auto m = _resource_index_map.find( description );
+//        if ( m == _resource_index_map.end() )
+//        {
+//            _resource_index_map[ description ] = _resource_index_counter;
+//            return _resource_index_counter++;
+//        }
+//        return m->second;
+//    }
 
-    int PipelineLayoutManager::createDescriptorSetAllocator( const UniformSetDesc& description )
+    int PipelineLayoutManager::createDescriptorSetAllocator( const UniformDescriptors& description )
     {
         auto m = _descriptor_allocator_indexmap.find( description );
         if ( m == _descriptor_allocator_indexmap.end() )
@@ -908,7 +1029,7 @@ namespace kege::vk{
 
     bool PipelineLayoutManager::writeDescriptor
     (
-        const UniformBinding& element,
+        const UniformResource& resource,
         VkDescriptorType descriptor_type,
         std::vector< VkDescriptorBufferInfo >& buffer_infos,
         std::vector< VkDescriptorImageInfo >& image_infos,
@@ -917,7 +1038,7 @@ namespace kege::vk{
     {
         descriptor_write->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptor_write->descriptorType = descriptor_type;
-        descriptor_write->dstBinding = element.binding;
+        descriptor_write->dstBinding = resource.binding;
         descriptor_write->dstArrayElement = 0;//resource_binding.array_element;
         descriptor_write->descriptorCount = 0; // Will be set based on info type
         //descriptor_write.dstSet = descriptor->set;
@@ -932,7 +1053,7 @@ namespace kege::vk{
                 bool success = writeBuffer
                 (
                     descriptor_type,
-                    element.uniform.buffers,
+                    resource.uniform.buffers,
                     buffer_infos,
                     descriptor_write
                 );
@@ -948,7 +1069,7 @@ namespace kege::vk{
                 bool success = writeSampler
                 (
                     descriptor_type,
-                    element.uniform.images,
+                    resource.uniform.images,
                     image_infos,
                     descriptor_write
                 );
@@ -965,7 +1086,7 @@ namespace kege::vk{
                 bool success = writeSampledImage
                 (
                     descriptor_type,
-                    element.uniform.images,
+                    resource.uniform.images,
                     image_infos,
                     descriptor_write
                 );
@@ -981,7 +1102,7 @@ namespace kege::vk{
                 bool success = writeCombinedImageSampler
                 (
                     descriptor_type,
-                    element.uniform.images,
+                    resource.uniform.images,
                     image_infos,
                     descriptor_write
                 );
@@ -997,7 +1118,7 @@ namespace kege::vk{
                 bool success = writeStorageImage
                 (
                     descriptor_type,
-                    element.uniform.images,
+                    resource.uniform.images,
                     image_infos,
                     descriptor_write
                 );

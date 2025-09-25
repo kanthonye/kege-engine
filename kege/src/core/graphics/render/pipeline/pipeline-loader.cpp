@@ -222,8 +222,8 @@ namespace kege{
 
         for ( LayoutBinding::iterator m = dslb_map.begin(); m != dslb_map.end(); m++ )
         {
-            kege::UniformSetLayout handle = graphics->createUniformSetLayout( m->second );
-            descriptor_set_layouts.push_back( handle );
+            //kege::UniformSetLayout handle = graphics->createUniformSetLayout( m->second );
+            //descriptor_set_layouts.push_back( handle );
         }
         return true;
     }
@@ -389,16 +389,16 @@ namespace kege{
         RasterizationStateDesc desc = {};
         if ( json )
         {
-            Json rasterizer_discard_enable = json["rasterizer_discard_enable"];
-            if( rasterizer_discard_enable )
+            Json rasterizer_disable = json["rasterizer_disable"];
+            if( rasterizer_disable )
             {
-                if ( strcmp(rasterizer_discard_enable.value(), "true") == 0 )
+                if ( strcmp(rasterizer_disable.value(), "true") == 0 )
                 {
-                    desc.rasterizer_discard_enable = true;
+                    desc.rasterizer_disable = true;
                 }
                 else
                 {
-                    desc.rasterizer_discard_enable = false;
+                    desc.rasterizer_disable = false;
                 }
             }
 
@@ -538,9 +538,9 @@ namespace kege{
         return states;
     }
 
-    UniformSetsDesc parsePipelineUniformLayouts( kege::Json json )
+    UniformDescriptorSets parsePipelineUniformLayouts( kege::Json json )
     {
-        using LayoutBinding = std::map< int, kege::UniformSetDesc >;
+        using LayoutBinding = std::map< int, kege::UniformDescriptorSet >;
         LayoutBinding dslb_map;
         for (int i = 0; i < json.count(); ++i)
         {
@@ -549,23 +549,24 @@ namespace kege{
             std::string name = layout[ "name" ].getString();
             Json bindings = layout[ "bindings" ];
 
-            kege::UniformSetDesc& dsl = dslb_map[ set ];
-            dsl.reserve( bindings.count() );
+            kege::UniformDescriptorSet& dsl = dslb_map[ set ];
+            dsl.set = set;
+            dsl.descriptors.reserve( bindings.count() );
             for (int i = 0; i < bindings.count(); ++i)
             {
                 Json bind = bindings[i];
 
-                kege::UniformDesc dslb = {};
-                dslb.name = bind[ "name" ].getString();
-                dslb.descriptor_type = convertDescriptorType( bind[ "type" ].getString() );
+                kege::UniformDescriptor ud = {};
+                ud.name = bind[ "name" ].getString();
+                ud.descriptor_type = convertDescriptorType( bind[ "type" ].getString() );
                 //dslb.stage_flags = convertShaderStageFlages( bind[ "stages" ] );
-                dslb.binding = bind[ "binding" ].getInt();
-                dslb.count = bind[ "count" ].getInt();
-                dsl.push_back( dslb );
+                ud.binding = bind[ "binding" ].getInt();
+                ud.count = bind[ "count" ].getInt();
+                dsl.descriptors.push_back( ud );
             }
         }
 
-        UniformSetsDesc desc_sets;
+        UniformDescriptorSets desc_sets;
         if ( !dslb_map.empty() )
         {
             desc_sets.reserve( dslb_map.size() );

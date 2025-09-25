@@ -119,6 +119,7 @@ namespace kege{
          * @warning Ensure the buffer is no longer in use by the GPU.
          */
         void destroyBuffer(BufferHandle handle);
+        void destroyBufferView( BufferViewHandle handle );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // Shader lifecycle
@@ -195,14 +196,14 @@ namespace kege{
          * @param descriptors Description of binding points for resources.
          * @return Handle to the created descriptor set layout.
          */
-        UniformSetLayout createUniformSetLayout( const UniformSetDesc& descriptors );
+        UniformSetLayout createUniformSetLayout( const UniformDescriptors& descriptors );
 
         /**
          * @brief Retrieves or creates a descriptor set layout based on bindings.
          * @param descriptors Description of binding points for resources.
          * @return Handle to the descriptor set layout.
          */
-        UniformSetLayout getUniformSetLayout( const UniformSetDesc& descriptors );
+        UniformSetLayout getUniformSetLayout( const UniformDescriptors& descriptors );
 
         /**
          * @brief Destroys a descriptor set layout.
@@ -210,6 +211,15 @@ namespace kege{
          * @warning Ensure no descriptor sets or pipelines are using this layout.
          */
         void destroyUniformSetLayout( const UniformSetLayout& layout );
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+        // Shader Resource Set Lifecycle
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
+        int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources );
+        bool updateSet( int handle, const UniformResourceSet& resources );
+        int  allocateSet( const UniformDescriptorSet& descriptors );
+        void freeSet( int set );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
         // UniformSets Lifecycle

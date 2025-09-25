@@ -88,7 +88,7 @@ namespace kege{
         {
             for (int k=0; k<_shader_resources[ index ].uniform_set_handles.size(); ++k)
             {
-                _device->freeUniformSet( _shader_resources[ index ].uniform_set_handles[k] );
+                _device->freeSet( _shader_resources[ index ].uniform_set_handles[k] );
             }
             _shader_resources[ index ].uniform_set_handles = {};
             _shader_resources[ index ].next = -1;
@@ -171,7 +171,7 @@ namespace kege{
             {
                 for ( int j=0; j<_shader_resources[i].uniform_set_handles.size(); ++j )
                 {
-                    _device->freeUniformSet( _shader_resources[i].uniform_set_handles[j] );
+                    _device->freeSet( _shader_resources[i].uniform_set_handles[j] );
                 }
             }
         }

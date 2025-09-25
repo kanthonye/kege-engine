@@ -134,8 +134,8 @@ namespace kege{
             .frames_in_flight = frames_in_flight,
             .usages = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::ShaderResource,
             {
-                .width  = graphics->getSwapchainExtent().width,
-                .height = graphics->getSwapchainExtent().height,
+                .width  = 1024,
+                .height = 640,
                 .depth  = 1,
                 .format = graphics->getSwapchainColorFormat(),
                 .type = kege::ImageType::Type2D
@@ -147,8 +147,8 @@ namespace kege{
             .frames_in_flight = frames_in_flight,
             .usages = kege::ImageUsageFlags::DepthStencilAttachment | kege::ImageUsageFlags::ShaderResource,
             {
-                .width  = graphics->getSwapchainExtent().width,
-                .height = graphics->getSwapchainExtent().height,
+                .width  = 1024,
+                .height = 640,
                 .depth  = 1,
                 .format = kege::Format::depth_32,
                 .type = kege::ImageType::Type2D
@@ -210,6 +210,7 @@ namespace kege{
             RgShaderResrcDefn
             {
                 .name = "camera-buffer",
+                .set_index = 0,
                 .frames_in_flight = frames_in_flight,
                 .bindings =
                 {
@@ -243,6 +244,7 @@ namespace kege{
             RgShaderResrcDefn
             {
                 .name = "light-buffer",
+                .set_index = 1,
                 .frames_in_flight = frames_in_flight,
                 .bindings =
                 {

@@ -59,29 +59,42 @@ namespace kege{
     }
 
 
-    InstanceBufferList::InstanceBufferList
-    (
-        kege::Graphics* graphics,
-        const std::vector< InstanceBuffer >& buffers
-    )
-    :   graphics( graphics )
-    ,   buffers( buffers )
+
+
+    const ShaderBindings& InstanceBuffer::getShaderBindings()const
+    {
+        return resource->getShaderBindings();
+    }
+    const BufferHandle& InstanceBuffer::getBufferHandle()const
+    {
+        return resource->operator[](0)[0].uniform.buffers[0].buffer;
+    }
+
+
+
+
+
+    
+    const ShaderBindings& InstanceBufferList::getShaderBindings( int index )const
+    {
+        return buffers[ index ].getShaderBindings();
+    }
+
+    const BufferHandle& InstanceBufferList::getBufferHandle( int index )const
+    {
+        return buffers[ index ].getBufferHandle();
+    }
+
+    InstanceBufferList::InstanceBufferList( const std::vector< InstanceBuffer >& buffers )
+    :   buffers( buffers )
     {}
 
     InstanceBufferList::~InstanceBufferList()
     {
-        if ( graphics )
-        {
-            for ( InstanceBuffer& buffer : buffers )
-            {
-                graphics->destroyBuffer( buffer.buffer );
-            }
-            buffers.clear();
-            graphics = nullptr;
-        }
+        buffers.clear();
     }
+
     InstanceBufferList::InstanceBufferList()
-    :   graphics( nullptr )
     {}
 
 
@@ -156,8 +169,7 @@ namespace kege{
     {
         vertex_buffer = graphics->createBuffer
         ({
-            sizeof( kege::Vertex ) * vertices.size(),
-            vertices.data(),
+            sizeof( kege::Vertex ) * vertices.size(), vertices.data(),
             BufferUsage::VertexBuffer,
             MemoryUsage::GpuOnly
         });
@@ -166,8 +178,7 @@ namespace kege{
         {
             index_buffer = graphics->createBuffer
             ({
-                sizeof( uint32_t ) * indices.size(),
-                indices.data(),
+                sizeof( indices[0] ) * indices.size(), indices.data(),
                 BufferUsage::IndexBuffer,
                 MemoryUsage::GpuOnly
             });

@@ -45,6 +45,7 @@ namespace kege{
         device_init_info.require_shader_float64 = false;
         device_init_info.engine = "KEGE";
         device_init_info.name = "dev";
+        device_init_info.enable_debug_validation = true;
 
         kege::SwapchainDesc swapchain_create_info = {};
         swapchain_create_info.image_count = kege::MAX_FRAMES_IN_FLIGHT + 1;

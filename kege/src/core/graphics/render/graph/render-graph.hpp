@@ -26,9 +26,9 @@ namespace kege{
     {
     public:
 
-        kege::RgResrcHandle importShaderResource( std::string name, const std::vector< kege::ShaderResource >& handles );
-        const kege::ShaderResource* fetchShaderResource( const std::string& name )const;
-        const kege::ShaderResource* getShaderResource( const RgResrcHandle& handle )const;
+        kege::RgResrcHandle importShaderResource( std::string name, const ShaderResrcs& handles );
+        const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
+        const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
         kege::RgResrcHandle defnShaderResource( const RgShaderResrcDefn& defn );
         void removeShaderResource( const RgResrcHandle& handle );
         void removeShaderResource( const std::string& name );

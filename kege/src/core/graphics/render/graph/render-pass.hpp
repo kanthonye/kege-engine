@@ -27,12 +27,12 @@ namespace kege{
     {
     public:
 
-        const kege::ShaderResource* getShaderResource( const RgResrcHandle& handle )const;
+        const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
         const kege::SamplerHandle* getSampler( const RgResrcHandle& handle )const;
         const kege::BufferHandle* getBuffer( const RgResrcHandle& handle )const;
         const kege::ImageHandle* getImage( const RgResrcHandle& handle )const;
 
-        const kege::ShaderResource* fetchShaderResource( const std::string& name )const;
+        const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
         const kege::SamplerHandle* fetchSampler( const std::string& name )const;
         const kege::BufferHandle* fetchBuffer( const std::string& name )const;
         const kege::ImageHandle* fetchImage( const std::string& name )const;

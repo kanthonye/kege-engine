@@ -11,42 +11,67 @@
 
 namespace kege::vk{
 
-    CommandEncoder::~CommandEncoder()
+    bool CommandEncoder::bind( const std::vector< ShaderBinding >& shader_bindings )
     {
+        for ( int i=0; i<shader_bindings.size(); ++i )
+        {
+            if ( !bind( shader_bindings[i] ) )
+            {
+                Log::error << "INVALID_SHADER_BINDING in std::vector< ShaderBinding >" <<"["<<i<<"]"<< Log::nl;
+                return false;
+            }
+        }
+        return true;
     }
 
-    CommandEncoder::CommandEncoder()
-    :   _command_buffer( nullptr )
-    ,   _handle( VK_NULL_HANDLE )
-    {}
+    bool CommandEncoder::bind( const ShaderBinding& shader_binding )
+    {
+        const DescriptorSet* set = _command_buffer->_device->getSet( shader_binding.resource );
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << shader_binding.name << Log::nl;
+            return false;
+        }
+        vkCmdBindDescriptorSets
+        (
+            _handle,
+            _current_pipeline_bindpoint,
+            _current_pipeline_layout->layout,
+            shader_binding.set_index,
+            1, &set->set,
+            0, nullptr
+        );
+        return true;
+    }
+
 
     bool CommandEncoder::bindShaderResource( const ShaderResource& resource )
     {
         if( _current_pipeline_layout == nullptr ) return false;
 
-        for ( int i=0; i<resource->size(); ++i )
-        {
-            const DescriptorSet* set = _command_buffer->_device->getDescriptorSet( resource->at(i) );
-            const DescriptorSetLayout* dsl = _command_buffer->_device->getDescriptorSetLayout( set->layout_id );
-            const VkDescriptorSet sets[] = { set->set };
-
-            auto itr = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
-
-            if ( itr == _current_pipeline_layout->descriptor_set_index_map.end() )
-            {
-                Log::error << "DescriptorSet -> " << dsl->name
-                << " does not have an binding_locations binding_index associated with the currently bound pipeline."
-                << Log::nl;
-                return false;
-            }
-            vkCmdBindDescriptorSets
-            (
-                _handle,
-                _current_pipeline_bindpoint,
-                _current_pipeline_layout->layout,
-                itr->second, 1, sets, 0, nullptr
-            );
-        }
+//        for ( int i=0; i<resource->size(); ++i )
+//        {
+//            const DescriptorSet* set = _command_buffer->_device->getDescriptorSet( resource->at(i) );
+//            const DescriptorSetLayout* dsl = _command_buffer->_device->getDescriptorSetLayout( set->layout_id );
+//            const VkDescriptorSet sets[] = { set->set };
+//
+//            auto itr = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
+//
+//            if ( itr == _current_pipeline_layout->descriptor_set_index_map.end() )
+//            {
+//                Log::error << "DescriptorSet -> " << dsl->name
+//                << " does not have an binding_locations binding_index associated with the currently bound pipeline."
+//                << Log::nl;
+//                return false;
+//            }
+//            vkCmdBindDescriptorSets
+//            (
+//                _handle,
+//                _current_pipeline_bindpoint,
+//                _current_pipeline_layout->layout,
+//                itr->second, 1, sets, 0, nullptr
+//            );
+//        }
         return true;
     }
 
@@ -165,7 +190,7 @@ namespace kege::vk{
         uint32_t index_count,
         uint32_t instance_count,
         uint32_t first_index,
-        int32_t vertex_offset,
+        int32_t  vertex_offset,
         uint32_t first_instance
     )
     {
@@ -714,4 +739,12 @@ namespace kege::vk{
         return _handle != VK_NULL_HANDLE;
     }
 
+    CommandEncoder::~CommandEncoder()
+    {
+    }
+
+    CommandEncoder::CommandEncoder()
+    :   _command_buffer( nullptr )
+    ,   _handle( VK_NULL_HANDLE )
+    {}
 }

@@ -15,11 +15,6 @@ namespace kege{
     void RenderManager::setSceneCamera( const kege::CameraData& data )
     {
         _scene_camera_data = data;
-        const BufferHandle* buffer = _graph->fetchBuffer( "camera-buffer" );
-        if ( buffer )
-        {
-            _graphics->updateBuffer( *buffer, 0, sizeof( _scene_camera_data ), &_scene_camera_data );
-        }
     }
     
     void RenderManager::setGuiCamera( const kege::CameraData& data )
@@ -54,8 +49,8 @@ namespace kege{
             {
                 case BindingType::SHADER_RESOURCE:
                 {
-                    const ShaderResource* resource = pass->fetchShaderResource( binding.name );
-                    encoder->bindShaderResource( *resource );
+                    const ShaderResrc* resource = pass->fetchShaderResource( binding.name );
+                    encoder->bind( resource->getShaderBindings() );
                     break;
                 }
 
@@ -97,11 +92,12 @@ namespace kege{
         {
             if ( object.material )
             {
-                for (int i=0; i<object.material->resources.size(); ++i)
+                if ( object.material->resource )
                 {
-                    encoder->bindShaderResource( object.material->resources[i] );
+                    encoder->bind( object.material->resource->getShaderBindings() );
                 }
             }
+
             encoder->setPushConstants
             (
                 object.constant.stages,
@@ -109,6 +105,7 @@ namespace kege{
                 object.constant.size,
                 object.constant.data
             );
+            
             drawMesh( encoder, object.mesh );
         }
     }
@@ -147,7 +144,7 @@ namespace kege{
                 const IndirectDrawBuffer& indirect_buffer = mesh->indirect_draw_buffer_list->buffers[i];
                 const InstanceBuffer& instance_buffer = mesh->instance_buffer_list->buffers[i];
 
-                encoder->bindShaderResource( instance_buffer.shader_resource );
+                encoder->bind( instance_buffer.getShaderBindings() );
                 encoder->drawIndexIndirect
                 (
                     indirect_buffer.buffer,
@@ -174,7 +171,7 @@ namespace kege{
         {
             for (const InstanceBuffer& instance : mesh->instance_buffer_list->buffers )
             {
-                encoder->bindShaderResource( instance.shader_resource );
+                encoder->bind( instance.getShaderBindings() );
                 encoder->drawIndexed
                 (
                     mesh->index_count,
@@ -206,7 +203,7 @@ namespace kege{
             {
                 const IndirectDrawBuffer& indirect_buffer = mesh->indirect_draw_buffer_list->buffers[i];
                 const InstanceBuffer& instance_buffer = mesh->instance_buffer_list->buffers[i];
-                encoder->bindShaderResource( instance_buffer.shader_resource );
+                encoder->bind( instance_buffer.getShaderBindings() );
                 encoder->drawIndirect
                 (
                     indirect_buffer.buffer,
@@ -233,7 +230,7 @@ namespace kege{
         {
             for (const InstanceBuffer& instance : mesh->instance_buffer_list->buffers )
             {
-                encoder->bindShaderResource( instance.shader_resource );
+                encoder->bind( instance.getShaderBindings() );
                 encoder->draw
                 (
                     mesh->index_count,
@@ -255,29 +252,14 @@ namespace kege{
         }
     }
 
-//    void executeRenderPass( kege::RenderPassContext* context )
-//    {
-//        RenderGraph* graph = 0;
-//        graph->defnShaderResource
-//        ({
-//            .name = "frames_in_flight",
-//            .frames_in_flight = 1,
-//            .bindings =
-//            {
-//                RgShaderResrcDesc
-//                {
-//                    .targets = {{RgResrcType::Image, "color"}},
-//                    .type    = DescriptorType::CombinedImageSampler,
-//                    .name    = "",
-//                    .binding = 0,
-//                    .count   = 1,
-//                }
-//            }
-//        });
-//    }
-    
     void RenderManager::execute( RenderPass* pass )
     {
+        const BufferHandle* buffer = _graph->fetchBuffer( "camera-buffer" );
+        if ( buffer )
+        {
+            _graphics->updateBuffer( *buffer, 0, sizeof( _scene_camera_data ), &_scene_camera_data );
+        }
+        
         const RenderPassQueue& queue = _render_queue.getQueueForPass( pass->getType() );
         CommandEncoder* encoder = pass->getCommandEncoder();
 

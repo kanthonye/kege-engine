@@ -103,7 +103,7 @@ namespace kege{
         _entity_systems->addSystem( "rigidbody-to-transform" );
 
         _entity_systems->addSystem( "terrain" );
-        _entity_systems->addSystem( "camera-controller" );
+        _entity_systems->addSystem( "update-scene-camera" );
         _entity_systems->addSystem( "mesh-rendering" );
 
         //_module->addSystem( "entity-factory" );

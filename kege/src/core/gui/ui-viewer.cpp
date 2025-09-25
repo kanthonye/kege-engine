@@ -327,82 +327,90 @@ namespace kege::ui{
 
     kege::Ref< MaterialSource > Viewer::createMaterial()
     {
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // create and setup the ui theme shader resources
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        kege::ShaderResource sr_theme = _graphics->allocateUniformSet
-        ({{
-            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-            .stage_flags = kege::ShaderStage::All,
-            .name = "ui_theme",
-            .binding = 0,
-            .count = 1,
-        }});
-        sr_theme[0][0] = kege::UniformBinding
-        {
-            .binding = 0,
-            .uniform = kege::ImageBindings
-            {{
-                .image   = _default_texture,
-                .sampler = _font->getSampler(),
-                .layout  = kege::ImageLayout::ShaderReadOnly
-            }}
-        };
-        sr_theme.update({});
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // create and setup the ui font shader resources
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        kege::ShaderResource sr_font = _graphics->allocateUniformSet(kege::UniformSetDesc{
-            kege::UniformDesc
+        kege::Ref< kege::ShaderResrc > resource = new kege::ShaderResrc
+        ({
+            .descriptors = kege::UniformDescriptorSets
             {
-                .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                .stage_flags = kege::ShaderStage::All,
-                .name = "ui_font",
-                .binding = 0,
-                .count = 1,
-            }
+                kege::UniformDescriptorSet
+                {
+                    .set = 1,
+                    .descriptors =
+                    {
+                        kege::UniformDescriptor
+                        {
+                            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
+                            .binding = 0,
+                            .count = 1,
+                            .name = "ui_theme"
+                        }
+                    }
+                },
+                kege::UniformDescriptorSet
+                {
+                    .set = 2,
+                    .descriptors =
+                    {
+                        kege::UniformDescriptor
+                        {
+                            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
+                            .binding = 0,
+                            .count = 1,
+                            .name = "ui_font"
+                        }
+                    }
+                },
+                kege::UniformDescriptorSet
+                {
+                    .set = 3,
+                    .descriptors =
+                    {
+                        kege::UniformDescriptor
+                        {
+                            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
+                            .binding = 0,
+                            .count = 1,
+                            .name = "ui_viewport"
+                        }
+                    }
+                },
+            },
+            .resources = kege::UniformResourceSets
+            {
+                kege::UniformResourceSet
+                {
+                    kege::UniformResource
+                    {
+                        .binding = 0,
+                        .uniform = kege::ImageBindings
+                        {
+                            kege::ImageInfo{ .image = _default_texture, .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderReadOnly }
+                        }
+                    }
+                },
+                kege::UniformResourceSet
+                {
+                    kege::UniformResource
+                    {
+                        .binding = 0,
+                        .uniform = kege::ImageBindings
+                        {
+                            kege::ImageInfo{ .image = _font->getImage(), .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderReadOnly }
+                        }
+                    }
+                },
+                kege::UniformResourceSet
+                {
+                    kege::UniformResource
+                    {
+                        .binding = 0,
+                        .uniform = kege::ImageBindings{ _scene_image_info }
+                    }
+                },
+            },
+            .graphics = _graphics
         });
-        sr_font[0][0] = kege::UniformBinding
-        {
-            .binding = 0,
-            .uniform = kege::ImageBindings
-            {{
-                .image   = _font->getImage(),
-                .sampler = _font->getSampler(),
-                .layout  = kege::ImageLayout::ShaderReadOnly
-            }}
-        };
-        sr_font.update({});
 
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // create and setup the ui textures shader resources
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        kege::ShaderResource sr_viewport = _graphics->allocateUniformSet
-        ({{
-            .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-            .stage_flags = kege::ShaderStage::All,
-            .name = "ui_viewport",
-            .binding = 0,
-            .count = 1,
-        }});
-        sr_viewport[0][0] = kege::UniformBinding
-        {
-            .binding = 0,
-            .uniform = kege::ImageBindings
-            { _scene_image_info }
-        };
-        sr_viewport.update({});
-
-        return new kege::MaterialSource
-        (
-            _pipeline, false, false,
-            { sr_theme, sr_font, sr_viewport },
-            { RenderPassType::UI }
-        );
+        return new kege::MaterialSource( RenderPassType::UI, _pipeline, false, false, resource );
     }
 
     kege::Ref< MeshSource > Viewer::createMesh()
@@ -413,42 +421,61 @@ namespace kege::ui{
         // create and setup the ui instance buffer shader resources
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-        kege::InstanceBuffer instance_buffer = kege::InstanceBuffer
-        {
-            .shader_resource = _graphics->allocateUniformSet(kege::UniformSetDesc{
-                kege::UniformDesc
-                {
-                    .descriptor_type = kege::DescriptorType::StorageBuffer,
-                    .stage_flags = kege::ShaderStage::All,
-                    .name = "UIViewBuffer",
-                    .binding = 0,
-                    .count = 1,
-                }
-            }),
-            .buffer = _graphics->createBuffer
-            ({
-                .size = size,
-                .usage = kege::BufferUsage::StorageBuffer,
-                .memory_usage = kege::MemoryUsage::CpuToGpu,
-                .data = _drawbuffer.data()
-            }),
-            .instance_count = _draw_count,
-            .first_instance = 0,
-        };
-        instance_buffer.shader_resource[0][0] = kege::UniformBinding
-        {
-            .binding = 0,
-            .uniform = kege::BufferBindings
-            {{
-                .buffer = instance_buffer.buffer,
-                .offset = 0,
-                .range = size
-            }}
-        };
-        instance_buffer.shader_resource.update({});
-
         kege::Ref< kege::MeshSource > source = new kege::MeshSource();
-        source->instance_buffer_list = new InstanceBufferList( _graphics, { instance_buffer } );
+        source->instance_buffer_list = new InstanceBufferList
+        ({
+            kege::InstanceBuffer
+            {
+                .resource = new kege::ShaderResrc
+                ({
+                    .descriptors = kege::UniformDescriptorSets
+                    {
+                        kege::UniformDescriptorSet
+                        {
+                            .set = 0,
+                            .descriptors =
+                            {
+                                kege::UniformDescriptor
+                                {
+                                    .descriptor_type = kege::DescriptorType::UniformBuffer,
+                                    .binding = 0,
+                                    .count = 1,
+                                    .name = "draw_buffer"
+                                }
+                            }
+                        },
+                    },
+                    .resources = kege::UniformResourceSets
+                    {
+                        kege::UniformResourceSet
+                        {
+                            kege::UniformResource
+                            {
+                                .binding = 0,
+                                .uniform = kege::BufferBindings
+                                {
+                                    kege::BufferInfo
+                                    {
+                                        .buffer = _graphics->createBuffer
+                                        ({
+                                            .size = size,
+                                            .usage = kege::BufferUsage::StorageBuffer,
+                                            .memory_usage = kege::MemoryUsage::CpuToGpu,
+                                            .data = _drawbuffer.data()
+                                        }),
+                                        .range = size,
+                                        .offset = 0
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    .graphics = _graphics
+                }),
+                .instance_count = _draw_count,
+                .first_instance = 0,
+            }
+        });
         source->instance_count = _draw_count;
         source->first_instance = 0;
         source->first_index = 0;
@@ -470,7 +497,7 @@ namespace kege::ui{
         {
             _graphics->updateBuffer
             (
-                meshs[ _curr_mesh_index ]->instance_buffer_list->buffers[0].buffer,
+                meshs[ _curr_mesh_index ]->instance_buffer_list->getBufferHandle( 0 ),
                 0, _draw_count * sizeof(ui::DrawElem), _drawbuffer.data()
             );
         }
@@ -583,10 +610,7 @@ namespace kege::ui{
 
             if( _material )
             {
-                for (int i = 0; i<_material->resources.size(); ++i)
-                {
-                    _graphics->freeUniformSet( _material->resources[i] );
-                }
+                _material->resource.clear();
                 _material.clear();
             }
 //            if( _ui_texture_shader_resource )

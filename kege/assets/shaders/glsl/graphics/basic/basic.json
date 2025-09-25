@@ -31,10 +31,10 @@
             {
                 "rasterizer":
                 {
-                    "cull_mode": "cull_node",
+                    "cull_mode": "cull_none",
                     "front_face": "ccw",
                     "polygon_mode": "line",
-                    "rasterizer_discard_enable": "false",
+                    "rasterizer_disable": "false",
                 },
                 "depth_stencil":
                 {
@@ -126,13 +126,13 @@
                         "format": "vec3",
                         "semantic": "NORMAL",
                         "name": "_normal"
-                    }
+                    },
                 ],
                 "bindings":
                 [
                     {
                         "binding": 0,
-                        "stride": 24,
+                        "stride": 56,
                         "input_rate": "vertex"
                     },
                 ],
