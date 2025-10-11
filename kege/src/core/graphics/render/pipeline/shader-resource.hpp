@@ -8,7 +8,6 @@
 #ifndef shader_resource_hpp
 #define shader_resource_hpp
 
-#include "graphics-core.hpp"
 #include "uniform-resource.hpp"
 
 //namespace kege{

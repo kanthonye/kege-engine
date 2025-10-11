@@ -67,17 +67,17 @@ add_library(editor   ${EDITOR_SOURCES})
 
 
 
-file(GLOB_RECURSE CAMERA_SOURCES CONFIGURE_DEPENDS kege/src/systems/camera/*.cpp)
-add_library(camera   ${CAMERA_SOURCES})
+# file(GLOB_RECURSE CAMERA_SOURCES CONFIGURE_DEPENDS kege/src/graphics/camera/*.cpp)
+# add_library(camera   ${CAMERA_SOURCES})
 
-file(GLOB_RECURSE PHYSICS_SOURCES CONFIGURE_DEPENDS kege/src/systems/physics/*.cpp)
-add_library(physics   ${PHYSICS_SOURCES})
+# file(GLOB_RECURSE PHYSICS_SOURCES CONFIGURE_DEPENDS kege/src/physics/*.cpp)
+# add_library(physics   ${PHYSICS_SOURCES})
 
-file(GLOB_RECURSE PARTICLE_SOURCES CONFIGURE_DEPENDS kege/src/systems/particle/*.cpp)
-add_library(particle   ${PARTICLE_SOURCES})
+# file(GLOB_RECURSE PARTICLE_SOURCES CONFIGURE_DEPENDS kege/src/particle/*.cpp)
+# add_library(particle   ${PARTICLE_SOURCES})
 
-file(GLOB_RECURSE PICKING_SOURCES CONFIGURE_DEPENDS kege/src/systems/picking/*.cpp)
-add_library(picking_systems   ${PICKING_SOURCES})
+# file(GLOB_RECURSE PICKING_SOURCES CONFIGURE_DEPENDS kege/src/systems/picking/*.cpp)
+# add_library(picking_systems   ${PICKING_SOURCES})
 
 
 add_executable(kege-engine kege/src/main.cpp)
@@ -101,10 +101,9 @@ target_include_directories(kege-engine
         ${CMAKE_SOURCE_DIR}/kege/src/core/engine
         ${CMAKE_SOURCE_DIR}/kege/src/core/math
         ${CMAKE_SOURCE_DIR}/kege/src/core/esm
-        ${CMAKE_SOURCE_DIR}/kege/src/systems/camera
-        ${CMAKE_SOURCE_DIR}/kege/src/systems/physics
-        ${CMAKE_SOURCE_DIR}/kege/src/systems/particle
-        ${CMAKE_SOURCE_DIR}/kege/src/systems/picking
+        ${CMAKE_SOURCE_DIR}/kege/src/camera
+        ${CMAKE_SOURCE_DIR}/kege/src/physics/3d
+        ${CMAKE_SOURCE_DIR}/kege/src/particle
 
         ${SHADERC_INCLUDE_DIR}
 )

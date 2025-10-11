@@ -277,39 +277,3 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
-
-# CAMERA_SOURCES at CMakeLists.txt:70 (file)
-file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/camera/*.cpp")
-set(OLD_GLOB
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
-endif()
-
-# PARTICLE_SOURCES at CMakeLists.txt:76 (file)
-file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/particle/*.cpp")
-set(OLD_GLOB
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
-endif()
-
-# PHYSICS_SOURCES at CMakeLists.txt:73 (file)
-file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/physics/*.cpp")
-set(OLD_GLOB
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
-endif()
-
-# PICKING_SOURCES at CMakeLists.txt:79 (file)
-file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/systems/picking/*.cpp")
-set(OLD_GLOB
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
-endif()

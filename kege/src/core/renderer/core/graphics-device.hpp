@@ -11,8 +11,8 @@
 #include "graphics-core.hpp"
 #include "swapchain.hpp"
 #include "graphics-physical-device.hpp"
-#include "shader-pipeline-manager.hpp"
-#include "shader-resource-manager.hpp"
+#include "../../graphics/render/pipeline/shader-pipeline-manager.hpp"
+#include "../../graphics/render/pipeline/shader-resource-manager.hpp"
 
 namespace kege{
     

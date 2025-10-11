@@ -10,10 +10,6 @@
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/scene.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/gui.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/editor.dir
-/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/camera.dir
-/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/physics.dir
-/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/particle.dir
-/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/picking_systems.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/kege-engine.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/edit_cache.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/rebuild_cache.dir

@@ -8,7 +8,7 @@
 #ifndef uniform_resource_info_hpp
 #define uniform_resource_info_hpp
 
-#include "graphics-core.hpp"
+#include "../../../renderer/core/graphics-core.hpp"
 
 namespace kege{
 
