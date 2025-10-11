@@ -123,7 +123,7 @@ namespace kege{
             if ( !_scene )
             {
                 kege::Log::error << "( LOADING_FAILED ) -> " << _scene_files[0] << Log::nl;
-                KEGE_LOG_ERROR << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;
+                kege::Log::error << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;
                 return false;
             }
         }

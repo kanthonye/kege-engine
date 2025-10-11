@@ -91,8 +91,6 @@ namespace kege::vk{
          */
         void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) override;
 
-        bool bindShaderResource( const ShaderResource& resource )override;
-
         void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data )override;
 
         /**
@@ -135,7 +133,7 @@ namespace kege::vk{
          * @param registry Function object that maps logical Render Graph IDs to physical
          * device handles (Buffer* or Image*).
          */
-        void pipelineBarrierBatch(const std::vector<AbstractResourceBarrier>& abstract_barriers, const ResourceRegistry& registry) override;
+//        void pipelineBarrierBatch(const std::vector<AbstractResourceBarrier>& abstract_barriers, const ResourceRegistry& registry) override;
 
         /**
          * @brief Copies data between two Vulkan buffers.
@@ -232,7 +230,7 @@ namespace kege::vk{
          * @param format The format of the texture.
          * @return The corresponding Vulkan VkImageLayout.
          */
-        VkImageLayout stateToVkLayout(ResourceState state, Format format) const;
+        //VkImageLayout stateToVkLayout(ResourceState state, Format format) const;
 
         bool isValid()const;
 

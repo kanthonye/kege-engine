@@ -5,15 +5,44 @@
 //  Created by Kenneth Esdaile on 3/6/24.
 //
 
-#include "physical-spherical-terrain.hpp"
+#include "virtual-directory.hpp"
+#include "spherical-terrain.hpp"
 
 namespace kege{
 
-    bool PhysicalSphericalTerrain::initialize( SphericalTerrainRenderer* renderer )
+    const SphericalTerrainSettings& SphericalTerrain::getSettings()const
     {
-        _renderer = renderer;
+        return _settings;
+    }
 
-        const DynamicCubeMesh* cube_mesh = _renderer->getDynamicCubeMesh();
+    TerrainRenderer* SphericalTerrain::getTerrainRenderer()
+    {
+        return _renderer.ref();
+    }
+
+    MaterialSource* SphericalTerrain::getTerrainMaterial()
+    {
+        return _material.ref();
+    }
+
+    bool SphericalTerrain::initialize()
+    {
+        kege::string shader_file = kege::vfs( "graphics-shaders/terrain/spherical/shader.json" );
+        ShaderPipeline pipeline = _settings.graphics->getShaderPipelineManager()->load( shader_file.c_str() );
+        if( !pipeline )
+        {
+            KEGE_LOG_ERROR << "Failed to load pipeline -> " << shader_file << Log::nl;
+            return false;
+        }
+        _material = new MaterialSource
+        (
+            RenderPassType::Geometry,
+            pipeline, false, false
+        );
+
+        
+        _renderer = new SphericalTerrainRenderer( _settings.graphics );
+        _renderer->initialize();
 
         SphericalTerrainTile* neighbors[6][4];
 
@@ -49,19 +78,15 @@ namespace kege{
 
         for (int face_id = 0; face_id < MAX_CUBE_FACES; face_id++ )
         {
-//            _faces[ i ]._face_id = i;
-//            _faces[ i ]._vertices = &_cube_mesh->face_vertices[i];
-//            _faces[ i ]._surface_axies[ 0 ] = _cube_mesh->face_axies[ i ][ 0 ];
-//            _faces[ i ]._surface_axies[ 1 ] = _cube_mesh->face_axies[ i ][ 1 ];
             _faces[ face_id ].init
             (
                 face_id,
                 this,
                 neighbors[face_id],
-                &cube_mesh->face_vertices[face_id],
-                cube_mesh->face_axies[ face_id ],
+                _renderer->getFaceVertices( face_id ),
+                _renderer->getFaceAxies( face_id ),
                 1.f,
-                _planet_radius,
+                _settings.radius,
                 0
             );
         }
@@ -69,15 +94,15 @@ namespace kege{
         return true;
     }
 
-    void PhysicalSphericalTerrain::render( kege::CommandEncoder* encoder, Transform* transform )
+    void SphericalTerrain::submitVisibleGeometries()
     {
-        _renderer->begin( encoder, transform );
-        render( _faces[ 0 ]._root );
-        render( _faces[ 1 ]._root );
-        render( _faces[ 2 ]._root );
-        render( _faces[ 3 ]._root );
-        render( _faces[ 4 ]._root );
-        render( _faces[ 5 ]._root );
+        _renderer->begin();
+        submitVisibleNodes( _faces[ 0 ]._root );
+        submitVisibleNodes( _faces[ 1 ]._root );
+        submitVisibleNodes( _faces[ 2 ]._root );
+        submitVisibleNodes( _faces[ 3 ]._root );
+        submitVisibleNodes( _faces[ 4 ]._root );
+        submitVisibleNodes( _faces[ 5 ]._root );
         _renderer->end();
 
 
@@ -91,22 +116,22 @@ namespace kege{
         }
     }
 
-    void PhysicalSphericalTerrain::render( SphericalTerrainTile& node )
+    void SphericalTerrain::submitVisibleNodes( SphericalTerrainTile& node )
     {
         if( node.children )
         {
-            render( node.children->nodes[ 0 ] );
-            render( node.children->nodes[ 1 ] );
-            render( node.children->nodes[ 2 ] );
-            render( node.children->nodes[ 3 ] );
+            submitVisibleNodes( node.children->nodes[ 0 ] );
+            submitVisibleNodes( node.children->nodes[ 1 ] );
+            submitVisibleNodes( node.children->nodes[ 2 ] );
+            submitVisibleNodes( node.children->nodes[ 3 ] );
         }
         else if( node.visible )
         {
-            _renderer->draw( node );
+            _renderer->submit( node.face_id, node.index_buffer_id, node.patch );
         }
     }
 //    
-//    void PhysicalSphericalTerrain::init( QuadtreePatchNode& node, const kege::vec3& position, float scale, double radius, int depth, int face_id )
+//    void SphericalTerrain::init( QuadtreePatchNode& node, const kege::vec3& position, float scale, double radius, int depth, int face_id )
 //    {
 //        kege::dvec3 sphere_position = _planet_radius * normalize( dvec3( position ) );
 //
@@ -143,7 +168,7 @@ namespace kege{
 //        _total_nodes++;
 //    }
 //
-//    void PhysicalSphericalTerrain::prepareGeometries( std::vector< char >& buffer )
+//    void SphericalTerrain::prepareGeometries( std::vector< char >& buffer )
 //    {
 ////        /**
 ////         * Given the buffer, determine how many instance can fit into the buffer. This is done
@@ -197,7 +222,7 @@ namespace kege{
 ////        }
 //    }
 //
-//    void PhysicalSphericalTerrain::prepareGeometries( QuadtreePatchNode& node )
+//    void SphericalTerrain::prepareGeometries( QuadtreePatchNode& node )
 //    {
 //        if( node.children )
 //        {
@@ -239,7 +264,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void PhysicalSphericalTerrain::submitDrawParamsAndPatchBuffer()
+//    void SphericalTerrain::submitDrawParamsAndPatchBuffer()
 //    {
 //        /*
 //        const uint32_t max_count = kege::getCapSize( _instance_count, _base, _exponent );
@@ -338,7 +363,7 @@ namespace kege{
 //             */
 //    }
 //
-//    void PhysicalSphericalTerrain::draw( kege::CommandBuffer* command_buffer )const
+//    void SphericalTerrain::draw( kege::CommandBuffer* command_buffer )const
 //    {
 //        /*
 //        ShaderPipeline* pipeline = ShaderPipelineLibrary::get( "spherical-terrain-shader" );
@@ -352,30 +377,30 @@ namespace kege{
 //         */
 //    }
 //
-//    void PhysicalSphericalTerrain::bind( kege::CommandBuffer* command_buffer )const
+//    void SphericalTerrain::bind( kege::CommandBuffer* command_buffer )const
 //    {
 ////        uint32_t set_index = 1;
 ////        command_buffer->bindShaderResource( _cubemesh->mesh_shader_resource, set_index );
 //    }
 
-    void PhysicalSphericalTerrain::setRotation( const kege::quat& rotation )
+    void SphericalTerrain::setRotation( const kege::quat& rotation )
     {
-//        _rotation = dquat(rotation.x, rotation.y, rotation.z, rotation.w);
+        _orientation = dquat(rotation.x, rotation.y, rotation.z, rotation.w);
     }
 
-    void PhysicalSphericalTerrain::setPosition( const kege::vec3& position )
+    void SphericalTerrain::setPosition( const kege::vec3& position )
     {
         _position.x = position.x;
         _position.y = position.y;
         _position.z = position.z;
     }
 
-    float PhysicalSphericalTerrain::getHeight( const kege::vec3& point )
+    float SphericalTerrain::getHeight( const kege::vec3& point )
     {
         return 0.f;
     }
 
-//    bool PhysicalSphericalTerrain::canSubDivide( QuadtreePatchNode& node )
+//    bool SphericalTerrain::canSubDivide( QuadtreePatchNode& node )
 //    {
 //        kege::dvec3 world_position = _position + rotate( _orientation, node.sphere.xyz );
 //        kege::dvec3 v = _camera_position - world_position;
@@ -396,12 +421,12 @@ namespace kege{
 //        return ( node.depth < _minimum_depth ) ? true : resolution < _maximum_resolution;
 //    }
 //
-//    bool PhysicalSphericalTerrain::splitable( QuadtreePatchNode& node )
+//    bool SphericalTerrain::splitable( QuadtreePatchNode& node )
 //    {
 //        return !node.children && node.depth < _maximum_depth;
 //    }
 //
-//    void PhysicalSphericalTerrain::split( int face_id, QuadtreePatchNode& node )
+//    void SphericalTerrain::split( int face_id, QuadtreePatchNode& node )
 //    {
 //        const int    DEPTH  = node.depth    + 1;
 //        const double RADIUS = node.sphere.w * 0.5;
@@ -424,7 +449,7 @@ namespace kege{
 //        init( node.children->nodes[ SE ], child_center[ SE ], SCALE, RADIUS, DEPTH, face_id );
 //    }
 //
-//    void PhysicalSphericalTerrain::merge( QuadtreePatchNode& node )
+//    void SphericalTerrain::merge( QuadtreePatchNode& node )
 //    {
 //        if ( node.children )
 //        {
@@ -439,7 +464,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void PhysicalSphericalTerrain::update( int16_t face_id, QuadtreePatchNode& node, QuadtreePatchNode* neighbors[4] )
+//    void SphericalTerrain::update( int16_t face_id, QuadtreePatchNode& node, QuadtreePatchNode* neighbors[4] )
 //    {
 //        _total_levels = kege::max( _total_levels, node.depth );
 //
@@ -503,7 +528,7 @@ namespace kege{
 //        }
 //    }
 
-    void PhysicalSphericalTerrain::update( const kege::dvec3& position )
+    void SphericalTerrain::update( const kege::dvec3& position )
     {
         _total_levels = 0;
         _camera_position = position;
@@ -572,14 +597,9 @@ namespace kege{
 //        update( CUBE_FACE_BELOW, _cube_faces[ CUBE_FACE_BELOW ]._root, below_neighbors );
     }
 
-    double PhysicalSphericalTerrain::radius()const
-    {
-        return _planet_radius;
-    }
-
-    PhysicalSphericalTerrain::PhysicalSphericalTerrain( const kege::TerrainSettings& settings )
-    :   PhysicalTerrain( settings )
-//    ,   _planet_radius( terrain-> )
+    SphericalTerrain::SphericalTerrain( kege::Terrain* terrain, const kege::SphericalTerrainSettings& settings )
+    :   PhysicalTerrain( terrain )
+    ,   _settings( settings )
 //    ,   _maximum_resolution( resolution )
 //    ,   _minimum_depth( min_depth )
 //    ,   _maximum_depth( max_depth )

@@ -33,7 +33,7 @@ namespace kege{
      * commands in a platform-independent manner. Concrete implementations
      * will wrap the native command buffer objects of the underlying graphics API.
      */
-    class CommandBuffer
+    class CommandBuffer : public kege::RefCounter
     {
     protected:
         
@@ -43,6 +43,16 @@ namespace kege{
         virtual ~CommandBuffer() = default;
 
     public:
+
+        virtual void transitionImageLayout
+        (
+            kege::ImageHandle image,
+            kege::ImageLayout oldLayout,
+            kege::ImageLayout newLayout
+        ) = 0;
+
+        virtual const vk::CommandBuffer* vk()const{ return nullptr; }
+        virtual vk::CommandBuffer* vk(){ return nullptr; }
 
         virtual CommandEncoder* createCommandEncoder() = 0;
 
@@ -58,7 +68,7 @@ namespace kege{
          * @brief Begins recording commands into the command buffer.
          * @return True if the command buffer began recording successfully, false otherwise.
          */
-        virtual bool beginCommands() = 0;
+        virtual bool beginCommands( CommandBufferUsage usage = CommandBufferUsage::SimultaneousUse ) = 0;
 
         /**
          * @brief Ends recording commands into the command buffer.
@@ -91,14 +101,7 @@ namespace kege{
          */
         virtual void endRendering() = 0;
 
-        // --- Regular Rendering with RenderPass ---
-
-        //virtual void beginRenderpass( kege::RenderPass& rp, kege::Framebuffer& fb, const Extent2D& extent, kege::SubpassContents content ) = 0;
-        //virtual void endRenderpass() = 0;
-
-        // --- State Binding ---
-
-        virtual bool bindShaderResource( const ShaderResource& resource ) = 0;
+        // --- Regular Rendering with RenderStage ---
 
         /**
          * @brief Binds a graphics pipeline to the command buffer.
@@ -128,8 +131,6 @@ namespace kege{
          * false if it contains 32-bit unsigned integers.
          */
         virtual void bindIndexBuffer(BufferHandle buffer_handle, uint64_t offset, bool use_uint16) = 0; // Added index type bool
-        // virtual void bindShaderResource(...) = 0; // Postponed for later
-        // virtual void setPushConstants(...) = 0; // Postponed for later
 
         virtual void setPushConstants( ShaderStage stages, uint32_t offset, uint32_t size, const void *data ) = 0;
 
@@ -200,17 +201,15 @@ namespace kege{
          * @param registry Function object that maps logical Render Graph IDs to physical
          * device handles (BufferHandle or ImageHandle).
          */
-        virtual void pipelineBarrierBatch
-        (
-            const std::vector< AbstractResourceBarrier >& abstract_barriers,
-            const ResourceRegistry& registry
-        )
-        = 0;
+//        virtual void pipelineBarrierBatch
+//        (
+//            const std::vector< AbstractResourceBarrier >& abstract_barriers,
+//            const ResourceRegistry& registry
+//        )
+//        = 0;
 
         virtual void pipelineBarrier
         (
-            PipelineStageFlag src_stage_mask,
-            PipelineStageFlag dst_stage_mask,
             const std::vector< ImageMemoryBarrier >& image_barriers,
             const std::vector< BufferMemoryBarrier >& buffer_barriers
         )
@@ -363,6 +362,8 @@ namespace kege{
 
         QueueType _queue_type;
         int32_t _id;
+
+        friend vk::Device;
     };
 
 }

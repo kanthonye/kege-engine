@@ -8,6 +8,7 @@
 #ifndef terrain_renderer_hpp
 #define terrain_renderer_hpp
 
+#include "mesh.hpp"
 #include "quadtree.h"
 #include "landscape-layer.hpp"
 #include "landscape-settings.h"
@@ -26,11 +27,11 @@ namespace kege{
     };
 
 
-    class TerrainRenderer : public RefCounter
+    class TerrainRenderer : public kege::Mesh
     {
     public:
 
-        virtual void begin( kege::CommandEncoder* encoder, Transform* transform ) = 0;
+        virtual void begin() = 0;
         virtual void end() = 0;
         virtual ~TerrainRenderer(){}
     };

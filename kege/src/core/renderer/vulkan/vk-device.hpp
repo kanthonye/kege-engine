@@ -10,9 +10,13 @@
 #ifndef vulkan_device_hpp
 #define vulkan_device_hpp
 
-#include "vk-utils.hpp"
+#include "vk-fence.hpp"
+#include "vk-semaphore.hpp"
+#include "vk-manager.hpp"
 #include "vk-physical-device.hpp"
 #include "vk-command-buffer.hpp"
+#include "vk-swapchain.hpp"
+#include "vk-queue-manager.hpp"
 #include "vk-pipeline-layout-manager.hpp"
 
 namespace kege::vk{
@@ -30,23 +34,12 @@ namespace kege::vk{
     class Device final : public kege::GraphicsDevice {
     public:
 
-        /**
-         * @brief Get the graphics API implemented by this device
-         * @return Always returns GraphicsAPI::Vulkan
-         */
-        kege::GraphicsAPI getCurrentAPI() const override { return kege::GraphicsAPI::Vulkan; }
-
-        /**
-         * @brief Get the enabled device features
-         * @return Reference to the device features structure
-         */
-        const kege::DeviceFeatures& getFeatures() const override { return _features; }
-
-        /**
-         * @brief Get the physical device limits
-         * @return Reference to the device limits structure
-         */
-        const kege::DeviceLimits& getLimits() const override { return _limits; }
+        bool submit( const std::vector< kege::SubmitInfo >& submit_infos, kege::Swapchain* swapchain )override;
+        bool submit( const kege::SubmitInfo& submit_info )override;
+        bool present( kege::Swapchain* swapchain )override;
+        int  getFrameIndex()const override;
+        bool beginSubmit()override;
+        void endSubmit()override;
 
         //-------------------------------------------------------------------------
         // Command & Queue Management
@@ -67,31 +60,6 @@ namespace kege::vk{
          * @param command_buffer The command buffer to destroy
          */
         void destroyCommandBuffer( kege::CommandBuffer* command_buffer ) override;
-
-        /**
-         * @brief Get a command queue for the specified queue type
-         *
-         * Returns a handle to a command queue of the requested type.
-         * The implementation may share physical queues when appropriate.
-         *
-         * @param type The type of queue to retrieve (graphics, compute, transfer)
-         * @return Handle to the requested command queue
-         */
-        //CommandQueueHandle getCommandQueue(QueueType type) override;
-
-        bool submitCommands
-        (
-            const std::vector< kege::CommandBuffer* >& command_buffers,
-            kege::FenceHandle* signal_fence,
-            kege::SemaphoreHandle* signal_semaphore,
-            kege::SemaphoreHandle* wait_semaphore
-        )
-        override;
-
-
-
-        void endTransferQueueCommandBuffer( VkCommandBuffer command_buffer );
-        VkCommandBuffer beginTransferQueueCommandBuffer();
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
         // Shader Resource Set Lifecycle
@@ -161,7 +129,9 @@ namespace kege::vk{
          */
         kege::BufferHandle createBuffer( const kege::BufferDesc& desc ) override;
         VkResult createBuffer( VkBufferUsageFlags usage, VkMemoryPropertyFlags property, VkDeviceSize size, const void* data, vk::Buffer* buffer );
+
         void setBufferData( VkDeviceSize size, const void* data, vk::Buffer* buffer );
+        bool resizeBuffer( const BufferHandle& handle, uint64_t size )override;
 
         void updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data ) override;
 
@@ -215,17 +185,6 @@ namespace kege::vk{
         std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc )override;
 
         /**
-         * @brief Create a graphics pipeline
-         *
-         * Creates a VkPipeline for graphics rendering based on the provided description.
-         * Uses pipeline caching for improved performance when creating similar pipelines.
-         *
-         * @param desc Description of the graphics pipeline to create
-         * @return Handle to the newly created graphics pipeline
-         */
-        kege::PipelineHandle createGraphicsPipeline( const kege::GraphicsPipelineDesc& desc ) override;
-
-        /**
          * @brief Create a compute pipeline
          *
          * Creates a VkPipeline for compute operations based on the provided description.
@@ -259,6 +218,8 @@ namespace kege::vk{
         void destroyBuffer(kege::BufferHandle handle) override;
         void destroyBufferView(kege::BufferViewHandle handle) override;
 
+        void destroyBuffer( vk::Buffer* buffer );
+        
         /**
          * @brief Destroy a sampler object
          *
@@ -349,6 +310,24 @@ namespace kege::vk{
         //-------------------------------------------------------------------------
 
         /**
+         * @brief Create a semaphore synchronization object
+         *
+         * Creates a VkSemaphore that can be used to synchronize GPU operations.
+         *
+         * @return Handle to the newly created semaphore
+         */
+        kege::Ref< kege::Semaphore > createSemaphore() override;
+
+        /**
+         * @brief Destroy a semaphore
+         *
+         * Releases the VkSemaphore.
+         *
+         * @param semaphore Handle to the semaphore to destroy
+         */
+        void destroySemaphore( kege::Semaphore* semaphore ) override;
+
+        /**
          * @brief Create a fence synchronization object
          *
          * Creates a VkFence that can be used to synchronize CPU and GPU operations.
@@ -356,79 +335,20 @@ namespace kege::vk{
          * @param initially_signaled Whether the fence should be created in the signaled state
          * @return Handle to the newly created fence
          */
-        kege::FenceHandle createFence(bool initially_signaled = false) override;
-
-        /**
-         * @brief Create a semaphore synchronization object
-         *
-         * Creates a VkSemaphore that can be used to synchronize GPU operations.
-         *
-         * @return Handle to the newly created semaphore
-         */
-        kege::SemaphoreHandle createSemaphore() override;
+        kege::Ref< kege::Fence > createFence( bool initially_signaled = false ) override;
 
         /**
          * @brief Destroy a fence
          *
          * Releases the VkFence.
          *
-         * @param handle Handle to the fence to destroy
+         * @param fence Handle to the fence to destroy
          */
-        void destroyFence(kege::FenceHandle handle) override;
-
-        /**
-         * @brief Destroy a semaphore
-         *
-         * Releases the VkSemaphore.
-         *
-         * @param handle Handle to the semaphore to destroy
-         */
-        void destroySemaphore(kege::SemaphoreHandle handle) override;
-
-        /**
-         * @brief Wait for a fence to become signaled
-         *
-         * Blocks the calling thread until the fence is signaled or the timeout expires.
-         *
-         * @param fences Handle to the fences to wait on
-         * @param wait_all Boolean value to indicate if the device should wait for all
-         * @param timeout_nanoseconds Maximum time to wait in nanoseconds (UINT64_MAX for indefinite)
-         * @return true if the fence was signaled, false if the timeout expired
-         */
-        bool waitForFence( uint32_t count, kege::FenceHandle* fences, uint32_t wait_all, uint64_t timeout_nanoseconds ) override;
-
-        /**
-         * @brief Reset a fence to the unsignaled state
-         *
-         * @param fences Handle to the fences to reset
-         */
-        void resetFence( uint32_t count, kege::FenceHandle* fences ) override;
-
-        /**
-         * @brief Get the current status of a fence
-         *
-         * @param handle Handle to the fence to check
-         * @return true if the fence is signaled, false otherwise
-         */
-        FenceStatus getFenceStatus(kege::FenceHandle handle) override;
+        void destroyFence( kege::Fence* fence ) override;
 
         //-------------------------------------------------------------------------
         // Swapchain Management
         //-------------------------------------------------------------------------
-
-        bool acquireNextSwapchainImage( const kege::Swapchain& swapchain, SemaphoreHandle signalSemaphore, uint32_t* out_image_index )override;
-        bool presentSwapchainImage( const kege::Swapchain& swapchain, SemaphoreHandle waitSemaphore, uint32_t image_index )override;
-        bool needsRecreation( const kege::Swapchain& swapchain )override;
-
-        ImageHandle getSwapchainColorImage( const kege::Swapchain& swapchain, uint32_t image_index )override;
-        ImageHandle getSwapchainDepthImage( const kege::Swapchain& swapchain, uint32_t image_index )override;
-        std::vector< ImageHandle > getSwapchainColorImages( const kege::Swapchain& swapchain )override;
-        std::vector< ImageHandle > getSwapchainDepthImages( const kege::Swapchain& swapchain )override;
-        uint32_t getSwapchainImageCount( const kege::Swapchain& swapchain )override;
-        uint32_t getSwapchainImageIndex( const kege::Swapchain& swapchain )override;
-        Extent2D getSwapchainExtent( const kege::Swapchain& swapchain )override;
-        Format getSwapchainColorFormat( const kege::Swapchain& swapchain )override;
-        Format getSwapchainDepthFormat( const kege::Swapchain& swapchain )override;
 
         /**
          * @brief Create a swapchain for presentation
@@ -438,7 +358,7 @@ namespace kege::vk{
          * @param desc Description of the swapchain to create
          * @return Handle to the newly created swapchain
          */
-        kege::Swapchain createSwapchain( const kege::SwapchainDesc& desc ) override;
+        kege::Swapchain* createSwapchain( const kege::SwapchainDesc& desc ) override;
 
         /**
          * @brief Destroy a swapchain
@@ -447,7 +367,7 @@ namespace kege::vk{
          *
          * @param swapchain Pointer to the swapchain to destroy
          */
-        void destroySwapchain( kege::Swapchain swapchain ) override;
+        void destroySwapchain( kege::Swapchain* swapchain ) override;
 
         //-------------------------------------------------------------------------
         // Buffer Management
@@ -589,127 +509,6 @@ namespace kege::vk{
          */
         const ComputePipeline* getComputePipeline(PipelineHandle handle) const;
 
-        /**
-         * @brief Get the internal Vulkan fence object
-         * @param handle Handle to the fence
-         * @return Pointer to the internal Fence object
-         */
-        const Fence* getFence(FenceHandle handle) const;
-
-        /**
-         * @brief Get the internal Vulkan semaphore object
-         * @param handle Handle to the semaphore
-         * @return Pointer to the internal Semaphore object
-         */
-        const Semaphore* getSemaphore(SemaphoreHandle handle) const;
-
-        void copyBufferToTexture( VkCommandBuffer command, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, VkImageAspectFlags aspect_flags, VkImageLayout old_layout, VkImageLayout new_layout );
-
-        void debugSetObjectName( uint64_t object_handle, VkObjectType object_type, const char* name );
-
-        inline VkResult createImageView
-        (
-            const VkImageViewCreateInfo* info,
-            const VkAllocationCallbacks* allocator,
-            VkImageView* view
-        )
-        {
-            return vkCreateImageView( _device, info, allocator, view );
-        }
-        
-        inline VkResult createPipelineLayout
-        (
-            const VkPipelineLayoutCreateInfo* info,
-            const VkAllocationCallbacks* allocator,
-            VkPipelineLayout* layout
-        )
-        {
-            return vkCreatePipelineLayout( _device, info, allocator, layout );
-        }
-
-        inline void destroyPipelineLayout( VkPipelineLayout layout, const VkAllocationCallbacks *allocator )
-        {
-            waitIdle();
-            vkDestroyPipelineLayout( _device, layout, allocator );
-        }
-
-        inline VkResult createDescriptorPool( const VkDescriptorPoolCreateInfo* info, const VkAllocationCallbacks *allocator, VkDescriptorPool *pool )
-        {
-            return vkCreateDescriptorPool( _device, info, allocator, pool );
-        }
-
-        inline void destroyDescriptorPool( VkDescriptorPool pool, const VkAllocationCallbacks* allocator )
-        {
-            vkDestroyDescriptorPool( _device, pool, allocator );
-        }
-
-        void updateDescriptorSets
-        (
-            uint32_t write_count,
-            const VkWriteDescriptorSet* writes,
-            uint32_t descriptor_count,
-            const VkCopyDescriptorSet* descriptor_copies
-        )
-        {
-            vkUpdateDescriptorSets( _device, write_count, writes, descriptor_count, descriptor_copies );
-        }
-
-        inline VkResult allocateDescriptorSets( const VkDescriptorSetAllocateInfo* info, VkDescriptorSet* descriptor_sets )
-        {
-            return vkAllocateDescriptorSets( _device, info, descriptor_sets );
-        }
-        
-        inline void freeDescriptorSets( VkDescriptorPool pool, uint32_t count, const VkDescriptorSet* sets )
-        {
-            vkFreeDescriptorSets( _device, pool, count, sets );
-        }
-
-        VkResult createDescriptorSetLayout
-        (
-            const VkDescriptorSetLayoutCreateInfo* info,
-            const VkAllocationCallbacks* allocator,
-            VkDescriptorSetLayout* layout
-        )
-        {
-            return vkCreateDescriptorSetLayout( _device, info, allocator, layout );
-        }
-        
-        inline void destroyUniformSetLayout( VkDescriptorSetLayout layout, const VkAllocationCallbacks* allocator )
-        {
-            waitIdle();
-            vkDestroyDescriptorSetLayout( _device, layout, allocator );
-        }
-
-        inline VkResult allocateCommandBuffers( const VkCommandBufferAllocateInfo* info, VkCommandBuffer* command_buffers )
-        {
-            return vkAllocateCommandBuffers( _device, info, command_buffers );
-        }
-
-        VkResult createSwapchain( const VkSwapchainCreateInfoKHR *info, const VkAllocationCallbacks* allocator, VkSwapchainKHR* swapchain )
-        {
-            return vkCreateSwapchainKHR( _device, info, allocator, swapchain );
-        }
-        void destroySwapchain( VkSwapchainKHR swapchain, const VkAllocationCallbacks* allocator )
-        {
-            waitIdle();
-            vkDestroySwapchainKHR( _device, swapchain, allocator );
-        }
-
-        void destroyImageView( VkImageView image_view, const VkAllocationCallbacks* allocator)
-        {
-            vkDestroyImageView( _device, image_view, allocator );
-        }
-
-        void destroySurface( VkSurfaceKHR surface, const VkAllocationCallbacks *allocator );
-
-
-        VkResult allocateDeviceMemory
-        (
-            VkMemoryRequirements memory_requirements,
-            VkMemoryPropertyFlags memory_properties,
-            VkDeviceMemory* memory
-        );
-
         VkSurfaceKHR surface();
         VkDevice handle();
 
@@ -802,62 +601,25 @@ namespace kege::vk{
          */
         bool createPipelineCache();
 
-        //-------------------------------------------------------------------------
-        // Internal Cleanup Methods
-        //-------------------------------------------------------------------------
-
-        /**
-         * @brief Clean up all swapchains
-         *
-         * Destroys all swapchain objects and their associated resources.
-         */
-        void cleanupSwapchains();
-
-        /**
-         * @brief Clean up all resource objects
-         *
-         * Destroys all textures, buffers, and other resources.
-         */
-        void cleanupResources();
-
-        /**
-         * @brief Clean up all synchronization primitives
-         *
-         * Destroys all fences and semaphores.
-         */
-        void cleanupSyncPrimitives();
-
-        /**
-         * @brief Clean up all pipelines and layouts
-         *
-         * Destroys all graphics and compute pipelines, and pipeline layouts.
-         */
-        void cleanupPipelines();
-
-        /**
-         * @brief Clean up all shaders
-         *
-         * Destroys all shader modules.
-         */
-        void cleanupShaders();
-
-        /**
-         * @brief Clean up command pools
-         *
-         * Destroys all command pools.
-         */
-        void cleanupCommandPools();
-
     private:
+
+        vk::Manager _manager;
 
         //-------------------------------------------------------------------------
         // Member Variables
         //-------------------------------------------------------------------------
 
-        PipelineLayoutManager _pipeline_layout_manager;
+        vk::QueueManager* _queue_manager;
+        QueueFamilyIndices _queue_family_indices;
 
-        /** @brief Storage for buffer objects */
-        ResourceRecycler< vk::CommandBuffer* > _command_buffers;
+        int32_t _frame_index;
+
+        vk::List< vk::Fence > _fences;
+        vk::List< vk::Semaphore > _semaphores;
+        vk::List< vk::Swapchain > _swapchains;
+        vk::List< vk::CommandBuffer > _command_buffers;
+
+        PipelineLayoutManager _pipeline_layout_manager;
 
         /** @brief Storage for buffer objects */
         ResourceRecycler< vk::Buffer > _buffers;
@@ -877,23 +639,6 @@ namespace kege::vk{
         /** @brief Storage for compute pipeline objects */
         ResourceRecycler< ComputePipeline > _compute_pipelines;
 
-        /** @brief Storage for swapchain objects */
-        ResourceRecycler< Swapchain > _swapchains;
-
-        /** @brief Storage for fence objects */
-        ResourceRecycler< Fence > _fences;
-
-        /** @brief Storage for semaphore objects */
-        ResourceRecycler< Semaphore > _semaphores;
-
-        /** @brief Main descriptor pool for allocating descriptor sets */
-        //DescriptorPool _main_descriptor_pool;
-
-        /** @brief Command pools for each queue type */
-        std::unordered_map< QueueType, VkCommandPool > _command_pools;
-
-        QueueFamilyIndices _queue_family_indices;
-
         PhysicalDevice* _physical_device = nullptr;
 
         /** @brief Vulkan instance handle */
@@ -906,27 +651,6 @@ namespace kege::vk{
 
         /** @brief Logical device handle */
         VkDevice _device = VK_NULL_HANDLE;
-
-        /** @brief Memory allocator handle */
-        //VmaAllocator _allocator = VK_NULL_HANDLE;
-
-        /** @brief Graphics queue information */
-        QueueInfo _graphics_queue;
-
-        /** @brief Compute queue information (might be same as graphics) */
-        QueueInfo _compute_queue;
-
-        /** @brief Transfer queue information (might be same as graphics or compute) */
-        QueueInfo _transfer_queue;
-
-        /** @brief Present queue information (often same as graphics) */
-        QueueInfo _present_queue;
-
-        /** @brief Enabled device features */
-        DeviceFeatures _features = {};
-
-        /** @brief Physical device limits */
-        DeviceLimits _limits = {};
 
         /** @brief Flag indicating if validation layers are enabled */
         bool _validation_enabled = false;
@@ -960,11 +684,14 @@ namespace kege::vk{
 
         PFN_vkSetDebugUtilsObjectNameEXT vkSetDebugUtilsObjectName;
 
-        VkPhysicalDeviceMemoryProperties _physical_device_memory_properties;
+        //VkPhysicalDeviceMemoryProperties _physical_device_memory_properties;
         uint32_t _api_version;
 
         enum{ MAX_FRAMES_IN_FLIGHT = 2};
+        friend vk::PipelineLayoutManager;
         friend vk::CommandBuffer;
+        friend vk::QueueManager;
+        friend vk::FrameRenderer;
         friend Swapchain;
         friend Instance;
     };

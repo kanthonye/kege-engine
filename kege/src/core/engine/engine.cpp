@@ -175,14 +175,10 @@ namespace kege{
 
                 _esm->render( _fixed_delta_time );
 
-                if ( 0 <= _graphics->beginFrame() )
+                if ( _graphics->beginFrame() )
                 {
                     //TODO: _render_manager->execute( _fixed_delta_time );
-                    if ( !_graphics->endFrame() )
-                    {
-                        KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;
-                        _running = false;
-                    }
+                    _graphics->endFrame();
                 }
                 else
                 {

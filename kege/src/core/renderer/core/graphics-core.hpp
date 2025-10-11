@@ -31,7 +31,29 @@
 #include "../../math/algebra/vectors.hpp"
 #include "../../math/algebra/matrices.hpp"
 
+
+namespace kege::vk{
+    class Device;
+    class Fence;
+    class Semaphore;
+    class Swapchain;
+    class CommandBuffer;
+}
+
 namespace kege{
+
+    enum struct ErrorType
+    {
+        NULL_OBJECT,
+        INVALID_OPERATION,
+        INVALID_ID,
+        UNSUPPORTED_QUEUE_TYPE,
+        INVALID_DEVICE_QUEUE_TYPE,
+        OUT_OF_BOUND_INDEX,
+        FAILED_TO_ACQUIRE_NEXT_IMAGE,
+        FAILED_TO_INITALIZED,
+        FAILED_TO_SHUTDOWN,
+    };
 
     enum{ MAX_FRAMES_IN_FLIGHT = 2};
 
@@ -40,12 +62,6 @@ namespace kege{
     class GraphicsDevice;
     class GraphicsWindow;
     class CommandBuffer;
-
-    struct Swapchain
-    {
-        inline operator bool()const{ return id >= 0; }
-        int32_t id = -1;
-    };
 
     struct BufferHandle
     {
@@ -69,17 +85,6 @@ namespace kege{
     struct ShaderHandle { int32_t id = -1; };
     struct PipelineLayoutHandle { int32_t id = -1; };
     struct PipelineHandle
-    {
-        inline operator bool()const{ return id >= 0; }
-        int32_t id = -1;
-    }; 
-    struct CommandQueueHandle { int32_t id = -1; };
-    struct FenceHandle
-    {
-        inline operator bool()const{ return id >= 0; }
-        int32_t id = -1;
-    };
-    struct SemaphoreHandle
     {
         inline operator bool()const{ return id >= 0; }
         int32_t id = -1;
@@ -113,21 +118,63 @@ namespace kege{
     inline bool operator!=(const kege::PipelineHandle& a, const kege::PipelineHandle& b){ return a.id != b.id; }
     inline bool operator <(const kege::PipelineHandle& a, const kege::PipelineHandle& b){ return a.id  < b.id; }
 
-    inline bool operator==(const kege::CommandQueueHandle& a, const kege::CommandQueueHandle& b){ return a.id == b.id; }
-    inline bool operator!=(const kege::CommandQueueHandle& a, const kege::CommandQueueHandle& b){ return a.id != b.id; }
-    inline bool operator <(const kege::CommandQueueHandle& a, const kege::CommandQueueHandle& b){ return a.id  < b.id; }
-
-    inline bool operator==(const kege::FenceHandle& a, const kege::FenceHandle& b){ return a.id == b.id; }
-    inline bool operator!=(const kege::FenceHandle& a, const kege::FenceHandle& b){ return a.id != b.id; }
-    inline bool operator <(const kege::FenceHandle& a, const kege::FenceHandle& b){ return a.id  < b.id; }
-
-    inline bool operator==(const kege::SemaphoreHandle& a, const kege::SemaphoreHandle& b){ return a.id == b.id; }
-    inline bool operator!=(const kege::SemaphoreHandle& a, const kege::SemaphoreHandle& b){ return a.id != b.id; }
-    inline bool operator <(const kege::SemaphoreHandle& a, const kege::SemaphoreHandle& b){ return a.id  < b.id; }
-
     inline bool operator==(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id == b.id; }
     inline bool operator!=(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id != b.id; }
     inline bool operator <(const kege::UniformSetLayout& a, const kege::UniformSetLayout& b){ return a.id  < b.id; }
+
+
+
+    class Fence : public kege::RefCounter
+    {
+    public:
+
+        /**
+         * @brief Wait for a fence to become signaled
+         *
+         * Blocks the calling thread until the fence is signaled or the timeout expires.
+         *
+         * @param wait_all Boolean value to indicate if the device should wait for all
+         * @param timeout_nanoseconds Maximum time to wait in nanoseconds (UINT64_MAX for indefinite)
+         * @return true if the fence was signaled, false if the timeout expired
+         */
+        virtual bool waitForFence( uint32_t wait_all, uint64_t timeout_nanoseconds )const = 0;
+
+        /**
+         * @brief Reset a fence to the unsignaled state
+         */
+        virtual void resetFence() = 0;
+
+        /**
+         * @brief Get the current status of a fence
+         * @return true if the fence is signaled, false otherwise
+         */
+        virtual bool isReady()const = 0;
+
+
+        const vk::Fence* vk()const{ return nullptr; };
+        vk::Fence* vk(){ return nullptr; };
+        virtual ~Fence() = default;
+
+    protected:
+
+        Fence() = default;
+    };
+    typedef Ref< Fence > FenceR;
+
+    class Semaphore : public kege::RefCounter
+    {
+    public:
+
+        virtual const vk::Semaphore* vk()const{ return nullptr; };
+        virtual vk::Semaphore* vk(){ return nullptr; };
+        virtual ~Semaphore() = default;
+
+    protected:
+
+        Semaphore() = default;
+    };
+    typedef Ref< Semaphore > SemaphoreR;
+
 
 
 
@@ -164,6 +211,26 @@ namespace kege{
         Transfer   ///< Transfer-only queue
     };
 
+    enum struct CommandBufferUsage
+    {
+        OneTimeSubmit = 0x1,
+        RenderPassContinue = 0x2,
+        SimultaneousUse = 0x4
+    };
+
+    constexpr inline bool operator <<= ( const CommandBufferUsage& usage, const CommandBufferUsage& other )
+    {
+        return (int( usage ) & int( other )) == int( other );
+    }
+
+   enum //QueueType
+   {
+       QUEUE_TYPE_INVALID,
+       QUEUE_TYPE_GRAPHICS,
+       QUEUE_TYPE_COMPUTE,
+       QUEUE_TYPE_TRANSFER,
+   };
+
     enum struct FenceStatus
     {
         Success,
@@ -181,19 +248,6 @@ namespace kege{
     {
         QueueType          type;
         CommandBufferLevel level;
-    };
-
-    struct SubmitInfo
-    {
-        //VkPipelineStageFlags*    wait_dst_stage_mask;
-        uint32_t         command_buffer_count;
-        CommandBuffer*   command_buffers;
-
-        uint32_t         wait_semaphore_count;
-        SemaphoreHandle* wait_semaphores;
-
-        uint32_t         signal_semaphore_count;
-        SemaphoreHandle* signal_semaphores;
     };
 
     enum class Format
@@ -403,70 +457,238 @@ namespace kege{
         Count64 = 64   ///< 64x MSAA (extremely high quality)
     };
 
-    /**
-     * @brief Bitmask flags specifying texture usage capabilities.
-     *
-     * These flags determine how a texture can be used and what operations
-     * are valid for the texture resource. Multiple flags can be combined.
-     */
-    enum class ImageUsageFlags : uint32_t
+    enum struct ImageUsage: uint32_t
     {
-        None = 0,                       ///< No specific usage (invalid for creation)
-        CopySrc = 1 << 0,               ///< Can be source of copy operations (GPU-GPU transfers)
-        CopyDst = 1 << 1,               ///< Can be destination of copy operations (GPU-GPU transfers)
-        ShaderResource = 1 << 2,        ///< Can be sampled in shaders (read-only)
-        Storage = 1 << 3,               ///< Can be used as storage image (read-write in shaders)
-        ColorAttachment = 1 << 4,       ///< Can be used as color render target
-        DepthStencilAttachment = 1 << 5,///< Can be used as depth/stencil render target
-        TransientAttachment = 1 << 6,   ///< Hint: Memory may be optimized for temporary render targets
-        InputAttachment = 1 << 7,       ///< For framebuffer-local subpass inputs (Vulkan-specific)
-        ResolveSrc = 1 << 8,            ///< Can be source for MSAA resolve operations
-        ResolveDst = 1 << 9,            ///< Can be destination for MSAA resolve operations
-        Present = 1 << 10               ///< Can be presented to screen (swapchain images)
+        Undefined       = 0,
+        TransferSrc     = 1 << 1,
+        TransferDst     = 1 << 2,
+        Sampled         = 1 << 3,
+        Storage         = 1 << 4,
+        Color           = 1 << 5,
+        DepthStencil    = 1 << 6,
+        Transient       = 1 << 7,
+        Input           = 1 << 8,
+        HostTransfer    = 1 << 9,
+        Present         = 1 << 10,
     };
 
-    // Bitwise operators for ImageUsageFlags
-    inline constexpr ImageUsageFlags operator|(ImageUsageFlags a, ImageUsageFlags b) {
-        return static_cast<ImageUsageFlags>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+    inline constexpr ImageUsage operator | (const ImageUsage& a, const ImageUsage& b)
+    {
+        return static_cast< ImageUsage >(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+    }
+    inline constexpr ImageUsage operator&(const ImageUsage& a, const ImageUsage& b)
+    {
+        return static_cast< ImageUsage >(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+    }
+    inline constexpr ImageUsage& operator |=( ImageUsage a, const ImageUsage& b)
+    {
+        return a = a | b;
+    }
+    inline constexpr ImageUsage& operator &=( ImageUsage a, const ImageUsage& b)
+    {
+        return a = a & b;
     }
 
-    inline constexpr ImageUsageFlags& operator|=(ImageUsageFlags& a, ImageUsageFlags b) {
+
+//
+//    /**
+//     * @brief Commonly used texture usage combinations
+//     */
+//    namespace TextureUsage
+//    {
+//        constexpr ImageUsage Default =
+//            ImageUsage::Sampled |
+//            ImageUsage::CopySrc |
+//            ImageUsage::CopyDst;
+//
+//        constexpr ImageUsage RenderTarget =
+//            ImageUsage::Color |
+//            ImageUsage::Sampled |
+//            ImageUsage::CopySrc;
+//
+//        constexpr ImageUsage DepthStencil =
+//            ImageUsage::DepthStencil |
+//            ImageUsage::Sampled;
+//
+//        constexpr ImageUsage Storage =
+//            ImageUsage::Storage |
+//            ImageUsage::Sampled |
+//            ImageUsage::CopySrc |
+//            ImageUsage::CopyDst;
+//    }
+
+    /**
+     * @brief Namespace defining flags for render graph resource access.
+     *
+     * These flags represent the types of access that are performed on a
+     * resource during a particular pipeline stage. They are crucial for
+     * ensuring proper synchronization and data coherency between different
+     * stages that might be accessing the same resource.
+     */
+    enum struct AccessFlags: uint32_t
+    {
+        None = 0,
+        IndirectCommandRead = 1 << 0,
+        IndexRead           = 1 << 1,
+        VertexBufferRead    = 1 << 2,
+        UniformRead         = 1 << 3,
+        InputRead           = 1 << 4,
+        ShaderRead          = 1 << 5,
+        ShaderWrite         = 1 << 6,
+        ColorRead           = 1 << 7,
+        ColorWrite          = 1 << 8,
+        DepthStencilRead    = 1 << 9,
+        DepthStencilWrite   = 1 << 10,
+        TransferRead        = 1 << 11,
+        TransferWrite       = 1 << 12,
+        HostRead            = 1 << 13,
+        HostWrite           = 1 << 14,
+
+        MemoryRead = HostRead | UniformRead | InputRead | ShaderRead |
+                     ColorRead | DepthStencilRead | TransferRead |
+                     IndirectCommandRead | IndexRead | VertexBufferRead,
+
+        MemoryWrite = HostWrite | ShaderWrite | ColorWrite |
+                      DepthStencilWrite | TransferWrite,
+
+        All = 0xFFFFFFFF,
+    };
+
+    /**
+     * @brief Enables bitwise OR operation for GraphAccessFlags.
+     * @param a First flag.
+     * @param b Second flag.
+     * @return The bitwise OR of the two flags.
+     */
+    inline AccessFlags operator|(AccessFlags a, AccessFlags b)
+    {
+        return static_cast< AccessFlags >( static_cast<uint32_t>(a) | static_cast<uint32_t>(b) );
+    }
+
+    /**
+     * @brief Enables bitwise AND operation for GraphAccessFlags.
+     * @param a First flag.
+     * @param b Second flag.
+     * @return The bitwise AND of the two flags.
+     */
+    inline AccessFlags operator&(AccessFlags a, AccessFlags b)
+    {
+        return static_cast<AccessFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+    }
+
+    /**
+     * @brief Enables bitwise XOR operation for GraphAccessFlags.
+     * @param a First flag.
+     * @param b Second flag.
+     * @return The bitwise XOR of the two flags.
+     */
+    inline AccessFlags operator^(AccessFlags a, AccessFlags b)
+    {
+        return static_cast<AccessFlags>(static_cast<uint32_t>(a) ^ static_cast<uint32_t>(b));
+    }
+
+    /**
+     * @brief Enables bitwise NOT operation for GraphAccessFlags.
+     * @param a The flag to negate.
+     * @return The bitwise NOT of the flag.
+     */
+    inline AccessFlags operator~(AccessFlags a)
+    {
+        return static_cast<AccessFlags>(~static_cast<uint32_t>(a));
+    }
+
+    /**
+     * @brief Enables the |= assignment operator for AccessFlags.
+     * @param a The flag to modify.
+     * @param b The flag to OR with.
+     * @return A reference to the modified flag.
+     */
+    inline AccessFlags& operator|=(AccessFlags& a, AccessFlags b)
+    {
         return a = a | b;
     }
 
-    inline constexpr ImageUsageFlags operator&(ImageUsageFlags a, ImageUsageFlags b) {
-        return static_cast<ImageUsageFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
-    }
-
-    inline constexpr ImageUsageFlags& operator&=(ImageUsageFlags& a, ImageUsageFlags b) {
+    /**
+     * @brief Enables the &= assignment operator for AccessFlags.
+     * @param a The flag to modify.
+     * @param b The flag to AND with.
+     * @return A reference to the modified flag.
+     */
+    inline AccessFlags& operator&=(AccessFlags& a, AccessFlags b)
+    {
         return a = a & b;
     }
 
     /**
-     * @brief Commonly used texture usage combinations
+     * @brief Enables the ^= assignment operator for AccessFlags.
+     * @param a The flag to modify.
+     * @param b The flag to XOR with.
+     * @return A reference to the modified flag.
      */
-    namespace TextureUsage
+    inline AccessFlags& operator^=(AccessFlags& a, AccessFlags b)
     {
-        constexpr ImageUsageFlags Default =
-            ImageUsageFlags::ShaderResource |
-            ImageUsageFlags::CopySrc |
-            ImageUsageFlags::CopyDst;
-
-        constexpr ImageUsageFlags RenderTarget =
-            ImageUsageFlags::ColorAttachment |
-            ImageUsageFlags::ShaderResource |
-            ImageUsageFlags::CopySrc;
-
-        constexpr ImageUsageFlags DepthStencil =
-            ImageUsageFlags::DepthStencilAttachment |
-            ImageUsageFlags::ShaderResource;
-
-        constexpr ImageUsageFlags Storage =
-            ImageUsageFlags::Storage |
-            ImageUsageFlags::ShaderResource |
-            ImageUsageFlags::CopySrc |
-            ImageUsageFlags::CopyDst;
+        return a = a ^ b;
     }
+
+    /**
+     * @brief Enables the != assignment operator for AccessFlags.
+     * @param a The flag to modify.
+     * @param i The flag to != with.
+     * @return True if not equal, false otherwise.
+     */
+    inline bool operator|=(const AccessFlags& a, uint32_t i)
+    {
+        return static_cast<uint32_t>(a) != i;
+    }
+
+    /**
+     * @brief Enables the != assignment operator for AccessFlags.
+     * @param i The flag to != with.
+     * @param a The flag to modify.
+     * @return True if not equal, false otherwise.
+     */
+    inline bool operator|=(uint32_t i, const AccessFlags& a)
+    {
+        return static_cast<uint32_t>(a) != i;
+    }
+
+    /**
+     * @brief Enables the == assignment operator for AccessFlags.
+     * @param a The flag to modify.
+     * @param i The flag to != with.
+     * @return True if equal, false otherwise.
+     */
+    inline bool operator==(const AccessFlags& a, uint32_t i)
+    {
+        return static_cast<uint32_t>(a) == i;
+    }
+
+    /**
+     * @brief Enables the != assignment operator for AccessFlags.
+     * @param i The flag to != with.
+     * @param a The flag to modify.
+     * @return True if equal, false otherwise.
+     */
+    inline bool operator==(uint32_t i, const AccessFlags& a)
+    {
+        return static_cast<uint32_t>(a) == i;
+    }
+
+    inline bool hasFlag( AccessFlags flags, AccessFlags mask )
+    {
+        return static_cast< uint32_t >( flags & mask ) != 0;
+    }
+
+    inline bool isWriteAccess(AccessFlags access)
+    {
+        return (access & AccessFlags::MemoryWrite) != AccessFlags::None;
+    }
+
+    inline bool isReadAccess(AccessFlags access)
+    {
+        return (access & AccessFlags::MemoryRead ) != AccessFlags::None;
+    }
+
 
     /**
      * @brief Memory usage patterns for buffer and texture allocations.
@@ -739,9 +961,10 @@ namespace kege{
         uint32_t height = 1;                                ///< Base height in texels
         uint32_t depth = 1;                                 ///< Depth for 3D textures, array layers for others
         uint32_t mip_levels = 1;                            ///< Number of mipmap levels
+        uint32_t layers = 1;                            
         Format format = Format::undefined;                  ///< Pixel format and data type
         SampleCount sample_count = SampleCount::Count1;     ///< MSAA sample count
-        ImageUsageFlags usage = ImageUsageFlags::None;  ///< Allowed usages
+        ImageUsage usage = ImageUsage::Undefined;  ///< Allowed usages
         MemoryUsage memory_usage = MemoryUsage::GpuOnly;    ///< Memory placement strategy
         std::string name = "";                        ///< Debug label (visible in tools like RenderDoc)
 
@@ -985,13 +1208,18 @@ namespace kege{
      */
     enum class ImageLayout
     {
-        Undefined,              ///< Initial undefined layout
-        General,                ///< General-purpose layout
-        ColorAttachment,        ///< Optimal for color attachment access
-        DepthStencilAttachment, ///< Optimal for depth/stencil attachment access
-        DepthStencilRead, ///< Optimal for depth/stencil attachment access
-        DepthStencilWrite, ///< Optimal for depth/stencil attachment access
-        ShaderReadOnly,         ///< Optimal for shader read-only access
+        Undefined,          ///< Initial undefined layout
+        General,            ///< General-purpose layout
+        Color,              ///< Optimal for color attachment access
+        Depth,
+        DepthRead,
+        Stencil,
+        StencilRead,
+        DepthStencil,       ///< Optimal for depth/stencil attachment access
+        DepthStencilRead,   ///< Optimal for depth/stencil attachment access
+        DepthRead_Stencil,
+        Depth_StencilRead,
+        ShaderRead,         ///< Optimal for shader read-only access
         TransferSrc,            ///< Optimal for transfer source operations
         TransferDst,            ///< Optimal for transfer destination operations
         PreInitialized,
@@ -2015,11 +2243,11 @@ namespace kege{
          * @brief Flags indicating how swapchain images will be used
          *
          * Common flags:
-         * - ColorAttachment: Required for rendering to swapchain images
+         * - Color: Required for rendering to swapchain images
          * - CopyDst: Enables copy operations to swapchain images (e.g., for screenshots)
          * - TransferSrc: Enables reading from swapchain images (e.g., for post-processing)
          */
-        ImageUsageFlags image_usage = ImageUsageFlags::ColorAttachment | ImageUsageFlags::CopyDst;
+        ImageUsage image_usage = ImageUsage::Color | ImageUsage::TransferDst;
 
         /**
          * @brief Previous swapchain to recover resources from when recreating
@@ -2027,7 +2255,7 @@ namespace kege{
          * Used when resizing window or changing swapchain properties.
          * Helps prevent resource churn and enables smoother transitions.
          */
-        Swapchain old_swapchain;
+        //Swapchain old_swapchain;
 
         /**
          * @brief Debug identifier for graphics debugging tools
@@ -2286,9 +2514,9 @@ namespace kege{
     //{
     //    Undefined = 0,
     //    General = 1,
-    //    ColorAttachment = 2,
+    //    Color = 2,
     //    DepthAttachment,
-    //    DepthStencilAttachment,
+    //    DepthStencil,
     //    TransferSrc,
     //    TransferDst,
     //
@@ -2311,25 +2539,25 @@ namespace kege{
     //};
 
 
-    // Resource States (used for import/export and barrier tracking)
-    enum class ResourceState
-    {
-        Undefined,
-        VertexBuffer,
-        IndexBuffer,
-        UniformBuffer,
-        StorageBufferRead, // Separate read/write for more granular barriers
-        StorageBufferWrite,
-        ShaderResource,    // Texture or Buffer read by shader
-        RenderTargetColor,
-        RenderTargetDepthStencil,
-        UnorderedAccess,   // Texture or Buffer read/write via UAV/Storage Image
-        CopySrc,
-        CopyDst,
-        Present,
-        IndirectArgument
-        // Add more as needed (e.g., ResolveSrc, ResolveDst)
-    };
+//    // Resource States (used for import/export and barrier tracking)
+//    enum class ResourceState
+//    {
+//        Undefined,
+//        VertexBuffer,
+//        IndexBuffer,
+//        UniformBuffer,
+//        StorageBufferRead, // Separate read/write for more granular barriers
+//        StorageBufferWrite,
+//        ShaderResource,    // Texture or Buffer read by shader
+//        RenderTargetColor,
+//        RenderTargetDepthStencil,
+//        UnorderedAccess,   // Texture or Buffer read/write via UAV/Storage Image
+//        CopySrc,
+//        CopyDst,
+//        Present,
+//        IndirectArgument
+//        // Add more as needed (e.g., ResolveSrc, ResolveDst)
+//    };
 
     /**
      * @brief Simple resource registry concept.
@@ -2514,6 +2742,8 @@ namespace kege{
             case Format::depth_24_stencil_8:
             case Format::depth_32_stencil_8:
             case Format::stencil_u8:
+            case Format::depth_16:
+            case Format::depth_32:
                 return true;
 
             default: return false;
@@ -2525,7 +2755,6 @@ namespace kege{
         switch (format)
         {
             case Format::depth_16:
-            //case Format::depth_24:
             case Format::depth_32:
                 return true;
 
@@ -2536,322 +2765,6 @@ namespace kege{
     inline bool isStencilOnlyFormat(Format format)
     {
         return format == Format::stencil_u8;
-    }
-
-    //typedef enum ResolveModeFlagBits {
-    //    VK_RESOLVE_MODE_NONE = 0,
-    //    VK_RESOLVE_MODE_SAMPLE_ZERO_BIT = 0x00000001,
-    //    VK_RESOLVE_MODE_AVERAGE_BIT = 0x00000002,
-    //    VK_RESOLVE_MODE_MIN_BIT = 0x00000004,
-    //    VK_RESOLVE_MODE_MAX_BIT = 0x00000008,
-    //  // Provided by VK_ANDROID_external_format_resolve with VK_KHR_dynamic_rendering or VK_VERSION_1_3
-    //    VK_RESOLVE_MODE_EXTERNAL_FORMAT_DOWNSAMPLE_ANDROID = 0x00000010,
-    //  // Provided by VK_KHR_depth_stencil_resolve
-    //    VK_RESOLVE_MODE_NONE_KHR = VK_RESOLVE_MODE_NONE,
-    //  // Provided by VK_KHR_depth_stencil_resolve
-    //    VK_RESOLVE_MODE_SAMPLE_ZERO_BIT_KHR = VK_RESOLVE_MODE_SAMPLE_ZERO_BIT,
-    //  // Provided by VK_KHR_depth_stencil_resolve
-    //    VK_RESOLVE_MODE_AVERAGE_BIT_KHR = VK_RESOLVE_MODE_AVERAGE_BIT,
-    //  // Provided by VK_KHR_depth_stencil_resolve
-    //    VK_RESOLVE_MODE_MIN_BIT_KHR = VK_RESOLVE_MODE_MIN_BIT,
-    //  // Provided by VK_KHR_depth_stencil_resolve
-    //    VK_RESOLVE_MODE_MAX_BIT_KHR = VK_RESOLVE_MODE_MAX_BIT,
-    //} VkResolveModeFlagBits;
-
-    //typedef struct RenderingAttachment {
-    //    VkImageView              imageView;
-    //    VkImageLayout            imageLayout;
-    //
-    //    VkResolveModeFlagBits    resolveMode;
-    //
-    //    VkImageView              resolveImageView;
-    //    VkImageLayout            resolveImageLayout;
-    //
-    //    AttachmentLoadOp       load_op;
-    //    AttachmentStoreOp      store_op;
-    //    ClearValue             clear_value;
-    //}
-    //RenderingAttachment;
-
-
-
-
-
-
-
-
-    /**
-     * @brief Namespace defining flags for render graph stages.
-     *
-     * These flags represent different stages within the graphics pipeline
-     * where memory dependencies and synchronization might be necessary.
-     * They are used in barrier descriptions to specify the source and
-     * destination stages of a resource transition.
-     */
-    enum struct RenderGraphStagesFlags : uint32_t
-    {
-        None = 0,
-        VertexInput = 1 << 0,
-        VertexShader = 1 << 1,
-        TessellationControlShader = 1 << 2,
-        TessellationEvaluationShader = 1 << 3,
-        GeometryShader = 1 << 4,
-        FragmentShader = 1 << 5,
-        EarlyFragmentTests = 1 << 6,
-        LateFragmentTests = 1 << 7,
-        ColorAttachmentOutput = 1 << 8,
-        ComputeShader = 1 << 9,
-        Transfer = 1 << 10,
-        Host = 1 << 11,
-        AllCommands = 0xFFFFFFFF,
-        AllGraphics = VertexInput | VertexShader | TessellationControlShader |
-        TessellationEvaluationShader | GeometryShader | FragmentShader |
-        EarlyFragmentTests | LateFragmentTests | ColorAttachmentOutput,
-        AllTransfer = Transfer,
-    };
-
-    /**
-     * @brief Enables bitwise OR operation for RenderGraphStagesFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise OR of the two flags.
-     */
-    inline RenderGraphStagesFlags operator|(RenderGraphStagesFlags a, RenderGraphStagesFlags b)
-    {
-        return static_cast<RenderGraphStagesFlags>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
-    }
-
-    /**
-     * @brief Enables bitwise AND operation for RenderGraphStagesFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise AND of the two flags.
-     */
-    inline RenderGraphStagesFlags operator&(RenderGraphStagesFlags a, RenderGraphStagesFlags b)
-    {
-        return static_cast<RenderGraphStagesFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
-    }
-
-    /**
-     * @brief Enables bitwise XOR operation for RenderGraphStagesFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise XOR of the two flags.
-     */
-    inline RenderGraphStagesFlags operator^(RenderGraphStagesFlags a, RenderGraphStagesFlags b)
-    {
-        return static_cast<RenderGraphStagesFlags>(static_cast<uint32_t>(a) ^ static_cast<uint32_t>(b));
-    }
-
-    /**
-     * @brief Enables bitwise NOT operation for RenderGraphStagesFlags.
-     * @param a The flag to negate.
-     * @return The bitwise NOT of the flag.
-     */
-    inline RenderGraphStagesFlags operator~(RenderGraphStagesFlags a)
-    {
-        return static_cast<RenderGraphStagesFlags>(~static_cast<uint32_t>(a));
-    }
-
-    /**
-     * @brief Enables the |= assignment operator for RenderGraphStagesFlags.
-     * @param a The flag to modify.
-     * @param b The flag to OR with.
-     * @return A reference to the modified flag.
-     */
-    inline RenderGraphStagesFlags& operator|=(RenderGraphStagesFlags& a, RenderGraphStagesFlags b)
-    {
-        return a = a | b;
-    }
-
-    /**
-     * @brief Enables the &= assignment operator for RenderGraphStagesFlags.
-     * @param a The flag to modify.
-     * @param b The flag to AND with.
-     * @return A reference to the modified flag.
-     */
-    inline RenderGraphStagesFlags& operator&=(RenderGraphStagesFlags& a, RenderGraphStagesFlags b)
-    {
-        return a = a & b;
-    }
-
-    /**
-     * @brief Enables the ^= assignment operator for RenderGraphStagesFlags.
-     * @param a The flag to modify.
-     * @param b The flag to XOR with.
-     * @return A reference to the modified flag.
-     */
-    inline RenderGraphStagesFlags& operator^=(RenderGraphStagesFlags& a, RenderGraphStagesFlags b)
-    {
-        return a = a ^ b;
-    }
-
-
-    /**
-     * @brief Namespace defining flags for render graph resource access.
-     *
-     * These flags represent the types of access that are performed on a
-     * resource during a particular pipeline stage. They are crucial for
-     * ensuring proper synchronization and data coherency between different
-     * stages that might be accessing the same resource.
-     */
-    enum struct AccessFlags: uint32_t
-    {
-        None = 0,
-        IndirectCommandRead = 1 << 0,
-        IndexRead = 1 << 1,
-        VertexBufferRead = 1 << 2,
-        UniformRead = 1 << 3,
-        InputAttachmentRead = 1 << 4,
-        ShaderRead = 1 << 5,
-        ShaderWrite = 1 << 6,
-        ColorAttachmentRead = 1 << 7,
-        ColorAttachmentWrite = 1 << 8,
-        DepthStencilAttachmentRead = 1 << 9,
-        DepthStencilAttachmentWrite = 1 << 10,
-        TransferRead = 1 << 11,
-        TransferWrite = 1 << 12,
-        HostRead = 1 << 13,
-        HostWrite = 1 << 14,
-
-        MemoryRead = HostRead | UniformRead | InputAttachmentRead | ShaderRead |
-                     ColorAttachmentRead | DepthStencilAttachmentRead | TransferRead |
-                     IndirectCommandRead | IndexRead | VertexBufferRead,
-
-        MemoryWrite = HostWrite | ShaderWrite | ColorAttachmentWrite |
-                      DepthStencilAttachmentWrite | TransferWrite,
-
-        All = 0xFFFFFFFF,
-    };
-
-    /**
-     * @brief Enables bitwise OR operation for GraphAccessFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise OR of the two flags.
-     */
-    inline AccessFlags operator|(AccessFlags a, AccessFlags b)
-    {
-        return static_cast< AccessFlags >( static_cast<uint32_t>(a) | static_cast<uint32_t>(b) );
-    }
-
-    /**
-     * @brief Enables bitwise AND operation for GraphAccessFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise AND of the two flags.
-     */
-    inline AccessFlags operator&(AccessFlags a, AccessFlags b)
-    {
-        return static_cast<AccessFlags>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
-    }
-
-    /**
-     * @brief Enables bitwise XOR operation for GraphAccessFlags.
-     * @param a First flag.
-     * @param b Second flag.
-     * @return The bitwise XOR of the two flags.
-     */
-    inline AccessFlags operator^(AccessFlags a, AccessFlags b)
-    {
-        return static_cast<AccessFlags>(static_cast<uint32_t>(a) ^ static_cast<uint32_t>(b));
-    }
-
-    /**
-     * @brief Enables bitwise NOT operation for GraphAccessFlags.
-     * @param a The flag to negate.
-     * @return The bitwise NOT of the flag.
-     */
-    inline AccessFlags operator~(AccessFlags a)
-    {
-        return static_cast<AccessFlags>(~static_cast<uint32_t>(a));
-    }
-
-    /**
-     * @brief Enables the |= assignment operator for AccessFlags.
-     * @param a The flag to modify.
-     * @param b The flag to OR with.
-     * @return A reference to the modified flag.
-     */
-    inline AccessFlags& operator|=(AccessFlags& a, AccessFlags b)
-    {
-        return a = a | b;
-    }
-
-    /**
-     * @brief Enables the &= assignment operator for AccessFlags.
-     * @param a The flag to modify.
-     * @param b The flag to AND with.
-     * @return A reference to the modified flag.
-     */
-    inline AccessFlags& operator&=(AccessFlags& a, AccessFlags b)
-    {
-        return a = a & b;
-    }
-
-    /**
-     * @brief Enables the ^= assignment operator for AccessFlags.
-     * @param a The flag to modify.
-     * @param b The flag to XOR with.
-     * @return A reference to the modified flag.
-     */
-    inline AccessFlags& operator^=(AccessFlags& a, AccessFlags b)
-    {
-        return a = a ^ b;
-    }
-
-    /**
-     * @brief Enables the != assignment operator for AccessFlags.
-     * @param a The flag to modify.
-     * @param i The flag to != with.
-     * @return True if not equal, false otherwise.
-     */
-    inline bool operator|=(const AccessFlags& a, uint32_t i)
-    {
-        return static_cast<uint32_t>(a) != i;
-    }
-
-    /**
-     * @brief Enables the != assignment operator for AccessFlags.
-     * @param i The flag to != with.
-     * @param a The flag to modify.
-     * @return True if not equal, false otherwise.
-     */
-    inline bool operator|=(uint32_t i, const AccessFlags& a)
-    {
-        return static_cast<uint32_t>(a) != i;
-    }
-
-    /**
-     * @brief Enables the == assignment operator for AccessFlags.
-     * @param a The flag to modify.
-     * @param i The flag to != with.
-     * @return True if equal, false otherwise.
-     */
-    inline bool operator==(const AccessFlags& a, uint32_t i)
-    {
-        return static_cast<uint32_t>(a) == i;
-    }
-
-    /**
-     * @brief Enables the != assignment operator for AccessFlags.
-     * @param i The flag to != with. 
-     * @param a The flag to modify.
-     * @return True if equal, false otherwise.
-     */
-    inline bool operator==(uint32_t i, const AccessFlags& a)
-    {
-        return static_cast<uint32_t>(a) == i;
-    }
-
-    inline bool isWriteAccess(AccessFlags access)
-    {
-        return (access & AccessFlags::MemoryWrite) != AccessFlags::None;
-    }
-
-    inline bool isReadAccess(AccessFlags access)
-    {
-        return (access & AccessFlags::MemoryRead ) != AccessFlags::None;
     }
 
 
@@ -2876,16 +2789,16 @@ namespace kege{
         FragmentShader               = 1 << 8,
         EarlyFragmentTests           = 1 << 9,
         LateFragmentTests            = 1 << 10,
-        ColorAttachmentOutput        = 1 << 11,
+        ColorOutput                  = 1 << 11,
         ComputeShader                = 1 << 12,
         Transfer                     = 1 << 13,
         Host                         = 1 << 14,
         RayTrace                     = 1 << 15,
-        BottomOfPipe,
+        BottomOfPipe                 = 1 << 16,
         AllCommands = 0xFFFFFFFF,
         AllGraphics = VertexInput | VertexShader | TessellationControlShader |
                       TessellationEvaluationShader | GeometryShader | FragmentShader |
-                      EarlyFragmentTests | LateFragmentTests | ColorAttachmentOutput,
+                      EarlyFragmentTests | LateFragmentTests | ColorOutput,
         AllTransfer = Transfer,
     };
 
@@ -3053,10 +2966,10 @@ namespace kege{
 //        UniformRead,               ///< Read access for uniform buffers
 //        ShaderRead,                ///< Generic shader read access
 //        ShaderWrite,               ///< Generic shader write access
-//        ColorAttachmentRead,       ///< Read access for color attachments
-//        ColorAttachmentWrite,      ///< Write access for color attachments
-//        DepthStencilAttachmentRead, ///< Read access for depth/stencil attachments
-//        DepthStencilAttachmentWrite,///< Write access for depth/stencil attachments
+//        ColorRead,       ///< Read access for color attachments
+//        ColorWrite,      ///< Write access for color attachments
+//        DepthStencilRead, ///< Read access for depth/stencil attachments
+//        DepthStencilWrite,///< Write access for depth/stencil attachments
 //        TransferRead,              ///< Read access for transfer operations
 //        TransferWrite,             ///< Write access for transfer operations
 //        HostRead,                  ///< Read access from host
@@ -3136,33 +3049,14 @@ namespace kege{
 
 
 
-
-    /**
-     * @brief Abstract description of a resource barrier used by the Render Graph.
-     *
-     * This struct encapsulates the information needed to perform a resource
-     * state transition (layout change, access mask change, pipeline stage
-     * synchronization). It uses logical resource handles managed by the
-     * Render Graph, which are later resolved to physical device objects.
-     */
-    struct AbstractResourceBarrier
+    struct SubmitInfo
     {
-        uint64_t resource_handle{}; ///< Logical handle of the resource in the Render Graph.
-        ResourceState previous_state = ResourceState::Undefined; ///< Resource state before the barrier.
-        ResourceState new_state = ResourceState::Undefined;      ///< Resource state after the barrier.
-        AccessFlags src_stage_mask  = AccessFlags::None;      ///< Pipeline stages that must complete before the barrier.
-        AccessFlags dst_stage_mask  = AccessFlags::None;      ///< Pipeline stages that will wait for the barrier to complete.
-        AccessFlags src_access_mask = AccessFlags::None;    ///< Access flags for the source stage.
-        AccessFlags dst_access_mask = AccessFlags::None;    ///< Access flags for the destination stage.
-        bool is_texture = false; ///< Indicates if the resource is a texture (as opposed to a buffer).
-        // Potential future additions for more granular barrier control:
-        uint32_t base_mip = 0;
-        uint32_t mip_count = 1;
-        uint32_t base_layer = 0;
-        uint32_t layer_count = 1;
+        CommandBuffer* command_buffer = nullptr;
+        kege::Ref< kege::Semaphore > render_complete_semaphore = nullptr;
+        std::vector< kege::Ref< kege::Semaphore > > wait_semaphores;
+        std::vector< PipelineStageFlag > wait_stages;
     };
 
-    
     struct ShaderBinding
     {
         std::string name;
@@ -3222,30 +3116,6 @@ namespace std{
     template <> struct hash< kege::PipelineHandle >
     {
         std::size_t operator()( const kege::PipelineHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::CommandQueueHandle >
-    {
-        std::size_t operator()( const kege::CommandQueueHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::FenceHandle >
-    {
-        std::size_t operator()( const kege::FenceHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::SemaphoreHandle >
-    {
-        std::size_t operator()( const kege::SemaphoreHandle& handle ) const
         {
             return handle.id;
         }

@@ -15,467 +15,6 @@
 
 namespace kege::vk{
 
-    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector< VkSurfaceFormatKHR >& availableFormats, Format preferredFormat);
-    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availableModes, PresentMode preferredMode);
-    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, uint32_t preferredWidth, uint32_t preferredHeight);
-
-    VkResult Swapchain::create( Device* device, const kege::SwapchainDesc& desc )
-    {
-        vk::PhysicalDevice* physical_device = device->getVkPhysicalDevice();
-
-        // 1. Create Surface (Platform Specific - Must be implemented!)
-        _device = device;
-        _surface = device->surface();// static_cast< VkSurfaceKHR >( desc.surface );
-        if (_surface == VK_NULL_HANDLE)
-        {
-            KEGE_LOG_ERROR << "Failed to create Vulkan surface!" <<Log::nl;
-            return {};
-        }
-
-        // 2. Query Surface Support Details
-        VkSurfaceCapabilitiesKHR capabilities = physical_device->getPhysicalDeviceSurfaceCapabilities( _surface );
-        if ( capabilities.maxImageCount == 0 )
-        {
-            KEGE_LOG_ERROR << "Failed to get surface capabilities!" <<Log::nl;
-            device->destroySurface( _surface, nullptr ); // Clean up surface
-            return {};
-        }
-
-        std::vector< VkSurfaceFormatKHR > formats = physical_device->getPhysicalDeviceSurfaceFormats( _surface );
-        if ( formats.empty() )
-        {
-            KEGE_LOG_ERROR << "No surface formats available!" <<Log::nl;
-            vkDestroySurfaceKHR( device->_instance->_instance, _surface, nullptr );
-            return {};
-        }
-
-        std::vector< VkPresentModeKHR > present_modes = physical_device->getPhysicalDeviceSurfacePresentModes( _surface );
-        if ( present_modes.empty() )
-        {
-            KEGE_LOG_ERROR << "No present modes available!" <<Log::nl;
-            vkDestroySurfaceKHR( device->_instance->_instance, _surface, nullptr );
-            return {};
-        }
-
-        // 3. Choose Settings
-        VkSurfaceFormatKHR surface_format = chooseSwapSurfaceFormat( formats, desc.color_format );
-        VkPresentModeKHR present_mode = chooseSwapPresentMode( present_modes, desc.present_mode );
-        VkExtent2D extent = chooseSwapExtent( capabilities, desc.width, desc.height );
-
-        _image_count = desc.image_count;
-        if ( capabilities.maxImageCount > 0 && _image_count > capabilities.maxImageCount )
-        {
-            _image_count = capabilities.maxImageCount;
-            KEGE_LOG_INFO << "Warning: Clamped swapchain image count to max supported: " << _image_count <<Log::nl;
-        }
-        if ( _image_count < capabilities.minImageCount )
-        {
-            _image_count = capabilities.minImageCount;
-            KEGE_LOG_INFO << "Warning: Increased swapchain image count to min supported: " << _image_count <<Log::nl;
-        }
-
-        VkResult result = createSwapchain
-        (
-            device,
-            desc,
-            extent,
-            surface_format,
-            present_mode,
-            capabilities,
-            _image_count
-        );
-
-        if ( result != VK_SUCCESS )
-        {
-            return result;
-        }
-        
-        _desc = desc; // Store original abstract desc
-        _extent = { extent.width, extent.height };
-        _depth_format = desc.depth_format;
-        _color_format = convertVkFormat( surface_format.format );
-
-        return createSwapchainImages
-        (
-            device,
-            desc,
-            surface_format.format,
-            _image_count,
-            _swapchain
-        );
-    }
-
-    VkResult Swapchain::createSwapchain
-    (
-        Device* device,
-        const kege::SwapchainDesc& desc,
-        VkExtent2D extent,
-        VkSurfaceFormatKHR surface_format,
-        VkPresentModeKHR present_mode,
-        VkSurfaceCapabilitiesKHR capabilities,
-        uint32_t image_count
-    )
-    {
-        // 4. Create Swapchain Info Struct
-        VkSwapchainCreateInfoKHR createInfo = {};
-        createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface = _surface;
-        createInfo.minImageCount = image_count;
-        createInfo.imageFormat = surface_format.format;
-        createInfo.imageColorSpace = surface_format.colorSpace;
-        createInfo.imageExtent = extent;
-        createInfo.imageArrayLayers = 1; // Non-stereoscopic
-        createInfo.imageUsage = convertTextureUsage( desc.image_usage ); // Use conversion helper
-
-        // Handle Queue Family Sharing (if graphics and present are different)
-        const QueueFamilyIndices& indices = device->_queue_family_indices;
-        uint32_t queueFamilyIndices[] = { indices.graphics_family.value(), indices.graphics_family.value() };
-
-        if (indices.graphics_family != indices.present_family)
-        {
-            createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = 2;
-            createInfo.pQueueFamilyIndices = queueFamilyIndices;
-            KEGE_LOG_INFO << "Swapchain using concurrent sharing mode." <<Log::nl;
-        }
-        else
-        {
-            createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0; // Optional
-            createInfo.pQueueFamilyIndices = nullptr; // Optional
-        }
-
-        createInfo.preTransform = capabilities.currentTransform; // Use current transform
-        createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // Assume opaque window background
-        createInfo.presentMode = present_mode;
-        createInfo.clipped = VK_TRUE; // Allow clipping unseen pixels
-
-        // Handle recreation
-        Swapchain* old_swapchain = nullptr;
-        if ( desc.old_swapchain.id >= 0 )
-        {
-            old_swapchain = device->_swapchains.get( desc.old_swapchain.id );
-            if ( old_swapchain != nullptr )
-            {
-                createInfo.oldSwapchain = old_swapchain->_swapchain;
-            }
-            else
-            {
-                KEGE_LOG_WARN << "oldSwapchain handle provided but not found!" <<Log::nl;
-            }
-        }
-        else
-        {
-            createInfo.oldSwapchain = VK_NULL_HANDLE;
-        }
-
-        // 5. Create the Vulkan Swapchai
-        VkResult result;
-        if ((result = device->createSwapchain( &createInfo, nullptr, &_swapchain ) ) != VK_SUCCESS )
-        {
-            kege::Log::error << vkResultToString( result );
-            device->destroySurface( _surface, nullptr ); // Clean up surface
-            return result;
-        }
-        KEGE_LOG_INFO << "Vulkan Swapchain Created." <<Log::nl;
-
-        // Destroy the old swapchain *after* the new one potentially reuses its resources
-        if ( old_swapchain )
-        {
-            KEGE_LOG_WARN << "Destroying old Vulkan swapchain." <<Log::nl;
-            // Need to ensure the old one is really not in use (WaitIdle is safest)
-            device->waitIdle();
-            // Destroy associated views and abstract handles of the OLD swapchain
-            for( ImageHandle& handle : old_swapchain->_color_images )
-            {
-                Image* texture = device->_textures.get( handle.id );
-                if ( texture != nullptr )
-                {
-                    // Don't destroy VkImage, just the view and map entry
-                    device->destroyImageView( texture->view, nullptr );
-                    device->destroyImage( handle );
-                }
-            }
-            for( ImageHandle& handle : old_swapchain->_depth_images )
-            {
-                _device->destroyImage( handle );
-            }
-            // Clear the list
-            // Image views are destroyed implicitly by vkDestroySwapchainKHR? Check spec.
-            // Safest to destroy explicitly if unsure, but often views are destroyed with swapchain.
-            // vkDestroyImageView for oldSwapchain.imageViews... (Assuming they weren't destroyed yet)
-            old_swapchain->_color_images.clear();
-            old_swapchain->_depth_images.clear();
-
-            device->destroySwapchain( desc.old_swapchain );
-            if (old_swapchain->_surface != _surface)
-            {
-                // If surface changed (unlikely but possible)
-                device->destroySurface( old_swapchain->_surface, nullptr );
-            }
-        }
-        return VK_SUCCESS;
-    }
-
-    VkResult Swapchain::createSwapchainImages
-    (
-        Device* device,
-        const kege::SwapchainDesc& desc,
-        VkFormat format,
-        uint32_t image_count,
-        VkSwapchainKHR swapchain
-    )
-    {
-        // 6. Get Swapchain Images
-        vkGetSwapchainImagesKHR( device->_device, swapchain, &image_count, nullptr ); // Get actual count
-        std::vector< VkImage > images( image_count );
-        vkGetSwapchainImagesKHR( device->_device, swapchain, &image_count, images.data());
-
-        // 7. Create Image Views and Abstract Handles
-        for (uint32_t i = 0; i < image_count; ++i)
-        {
-            ImageHandle texr = {device->_textures.gen()};
-            _color_images.push_back( texr );
-
-            Image* color_image = device->_textures.get( texr.id );
-            color_image->image = images[i];
-            color_image->format = format;
-
-            // Create Image View
-            VkImageViewCreateInfo viewInfo = {};
-            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-            viewInfo.image = images[i];
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            viewInfo.format = format;
-            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            viewInfo.subresourceRange.baseMipLevel = 0;
-            viewInfo.subresourceRange.levelCount = 1;
-            viewInfo.subresourceRange.baseArrayLayer = 0;
-            viewInfo.subresourceRange.layerCount = 1;
-
-            if ( device->createImageView( &viewInfo, nullptr, &color_image->view ) != VK_SUCCESS )
-            {
-                KEGE_LOG_ERROR << "Failed to create swapchain image view " << i << "!" <<Log::nl;
-                // Cleanup already created views, swapchain, surface
-                for (uint32_t j = 0; j < i; ++j)
-                {
-                    Image* tex = device->_textures.get( _color_images[j].id );
-                    device->destroyImageView( tex->view, nullptr);
-                }
-                device->destroySwapchain( swapchain, nullptr);
-                device->destroySurface( _surface, nullptr );
-                return {};
-            }
-
-            // Create corresponding abstract Texture entry
-            color_image->desc.type = ImageType::Type2D;
-            color_image->desc.width = _extent.width;
-            color_image->desc.height = _extent.height;
-            color_image->desc.depth = 1;
-            color_image->desc.mip_levels = 1;
-            color_image->desc.format = convertVkFormat( format ); // Need inverse translation
-            color_image->desc.sample_count = SampleCount::Count1;
-            color_image->desc.usage = desc.image_usage; // Store intended usage
-            color_image->desc.memory_usage = MemoryUsage::GpuOnly; // Implicitly GPU only
-            color_image->desc.name = "swapchain-image-" + std::to_string(i);
-            color_image->current_layout = VK_IMAGE_LAYOUT_UNDEFINED; // Swapchain images start as undefined
-        }
-
-        if ( desc.depth_format != kege::Format::undefined )
-        {
-            for (uint32_t i = 0; i < image_count; ++i)
-            {
-                kege::ImageDesc depth_info = {};
-                depth_info.type = ImageType::Type2D;
-                depth_info.width = _extent.width;
-                depth_info.height = _extent.height;
-                depth_info.depth = 1;
-                depth_info.mip_levels = 1;
-                depth_info.format = desc.depth_format;
-                depth_info.sample_count = SampleCount::Count1;
-                depth_info.usage = ImageUsageFlags::DepthStencilAttachment;
-                depth_info.memory_usage = MemoryUsage::GpuOnly;
-                depth_info.name = "swapchain-depth-image-" + std::to_string(i);
-                _depth_images.push_back( _device->createImage( depth_info ) );
-            }
-        }
-        return VK_SUCCESS;
-    }
-
-    void Swapchain::destroy()
-    {
-        // Wait for device to be idle before destroying swapchain resources
-        _device->waitIdle(); // Simplest synchronization
-
-        // Destroy Color Image
-        for (int i=0; i<_color_images.size(); ++i )
-        {
-            if( _device->getImage( _color_images[i] ) )
-            {
-                _device->destroyImage( _color_images[i] );
-            }
-            
-            if( _device->getImage( _depth_images[i] ) )
-            {
-                _device->destroyImage( _depth_images[i] );
-            }
-        }
-        _color_images.clear();
-
-        // Destroy Depth Image
-        for (const auto& handle : _depth_images)
-        {
-            if( _device->getImage( handle ) )
-            {
-                _device->destroyImage( handle );
-            }
-        }
-        _depth_images.clear();
-
-        // Destroy Swapchain
-        if ( _swapchain != VK_NULL_HANDLE)
-        {
-            vkDestroySwapchainKHR( _device->_device, _swapchain, nullptr );
-        }
-
-        KEGE_LOG_INFO << "Vulkan Swapchain Destroyed (Handle: " << _id << ")" <<Log::nl;
-    }
-
-    bool Swapchain::acquireNextImage( SemaphoreHandle signalSemaphore, uint32_t* out_image_index )
-    {
-        if ( _id == 0 || signalSemaphore.id == 0) return false;
-
-        VkResult result = vkAcquireNextImageKHR
-        (
-            _device->_device,
-            _swapchain,
-            UINT64_MAX, // Timeout (no timeout)
-            _device->_semaphores.get( signalSemaphore.id )->semaphore, // Semaphore to signal
-            VK_NULL_HANDLE, // Fence (not using fence here)
-            out_image_index
-        );
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-        {
-            KEGE_LOG_ERROR << "Swapchain out of date during acquire. Needs recreation." <<Log::nl;
-            _needs_recreation = true;
-            return false; // Cannot render to this image index
-        }
-        else if (result == VK_SUBOPTIMAL_KHR)
-        {
-            KEGE_LOG_ERROR << "Warning: Swapchain suboptimal during acquire. Needs recreation soon." <<Log::nl;
-            _needs_recreation = true;
-            // Still okay to render to this image for now
-            return true;
-        }
-        else if (result != VK_SUCCESS)
-        {
-            KEGE_LOG_ERROR << "Failed to acquire swap chain image! Error: " << result;
-            // This could be a more serious error
-            return false;
-        }
-
-        // Success
-        _needs_recreation = false; // Reset flag on successful acquire (if not suboptimal)
-        return true;
-    }
-
-    ImageHandle Swapchain::getColorImage( uint32_t image_index )
-    {
-        if ( _id < 0)
-        {
-            KEGE_LOG_ERROR << "Error: Invalid Swapchain in getColorImage!" <<Log::nl;
-            return {-1};
-        }
-
-        if ( image_index < _color_images.size() )
-        {
-            return _color_images[ image_index ];
-        }
-        else
-        {
-            KEGE_LOG_ERROR << "Error: imageIndex out of bounds in getColorImage!" <<Log::nl;
-            return {-1};
-        }
-        return {-1}; // Invalid handle
-    }
-
-    ImageHandle Swapchain::getDepthImage( uint32_t image_index )
-    {
-        if ( _id < 0)
-        {
-            KEGE_LOG_ERROR << "Error: Invalid Swapchain in getDepthImage!" <<Log::nl;
-            return {-1};
-        }
-
-        if ( image_index < _depth_images.size() )
-        {
-            return _depth_images[ image_index ];
-        }
-        else
-        {
-            KEGE_LOG_ERROR << "Error: imageIndex out of bounds in getDepthImage!";
-            return {-1};
-        }
-        return {-1}; // Invalid handle
-    }
-
-    bool Swapchain::present( SemaphoreHandle wait_semaphore, uint32_t image_index)
-    {
-        if ( _id == 0 || wait_semaphore.id == 0 )
-        {
-            return false; // QueueHandle needs proper lookup
-        }
-
-        Semaphore* sem = _device->_semaphores.get( wait_semaphore.id );
-        if ( sem == nullptr )
-        {
-            KEGE_LOG_ERROR << "Invalid semaphore in present." <<Log::nl;
-            return false;
-        }
-
-        /** --- Prepare Present Info --- */
-        VkSemaphore wait_semaphores[] = { sem->semaphore };
-        VkSwapchainKHR swapchains[] = { _swapchain };
-
-        VkPresentInfoKHR present_info = {};
-        present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        present_info.waitSemaphoreCount = 1;
-        present_info.pWaitSemaphores = wait_semaphores;
-        present_info.swapchainCount = 1;
-        present_info.pSwapchains = swapchains;
-        present_info.pImageIndices = &image_index;
-        present_info.pResults = nullptr; // Optional
-
-        /** --- Submit Present Request --- */
-        VkResult result = vkQueuePresentKHR( _device->_present_queue.queue, &present_info );
-
-        /** --- Handle Results --- */
-        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-        {
-            KEGE_LOG_WARN << "Out of date image during present. Needs recreation." <<Log::nl;
-            _needs_recreation = true;
-        }
-        else if (result == VK_SUBOPTIMAL_KHR)
-        {
-            KEGE_LOG_WARN << "Suboptimal image during present. Needs recreation soon." <<Log::nl;
-            _needs_recreation = true;
-        }
-        else if (result != VK_SUCCESS)
-        {
-            /** This could be a more serious error (e.g., device lost) */
-            KEGE_LOG_ERROR << "Failed to queue present! Error: " << result <<Log::nl;
-            /** Consider handling VK_ERROR_DEVICE_LOST */
-            return false;
-        }
-        /** On success, no specific action needed here, but render loop needs to check needsRecreation flag. */
-        return false;
-    }
-
     VkSurfaceFormatKHR chooseSwapSurfaceFormat( const std::vector<VkSurfaceFormatKHR>& availableFormats, Format preferred_format )
     {
         VkFormat preferred_vk_format = convertFormat( preferred_format ); // Need conversion helper
@@ -526,7 +65,7 @@ namespace kege::vk{
         return VK_PRESENT_MODE_FIFO_KHR; // Always supported
     }
 
-    VkExtent2D chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabilities, uint32_t preferred_width, uint32_t preferred_height )
+    VkExtent2D chooseSwapExtent( const VkSurfaceCapabilitiesKHR& capabilities, const VkExtent2D& preferred_extent )
     {
         if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
         {
@@ -536,7 +75,7 @@ namespace kege::vk{
         else
         {
             // We can choose extent within limits
-            VkExtent2D actualExtent = { preferred_width, preferred_height };
+            VkExtent2D actualExtent = preferred_extent;
 
             actualExtent.width = std::max
             (
@@ -554,4 +93,387 @@ namespace kege::vk{
         }
     }
 
+    std::vector< ImageHandle > Swapchain::getColorImages()const
+    {
+        std::vector< ImageHandle > images( _image_count );
+        for (int i=0; i<_image_count; ++i) {
+            images[i] = _frames[i].color;
+        }
+        return images;
+    }
+    std::vector< ImageHandle > Swapchain::getDepthImages()const
+    {
+        std::vector< ImageHandle > images( _image_count );
+        for (int i=0; i<_image_count; ++i) {
+            images[i] = _frames[i].depth;
+        }
+        return images;
+    }
+    kege::Format Swapchain::getDepthFormat()const
+    {
+        return vk::convertVkFormat( _depth_format );
+    }
+    kege::Format Swapchain::getColorFormat()const
+    {
+        return vk::convertVkFormat( _surface_format.format );
+    }
+    uint32_t Swapchain::getImageCount()const
+    {
+        return _image_count;
+    }
+    uint32_t Swapchain::getImageIndex()const
+    {
+        return _image_index;
+    }
+    Extent2D Swapchain::getExtent()const
+    {
+        return {_extent.width, _extent.height};
+    }
+
+    FrameSync& Swapchain::getFrameSync( uint32_t frame_index )
+    {
+        return _frame_syncs [ _image_index ];
+    }
+    
+    int32_t Swapchain::acquireNextImage()
+    {
+        _curr_frame_index = (_curr_frame_index + 1) % _frame_syncs.size();
+        VkSemaphore image_available_semaphore = _frame_syncs[ _curr_frame_index ].image_available_semaphore;
+
+        VkResult result = vkAcquireNextImageKHR
+        (
+            _device->_device,
+            _swapchain,
+            UINT64_MAX, // Timeout (no timeout)
+            image_available_semaphore, // The Semaphore to signal when the image is ready for use
+            VK_NULL_HANDLE, // kege::Fence (not using fence here)
+            &_image_index
+        );
+
+        if (result == VK_ERROR_OUT_OF_DATE_KHR)
+        {
+            kege::Log::debug << "Swapchain out of date during acquire. Needs recreation." <<Log::nl;
+            _needs_recreation = true;
+        }
+        else if (result == VK_SUBOPTIMAL_KHR)
+        {
+            kege::Log::debug << "Warning: Swapchain suboptimal during acquire. Needs recreation soon." <<Log::nl;
+            _needs_recreation = true;
+        }
+        else if (result != VK_SUCCESS)
+        {
+            kege::Log::error << "Failed to acquire swap chain image!" << Log::nl;
+            return -1;
+        }
+
+        if( _needs_recreation )
+        {
+            if ( recreate() != VK_SUCCESS )
+            {
+                kege::Log::error << "Failed to recreate Swapchain!" << Log::nl;
+                return -1;
+            };
+            _needs_recreation = false;// Reset flag on successful acquire (if not suboptimal)
+        }
+        return _image_index;
+    }
+
+    vk::FrameData& Swapchain::getFrame( uint32_t curr_frame )
+    {
+        return _frames[ curr_frame ];
+    }
+
+    Viewport Swapchain::getViewport()const
+    {
+        return _viewport;
+    }
+    
+    Scissor Swapchain::getScissor()const
+    {
+        return _scissor;
+    }
+
+
+    VkResult Swapchain::create( const SwapchainDesc& desc )
+    {
+        vk::PhysicalDevice* physical_device = _device->getVkPhysicalDevice();
+
+        std::vector< VkSurfaceFormatKHR > formats = physical_device->getPhysicalDeviceSurfaceFormats( _device->_surface );
+        if ( formats.empty() )
+        {
+            KEGE_LOG_ERROR << "No surface formats available!" <<Log::nl;
+            return {};
+        }
+
+        std::vector< VkPresentModeKHR > present_modes = physical_device->getPhysicalDeviceSurfacePresentModes( _device->_surface );
+        if ( present_modes.empty() )
+        {
+            KEGE_LOG_ERROR << "No present modes available!" <<Log::nl;
+            return {};
+        }
+
+        _surface_format = chooseSwapSurfaceFormat( formats, desc.color_format );
+        _present_mode = chooseSwapPresentMode( present_modes, desc.present_mode );
+        _depth_format = vk::convertFormat( desc.depth_format );
+        _image_count = desc.image_count;
+
+        return recreate();
+    }
+
+    VkResult Swapchain::recreate()
+    {
+        _device->waitIdle();
+
+        VkSwapchainKHR new_swapchain;
+        VkResult result = createSwapchain( &new_swapchain );
+
+        if ( result != VK_SUCCESS )
+        {
+            kege::Log::error << vkResultToString( result );
+            return result; // ERROR_SWAPCHAIN_CREATEION_FAILED
+        }
+
+        destroy();
+
+        _swapchain = new_swapchain;
+        _frames = createFrames( _image_count );
+        if ( _frames.empty() )
+        {
+            destroy();
+            return VK_ERROR_INITIALIZATION_FAILED; // ERROR_SWAPCHAIN_FRAMEBUFFER_CREATEION_FAILED
+        }
+
+        _frame_syncs.resize( _image_count );
+        for (int i=0; i<_frame_syncs.size(); ++i)
+        {
+            _frame_syncs[i].image_available_semaphore = _device->_manager.createSemaphore();
+            if( _frame_syncs[i].image_available_semaphore == VK_NULL_HANDLE )
+            {
+                destroy();
+                return VK_ERROR_INITIALIZATION_FAILED;
+            }
+
+            _frame_syncs[i].render_complete_semaphore = _device->_manager.createSemaphore();
+            if( _frame_syncs[i].render_complete_semaphore == VK_NULL_HANDLE )
+            {
+                destroy();
+                return VK_ERROR_INITIALIZATION_FAILED;
+            }
+        }
+        return result;
+    }
+
+    VkResult Swapchain::createSwapchain( VkSwapchainKHR* swapchain )
+    {
+        vk::PhysicalDevice* physical_device = _device->getVkPhysicalDevice();
+
+        // 2. Query Surface Support Details
+        VkSurfaceCapabilitiesKHR capabilities = physical_device->getPhysicalDeviceSurfaceCapabilities(  _device->_surface );
+        if ( capabilities.maxImageCount == 0 )
+        {
+            KEGE_LOG_ERROR << "Failed to get surface capabilities!" <<Log::nl;
+            return {};
+        }
+
+        // 3. Choose Settings
+        VkImageUsageFlags image_usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        _extent = chooseSwapExtent( capabilities, capabilities.currentExtent );
+
+        _viewport.height = _extent.height;
+        _viewport.width = _extent.width;
+        _viewport.min_depth = 0.0;
+        _viewport.max_depth = 1.0;
+        _viewport.x = 0.0;
+        _viewport.y = 0.0;
+
+        _scissor.height = _extent.height;
+        _scissor.width = _extent.width;
+        _scissor.x = 0.0;
+        _scissor.y = 0.0;
+
+        // 4. Create Swapchain Info Struct
+        VkSwapchainCreateInfoKHR create_info = {};
+        create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        create_info.surface =  _device->_surface;
+        create_info.minImageCount = _image_count;
+        create_info.imageFormat = _surface_format.format;
+        create_info.imageColorSpace = _surface_format.colorSpace;
+        create_info.imageExtent.height = _extent.height;
+        create_info.imageExtent.width = _extent.width;
+        create_info.imageArrayLayers = 1; // Non-stereoscopic
+        create_info.imageUsage = image_usage; // Use conversion helper
+        create_info.preTransform = capabilities.currentTransform; // Use current transform
+        create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // Assume opaque window background
+        create_info.presentMode = _present_mode;
+        create_info.oldSwapchain = _swapchain;
+        create_info.clipped = VK_TRUE; // Allow clipping unseen pixels
+
+        // Handle Queue Family Sharing (if graphics and present are different)
+        const QueueFamilyIndices& indices = _device->_queue_family_indices;
+        uint32_t queueFamilyIndices[] = { indices.graphics_family.value(), indices.present_family.value() };
+
+        if (indices.graphics_family != indices.present_family)
+        {
+            create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            create_info.queueFamilyIndexCount = 2;
+            create_info.pQueueFamilyIndices = queueFamilyIndices;
+            KEGE_LOG_INFO << "Swapchain using concurrent sharing mode." <<Log::nl;
+            KEGE_LOG_INFO << indices.graphics_family.value() <<"," << indices.present_family.value() <<Log::nl;
+        }
+        else
+        {
+            create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            create_info.queueFamilyIndexCount = 0; // Optional
+            create_info.pQueueFamilyIndices = nullptr; // Optional
+        }
+
+        // 5. Create the Vulkan Swapchai
+        return _device->_manager.createSwapchain( &create_info, nullptr, swapchain );
+    }
+
+    std::vector< vk::FrameData > Swapchain::createFrames( uint32_t image_count )
+    {
+        // 6. Get Swapchain Images
+        vkGetSwapchainImagesKHR( _device->handle(), _swapchain, &image_count, nullptr ); // Get actual count
+        std::vector< VkImage > images( image_count );
+        vkGetSwapchainImagesKHR( _device->handle(), _swapchain, &image_count, images.data());
+
+        std::vector< vk::FrameData > frames( image_count );
+        // 7. Create Image Views and Abstract Handles
+        for (uint32_t i = 0; i < image_count; ++i)
+        {
+            frames[i].color = { _device->_textures.gen() };
+
+            Image* color_image = _device->_textures.get( frames[i].color.id );
+            color_image->image = images[i];
+            color_image->format = _surface_format.format;
+
+            color_image->view = _device->_manager.createImageView
+            (
+                images[i],
+                VK_IMAGE_VIEW_TYPE_2D,
+                _surface_format.format,
+                1, 1,
+                vkFormatToVkImageAspect( _surface_format.format )
+            );
+
+            if ( color_image->view == VK_NULL_HANDLE )
+            {
+                kege::Log::error << "Failed to create swapchain image view " << i << "!" <<Log::nl;
+                // Cleanup already created views, swapchain, surface
+                for (uint32_t j = 0; j < i; ++j)
+                {
+                    Image* tex = _device->_textures.get( frames[j].color.id );
+                    _device->_manager.destroyImageView( tex->view);
+                }
+                return {};
+            }
+
+            // Create corresponding abstract Texture entry
+            color_image->desc.type = ImageType::Type2D;
+            color_image->desc.width = _extent.width;
+            color_image->desc.height = _extent.height;
+            color_image->desc.depth = 1;
+            color_image->desc.mip_levels = 1;
+            color_image->desc.format = convertVkFormat( _surface_format.format ); // Need inverse translation
+            color_image->desc.sample_count = SampleCount::Count1;
+            color_image->desc.usage = ImageUsage::Color | ImageUsage::Present | ImageUsage::Present; // Store intended usage
+            color_image->desc.memory_usage = MemoryUsage::GpuOnly; // Implicitly GPU only
+            color_image->desc.name = "swapchain-image-" + std::to_string(i);
+            color_image->current_layout = VK_IMAGE_LAYOUT_UNDEFINED; // Swapchain images start as undefined
+            color_image->aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+
+
+            if ( _depth_format != VkFormat::VK_FORMAT_UNDEFINED )
+            {
+                kege::ImageDesc depth_info = {};
+                depth_info.type = ImageType::Type2D;
+                depth_info.width = _extent.width;
+                depth_info.height = _extent.height;
+                depth_info.depth = 1;
+                depth_info.mip_levels = 1;
+                depth_info.format = convertVkFormat( _depth_format );
+                depth_info.sample_count = SampleCount::Count1;
+                depth_info.usage = ImageUsage::DepthStencil | ImageUsage::Present | ImageUsage::Present;;
+                depth_info.memory_usage = MemoryUsage::GpuOnly;
+                depth_info.name = "swapchain-depth-image-" + std::to_string(i);
+                frames[i].depth = _device->createImage( depth_info );
+            }
+        }
+
+        return frames;
+    }
+
+    void Swapchain::destroy()
+    {
+        if ( _device )
+        {
+            // Wait for device to be idle before destroying swapchain resources
+            _device->waitIdle(); // Simplest synchronization
+
+            // Destroy Color Image
+            for( FrameData& fbo : _frames )
+            {
+                Image* img = _device->_textures.get( fbo.color.id );
+                if ( img != nullptr )
+                {
+                    // Don't destroy VkImage, just the view and map entry
+                    _device->_manager.destroyImageView( img->view );
+                    _device->destroyImage( fbo.color );
+                }
+
+                img = _device->_textures.get( fbo.depth.id );
+                if ( img != nullptr )
+                {
+                    // Don't destroy VkImage, just the view and map entry
+                    _device->destroyImage( fbo.depth );
+                }
+            }
+            _frames.clear();
+
+            for (int i=0; i<_frame_syncs.size(); ++i)
+            {
+                _device->_manager.destroySemaphore( _frame_syncs[i].image_available_semaphore );
+                _device->_manager.destroySemaphore( _frame_syncs[i].render_complete_semaphore );
+            }
+            _frame_syncs.clear();
+
+            // Destroy Swapchain
+            if ( _swapchain != VK_NULL_HANDLE)
+            {
+                vkDestroySwapchainKHR( _device->_device, _swapchain, nullptr );
+                _swapchain = VK_NULL_HANDLE;
+            }
+        }
+    }
+
+    void Swapchain::setShouldRecreate( bool state )
+    {
+        _needs_recreation = state;
+    }
+
+    bool Swapchain::shouldRecreate()const
+    {
+        return _needs_recreation;
+    }
+
+    const VkSwapchainKHR& Swapchain::getHandle()const
+    {
+        return _swapchain;
+    }
+
+    Swapchain::Swapchain( Device* device )
+    :   _device( device )
+    ,   _swapchain( VK_NULL_HANDLE )
+    ,   _curr_frame_index( -1 )
+    ,   _image_count( 0 )
+    ,   _image_index( 0 )
+    ,   _needs_recreation( false )
+    {}
+
+    Swapchain::~ Swapchain()
+    {
+        destroy();
+        _device = nullptr;
+    }
 }

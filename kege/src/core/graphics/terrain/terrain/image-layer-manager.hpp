@@ -49,7 +49,7 @@ namespace kege{
         void bind( CommandBuffer& command_buffer );
         void freeHeightmap( ImageLayer& layer );
 
-        const ShaderResource& getShaderResource()const;
+        const ShaderResrc& getShaderResource()const;
         ImageLayer generateImageLayer();
 
         bool initialize( uint32_t image_width, uint32_t image_height, uint32_t image_layers );
@@ -70,7 +70,7 @@ namespace kege{
         std::vector< uint32_t > _image_layer_counters;
         std::list< ImageLayer > _freed_layers;
 
-        ShaderResource _shader_resource;
+        ShaderResrc _shader_resource;
         Graphics* _graphics;
 
         kege::SamplerHandle _sampler;

@@ -65,7 +65,7 @@ namespace kege{
             system->render( dms );
         }
     }
-
+ 
     void EntitySystemManager::input( double dms )
     {
         for ( kege::EntitySystem* system : _system_inputs )

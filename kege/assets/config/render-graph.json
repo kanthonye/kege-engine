@@ -69,7 +69,7 @@
                 "type":   "Type2D"
             },
 
-            "usages": [ "ColorAttachment", "ShaderResource" ],
+            "usages": [ "Color", "ShaderResource" ],
             "physical_handle": "getSwapchainColorImages()",
         },
 
@@ -86,7 +86,7 @@
                 "depth":  1,
             },
 
-            "usages": [ "ColorAttachment", "ShaderResource" ],
+            "usages": [ "Color", "ShaderResource" ],
             "physical_handle": "getSwapchainDepthImages()",
         },
 
@@ -103,7 +103,7 @@
                 "depth":  1,
             },
 
-            "usages": [ "ColorAttachment", "ShaderResource" ],
+            "usages": [ "Color", "ShaderResource" ],
         }
     ],
 
@@ -155,36 +155,36 @@
                 {
                     "type": "image",
                     "name": "gbuffer_position",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 },
                 {
                     "type": "image",
                     "name": "gbuffer_normal",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 },
                 {
                     "type": "image",
                     "name": "gbuffer_albedo",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 },
                 {
                     "type": "image",
                     "name": "gbuffer_rmoa",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 },
                 {
                     "name": "scene_depth",
                     "type": "Image",
-                    "access": "DepthStencilAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "DepthStencilWrite",
+                    "stage": "ColorOutput",
                     "clear_depth": 1.0,
                 }
             ]
@@ -231,8 +231,8 @@
                 {
                     "type": "image",
                     "name": "output-1",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 }
             ]
@@ -255,8 +255,8 @@
                 {
                     "type": "image",
                     "name": "output-2",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 }
             ]
@@ -285,15 +285,15 @@
                 {
                     "type": "image",
                     "name": "scene_color",
-                    "access": "ColorAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "ColorWrite",
+                    "stage": "ColorOutput",
                     "clear_color": [ 0.2, 0.2, 0.2, 1.0 ],
                 },
                 {
                     "name": "scene_depth",
                     "type": "Image",
-                    "access": "DepthStencilAttachmentWrite",
-                    "stage": "ColorAttachmentOutput",
+                    "access": "DepthStencilWrite",
+                    "stage": "ColorOutput",
                     "clear_depth": 1.0,
                 }
             ]

@@ -10,6 +10,25 @@
 
 namespace kege{
 
+
+    // Define equality comparison for VkDescriptorSetLayoutBinding
+    bool operator==(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b)
+    {
+        return a.id() == b.id();
+    }
+
+    // Define none equality comparison for VkDescriptorSetLayoutBinding
+    bool operator!=(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b)
+    {
+        return a.id() != b.id();
+    }
+
+    // Define less-than comparison (needed to resolve the compiler error)
+    bool operator<(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b)
+    {
+        return a.id() < b.id();
+    }
+
     const PipelineContext* ShaderPipeline::operator ->()const
     {
         return &_manager->_pipeline_objects[ _index ].pipeline_contexts[ 0 ];
@@ -27,7 +46,7 @@ namespace kege{
 
     ShaderPipeline::operator bool()const
     {
-        return _index < _manager->_pipeline_objects.size();
+        return (_index < 0) ? false : _index < _manager->_pipeline_objects.size();
     }
 
     PipelineHandle ShaderPipeline::handle()const
@@ -76,7 +95,7 @@ namespace kege{
     {
         if ( _manager )
         {
-            _manager->_pipeline_objects[ _index ].duplicates += 1;
+            _manager->_pipeline_objects[ _index ].duplicates -= 1;
             _manager->destroy( *this );
             _manager = nullptr;
             _index = -1;
@@ -85,7 +104,9 @@ namespace kege{
     ShaderPipeline::ShaderPipeline(ShaderPipelineManager* manager, int32_t index)
     :   _manager( manager )
     ,   _index( index )
-    {}
+    {
+        _manager->_pipeline_objects[ _index ].duplicates += 1;
+    }
 
     ShaderPipeline::ShaderPipeline()
     :   _manager( nullptr )

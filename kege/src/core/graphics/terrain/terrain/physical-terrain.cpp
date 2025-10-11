@@ -19,10 +19,6 @@ namespace kege{
         return 0.0;
     }
 
-    PhysicalTerrain::PhysicalTerrain( const kege::TerrainSettings& settings )
-    :   _settings( settings )
-    {}
-
     void PhysicalTerrain::setOrientation( const kege::dquat& orientation )
     {
         _orientation = orientation;
@@ -38,17 +34,21 @@ namespace kege{
         return _settings;
     }
 
-    bool PhysicalTerrain::initialize( kege::Terrain* terrain )
+    bool PhysicalTerrain::initialize()
     {
         return false;
     }
 
-    void PhysicalTerrain::render( kege::CommandEncoder* encoder, Transform* transform )
+    void PhysicalTerrain::submitVisibleGeometries()
     {}
 
     void PhysicalTerrain::update( const kege::dvec3& position )
     {}
 
+    PhysicalTerrain::PhysicalTerrain( kege::Terrain* terrain )
+    :   _terrain( terrain )
+    {}
+    
     PhysicalTerrain:: ~PhysicalTerrain()
     {}
 

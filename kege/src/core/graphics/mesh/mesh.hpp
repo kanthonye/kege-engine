@@ -86,12 +86,8 @@ namespace kege{
         std::vector< InstanceBuffer > buffers;
     };
 
-
-
-    
     struct IndirectDrawBuffer
     {
-        kege::ShaderResource shader_resource;
         kege::BufferHandle buffer;
         uint64_t offset;
         uint32_t count;
@@ -104,7 +100,6 @@ namespace kege{
 
         IndirectDrawBufferList
         (
-            kege::Graphics* graphics,
             const std::vector< IndirectDrawBuffer >& buffers
         );
 
@@ -112,11 +107,7 @@ namespace kege{
         IndirectDrawBufferList();
 
         std::vector< IndirectDrawBuffer > buffers;
-        kege::Graphics* graphics;
     };
-
-
-
 
     class MeshPrimitive : public kege::RefCounter
     {
@@ -149,6 +140,7 @@ namespace kege{
         
         uint32_t drawcount;
     };
+    typedef kege::Ref< kege::MeshPrimitive > MeshPrimitiveRef;
 
     enum class PrimitiveType { Mesh, ScreenSpaceQuad, PointList };
 
@@ -166,7 +158,14 @@ namespace kege{
             uint32_t index_count,
             int32_t material_index = 1
         );
-        
+
+        MeshSource
+        (
+            Ref< MeshPrimitive > primative,
+            Ref< IndirectDrawBufferList > indirect_draw_buffer_list,
+            Ref< InstanceBufferList > instance_buffer_list
+        );
+
         MeshSource
         ();
 
@@ -182,16 +181,18 @@ namespace kege{
 
         int material_index = -1;
     };
+    typedef kege::Ref< kege::MeshSource > MeshSourceRef;
 
     struct Mesh : public kege::RefCounter
     {
-        Mesh( const std::vector< Ref< MeshSource > >& sources );
+        Mesh( const std::vector< kege::MeshSourceRef >& sources );
         Mesh();
         
-        std::vector< Ref< MeshSource > > sources;
+        std::vector< kege::MeshSourceRef > sources;
         kege::vec3 aabb_min;
         kege::vec3 aabb_max;
     };
+    typedef kege::Ref< kege::Mesh > MeshRef;
 
 
 

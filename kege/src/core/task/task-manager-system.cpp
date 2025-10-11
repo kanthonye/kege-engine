@@ -11,35 +11,35 @@ namespace kege{
 
     void executeTask( const std::function< void() >& task, Task::Status* status, Task::Type type )
     {
-        TaskManagerSystem::addTask( task, status, type );
+        QueueManagerSystem::addTask( task, status, type );
     }
 
 
 
 
-    void TaskManagerSystem::addTask( const std::function< void() >& task, Task::Status* status, Task::Type type )
+    void QueueManagerSystem::addTask( const std::function< void() >& task, Task::Status* status, Task::Type type )
     {
         taskManager( type )->addTask( task, status );
     }
 
-    void TaskManagerSystem::addTaskManager( Task::Type type )
+    void QueueManagerSystem::addQueueManager( Task::Type type )
     {
-        if( getTaskManager( type ) == nullptr )
+        if( getQueueManager( type ) == nullptr )
         {
-            createTaskManager( type );
+            createQueueManager( type );
         }
     }
 
-    bool TaskManagerSystem::initialize()
+    bool QueueManagerSystem::initialize()
     {
         if ( _task_managers.empty() )
         {
-            addTaskManager( Task::Type::General );
+            addQueueManager( Task::Type::General );
         }
         return true;
     }
 
-    void TaskManagerSystem::shutdown()
+    void QueueManagerSystem::shutdown()
     {
         for ( int i=0; i<_task_managers.size(); ++i )
         {
@@ -49,19 +49,19 @@ namespace kege{
         _task_managers.clear();
     }
 
-    TaskManager* TaskManagerSystem::createTaskManager( Task::Type type )
+    QueueManager* QueueManagerSystem::createQueueManager( Task::Type type )
     {
-        TaskManager* manager = getTaskManager( type );
+        QueueManager* manager = getQueueManager( type );
         if ( manager == nullptr )
         {
-            manager = new TaskManager( type );
+            manager = new QueueManager( type );
             _task_managers.push_back( manager );
         }
         //manager->addNewTaskExecutor();
         return manager;
     }
 
-    TaskManager* TaskManagerSystem::getTaskManager( Task::Type type )
+    QueueManager* QueueManagerSystem::getQueueManager( Task::Type type )
     {
         for ( int i=0; i<_task_managers.size(); ++i )
         {
@@ -73,24 +73,24 @@ namespace kege{
         return nullptr;
     }
 
-    TaskManager* TaskManagerSystem::taskManager( Task::Type type )
+    QueueManager* QueueManagerSystem::taskManager( Task::Type type )
     {
-        TaskManager* manager = getTaskManager( type );
+        QueueManager* manager = getQueueManager( type );
         if ( manager == nullptr )
         {
-            manager = createTaskManager( type );
+            manager = createQueueManager( type );
         }
         return manager;
     }
 
-    TaskManagerSystem::TaskManagerSystem()
+    QueueManagerSystem::QueueManagerSystem()
     {
     }
 
-    TaskManagerSystem::~TaskManagerSystem()
+    QueueManagerSystem::~QueueManagerSystem()
     {
         shutdown();
     }
 
-    std::vector< kege::Ref< TaskManager > > TaskManagerSystem::_task_managers;
+    std::vector< kege::Ref< QueueManager > > QueueManagerSystem::_task_managers;
 }

@@ -20,25 +20,25 @@ namespace kege{
     {
         //if ( _shader_pipeline == nullptr || _terrain->imageLayerManager()->empty() ) return;
 
-        const ShaderResource& resource = _image_layer_manager.getShaderResource();
-
-        mat44 m[2];
-        m[1][0].x = _settings->terrain_diameter;
-        m[1][0].y = _settings->min_height;
-        m[1][0].z = _settings->max_height;
-
-        _encoder->bindGraphicsPipeline( _shader_pipeline );
-        _encoder->bindVertexBuffers(0, { _vertex_buffer }, { 0 });
-        _encoder->bindIndexBuffer( _index_buffer, 0, false );
-        _encoder->setPushConstants( kege::ShaderStage::Vertex, 0, sizeof(m), m );
-        _encoder->bindShaderResource( resource );
-
-        for ( int i=0; i<_batch_count; ++i )
-        {
-            _encoder->bindShaderResource( _batchs[i].resource_set );
-            _encoder->drawIndirect( _batchs[i].draw_buffer, 0, _batchs[i].instance_count, sizeof( VertexDrawCommand ) );
-            //_instances += _batchs[i].instance_count;
-        }
+//        const ShaderResource& resource = _image_layer_manager.getShaderResource();
+//
+//        mat44 m[2];
+//        m[1][0].x = _settings->terrain_diameter;
+//        m[1][0].y = _settings->min_height;
+//        m[1][0].z = _settings->max_height;
+//
+//        _encoder->bindGraphicsPipeline( _shader_pipeline );
+//        _encoder->bindVertexBuffers(0, { _vertex_buffer }, { 0 });
+//        _encoder->bindIndexBuffer( _index_buffer, 0, false );
+//        _encoder->setPushConstants( kege::ShaderStage::Vertex, 0, sizeof(m), m );
+//        _encoder->bindShaderResource( resource );
+//
+//        for ( int i=0; i<_batch_count; ++i )
+//        {
+//            _encoder->bindShaderResource( _batchs[i].resource_set );
+//            _encoder->drawIndirect( _batchs[i].draw_buffer, 0, _batchs[i].instance_count, sizeof( VertexDrawCommand ) );
+//            //_instances += _batchs[i].instance_count;
+//        }
         //_drawcount = _batch_count;
     }
 

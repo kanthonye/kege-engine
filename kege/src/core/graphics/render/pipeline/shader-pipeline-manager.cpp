@@ -67,6 +67,10 @@ namespace kege{
             return {};
         }
         std::vector< kege::PipelineHandle > pipelines = _graphics->createGraphicsPipeline( info );
+        if ( pipelines.empty() )
+        {
+            return {};
+        }
         return kege::ShaderPipeline( this, set( name, info, pipelines ) );
     }
 
@@ -75,7 +79,9 @@ namespace kege{
         int index = int(_pipeline_objects.size());
         _pipeline_objects.push_back({});
 
+
         _name_index_map[ name_id ] = index;
+        _pipeline_objects[ index ].duplicates = 0;
         _pipeline_objects[ index ].pipeline_contexts.resize( pipelines.size() );
         for (int i=0; i<_pipeline_objects[ index ].pipeline_contexts.size(); ++i)
         {

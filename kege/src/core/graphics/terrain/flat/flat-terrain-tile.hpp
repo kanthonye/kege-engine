@@ -8,13 +8,13 @@
 #ifndef flat_terrain_tile_hpp
 #define flat_terrain_tile_hpp
 
-#include "landscape.hpp"
+#include "mesh.hpp"
 #include "terrain-topography.hpp"
 #include "flat-terrain-node.hpp"
 
 namespace kege{
 
-    class PhysicalFlatTerrain;
+    class FlatTerrain;
 
     class FlatTerrainTile : public RefCounter
     {
@@ -26,13 +26,11 @@ namespace kege{
         enum{ NW, NE, SW, SE };
 
         void initialize( Ref< TerrainTopography >& topography );
+        
         void setNeighborNorth( FlatTerrainTile* tile );
         void setNeighborSouth( FlatTerrainTile* tile );
         void setNeighborEast( FlatTerrainTile* tile );
         void setNeighborWest( FlatTerrainTile* tile );
-        
-        void render();
-        void update();
 
         void setHeight( FlatTerrainQuadtree& node );
 
@@ -40,7 +38,10 @@ namespace kege{
         const ImageLayer& getImageLayer()const;
         const dvec3& center()const;
 
-        FlatTerrainTile( PhysicalFlatTerrain* terrain, const sint2& coord );
+        void render();
+        void update();
+
+        FlatTerrainTile( FlatTerrain* terrain, const sint2& coord );
         ~FlatTerrainTile();
 
     private:
@@ -103,9 +104,10 @@ namespace kege{
     public:
 
         FlatTerrainQuadtree _root;
-        PhysicalFlatTerrain* _terrain;
+        FlatTerrain* _terrain;
 
         Ref< TerrainTopography > _topography;
+        Ref< MeshSource > _mesh_source;
         ImageLayer _image_layer;
 
         Status _status;

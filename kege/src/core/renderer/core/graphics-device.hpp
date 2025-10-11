@@ -9,6 +9,7 @@
 #define graphics_device_hpp
 
 #include "graphics-core.hpp"
+#include "swapchain.hpp"
 #include "graphics-physical-device.hpp"
 #include "shader-pipeline-manager.hpp"
 #include "shader-resource-manager.hpp"
@@ -143,42 +144,16 @@ namespace kege{
     {
     public:
 
-        /**
-         * @brief Shuts down the graphics device and releases all resources.
-         * @warning Must be called before destruction to ensure proper cleanup.
-         */
-        virtual void shutdown() = 0;
-
-        /**
-         * @brief Retrieves the supported features of the graphics device.
-         * @return const reference to DeviceFeatures structure.
-         */
-        virtual const DeviceFeatures& getFeatures() const = 0;
-
-        /**
-         * @brief Retrieves the physical limitations of the graphics device.
-         * @return const reference to DeviceLimits structure.
-         */
-        virtual const DeviceLimits& getLimits() const = 0;
-
-        /**
-         * @brief Gets the graphics API being used by this device.
-         * @return GraphicsAPI enum value indicating the current API.
-         */
-        virtual GraphicsAPI getCurrentAPI() const = 0;
+        virtual bool submit( const std::vector< kege::SubmitInfo >& submit_infos, kege::Swapchain* swapchain ) = 0;
+        virtual bool submit( const kege::SubmitInfo& submit_info ) = 0;
+        virtual bool present( kege::Swapchain* swapchain ) = 0;
+        virtual int  getFrameIndex()const = 0;
+        virtual bool beginSubmit() = 0;
+        virtual void endSubmit() = 0;
 
         //-------------------------------------------------------------------------
         // CommandBuffer Life Cycle
         //-------------------------------------------------------------------------
-
-        virtual bool submitCommands
-        (
-            const std::vector< kege::CommandBuffer* >& command_buffers,
-            kege::FenceHandle* signal_fence,
-            kege::SemaphoreHandle* signal_semaphore,
-            kege::SemaphoreHandle* wait_semaphore
-        )
-        = 0;
 
         /**
          * @brief Creates a command buffer for recording commands.
@@ -193,7 +168,6 @@ namespace kege{
          * @warning Ensure the command buffer is no longer in use.
          */
         virtual void destroyCommandBuffer( kege::CommandBuffer* cmb ) = 0;
-
 
         //-------------------------------------------------------------------------
         // Shader Pipeline Life Cycle
@@ -230,13 +204,6 @@ namespace kege{
          * @return Handle to the created pipelines.
          */
         virtual std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc ) = 0;
-
-        /**
-         * @brief Creates a graphics rendering pipeline.
-         * @param desc Complete graphics pipeline state description.
-         * @return Handle to the created pipeline.
-         */
-        virtual kege::PipelineHandle createGraphicsPipeline( const kege::GraphicsPipelineDesc& desc ) = 0;
 
         /**
          * @brief Creates a compute pipeline.
@@ -312,6 +279,7 @@ namespace kege{
          */
         virtual kege::BufferHandle createBuffer( const kege::BufferDesc& desc ) = 0;
         virtual void updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data ) = 0;
+        virtual bool resizeBuffer( const BufferHandle& handle, uint64_t size ) = 0;
 
         /**
          * @brief Destroys a buffer resource.
@@ -414,89 +382,77 @@ namespace kege{
         // --- Synchronization ---
 
         /**
+         * @brief Creates a semaphore for GPU-GPU synchronization.
+         * @return Handle to the created semaphore.
+         */
+        virtual kege::Ref< kege::Semaphore > createSemaphore() = 0;
+
+        /**
+         * @brief Destroys a semaphore.
+         * @param semaphore Handle to the semaphore to destroy.
+         * @warning Ensure the semaphore is no longer in use.
+         */
+        virtual void destroySemaphore( kege::Semaphore* semaphore ) = 0;
+
+        /**
          * @brief Creates a fence for CPU-GPU synchronization.
          * @param initially_signaled Whether the fence starts in signaled state.
          * @return Handle to the created fence.
          */
-        virtual kege::FenceHandle createFence( bool initially_signaled = false ) = 0;
-
-        /**
-         * @brief Creates a semaphore for GPU-GPU synchronization.
-         * @return Handle to the created semaphore.
-         */
-        virtual kege::SemaphoreHandle createSemaphore() = 0;
+        virtual kege::Ref< kege::Fence > createFence( bool initially_signaled = false ) = 0;
 
         /**
          * @brief Destroys a fence.
-         * @param handle Handle to the fence to destroy.
+         * @param fence Handle to the fence to destroy.
          * @warning Ensure the fence is no longer in use.
          */
-        virtual void destroyFence( kege::FenceHandle handle ) = 0;
-
-        /**
-         * @brief Destroys a semaphore.
-         * @param handle Handle to the semaphore to destroy.
-         * @warning Ensure the semaphore is no longer in use.
-         */
-        virtual void destroySemaphore( kege::SemaphoreHandle handle ) = 0;
-
-        /**
-         * @brief Waits for a fence to be signaled.
-         * @param fences Handle to the fence to wait on.
-         * @param timeout_nanoseconds Maximum time to wait in nanoseconds.
-         * @return true if fence was signaled, false if timeout occurred.
-         */
-        virtual bool waitForFence( uint32_t count, kege::FenceHandle* fences, uint32_t wait_all, uint64_t timeout_nanoseconds ) = 0;
-
-        /**
-         * @brief Resets a fence to unsignaled state.
-         * @param fences Handle to the fence to reset.
-         */
-        virtual void resetFence( uint32_t count, kege::FenceHandle* fences ) = 0;
-
-        /**
-         * @brief Checks the current status of a fence.
-         * @param handle Handle to the fence to check.
-         * @return true if signaled, false if not.
-         */
-        virtual kege::FenceStatus getFenceStatus( kege::FenceHandle handle ) = 0;
+        virtual void destroyFence( kege::Fence* fence ) = 0;
 
         // --- Swapchain ---
-
-        virtual bool acquireNextSwapchainImage( const kege::Swapchain& swapchain, kege::SemaphoreHandle signalSemaphore, uint32_t* out_image_index ) = 0;
-        virtual bool presentSwapchainImage( const kege::Swapchain& swapchain, kege::SemaphoreHandle waitSemaphore, uint32_t image_index ) = 0;
-        virtual bool needsRecreation( const kege::Swapchain& swapchain ) = 0;
-
-        virtual kege::ImageHandle getSwapchainColorImage( const kege::Swapchain& swapchain, uint32_t image_index ) = 0;
-        virtual kege::ImageHandle getSwapchainDepthImage( const kege::Swapchain& swapchain, uint32_t image_index ) = 0;
-        virtual std::vector< kege::ImageHandle > getSwapchainColorImages( const kege::Swapchain& swapchain ) = 0;
-        virtual std::vector< kege::ImageHandle > getSwapchainDepthImages( const kege::Swapchain& swapchain ) = 0;
-        virtual uint32_t getSwapchainImageCount( const kege::Swapchain& swapchain ) = 0;
-        virtual uint32_t getSwapchainImageIndex( const kege::Swapchain& swapchain ) = 0;
-        virtual kege::Extent2D getSwapchainExtent( const kege::Swapchain& swapchain ) = 0;
-        virtual Format getSwapchainColorFormat( const kege::Swapchain& swapchain ) = 0;
-        virtual Format getSwapchainDepthFormat( const kege::Swapchain& swapchain ) = 0;
-
 
         /**
          * @brief Creates a swapchain for presentation.
          * @param desc Swapchain description including format and size.
          * @return Handle to the created swapchain.
          */
-        virtual Swapchain createSwapchain( const kege::SwapchainDesc& desc ) = 0;
+        virtual kege::Swapchain* createSwapchain( const kege::SwapchainDesc& desc ) = 0;
 
         /**
          * @brief Destroys a swapchain.
          * @param swapchain Pointer to the swapchain to destroy.
          * @warning Ensure no images from this swapchain are in use.
          */
-        virtual void destroySwapchain( kege::Swapchain swapchain ) = 0;
+        virtual void destroySwapchain( kege::Swapchain* swapchain ) = 0;
 
         /**
          * @brief Waits for the device to complete all outstanding operations.
          * @note This is a heavyweight operation - use sparingly.
          */
         virtual void waitIdle() = 0;
+
+        /**
+         * @brief Get the graphics API implemented by this device
+         * @return Always returns GraphicsAPI::Vulkan
+         */
+        kege::GraphicsAPI getCurrentAPI() const { return _api; }
+
+        /**
+         * @brief Get the enabled device features
+         * @return Reference to the device features structure
+         */
+        const kege::DeviceFeatures& getFeatures() const { return _features; }
+
+        /**
+         * @brief Get the physical device limits
+         * @return Reference to the device limits structure
+         */
+        const kege::DeviceLimits& getLimits() const { return _limits; }
+
+        /**
+         * @brief Shuts down the graphics device and releases all resources.
+         * @warning Must be called before destruction to ensure proper cleanup.
+         */
+        virtual void shutdown() = 0;
 
         uint32_t id()const{ return _id; }
 
@@ -511,6 +467,14 @@ namespace kege{
 
     protected:
 
+        /** @brief Enabled device features */
+        DeviceFeatures _features = {};
+
+        /** @brief Physical device limits */
+        DeviceLimits _limits = {};
+
+        kege::GraphicsAPI _api;
+        
         uint32_t _id;
    };
 

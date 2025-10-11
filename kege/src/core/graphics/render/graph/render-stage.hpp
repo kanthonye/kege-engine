@@ -1,12 +1,12 @@
 //
-//  render-pass.hpp
+//  render-stage.hpp
 //  graphics
 //
 //  Created by Kenneth Esdaile on 5/20/25.
 //
 
-#ifndef render_pass_hpp
-#define render_pass_hpp
+#ifndef render_stage_hpp
+#define render_stage_hpp
 
 #include "render-pass-context.hpp"
 
@@ -15,15 +15,15 @@ namespace kege{
     class RenderManager;
 
     /**
-     * @struct RenderPass
+     * @struct RenderStage
      * @brief Manages the execution of a single rendering stage within a rendering pipeline.
      *
-     * The RenderPass class is responsible for orchestrating the commands required to perform
+     * The RenderStage class is responsible for orchestrating the commands required to perform
      * a specific rendering operation. This includes beginning the command buffer, configuring
      * the render pass with its render-target, and initiating the draw calls. It acts as
      * an intermediary between the render graph and the actual rendering commands.
      */
-    class RenderPass
+    class RenderStage
     {
     public:
 
@@ -54,30 +54,39 @@ namespace kege{
         CommandBuffer* getCommandBuffer();
         //RenderPassContext& getContext();
         bool hasFixedPipelines()const;
-        
-        void beginRendering( const int IMAGE_INDEX );
+
+        void beginRendering();
         void endRendering();
 
+        const SubmitInfo& getSubmitInfo()const;
+
         RenderPassType getType()const;
+        int getPassId()const;
 
         bool execute( RenderManager& render_manager );
-        ~RenderPass();
+        void destroy();
+        ~RenderStage();
+        RenderStage();
 
     public:
+
+        void applyBarriers( const BarrierDescriptions& barriers );
+        void destroySemaphores();
 
         std::vector< ShaderPipeline > _fixed_shader_pipelines;
         std::vector< RgResrcHandle > _shader_resources;
 
-        /**
-         * The main command buffer for recording command
-         */
-        std::vector< CommandBuffer* > _command_buffers;
+        std::vector< SubmitInfo > _submit_info;
 
         /**
          * barriers hold the transitions for the ouput resources for this render pass.
          * barriers is computed in the render-graph compile function
          */
-        BarrierDescription _barriers;
+        BarrierDescriptions _barriers;
+
+
+        //std::vector< kege::BufferMemoryBarrier > _buffer_barriers;
+        //std::vector< kege::ImageMemoryBarrier > _image_barriers;
 
         /**
          * render pass definition hold the input resources and output target for this render-pass
@@ -94,10 +103,11 @@ namespace kege{
          */
         int _id;
 
+        bool _begin;
         Rect2D _render_area;
         
         friend RenderGraph;
     };
 
 }
-#endif /* render_pass_hpp */
+#endif /* render_stage_hpp */

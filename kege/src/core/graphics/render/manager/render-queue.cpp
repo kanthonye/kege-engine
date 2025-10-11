@@ -22,7 +22,19 @@ namespace kege{
 
     void RenderQueue::submit( const RenderObject& object )
     {
-        _queues[ object.material->pass ].objects[ object.material->pipeline ].push_back( object );
+        RenderPassQueue& queue = _queues[ object.material->pass ];
+
+        auto a = queue.objects.find( object.material->pipeline.id() );
+        if ( a == queue.objects.end() )
+        {
+            RenderPassQueue::RenderObjects& objects = queue.objects[ object.material->pipeline.id() ];
+            objects.first = object.material->pipeline;
+            objects.second.push_back( object );
+        }
+        else
+        {
+            a->second.second.push_back( object );
+        }
     }
 
     void RenderQueue::clear()

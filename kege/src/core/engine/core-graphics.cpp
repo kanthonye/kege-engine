@@ -56,7 +56,7 @@ namespace kege{
         swapchain_create_info.depth_format = kege::Format::depth_32;
         swapchain_create_info.present_mode = kege::PresentMode::Fifo;
         swapchain_create_info.present_queue_type = kege::QueueType::Graphics;
-        swapchain_create_info.image_usage = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::CopyDst;
+        swapchain_create_info.image_usage = kege::ImageUsage::Color | kege::ImageUsage::TransferDst;
 
         _module = new kege::Graphics();
         if( !_module->initalize( window, device_init_info, swapchain_create_info ) )

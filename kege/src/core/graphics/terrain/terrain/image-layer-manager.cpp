@@ -53,7 +53,7 @@ namespace kege{
 //        _resource_binding_sets[ _current_image_index ].resources[1].image->copyFrom(4 * size, data[1], layer.image_layer, 0 );
     }
 
-    const ShaderResource& ImageLayerManager::getShaderResource()const
+    const ShaderResrc& ImageLayerManager::getShaderResource()const
     {
         return _shader_resource;
     }
@@ -85,7 +85,7 @@ namespace kege{
                     .mip_levels = 1,
                     .format = Format::r_f32,
                     .sample_count = SampleCount::Count1,
-                    .usage = ImageUsageFlags::None,
+                    .usage = ImageUsage::TransferDst,
                     .memory_usage = MemoryUsage::GpuOnly,
                     .data =  nullptr
                 }),
@@ -102,7 +102,7 @@ namespace kege{
                     .mip_levels = 1,
                     .format = Format::rgba_8_srgb,
                     .sample_count = SampleCount::Count1,
-                    .usage = ImageUsageFlags::None,
+                    .usage = ImageUsage::TransferDst,
                     .memory_usage = MemoryUsage::GpuOnly,
                     .data =  nullptr
                 }),

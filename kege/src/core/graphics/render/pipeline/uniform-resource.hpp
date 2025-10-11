@@ -43,7 +43,7 @@ namespace kege{
          *
          * Commonly needed for explicit APIs like Vulkan.
          */
-         ImageLayout layout = ImageLayout::ShaderReadOnly;
+         ImageLayout layout = ImageLayout::ShaderRead;
     };
 
 }

@@ -101,27 +101,24 @@ namespace kege{
 
     IndirectDrawBufferList::IndirectDrawBufferList
     (
-        kege::Graphics* graphics,
         const std::vector< IndirectDrawBuffer >& buffers
     )
-    :   graphics( graphics )
-    ,   buffers( buffers )
+    :   buffers( buffers )
     {}
 
     IndirectDrawBufferList::~IndirectDrawBufferList()
     {
-        if ( graphics )
-        {
-            for ( IndirectDrawBuffer& buffer : buffers )
-            {
-                graphics->destroyBuffer( buffer.buffer );
-            }
-            buffers.clear();
-            graphics = nullptr;
-        }
+//        if ( graphics )
+//        {
+//            for ( IndirectDrawBuffer& buffer : buffers )
+//            {
+//                graphics->destroyBuffer( buffer.buffer );
+//            }
+//            buffers.clear();
+//            graphics = nullptr;
+//        }
     }
     IndirectDrawBufferList::IndirectDrawBufferList()
-    :   graphics( nullptr )
     {}
 
 
@@ -218,12 +215,29 @@ namespace kege{
     ,   material_index( material_index )
     {}
 
+    MeshSource::MeshSource
+    (
+        Ref< MeshPrimitive > primative,
+        Ref< IndirectDrawBufferList > indirect_draw_buffer_list,
+        Ref< InstanceBufferList > instance_buffer_list
+    )
+    :   primative( primative )
+    ,   indirect_draw_buffer_list( indirect_draw_buffer_list )
+    ,   instance_buffer_list( instance_buffer_list )
+    ,   instance_count( 0 )
+    ,   first_instance( 0 )
+    ,   first_index( 0 )
+    ,   index_count( 0 )
+    ,   material_index( -1 )
+    {}
+
     MeshSource::MeshSource()
     :   primative()
     ,   instance_count( 0 )
     ,   first_instance( 0 )
     ,   first_index( 0 )
     ,   index_count( 0 )
+    ,   material_index( -1 )
     {}
 
 

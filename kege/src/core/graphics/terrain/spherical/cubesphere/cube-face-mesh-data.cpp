@@ -18,7 +18,5 @@ namespace kege{
     PatchData::PatchData()
     :   transform(0.f, 0.f, 0.f, 0.f)
     {
-        patch_index_id = ( 0 );
-        patch_vertex_id = ( 0 );
     }
 }

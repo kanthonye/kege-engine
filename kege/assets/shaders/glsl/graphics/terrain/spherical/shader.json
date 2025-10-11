@@ -1,82 +1,145 @@
-
 {
-    "type": "graphics_pipeline",
-    "name": "cube-sphere-quatree-terrain-shader",
+    "asset":
+    {
+        "version": "1.0",
+        "generator": "KEGE",
+        "name": "planetary-pipeline",
+    },
 
     "shaders":
     [
-        {
-            "stage": "vertex",
-            "file":  "shader.vert"
-        },
-        {
-            "stage": "fragment",
-            "file":  "shader.frag"
-        }
+        { "entry-point": "main", "name": "terrain.vert", "type": "vertex",   "uri": "shader.vert" },
+        { "entry-point": "main", "name": "terrain.frag", "type": "fragment", "uri": "shader.frag" },
     ],
 
-    "attribute_inputs":[],
-
-    "attribute_bindings":[],
-
-    "rasterization":
-    {
-        "depth_test": "depth_op_less",
-        "primative_topology": "triangle-list",
-        "polygon_modes": ["line"],
-        "cull_mode": "cull_cw"
-    },
-
-    "descriptor_sets":
+    "pipelines":
     [
         {
-            "name": "CameraBlock",
-            "set": "0",
-            "count": "1",
-            "binding": "0",
-            "type": "uniform-buffer",
-            "stages": ["vertex"]
-        },
-        {
-            "name": "PatchVertexBuffer",
-            "set": "1",
-            "count": "1",
-            "binding": "0",
-            "type": "uniform-buffer",
-            "stages": ["vertex"]
-        },
-        {
-            "name": "PatchIndexBuffer",
-            "set": "1",
-            "count": "1",
-            "binding": "1",
-            "type": "uniform-buffer",
-            "stages": ["vertex"]
-        },
-        {
-            "name": "PatchDataBuffer",
-            "set": "2",
-            "count": "1",
-            "binding": "0",
-            "type": "storage-buffer",
-            "stages": ["vertex"]
-        }
-    ],
+            "name": "spherical-terrain-planet",
+            "stages": [0, 1],
+            "states":
+            {
+                "rasterizer":
+                {
+                    "cull_mode": "cull_none",
+                    "front_face": "ccw",
+                    "polygon_mode": "line",
+                    "rasterizer_disable": "false",
+                },
+                "depth_stencil":
+                {
+                    "depth_test": "true",
+                    "depth_write": "true",
+                    "depth_compare_op": "less"
+                },
+                "color_blend":
+                {
+                    "logic_op_enable": "false",
+                    "logic_op": "copy",
+                    "color_blend_attachments":
+                    [
+                        {
+                            "blend_enable": "true",
 
-    "push_constants":
-    [
-        {
-            "name": "ObjectMatrices",
-            "size": 128,
-            "offset": 0,
-            "stages": ["vertex"]
-        }
-    ],
+                            "color_blend_op": "add",
+                            "src_color_blend_factor": "src-alpha",
+                            "dst_color_blend_factor": "one-minus-src-alpha",
 
-    "renderpass":
-    {
-        "name": "swapchain-renderpass",
-        "attachments":
-        []
-    },
+                            "alpha_blend_op": "add",
+                            "src_alpha_blend_factor": "one",
+                            "dst_alpha_blend_factor": "zero",
+                        }
+                    ],
+                },
+                "input_assembly":
+                {
+                    "topology": "triangle-list"
+                }
+            },
+            "layouts":
+            [
+                {
+                    "name": "camera-buffer",
+                    "set": 0,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "camera-buffer",
+                            "type": "uniform-buffer",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                },
+                {
+                    "name": "PatchDataBuffer",
+                    "set": 1,
+                    "bindings":
+                    [
+                        {
+                            "count" : 1,
+                            "binding" : 0,
+                            "name": "PatchDataBuffer",
+                            "type": "storage-buffer",
+                            "stages": [ "all" ],
+                        }
+                    ]
+                }
+            ],
+            "push_constants":
+            [
+                {
+                    "name": "ObjectMatrices",
+                    "offset": 0,
+                    "size": 128,
+                    "stages": ["vertex"],
+                    "fields":
+                    [
+                        {
+                            "name": "transform",
+                            "type": "mat4",
+                            "offset": 0,
+                            "size": 64,
+                        },
+                        {
+                            "name": "radius",
+                            "type": "float",
+                            "offset": 64,
+                            "size": 4,
+                        }
+                    ]
+                },
+            ],
+            "vertex_input":
+            {
+                "attributes":
+                [
+                    { "binding": 0, "location": 0, "format": "vec4", "semantic": "POSITION", "name": "_vertex" },
+                ],
+                "bindings":
+                [
+                    { "binding": 0, "stride": 16, "inputRate": "vertex" },
+                ],
+            },
+
+            "outputs":
+            [
+                {
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "out_color"
+                }
+            ],
+
+            "globals":
+            [
+                {
+                    "name": "camera-buffer",
+                    "type": "SHADER_RESOURCE"
+                }
+            ]
+        }
+    ]
 }

@@ -281,7 +281,7 @@ namespace kege::ui{
         draw( layout, 1, layout[1]->rect );
         end();
 
-        std::vector< kege::Ref< MeshSource > >& meshs = _meshes[ _graphics->getCurrFrameIndex() ];
+        std::vector< kege::Ref< MeshSource > >& meshs = _meshes[ _graphics->getFrameIndex() ];
         for (int i=0; i<_curr_mesh_index; ++i)
         {
             manager->submit
@@ -383,7 +383,7 @@ namespace kege::ui{
                         .binding = 0,
                         .uniform = kege::ImageBindings
                         {
-                            kege::ImageInfo{ .image = _default_texture, .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderReadOnly }
+                            kege::ImageInfo{ .image = _default_texture, .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderRead }
                         }
                     }
                 },
@@ -394,7 +394,7 @@ namespace kege::ui{
                         .binding = 0,
                         .uniform = kege::ImageBindings
                         {
-                            kege::ImageInfo{ .image = _font->getImage(), .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderReadOnly }
+                            kege::ImageInfo{ .image = _font->getImage(), .sampler = _font->getSampler(), .layout  = kege::ImageLayout::ShaderRead }
                         }
                     }
                 },
@@ -437,10 +437,10 @@ namespace kege::ui{
                             {
                                 kege::UniformDescriptor
                                 {
-                                    .descriptor_type = kege::DescriptorType::UniformBuffer,
+                                    .descriptor_type = kege::DescriptorType::StorageBuffer,
                                     .binding = 0,
                                     .count = 1,
-                                    .name = "draw_buffer"
+                                    .name = "ui-instance-buffer"
                                 }
                             }
                         },
@@ -461,7 +461,8 @@ namespace kege::ui{
                                             .size = size,
                                             .usage = kege::BufferUsage::StorageBuffer,
                                             .memory_usage = kege::MemoryUsage::CpuToGpu,
-                                            .data = _drawbuffer.data()
+                                            .data = _drawbuffer.data(),
+                                            .name = "ui-instance-buffer"
                                         }),
                                         .range = size,
                                         .offset = 0
@@ -488,7 +489,7 @@ namespace kege::ui{
 
     void Viewer::flush()
     {
-        std::vector< kege::Ref< MeshSource > >& meshs = _meshes[ _graphics->getCurrFrameIndex() ];
+        std::vector< kege::Ref< MeshSource > >& meshs = _meshes[ _graphics->getFrameIndex() ];
         if ( _curr_mesh_index >= meshs.size() )
         {
             meshs.push_back( createMesh() );
@@ -565,6 +566,7 @@ namespace kege::ui{
         uint32_t color[] = {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF};
         _default_texture = _graphics->createImage
         ({
+            .name = "default-texture",
             .width  = 2,
             .height = 2,
             .depth  = 1,
@@ -572,7 +574,8 @@ namespace kege::ui{
             .memory_usage = MemoryUsage::GpuOnly,
             .sample_count = SampleCount::Count1,
             .format = Format::rgba_u8_norm,
-            .data = &color
+            .data = &color,
+            .usage = ImageUsage::Color | ImageUsage::Sampled
         });
 
         /*

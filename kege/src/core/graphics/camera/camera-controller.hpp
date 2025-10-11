@@ -18,7 +18,7 @@ namespace kege{
 
         CameraControlSystem( kege::Engine* engine );
 
-        void operator()( const MappedInputs& inputs );
+        void input( double dms )override;
         void update( double dms )override;
         bool initialize()override;
         void shutdown()override;

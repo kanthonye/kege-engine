@@ -17,9 +17,9 @@ namespace kege
     {
     public:
 
-        inline int  referenceRefCounter()const { return _ref_counter; }
-        inline void decrementRefRefCounter()const { _ref_counter--; }
-        inline void incrementRefRefCounter()const { _ref_counter++; }
+        inline int  getRefCounter()const { return _ref_counter; }
+        inline void decrRefCounter()const { _ref_counter--; }
+        inline void incrRefCounter()const { _ref_counter++; }
         
     protected:
 
@@ -116,8 +116,8 @@ namespace kege{
         {
             if( _ref != nullptr )
             {
-                _ref->decrementRefRefCounter();
-                if( _ref->referenceRefCounter() <= 0 )
+                _ref->decrRefCounter();
+                if( _ref->getRefCounter() <= 0 )
                 {
                     delete _ref;
                 }
@@ -160,7 +160,7 @@ namespace kege{
             _ref = a;
 
             if ( a != nullptr )
-                _ref->RefCounter::incrementRefRefCounter();
+                _ref->RefCounter::incrRefCounter();
 
             return *this;
         }

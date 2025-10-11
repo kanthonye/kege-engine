@@ -17,21 +17,20 @@ namespace kege{
 
     class FlatTerrainTile;
 
-    class PhysicalFlatTerrain : public kege::PhysicalTerrain
+    class FlatTerrain : public kege::PhysicalTerrain
     {
     public:
 
         void render( kege::CommandEncoder* encoder, Transform* transform );
         void update( const kege::dvec3& camera_position );
 
-
         void setRotation( const kege::quat& rotation );
         void setPosition( const kege::vec3& position );
 
         bool initialize();
         
-        PhysicalFlatTerrain( const kege::TerrainSettings& settings );
-        ~PhysicalFlatTerrain();
+        FlatTerrain( const kege::TerrainSettings& settings );
+        ~FlatTerrain();
 
     protected:
 
@@ -64,11 +63,15 @@ namespace kege{
 
         Ref< FlatTerrainRenderer > _renderer;
 
+        std::vector< IndexDrawCommand > _draw_commands;
+        kege::Ref< MeshPrimitive > _primative;
+
         float _half_patch_parameter;
         int _terrain_div_patch;
 
         friend FlatTerrainTile;
     };
 
+    void createMeshPrimitive( Graphics* graphics, kege::Ref< MeshPrimitive >& primative, std::vector< IndexDrawCommand >& draw_commands );
 }
 #endif /* flat_landscape_hpp */

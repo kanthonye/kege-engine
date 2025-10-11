@@ -23,9 +23,9 @@ namespace kege{
         void init
         (
             int16_t face_id,
-            PhysicalSphericalTerrain* terrain,
+            SphericalTerrain* terrain,
             SphericalTerrainTile* neighbors[4],
-            const PatchVertices* vertices,
+            const kege::vec4* vertices,
             const kege::mat33& axes,
             float scale,
             double radius,
@@ -85,13 +85,13 @@ namespace kege{
 
         SphericalTerrainTile _root;
         kege::vec3 _surface_axies[ 2 ];
-        const PatchVertices* _vertices;
+        const kege::vec4* _vertices;
 
-        PhysicalSphericalTerrain* _terrain;
+        SphericalTerrain* _terrain;
         SphericalTerrainTile* _neighbors[4];
         int16_t _face_id;
 
-        friend PhysicalSphericalTerrain;
+        friend SphericalTerrain;
     };
 
 }

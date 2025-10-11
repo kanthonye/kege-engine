@@ -48,6 +48,143 @@ namespace kege::vk{
     ,   _is_recording( false )
     {}
 
+    void vk::CommandBuffer::transitionImageLayout
+    (
+        kege::ImageHandle image_handle,
+        kege::ImageLayout old_layout,
+        kege::ImageLayout new_layout
+    )
+    {
+        VkPipelineStageFlags srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        VkPipelineStageFlags dstStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        VkAccessFlags srcAccess = 0;
+        VkAccessFlags dstAccess = 0;
+
+        // Source
+        switch (old_layout)
+        {
+            case kege::ImageLayout::Undefined:
+                srcAccess = 0;
+                srcStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+                break;
+            case kege::ImageLayout::Color:
+                srcAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                srcStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                break;
+            case kege::ImageLayout::ShaderRead:
+                srcAccess = VK_ACCESS_SHADER_READ_BIT;
+                srcStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                break;
+            case kege::ImageLayout::Present:
+                srcAccess = VK_ACCESS_MEMORY_READ_BIT;
+                srcStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+                break;
+            case kege::ImageLayout::Depth:
+            case kege::ImageLayout::Stencil:
+            case kege::ImageLayout::DepthRead:
+            case kege::ImageLayout::StencilRead:
+            case kege::ImageLayout::DepthStencil:
+            case kege::ImageLayout::DepthStencilRead:
+            case kege::ImageLayout::Depth_StencilRead:
+            case kege::ImageLayout::DepthRead_Stencil:
+                srcAccess = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+                srcStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+                break;
+            case kege::ImageLayout::TransferSrc:
+                srcAccess = VK_ACCESS_TRANSFER_READ_BIT;
+                srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                break;
+            case kege::ImageLayout::TransferDst:
+                srcAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+                srcStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                break;
+            case kege::ImageLayout::HostRead:
+                srcAccess = VK_ACCESS_HOST_READ_BIT;
+                srcStage = VK_PIPELINE_STAGE_HOST_BIT;
+                break;
+            case kege::ImageLayout::HostWrite:
+                srcAccess = VK_ACCESS_HOST_WRITE_BIT;
+                srcStage = VK_PIPELINE_STAGE_HOST_BIT;
+                break;
+            default:
+                break;
+        }
+
+        // Destination
+        switch (new_layout)
+        {
+            case kege::ImageLayout::Color:
+                dstAccess = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                dstStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                break;
+            case kege::ImageLayout::ShaderRead:
+                dstAccess = VK_ACCESS_SHADER_READ_BIT;
+                dstStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+                break;
+            case kege::ImageLayout::Present:
+                dstAccess = 0;
+                dstStage = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+                break;
+            case kege::ImageLayout::Depth:
+            case kege::ImageLayout::Stencil:
+            case kege::ImageLayout::DepthRead:
+            case kege::ImageLayout::StencilRead:
+            case kege::ImageLayout::DepthStencil:
+            case kege::ImageLayout::DepthStencilRead:
+            case kege::ImageLayout::Depth_StencilRead:
+            case kege::ImageLayout::DepthRead_Stencil:
+                dstAccess = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+                dstStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+                break;
+            case kege::ImageLayout::TransferSrc:
+                dstAccess = VK_ACCESS_TRANSFER_READ_BIT;
+                dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                break;
+            case kege::ImageLayout::TransferDst:
+                dstAccess = VK_ACCESS_TRANSFER_WRITE_BIT;
+                dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+                break;
+            case kege::ImageLayout::HostRead:
+                dstAccess = VK_ACCESS_HOST_READ_BIT;
+                dstStage = VK_PIPELINE_STAGE_HOST_BIT;
+                break;
+            case kege::ImageLayout::HostWrite:
+                dstAccess = VK_ACCESS_HOST_WRITE_BIT;
+                dstStage = VK_PIPELINE_STAGE_HOST_BIT;
+                break;
+            default:
+                break;
+        }
+
+        vk::Image* image = _device->_textures.get(image_handle.id);
+
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.oldLayout = vk::convertImageLayout(old_layout);
+        barrier.newLayout = vk::convertImageLayout(new_layout);
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image = image->image;
+        barrier.subresourceRange.aspectMask = image->aspect;
+        barrier.subresourceRange.baseMipLevel = 0;
+        barrier.subresourceRange.levelCount = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        barrier.srcAccessMask = srcAccess;
+        barrier.dstAccessMask = dstAccess;
+
+        vkCmdPipelineBarrier(
+            _handle,
+            srcStage,
+            dstStage,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &barrier
+        );
+        image->current_layout = barrier.newLayout;
+    }
+
     CommandEncoder* vk::CommandBuffer::createCommandEncoder()
     {
         CommandEncoder* encoder = nullptr;
@@ -57,11 +194,11 @@ namespace kege::vk{
             _command_encoders.push_back( encoder );
             encoder->_command_buffer = this;
 
-            VkCommandBufferAllocateInfo info = {};
+            VkCommandBufferAllocateInfo info = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO };
             info.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
             info.commandPool = _command_pool;
             info.commandBufferCount = 1;
-            if ( _device->allocateCommandBuffers( &info, &encoder->_handle ) != VK_SUCCESS )
+            if ( vkAllocateCommandBuffers( _device->handle(), &info, &encoder->_handle ) != VK_SUCCESS )
             {
                 return nullptr;
             }
@@ -84,6 +221,10 @@ namespace kege::vk{
         inheritance_rendering_info.pColorAttachmentFormats = _color_attachment_formats.data();
         inheritance_rendering_info.depthAttachmentFormat = _depth_attachment_format;
         inheritance_rendering_info.stencilAttachmentFormat = _stencil_attachment_format;
+        if ( inheritance_rendering_info.colorAttachmentCount != 0 )
+        {
+            inheritance_rendering_info.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+        }
 
         VkCommandBufferInheritanceInfo inheritance_info = {};
         inheritance_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
@@ -105,7 +246,7 @@ namespace kege::vk{
         return encoder;
     }
 
-    bool vk::CommandBuffer::beginCommands()
+    bool vk::CommandBuffer::beginCommands( CommandBufferUsage usage )
     {
         if (_is_recording)
         {
@@ -119,7 +260,20 @@ namespace kege::vk{
         vkResetCommandBuffer( _handle, 0 );
         VkCommandBufferBeginInfo begin_info = {};
         begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        begin_info.flags = 0;
+        if ( usage <<= CommandBufferUsage::OneTimeSubmit )
+        {
+            begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        }
+        else if ( usage <<= CommandBufferUsage::SimultaneousUse )
+        {
+            begin_info.flags |= VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+        }
+        else if ( usage <<= CommandBufferUsage::RenderPassContinue )
+        {
+            begin_info.flags |= VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+        }
+
         begin_info.pInheritanceInfo = nullptr; // Not a secondary command buffer
 
         VkResult result = vkBeginCommandBuffer( _handle, &begin_info );
@@ -178,7 +332,7 @@ namespace kege::vk{
             color_attachment.imageView = image->view;
             // **** CRITICAL: Layout must be correct before this call ****
             // **** Render Graph barrier logic ensures this! ****
-            color_attachment.imageLayout = convertImageLayout( attach_info.image_layout );// stateToVkLayout( attach_info.initial_layout, tex_internals->desc.format );
+            color_attachment.imageLayout = convertImageLayout( attach_info.image_layout );
             // vk_attach_info.resolveImageView = ... // Handle resolve later
             // vk_attach_info.resolveImageLayout = ...
             color_attachment.loadOp = convertAttachmentLoadOp( attach_info.load_op ); // Need TranslateLoadOp helper
@@ -248,6 +402,7 @@ namespace kege::vk{
         vk_rendering_info.pColorAttachments = color_attachments.empty() ? nullptr : color_attachments.data();
         vk_rendering_info.pDepthAttachment = (depth_image) ? &depth_attachment : nullptr;
         vk_rendering_info.pStencilAttachment = (stencil_image) ? &stencil_attachment : nullptr; // Handle separate stencil later
+        vk_rendering_info.flags = VK_RENDERING_CONTENTS_SECONDARY_COMMAND_BUFFERS_BIT;
 
         // Use function pointer for KHR or core version based on device support
         if ( vkCmdBeginRenderingPfn == nullptr )
@@ -300,36 +455,6 @@ namespace kege::vk{
         }
         assert( vkCmdEndRenderingPfn && "vkCmdEndRendering and vkCmdEndRenderingKHR are both NULL!");
         vkCmdEndRenderingPfn( _handle ); // Assuming core 1.3 or KHR loaded
-    }
-
-    bool vk::CommandBuffer::bindShaderResource( const ShaderResource& resource )
-    {
-        if( _current_pipeline_layout == nullptr ) return false;
-
-        for ( int i=0; i<resource->size(); ++i )
-        {
-//            const DescriptorSet* set = _device->getDescriptorSet( resource->at(i) );
-//            const DescriptorSetLayout* dsl = _device->getDescriptorSetLayout( set->layout_id );
-//            const VkDescriptorSet sets[] = { set->set };
-//
-//            auto itr = _current_pipeline_layout->descriptor_set_index_map.find( dsl->resource_index );
-//
-//            if ( itr == _current_pipeline_layout->descriptor_set_index_map.end() )
-//            {
-//                Log::error << "DescriptorSet -> " << dsl->name
-//                << " does not have an binding_locations binding_index associated with the currently bound pipeline."
-//                << Log::nl;
-//                return false;
-//            }
-//            vkCmdBindDescriptorSets
-//            (
-//                _handle,
-//                _current_pipeline_bindpoint,
-//                _current_pipeline_layout->layout,
-//                itr->second, 1, sets, 0, nullptr
-//            );
-        }
-        return true;
     }
 
     // --- State Binding ---
@@ -470,100 +595,98 @@ namespace kege::vk{
         vkCmdDispatch(_handle, group_count_x, group_count_y, group_count_z);
     }
 
-    void vk::CommandBuffer::pipelineBarrierBatch
-    (
-        const std::vector< AbstractResourceBarrier >& abstract_barriers,
-        const ResourceRegistry& registry
-    )
-    {
-        if (!_is_recording || !_handle || abstract_barriers.empty()) return;
-
-        std::vector< VkImageMemoryBarrier > image_barriers;
-        std::vector< VkBufferMemoryBarrier > buffer_barriers;
-        VkPipelineStageFlags src_stage_mask = 0;
-        VkPipelineStageFlags dst_stage_mask = 0;
-
-        for ( const AbstractResourceBarrier& abstract_barrier : abstract_barriers )
-        {
-            // Translate abstract stage/access to Vulkan stage/access using helpers
-            // These helpers likely live in Device or VulkanTypeConversion
-            VkPipelineStageFlags vk_src_stage = convertAccessFlag( abstract_barrier.src_stage_mask );
-            VkPipelineStageFlags vk_dst_stage = convertAccessFlag( abstract_barrier.dst_stage_mask );
-            VkAccessFlags vk_src_access = convertAccessFlag( abstract_barrier.src_access_mask );
-            VkAccessFlags vk_dst_access = convertAccessFlag( abstract_barrier.dst_access_mask );
-
-            src_stage_mask |= vk_src_stage;
-            dst_stage_mask |= vk_dst_stage;
-
-            // Resolve logical handle to physical Vulkan handle using the registry
-            // The registry lambda returns a void* which we need to cast based on isTexture
-            const void* resource_ptr = registry( abstract_barrier.resource_handle, abstract_barrier.is_texture );
-            if (!resource_ptr)
-            {
-                KEGE_LOG_ERROR  << "Failed to resolve logical resource ID "
-                << abstract_barrier.resource_handle << " in pipelineBarrierBatch." <<Log::nl;
-                continue;
-            }
-
-            if ( abstract_barrier.is_texture )
-            {
-                const Image* tex_internals = static_cast<const Image*>(resource_ptr);
-                Format format = tex_internals->desc.format; // Get format for layout/aspect
-
-                VkImageMemoryBarrier vk_barrier = {};
-                vk_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-                vk_barrier.srcAccessMask = vk_src_access;
-                vk_barrier.dstAccessMask = vk_dst_access;
-                vk_barrier.oldLayout = stateToVkLayout( abstract_barrier.previous_state, format);
-                vk_barrier.newLayout = stateToVkLayout( abstract_barrier.new_state, format);
-                vk_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-                vk_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-                vk_barrier.image = tex_internals->image;
-                vk_barrier.subresourceRange.aspectMask = getImageAspectFlags( format ); // Need helper
-                vk_barrier.subresourceRange.baseMipLevel = 0; // TODO: Support subresource ranges
-                vk_barrier.subresourceRange.levelCount = tex_internals->desc.mip_levels;
-                vk_barrier.subresourceRange.baseArrayLayer = 0;
-                vk_barrier.subresourceRange.layerCount = tex_internals->desc.depth;
-                image_barriers.push_back(vk_barrier);
-            }
-            else
-            { // Buffer
-                const Buffer* buf_internals = static_cast<const Buffer*>(resource_ptr);
-
-                VkBufferMemoryBarrier vk_barrier = {};
-                vk_barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-                vk_barrier.srcAccessMask = vk_src_access;
-                vk_barrier.dstAccessMask = vk_dst_access;
-                vk_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-                vk_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-                vk_barrier.buffer = buf_internals->buffer;
-                vk_barrier.offset = 0; // TODO: Support offset/size
-                vk_barrier.size = buf_internals->desc.size;
-                buffer_barriers.push_back(vk_barrier);
-            }
-        }
-
-        // Ensure valid stages if none were accumulated
-        if (src_stage_mask == 0) src_stage_mask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        if (dst_stage_mask == 0) dst_stage_mask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-
-        // Issue the vkCmdPipelineBarrier
-        vkCmdPipelineBarrier
-        (
-            _handle,
-            src_stage_mask,
-            dst_stage_mask,
-            0, // Dependency flags
-            0, nullptr, // Global Memory Barriers
-            static_cast<uint32_t>(buffer_barriers.size()), buffer_barriers.data(),
-            static_cast<uint32_t>(image_barriers.size()), image_barriers.data()
-        );
-    }
+//    void vk::CommandBuffer::pipelineBarrierBatch
+//    (
+//        const std::vector< AbstractResourceBarrier >& abstract_barriers,
+//        const ResourceRegistry& registry
+//    )
+//    {
+//        if (!_is_recording || !_handle || abstract_barriers.empty()) return;
+//
+//        std::vector< VkImageMemoryBarrier > image_barriers;
+//        std::vector< VkBufferMemoryBarrier > buffer_barriers;
+//        VkPipelineStageFlags src_stage_mask = 0;
+//        VkPipelineStageFlags dst_stage_mask = 0;
+//
+//        for ( const AbstractResourceBarrier& abstract_barrier : abstract_barriers )
+//        {
+//            // Translate abstract stage/access to Vulkan stage/access using helpers
+//            // These helpers likely live in Device or VulkanTypeConversion
+//            VkPipelineStageFlags vk_src_stage = convertAccessFlag( abstract_barrier.src_stage_mask );
+//            VkPipelineStageFlags vk_dst_stage = convertAccessFlag( abstract_barrier.dst_stage_mask );
+//            VkAccessFlags vk_src_access = convertAccessFlag( abstract_barrier.src_access_mask );
+//            VkAccessFlags vk_dst_access = convertAccessFlag( abstract_barrier.dst_access_mask );
+//
+//            src_stage_mask |= vk_src_stage;
+//            dst_stage_mask |= vk_dst_stage;
+//
+//            // Resolve logical handle to physical Vulkan handle using the registry
+//            // The registry lambda returns a void* which we need to cast based on isTexture
+//            const void* resource_ptr = registry( abstract_barrier.resource_handle, abstract_barrier.is_texture );
+//            if (!resource_ptr)
+//            {
+//                KEGE_LOG_ERROR  << "Failed to resolve logical resource ID "
+//                << abstract_barrier.resource_handle << " in pipelineBarrierBatch." <<Log::nl;
+//                continue;
+//            }
+//
+//            if ( abstract_barrier.is_texture )
+//            {
+//                const Image* tex_internals = static_cast<const Image*>(resource_ptr);
+//                Format format = tex_internals->desc.format; // Get format for layout/aspect
+//
+//                VkImageMemoryBarrier vk_barrier = {};
+//                vk_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+//                vk_barrier.srcAccessMask = vk_src_access;
+//                vk_barrier.dstAccessMask = vk_dst_access;
+//                vk_barrier.oldLayout = stateToVkLayout( abstract_barrier.previous_state, format);
+//                vk_barrier.newLayout = stateToVkLayout( abstract_barrier.new_state, format);
+//                vk_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+//                vk_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+//                vk_barrier.image = tex_internals->image;
+//                vk_barrier.subresourceRange.aspectMask = getImageAspectFlags( format ); // Need helper
+//                vk_barrier.subresourceRange.baseMipLevel = 0; // TODO: Support subresource ranges
+//                vk_barrier.subresourceRange.levelCount = tex_internals->desc.mip_levels;
+//                vk_barrier.subresourceRange.baseArrayLayer = 0;
+//                vk_barrier.subresourceRange.layerCount = tex_internals->desc.depth;
+//                image_barriers.push_back(vk_barrier);
+//            }
+//            else
+//            { // Buffer
+//                const Buffer* buf_internals = static_cast<const Buffer*>(resource_ptr);
+//
+//                VkBufferMemoryBarrier vk_barrier = {};
+//                vk_barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+//                vk_barrier.srcAccessMask = vk_src_access;
+//                vk_barrier.dstAccessMask = vk_dst_access;
+//                vk_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+//                vk_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+//                vk_barrier.buffer = buf_internals->buffer;
+//                vk_barrier.offset = 0; // TODO: Support offset/size
+//                vk_barrier.size = buf_internals->size;
+//                buffer_barriers.push_back(vk_barrier);
+//            }
+//        }
+//
+//        // Ensure valid stages if none were accumulated
+//        if (src_stage_mask == 0) src_stage_mask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+//        if (dst_stage_mask == 0) dst_stage_mask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+//
+//        // Issue the vkCmdPipelineBarrier
+//        vkCmdPipelineBarrier
+//        (
+//            _handle,
+//            src_stage_mask,
+//            dst_stage_mask,
+//            0, // Dependency flags
+//            0, nullptr, // Global Memory Barriers
+//            static_cast<uint32_t>(buffer_barriers.size()), buffer_barriers.data(),
+//            static_cast<uint32_t>(image_barriers.size()), image_barriers.data()
+//        );
+//    }
 
     void vk::CommandBuffer::pipelineBarrier
     (
-        PipelineStageFlag src_stage_mask,
-        PipelineStageFlag dst_stage_mask,
         const std::vector< ImageMemoryBarrier >& image_barriers,
         const std::vector< BufferMemoryBarrier >& buffer_barriers
     )
@@ -581,16 +704,14 @@ namespace kege::vk{
             // These helpers likely live in Device or VulkanTypeConversion
             src_pipeline_stage |= convertPipelineStageFlag( barrier.src_stage );
             dst_pipeline_stage |= convertPipelineStageFlag( barrier.dst_stage );
-            VkAccessFlags vk_src_access = convertAccessFlag( barrier.src_access );
-            VkAccessFlags vk_dst_access = convertAccessFlag( barrier.dst_access );
 
-            const Image* tex_internals = _device->getImage( barrier.image );
+            Image* tex_internals = _device->_textures.get( barrier.image.id );
             Format format = tex_internals->desc.format; // Get format for layout/aspect
 
             VkImageMemoryBarrier img_barrier = {};
             img_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-            img_barrier.srcAccessMask = vk_src_access;
-            img_barrier.dstAccessMask = vk_dst_access;
+            img_barrier.srcAccessMask = convertAccessFlag( barrier.src_access );
+            img_barrier.dstAccessMask = convertAccessFlag( barrier.dst_access );
             img_barrier.oldLayout = convertImageLayout( barrier.old_layout );
             img_barrier.newLayout = convertImageLayout( barrier.new_layout );
             img_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -602,6 +723,8 @@ namespace kege::vk{
             img_barrier.subresourceRange.baseArrayLayer = 0;
             img_barrier.subresourceRange.layerCount = tex_internals->desc.depth;
             image_memory_barriers.push_back( img_barrier );
+
+            tex_internals->current_layout = img_barrier.newLayout;
         }
 
         for ( const BufferMemoryBarrier& barrier : buffer_barriers )
@@ -793,7 +916,7 @@ namespace kege::vk{
             VkImageSubresourceRange vk_range = {};
 
             // Translate aspect mask - Ensure only Depth/Stencil aspects are included
-            vk_range.aspectMask = convertImageAspect( abstract_range.aspect_mask );
+            vk_range.aspectMask = toVkImageAspect( abstract_range.aspect_mask );
             if ((vk_range.aspectMask & (VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)) == 0)
             {
                 Log::warning
@@ -914,7 +1037,7 @@ namespace kege::vk{
         {
             VkImageSubresourceRange vk_range = {};
             // Ensure aspect is COLOR or NONE (default to COLOR if NONE)
-            vk_range.aspectMask = convertImageAspect( abstract_range.aspect_mask );
+            vk_range.aspectMask = toVkImageAspect( abstract_range.aspect_mask );
             if (( vk_range.aspectMask & VK_IMAGE_ASPECT_COLOR_BIT ) == 0 )
             {
                 // Allow AspectFlags::None, default it to COLOR
@@ -975,7 +1098,7 @@ namespace kege::vk{
         VkClearRect rects[ clear_rects.size() ];
         for (int i=0; i<clear_attachments.size(); ++i)
         {
-            attachments[i].aspectMask = convertImageAspect( clear_attachments[i].aspect_mask );
+            attachments[i].aspectMask = toVkImageAspect( clear_attachments[i].aspect_mask );
             attachments[i].colorAttachment = clear_attachments[i].attachment_index;
             memcpy(attachments[i].clearValue.color.float32, clear_attachments[i].clear_value.color, 4*sizeof( float ));
         }
@@ -1012,68 +1135,68 @@ namespace kege::vk{
 
 
 
-    VkImageLayout vk::CommandBuffer::stateToVkLayout(ResourceState state, Format format)const
-    { // Or make it a free function
-        switch ( state )
-        {
-            case ResourceState::Undefined:
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-
-            case ResourceState::RenderTargetColor:
-                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-            case ResourceState::RenderTargetDepthStencil:
-                // Could refine based on format if separating depth/stencil-only layouts
-                 if ( isDepthOnlyFormat( format ) ) return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
-                 if ( isStencilOnlyFormat( format ) ) return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
-                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-            case ResourceState::ShaderResource:
-                // Read-only access in shaders (textures, uniform texel buffers)
-                if ( isDepthStencilFormat( format ) )
-                {
-                     // Depth/stencil formats often need a specific read-only layout
-                     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-                     // Could refine to DEPTH_READ_ONLY / STENCIL_READ_ONLY if needed
-                }
-                else
-                {
-                    return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                }
-
-            case ResourceState::UnorderedAccess:
-                // Read/Write access in shaders (storage images/texel buffers)
-                return VK_IMAGE_LAYOUT_GENERAL; // General layout is usually required for storage images
-
-            case ResourceState::CopySrc:
-                return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-
-            case ResourceState::CopyDst:
-                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-
-            case ResourceState::Present:
-                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-            // States primarily relevant for Buffers (Layout doesn't apply)
-            case ResourceState::VertexBuffer:
-            case ResourceState::IndexBuffer:
-            case ResourceState::UniformBuffer:
-            case ResourceState::StorageBufferRead:
-            case ResourceState::StorageBufferWrite:
-            case ResourceState::IndirectArgument:
-                // Buffers don't have image layouts. Return something reasonable or assert.
-                // Returning UNDEFINED might be safest if called erroneously for a buffer.
-                // std::cerr << "Warning: stateToVkLayout called for buffer-specific state." << std::endl;
-                return VK_IMAGE_LAYOUT_UNDEFINED; // Or VK_IMAGE_LAYOUT_GENERAL? Needs care.
-
-            // Add ResolveSrc/Dst cases if needed -> TRANSFER_SRC/DST usually appropriate
-            // case ResourceState::ResolveSrc: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            // case ResourceState::ResolveDst: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-
-            default:
-                KEGE_LOG_ERROR << "Warning: Unhandled ResourceState in stateToVkLayout. Defaulting to UNDEFINED." <<Log::nl;
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-        }
-    }
+//    VkImageLayout vk::CommandBuffer::stateToVkLayout(ResourceState state, Format format)const
+//    { // Or make it a free function
+//        switch ( state )
+//        {
+//            case ResourceState::Undefined:
+//                return VK_IMAGE_LAYOUT_UNDEFINED;
+//
+//            case ResourceState::RenderTargetColor:
+//                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+//
+//            case ResourceState::RenderTargetDepthStencil:
+//                // Could refine based on format if separating depth/stencil-only layouts
+//                 if ( isDepthOnlyFormat( format ) ) return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+//                 if ( isStencilOnlyFormat( format ) ) return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
+//                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+//
+//            case ResourceState::ShaderResource:
+//                // Read-only access in shaders (textures, uniform texel buffers)
+//                if ( isDepthStencilFormat( format ) )
+//                {
+//                     // Depth/stencil formats often need a specific read-only layout
+//                     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+//                     // Could refine to DEPTH_READ_ONLY / STENCIL_READ_ONLY if needed
+//                }
+//                else
+//                {
+//                    return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+//                }
+//
+//            case ResourceState::UnorderedAccess:
+//                // Read/Write access in shaders (storage images/texel buffers)
+//                return VK_IMAGE_LAYOUT_GENERAL; // General layout is usually required for storage images
+//
+//            case ResourceState::CopySrc:
+//                return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+//
+//            case ResourceState::CopyDst:
+//                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+//
+//            case ResourceState::Present:
+//                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+//
+//            // States primarily relevant for Buffers (Layout doesn't apply)
+//            case ResourceState::VertexBuffer:
+//            case ResourceState::IndexBuffer:
+//            case ResourceState::UniformBuffer:
+//            case ResourceState::StorageBufferRead:
+//            case ResourceState::StorageBufferWrite:
+//            case ResourceState::IndirectArgument:
+//                // Buffers don't have image layouts. Return something reasonable or assert.
+//                // Returning UNDEFINED might be safest if called erroneously for a buffer.
+//                // std::cerr << "Warning: stateToVkLayout called for buffer-specific state." << std::endl;
+//                return VK_IMAGE_LAYOUT_UNDEFINED; // Or VK_IMAGE_LAYOUT_GENERAL? Needs care.
+//
+//            // Add ResolveSrc/Dst cases if needed -> TRANSFER_SRC/DST usually appropriate
+//            // case ResourceState::ResolveSrc: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+//            // case ResourceState::ResolveDst: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+//
+//            default:
+//                KEGE_LOG_ERROR << "Warning: Unhandled ResourceState in stateToVkLayout. Defaulting to UNDEFINED." <<Log::nl;
+//                return VK_IMAGE_LAYOUT_UNDEFINED;
+//        }
+//    }
 
 }

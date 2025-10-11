@@ -44,15 +44,14 @@ namespace kege{
          */
         RenderQueue& getRenderQueue();
 
-        void drawObjects( CommandEncoder* encoder, RenderPass* pass, const ShaderPipeline& pipeline, const std::vector< RenderObject >& objects );
+        void drawObjects( CommandEncoder* encoder, RenderStage* pass, const ShaderPipeline& pipeline, const std::vector< RenderObject >& objects );
         void drawMesh( CommandEncoder* encoder, const Ref< MeshSource >& mesh );
 
         /**
          * @brief Executes the rendering process for the current frame.
-         * @param dms Delta time in milliseconds since the last frame.
          * This function processes the render queue and issues draw calls.
          */
-        void execute( RenderPass* pass );
+        void execute( RenderStage* pass );
 
         /**
          * @brief Initializes the RenderManager and its resources.

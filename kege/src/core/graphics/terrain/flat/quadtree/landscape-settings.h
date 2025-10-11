@@ -9,17 +9,14 @@
 #define terrain_settings_hpp
 
 #include "vectors.hpp"
+#include "graphics.hpp"
 
 namespace kege{
-
-    enum struct TerrainType{ FLAT, SPHERICAL };
 
     struct TerrainSettings
     {
         enum{ MAX_LOD_LEVELS };
 
-        TerrainType type;
-        
         double   max_terrain_resolution;
         uint32_t max_image_array_layers;
         uint32_t max_terrain_depth;
@@ -38,7 +35,8 @@ namespace kege{
         kege::dvec3 position;
 
         uint16_t resolutions[ MAX_LOD_LEVELS ];
-    };
 
+        kege::Graphics* graphics;
+    };
 }
 #endif /* terrain_settings_hpp */

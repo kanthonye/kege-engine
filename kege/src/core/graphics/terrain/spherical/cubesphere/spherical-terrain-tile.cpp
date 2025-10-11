@@ -6,7 +6,7 @@
 //
 
 #include "spherical-terrain-tile.hpp"
-#include "physical-spherical-terrain.hpp"
+#include "spherical-terrain.hpp"
 
 namespace kege{
 

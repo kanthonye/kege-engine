@@ -60,14 +60,14 @@
             "layouts":
             [
                 {
-                    "name": "WidgetBuffer",
+                    "name": "widget-buffer",
                     "set": 0,
                     "bindings":
                     [
                         {
                             "count" : 1,
                             "binding" : 0,
-                            "name": "WidgetBuffer",
+                            "name": "widget-buffer",
                             "type": "storage-buffer",
                             "stages": [ "all" ],
                         }

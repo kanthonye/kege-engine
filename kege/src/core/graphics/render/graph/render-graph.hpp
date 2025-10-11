@@ -8,8 +8,9 @@
 #ifndef render_graph_hpp
 #define render_graph_hpp
 
-#include "render-pass.hpp"
+#include "render-stage.hpp"
 #include "asset-manager.hpp"
+#include "render-graph-compiler.hpp"
 
 namespace kege{
 
@@ -26,6 +27,8 @@ namespace kege{
     {
     public:
 
+        void addInitialImageTransition( const RgImageLayoutTransition& transition );
+
         kege::RgResrcHandle importShaderResource( std::string name, const ShaderResrcs& handles );
         const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
         const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
@@ -34,8 +37,6 @@ namespace kege{
         void removeShaderResource( const std::string& name );
         RgResrcHandle getRgResrcShaderResrc( const std::string& name );
 
-
-        
         kege::RgResrcHandle importBuffer( std::string name, const std::vector<kege::BufferHandle>& handles );
         const kege::BufferDefn* getBufferDefn( const std::string& name );
         kege::RgResrcHandle defnBuffer( const kege::BufferDefn& defn );
@@ -46,10 +47,11 @@ namespace kege{
         RgResrcHandle getRgResrcBuffer( const std::string& name );
 
 
+        kege::RgResrcHandle defnImage( const kege::ImageDefn& defn );
+        const ImageDefn* getImageDefn( const kege::RgResrcHandle& handle );
+        const ImageDefn* getImageDefn( const std::string& name );
 
         RgResrcHandle importImage( std::string name, const std::vector<kege::ImageHandle>& handles );
-        const ImageDefn* getImageDefn( const std::string& name );
-        kege::RgResrcHandle defnImage( const kege::ImageDefn& defn );
         const kege::ImageHandle* getImage( const kege::RgResrcHandle& handle )const;
         const kege::ImageHandle* fetchImage( const std::string& name )const;
         void removeImage( const kege::RgResrcHandle& handle );
@@ -67,24 +69,12 @@ namespace kege{
 
 
 
-
-
-        /// @name Pass Management
-        /// @{
         /**
          * @brief Adds a graphics pass to the render graph.
          * @param definition Parameters defining the graphics pass.
          */
         void addPass(const RenderPassDefn& definition);
 
-        /**
-         * @brief Gets the associated graphics context.
-         * @return Pointer to the graphics context.
-         */
-        kege::Graphics* getGraphics();
-
-        /// @name Graph Execution
-        /// @{
         /**
          * @brief Executes the compiled render graph.
          */
@@ -100,7 +90,12 @@ namespace kege{
          * @brief Clears all resources and passes from the graph.
          */
         void clear();
-        /// @}
+
+        /**
+         * @brief Gets the associated graphics context.
+         * @return Pointer to the graphics context.
+         */
+        kege::Graphics* getGraphics();
 
         /**
          * @brief Constructs a render graph.
@@ -114,28 +109,12 @@ namespace kege{
         ~RenderGraph();
 
     private:
-        
-        bool resolveResosurceLinks( RenderPass* pass );
-
-        /// @name Internal Implementation
-        /// @{
-        /**
-         * @brief Assign the required resources to each context of the given RenderPasses.
-         * @param sorted_passes The RenderPasses that needs their physical resources initialized.
-         */
-        //void setupRenderPassContext( std::vector<RenderPass*>& sorted_passes );
-
-        /**
-         * @brief Create the physical resources for each render graph resource that is not yet initialized.
-         * @param sorted_passes The RenderPasses that needs their physical resources initialized.
-         */
-        bool resolveResosurceLinks( std::vector<RenderPass*>& sorted_passes );
 
         /**
          * @brief Create the necessary transition required for each pass.
          * @param sorted_passes The RenderPasses that needs their physical resources initialized.
          */
-        void analyzeTransitions( std::vector<RenderPass*>& sorted_passes );
+        //void analyzeTransitions( std::vector<RenderStage*>& sorted_passes );
 
         void createShaderResource( RgShaderResrcDefn* def );
 
@@ -153,71 +132,26 @@ namespace kege{
 
         void createSampler( SamplerDefn& defn );
 
-        void processUsage
-        (
-            const std::string& name,
-            RgResrcType type,
-            AccessFlags access,
-            PipelineStageFlag stage,
-            RgResrcHandle handle, bool is_write, BarrierDescription& pre_barriers,
-            std::unordered_map<kege::ImageHandle, RgResrcUsage>& current_image_states,
-            std::unordered_map<kege::BufferHandle, RgResrcUsage>& current_buffer_states
-        );
-
-        void updateStateAfterPass
-        (
-            const std::string& name,
-            RgResrcType type,
-            AccessFlags access,
-            PipelineStageFlag stage,
-            RgResrcHandle handle, bool is_write,
-            std::unordered_map<kege::ImageHandle, RgResrcUsage>& current_image_states,
-            std::unordered_map<kege::BufferHandle, RgResrcUsage>& current_buffer_states
-        );
-        /// @}
-
     private:
 
         AssetManager _asset_manager;
 
-        /**
-         * Shader resources
-         */
-//        ResourceManagerT< RgShaderResrcDefn >
-//        std::unordered_map< std::string, RgResrcHandle > _shader_resrc_map;
-//        std::vector< RgShaderResrcDefn > _shader_resrc_definitions;
-
-        /**
-         * Buffer resources
-         */
-//        std::unordered_map< std::string, RgResrcHandle > _buffer_resource_map;
-//        std::vector< BufferDefn > _buffer_definitions;
-
-        /**
-         * Image resources
-         */
-//        std::unordered_map< std::string, RgResrcHandle > _image_resource_map;
-//        std::vector< ImageDefn > _image_definitions;
-
-        /**
-         * Sampler resources
-         */
-//        std::unordered_map< std::string, RgResrcHandle > _sampler_resource_map;
-//        std::vector< SamplerDefn > _sampler_definitions;
+        std::vector< RgImageLayoutTransition > _initial_image_transitions;
 
         /**
          * compiled render passes read for executions
          */
-        std::vector< RenderPass* > _compiled_pass_execution_plan;
+        std::vector< RenderStage* > _execution_order;
 
         /**
          * all the available render passes
          */
-        std::vector< RenderPass > _render_passes;
+        std::vector< RenderStage > _passes;
 
         kege::Graphics* _graphics;
 
-        friend RenderPass;
+        friend RenderGraphCompiler;
+        friend RenderStage;
     };
 
 }

@@ -2,7 +2,8 @@
     "asset":
     {
         "version": "1.0",
-        "generator": "KEGE"
+        "generator": "KEGE",
+        "name": "basic-pipeline",
     },
 
     "shaders":
@@ -250,13 +251,23 @@
                     { "binding": 0, "stride": 20, "inputRate": "vertex" },
                 ],
             },
+
             "outputs":
             [
-                { "location": 0, "format": "bgra_u8_norm", "semantic": "COLOR", "name": "outColor" },
+                {
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "out_color"
+                }
             ],
-            "specializationConstants":
+
+            "globals":
             [
-                { "id": 0, "name": "USE_TEXTURE", "value": true }
+                {
+                    "name": "camera-buffer",
+                    "type": "SHADER_RESOURCE"
+                }
             ]
         }
     ]

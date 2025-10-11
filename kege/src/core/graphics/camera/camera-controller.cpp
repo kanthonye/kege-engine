@@ -9,14 +9,16 @@
 
 namespace kege{
 
-    void CameraControlSystem::operator()( const MappedInputs& inputs )
+    void CameraControlSystem::input( double dms )
     {
         Entity entity = _engine->scene().getScene()->getCameraEntity();
         if( !entity ) return;
 
+
         CameraControls* controls = entity.get< CameraControls >();
         if( !controls ) return;
 
+        const MappedInputs& inputs = _engine->input()->getMappedInputs();
         if ( inputs[ kege::ACTION_CONTROL_CAMERA ] )
         {
             if ( inputs[ kege::ACTION_LOOK_LEFT ] )
@@ -71,18 +73,16 @@ namespace kege{
 
     bool CameraControlSystem::initialize()
     {
-        Communication::add< const MappedInputs&, CameraControlSystem >( this );
         return EntitySystem::initialize();
     }
 
     void CameraControlSystem::shutdown()
     {
-        Communication::remove< const MappedInputs&, CameraControlSystem >( this );
         return EntitySystem::shutdown();
     }
 
     CameraControlSystem::CameraControlSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "camera-control-system", REQUIRE_UPDATE )
+    :   kege::EntitySystem( engine, "camera-controller", REQUIRE_UPDATE | REQUIRE_INPUT )
     {
         _signature = createEntitySignature< kege::Camera, kege::CameraControls >();
     }

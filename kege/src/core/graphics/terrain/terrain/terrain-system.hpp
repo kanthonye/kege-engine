@@ -49,8 +49,8 @@ namespace kege{
     public:
 
         //void operator()( kege::RenderPassContext* context );
+        void render( double dms );
         void update( double dms );
-
         bool initialize();
 
         TerrainSystem( kege::Engine* engine );

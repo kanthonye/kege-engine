@@ -215,7 +215,6 @@ namespace kege{
     class ShaderPipeline : public RefCounter
     {
     public:
-
         /**
          * @brief Enables access to this shader resource handles
          * @return A collection of resource handle associated with this shader resource.
@@ -241,7 +240,7 @@ namespace kege{
         operator bool() const;
 
         PipelineHandle handle()const;
-        int id()const;
+        int32_t id()const;
 
         /**
          * @brief Copy assignment operator
@@ -287,6 +286,17 @@ namespace kege{
         int32_t _index;
     };
 
+
+
+    // Define equality comparison for VkDescriptorSetLayoutBinding
+    bool operator==(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
+
+    // Define none equality comparison for VkDescriptorSetLayoutBinding
+    bool operator!=(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
+
+    // Define less-than comparison (needed to resolve the compiler error)
+    bool operator<(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
+
 }
 
 namespace std{
@@ -295,7 +305,7 @@ namespace std{
     {
         std::size_t operator()( const kege::ShaderPipeline& pipeline ) const
         {
-            return pipeline.id();
+            return static_cast< std::size_t >( pipeline.id() + 1 );
         }
     };
 

@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class TaskManager : public kege::RefCounter
+    class QueueManager : public kege::RefCounter
     {
     public:
 
@@ -21,8 +21,8 @@ namespace kege{
 
         Task::Type type()const;
 
-        TaskManager( Task::Type type );
-        ~TaskManager();
+        QueueManager( Task::Type type );
+        ~QueueManager();
 
     private:
 

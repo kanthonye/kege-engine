@@ -17,8 +17,8 @@ namespace kege{
     {
     public:
 
-        void operator()( const MappedInputs& input_commands );
         MovementSystem( kege::Engine* engine );
+        void input( double dms );
         bool initialize();
         void shutdown();
     };

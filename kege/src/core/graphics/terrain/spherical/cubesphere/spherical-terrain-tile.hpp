@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class PhysicalSphericalTerrain;
+    class SphericalTerrain;
     struct SphericalTerrainTileChildren;
 
 
@@ -49,6 +49,8 @@ namespace kege{
          * Hold the depth of this node.
          */
         int16_t depth;
+        int16_t index_buffer_id;
+        int16_t face_id;
         bool visible;
     };
 

@@ -68,6 +68,10 @@ namespace kege{
                 {
                     object.material = geometry->material->sources[ source->material_index ];
                 }
+                else if ( 0 > source->material_index && geometry->material )
+                {
+                    object.material = geometry->material->sources[ 0 ];
+                }
                 else
                 {
                     object.material = _default_material->sources[0];

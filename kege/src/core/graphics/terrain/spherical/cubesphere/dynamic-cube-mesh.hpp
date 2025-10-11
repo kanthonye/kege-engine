@@ -40,31 +40,12 @@ namespace kege{
     struct PatchData
     {
         PatchData();
-        /**
-         * Heightmap elevations data for a single patch.
-         */
-        //float elevations[ 9 ];
 
         /**
          * The transformation data for this patch. It's xyz components represents
          * the position and the w component represents the scale
          */
         kege::fvec4 transform;
-
-        /**
-         * The patch_vertex_id hold the index to which PatchVertices to use when
-         * rendering this patch.
-         */
-        uint32_t patch_vertex_id;
-
-        /**
-         * The patch_index_id hold the index to which PatchIndices to use when
-         * rendering this patch.
-         */
-        uint32_t patch_index_id;
-
-
-        uint32_t pddn[2];
     };
 
 }

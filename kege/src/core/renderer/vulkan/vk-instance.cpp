@@ -57,7 +57,7 @@ namespace kege::vk{
             return nullptr;
         }
 
-        (*device) = new Device;
+        (*device) = new vk::Device;
         if ( !(*device)->initialize( vk_physical_device, vk_surface ) )
         {
             KEGE_LOG_ERROR << "Device initalization failed in Instance::createDevice()." <<Log::nl;

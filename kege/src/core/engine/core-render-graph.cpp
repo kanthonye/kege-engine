@@ -33,7 +33,7 @@ namespace kege{
         // Use the graphics system to get the swapchain and other graphics resources
         // This will allow the render graph to manage rendering operations
         // across multiple frames and handle resources efficiently.
-        uint32_t frames_in_flight = 2;
+        uint32_t frames_in_flight = MAX_FRAMES_IN_FLIGHT;
         kege::Graphics* graphics = _engine->graphics().get();
         _module = new kege::RenderGraph( graphics );
 
@@ -100,30 +100,34 @@ namespace kege{
         _module->defnImage
         ({
             .name = "swapchain_color_output",
-            .frames_in_flight = graphics->getSwapchainImageCount(),
-            .usages = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::ShaderResource,
+            .frames_in_flight = graphics->getSwapchain()->getImageCount(),
+            .usages = kege::ImageUsage::Color | kege::ImageUsage::Sampled,
+            .info = ImageDefn::Info
             {
-                .width  = graphics->getSwapchainExtent().width,
-                .height = graphics->getSwapchainExtent().height,
+                .width  = graphics->getSwapchain()->getExtent().width,
+                .height = graphics->getSwapchain()->getExtent().height,
                 .depth  = 1,
-                .format = graphics->getSwapchainColorFormat(),
+                .format = graphics->getSwapchain()->getColorFormat(),
                 .type = kege::ImageType::Type2D
             },
-            .physical_handle = graphics->getSwapchainColorImages(),
+            .physical_handle = graphics->getSwapchain()->getColorImages(),
+            .use_swapchain_image_index = true,
         });
         _module->defnImage
         ({
             .name = "swapchain_depth_output",
-            .frames_in_flight = graphics->getSwapchainImageCount(),
-            .usages = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::ShaderResource,
+            .frames_in_flight = graphics->getSwapchain()->getImageCount(),
+            .usages = kege::ImageUsage::DepthStencil | kege::ImageUsage::Sampled,
+            .info = ImageDefn::Info
             {
-                .width  = graphics->getSwapchainExtent().width,
-                .height = graphics->getSwapchainExtent().height,
+                .width  = graphics->getSwapchain()->getExtent().width,
+                .height = graphics->getSwapchain()->getExtent().height,
                 .depth  = 1,
-                .format = graphics->getSwapchainDepthFormat(),
+                .format = graphics->getSwapchain()->getDepthFormat(),
                 .type = kege::ImageType::Type2D
             },
-            .physical_handle = graphics->getSwapchainDepthImages(),
+            .physical_handle = graphics->getSwapchain()->getDepthImages(),
+            .use_swapchain_image_index = true,
         });
 
         // ------- Scene Render Targets -------
@@ -132,12 +136,13 @@ namespace kege{
         ({
             .name = "scene_color",
             .frames_in_flight = frames_in_flight,
-            .usages = kege::ImageUsageFlags::ColorAttachment | kege::ImageUsageFlags::ShaderResource,
+            .usages = kege::ImageUsage::Color | kege::ImageUsage::Sampled,
+            .info = ImageDefn::Info
             {
                 .width  = 1024,
                 .height = 640,
                 .depth  = 1,
-                .format = graphics->getSwapchainColorFormat(),
+                .format = graphics->getSwapchain()->getColorFormat(),
                 .type = kege::ImageType::Type2D
             },
         });
@@ -145,7 +150,8 @@ namespace kege{
         ({
             .name = "scene_depth",
             .frames_in_flight = frames_in_flight,
-            .usages = kege::ImageUsageFlags::DepthStencilAttachment | kege::ImageUsageFlags::ShaderResource,
+            .usages = kege::ImageUsage::DepthStencil | kege::ImageUsage::Sampled,
+            .info = ImageDefn::Info
             {
                 .width  = 1024,
                 .height = 640,
@@ -286,56 +292,6 @@ namespace kege{
         });
 
         // ------- Add Render Passes -------
-        _module->addPass
-        ({
-            .type = QueueType::Graphics,
-            .pass = RenderPassType::UI,
-            .name = "final-pass",
-            .reads =
-            {
-                kege::RgReadResrcDesc
-                {
-                    .name = "scene_color",
-                    .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::ShaderRead,
-                    .stage = kege::PipelineStageFlag::FragmentShader,
-                },
-                kege::RgReadResrcDesc
-                {
-                    .name = "scene_depth",
-                    .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::ShaderRead,
-                    .stage = kege::PipelineStageFlag::FragmentShader,
-                },
-                kege::RgReadResrcDesc
-                {
-                    .name = "scene-graphics",
-                    .type = kege::RgResrcType::ShaderResource,
-                    .access = kege::AccessFlags::ShaderRead,
-                    .stage = kege::PipelineStageFlag::FragmentShader,
-                },
-            },
-            .writes =
-            {
-                kege::RgWriteResrcDesc
-                {
-                    .name = "swapchain_color_output",
-                    .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::ColorAttachmentWrite,
-                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
-                    .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } }
-                },
-                kege::RgWriteResrcDesc
-                {
-                    .name = "swapchain_depth_output",
-                    .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-                    .stage = kege::PipelineStageFlag::FragmentShader,
-                    .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f } }
-                }
-            },
-        });
-
 
         _module->addPass
         ({
@@ -347,9 +303,7 @@ namespace kege{
                 kege::RgReadResrcDesc
                 {
                     .name = "camera-buffer",
-                    .type = kege::RgResrcType::ShaderResource,
-                    .access = kege::AccessFlags::ShaderRead,
-                    .stage = kege::PipelineStageFlag::AllGraphics,
+                    .type = kege::RgResrcType::ShaderResource
                 },
             },
             .writes =
@@ -358,21 +312,129 @@ namespace kege{
                 {
                     .name = "scene_color",
                     .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::ColorAttachmentWrite,
-                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::Color,
+                        .access = kege::AccessFlags::ColorWrite,
+                        .stage = kege::PipelineStageFlag::ColorOutput,
+                        .load_op = kege::AttachmentLoadOp::Clear,
+                    },
                     .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } },
                 },
                 kege::RgWriteResrcDesc
                 {
                     .name = "scene_depth",
                     .type = kege::RgResrcType::Image,
-                    .access = kege::AccessFlags::DepthStencilAttachmentWrite,
-                    .stage = kege::PipelineStageFlag::ColorAttachmentOutput,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::Depth,
+                        .access = kege::AccessFlags::DepthStencilWrite,
+                        .stage = kege::PipelineStageFlag::EarlyFragmentTests|kege::PipelineStageFlag::LateFragmentTests,
+                        .load_op = kege::AttachmentLoadOp::Clear,
+                    },
                     .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f }},
                 }
             }
         });
 
+        _module->addPass
+        ({
+            .type = QueueType::Graphics,
+            .pass = RenderPassType::UI,
+            .name = "final-pass",
+            .reads =
+            {
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene_color",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::ShaderRead,
+                        .access = kege::AccessFlags::ShaderRead,
+                        .stage = kege::PipelineStageFlag::FragmentShader,
+                    }
+                },
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene_depth",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::DepthStencilRead,
+                        .access = kege::AccessFlags::DepthStencilRead,
+                        .stage = kege::PipelineStageFlag::FragmentShader,
+                    }
+                },
+                kege::RgReadResrcDesc
+                {
+                    .name = "scene-graphics",
+                    .type = kege::RgResrcType::ShaderResource,
+                },
+            },
+            .writes =
+            {
+                kege::RgWriteResrcDesc
+                {
+                    .name = "swapchain_color_output",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::Color,
+                        .access = kege::AccessFlags::ColorWrite,
+                        .stage = kege::PipelineStageFlag::ColorOutput,
+                        .load_op = kege::AttachmentLoadOp::Clear,
+                    },
+                    .clear_value = kege::ClearValue{ .color = { 0.2f, 0.2f, 0.2f, 1.0f } }
+                },
+                kege::RgWriteResrcDesc
+                {
+                    .name = "swapchain_depth_output",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::Depth,
+                        .access = kege::AccessFlags::DepthStencilWrite,
+                        .stage = kege::PipelineStageFlag::EarlyFragmentTests|kege::PipelineStageFlag::LateFragmentTests,
+                        .load_op = kege::AttachmentLoadOp::Clear,
+                    },
+                    .clear_value = kege::ClearValue{ .depth_stencil = { 1.0f } }
+                }
+            },
+        });
+
+        _module->addPass
+        ({
+            "present-stage",
+            .type = QueueType::Graphics,
+            .pass = RenderPassType::BarrierTransition,
+            .reads =
+            {
+                kege::RgReadResrcDesc
+                {
+                    .name = "swapchain_color_output",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::Present,
+                        .access = kege::AccessFlags::ColorWrite,
+                        .stage  = kege::PipelineStageFlag::ColorOutput,
+                    },
+                },
+                kege::RgReadResrcDesc
+                {
+                    .name = "swapchain_depth_output",
+                    .type = kege::RgResrcType::Image,
+                    .usage = RgResrcUsage
+                    {
+                        .layout = ImageLayout::DepthStencilRead,
+                        .access = kege::AccessFlags::DepthStencilRead,
+                        .stage  = kege::PipelineStageFlag::FragmentShader,
+                    },
+                }
+            },
+        });
+        
         if( !_module->compile() )
         {
             return false;

@@ -9,47 +9,24 @@
 
 namespace kege{
 
+    bool Graphics::submit( const std::vector< kege::SubmitInfo >& submit_infos, kege::Swapchain* swapchain )
+    {
+        return _device->submit( submit_infos, swapchain );
+    }
+
+    bool Graphics::submit( const kege::SubmitInfo& submit_info )
+    {
+        return _device->submit( submit_info );
+    }
+
+    bool Graphics::present( kege::Swapchain* swapchain )
+    {
+        return _device->present( swapchain );
+    }
+
     CommandBuffer* Graphics::createCommandBuffer( QueueType type )
     {
         return _device->createCommandBuffer( type );
-    }
-
-    void Graphics::submitCommands( std::vector< CommandBuffer* > command_buffers )
-    {
-        if ( !_wait_semaphore )
-        {
-            _wait_semaphore = _image_available_semaphores[ _current_frame ];
-        }
-
-        QueueType type = command_buffers[0]->getQueueType();
-        for(int i=0; i<command_buffers.size(); ++i)
-        {
-            std::vector< CommandBuffer* > commands;
-            while ( type == command_buffers[i]->getQueueType() )
-            {
-                commands.push_back( command_buffers[i] );
-                i += 1;
-                if (i >= command_buffers.size() )
-                    break;
-            }
-            if (i < command_buffers.size() )
-            {
-                type = command_buffers[i]->getQueueType();
-            }
-
-            if ( _cmb_submit_count >= _cmb_fences[ _current_frame ].size() )
-            {
-                _cmb_fences[ _current_frame ].push_back( _device->createFence() );
-                _cmb_semaphores[ _current_frame ].push_back( _device->createSemaphore() );
-            }
-
-            FenceHandle signal_fence = _cmb_fences[ _current_frame ][ _cmb_submit_count ];
-            SemaphoreHandle signal_semaphore = _cmb_semaphores[ _current_frame ][ _cmb_submit_count ];
-
-            _device->submitCommands( commands, &signal_fence, &signal_semaphore, &_wait_semaphore );
-            _wait_semaphore = signal_semaphore;
-            _cmb_submit_count += 1;
-        }
     }
 
     void Graphics::destroyCommandBuffer(CommandBuffer* command_buffer)
@@ -59,7 +36,6 @@ namespace kege{
 
     ImageHandle Graphics::createImage(const ImageDesc& desc)
     {
-        
         return _device->createImage( desc );
     }
 
@@ -95,6 +71,11 @@ namespace kege{
     void* Graphics::mapBuffer( const BufferHandle& handle, size_t offset, size_t size )
     {
         return _device->mapBuffer( handle, offset, size );
+    }
+
+    bool Graphics::resizeBuffer( const BufferHandle& handle, uint64_t size )
+    {
+        return _device->resizeBuffer( handle, size );
     }
 
     size_t Graphics::bufferSize( const BufferHandle& handle )
@@ -133,11 +114,6 @@ namespace kege{
     }
 
     std::vector< PipelineHandle > Graphics::createGraphicsPipeline( const CreateShaderPipelineInfo& desc )
-    {
-        return _device->createGraphicsPipeline( desc );
-    }
-
-    PipelineHandle Graphics::createGraphicsPipeline(const GraphicsPipelineDesc& desc)
     {
         return _device->createGraphicsPipeline( desc );
     }
@@ -202,101 +178,37 @@ namespace kege{
     }
 
     // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    // ShaderResource
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-    ShaderResource Graphics::allocateUniformSets( const UniformSetsDesc& desc )
-    {
-        return _shader_resource_manager.create( desc );
-    }
-
-    ShaderResource Graphics::allocateUniformSet( const UniformSetDesc& desc )
-    {
-        return _shader_resource_manager.create( desc );
-    }
-
-    void Graphics::freeUniformSet( const ShaderResource& resource )
-    {
-        return _shader_resource_manager.free( resource );
-    }
-
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     //
     // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    FenceHandle Graphics::createFence( bool initially_signaled )
+    kege::Ref< kege::Fence > Graphics::createFence( bool initially_signaled )
     {
         return _device->createFence( initially_signaled );
     }
 
-    void Graphics::destroyFence(FenceHandle handle)
+    void Graphics::destroyFence( kege::Fence* fence )
     {
-        _device->destroyFence( handle );
+        _device->destroyFence( fence );
     }
 
-    SemaphoreHandle Graphics::createSemaphore()
+    kege::Ref< kege::Semaphore > Graphics::createSemaphore()
     {
         return _device->createSemaphore();
     }
 
-    void Graphics::destroySemaphore(SemaphoreHandle handle)
+    void Graphics::destroySemaphore( kege::Semaphore* semaphore )
     {
-        _device->destroySemaphore( handle );
-    }
-
-    ImageHandle Graphics::getSwapchainColorImage( uint32_t image_index )
-    {
-        return _device->getSwapchainColorImage( _swapchain, image_index );
-    }
-
-    std::vector< ImageHandle > Graphics::getSwapchainColorImages()
-    {
-        return _device->getSwapchainColorImages( _swapchain );
-    }
-
-    ImageHandle Graphics::getSwapchainDepthImage( uint32_t image_index )
-    {
-        return _device->getSwapchainDepthImage( _swapchain, image_index );
-    }
-
-    std::vector< ImageHandle > Graphics::getSwapchainDepthImages()
-    {
-        return _device->getSwapchainDepthImages( _swapchain );
-    }
-
-    uint32_t Graphics::getSwapchainImageIndex()
-    {
-        return _device->getSwapchainImageIndex( _swapchain );
-    }
-
-    uint32_t Graphics::getSwapchainImageCount()
-    {
-        return _device->getSwapchainImageCount( _swapchain );
-    }
-
-    Extent2D Graphics::getSwapchainExtent()
-    {
-        return _device->getSwapchainExtent( _swapchain );
-    }
-
-    Format Graphics::getSwapchainColorFormat()
-    {
-        return _device->getSwapchainColorFormat( _swapchain );
-    }
-
-    Format Graphics::getSwapchainDepthFormat()
-    {
-        return _device->getSwapchainDepthFormat( _swapchain );
-    }
-
-    uint32_t Graphics::getCurrFrameIndex()const
-    {
-        return _current_frame;
+        _device->destroySemaphore( semaphore );
     }
 
     kege::ShaderPipelineManager* Graphics::getShaderPipelineManager()
     {
         return &_shader_pipeline_manager;
+    }
+
+    kege::Swapchain* Graphics::getSwapchain()
+    {
+        return _swapchain;
     }
 
     kege::GraphicsWindow* Graphics::getWindow()
@@ -324,69 +236,19 @@ namespace kege{
         return !_window->shouldClose();
     }
 
-    int Graphics::beginFrame()
+    bool Graphics::beginFrame()
     {
-        //_shader_resource_manager.reset();
-        
-        if ( _cmb_submit_count != 0 )
-        {
-            _device->waitForFence( _cmb_submit_count, _cmb_fences[ _current_frame ].data(), true, UINT64_MAX );
-            _device->resetFence( _cmb_submit_count, _cmb_fences[ _current_frame ].data() ); // Reset fence for the new frame
-        }
-        _cmb_submit_count = 0;
-        _wait_semaphore = {-1};
-
-        if( !_device->acquireNextSwapchainImage( _swapchain, _image_available_semaphores[ _current_frame ], &_image_index ) )
-        {
-            if( _device->needsRecreation( _swapchain ) )
-            {
-                _device->waitIdle();
-                _swapchain_create_info.old_swapchain = _swapchain;
-                _swapchain_create_info.width = _window->getWidth();
-                _swapchain_create_info.height = _window->getHeight();
-                _swapchain = _device->createSwapchain( _swapchain_create_info );
-                if( !_swapchain )
-                {
-                    return -1;
-                }
-            }
-            else
-            {
-               // Handle other present error
-               return -1;
-            }
-        }
-        return _current_frame;
+        return _device->beginSubmit();
     }
 
-    bool Graphics::endFrame()
+    void Graphics::endFrame()
     {
-        SemaphoreHandle render_finish = _wait_semaphore;
-        // 5. Present the image
-        //    *** CRITICAL: Wait on the RENDER FINISHED semaphore ***
-        if (!_device->presentSwapchainImage( _swapchain, render_finish, _image_index ) )
-        {
-            if( _device->needsRecreation( _swapchain ) )
-             {
-                 _device->waitIdle();
-                 _swapchain_create_info.old_swapchain = _swapchain;
-                 _swapchain_create_info.width = _window->getWidth();
-                 _swapchain_create_info.height = _window->getHeight();
-                 _swapchain = _device->createSwapchain( _swapchain_create_info );
-                 if( !_swapchain )
-                 {
-                     return -1;
-                 }
-             }
-             else
-             {
-                 KEGE_LOG_ERROR << "submission to device queue failed in endFrame()";
-                // Handle other present error
-                return -1;
-             }
-        }
-        _current_frame = (_current_frame + 1) % kege::MAX_FRAMES_IN_FLIGHT;
-        return true;
+        _device->endSubmit();
+    }
+
+    int32_t Graphics::getFrameIndex()const
+    {
+        return _device->getFrameIndex();
     }
 
     bool Graphics::initalize
@@ -398,17 +260,8 @@ namespace kege{
     {
         _window = window;
 
-        kege::DeviceInitializationInfo device_init_info = {};
-        device_init_info.window = window.ref();
-        device_init_info.enable_raytracing = false;
-        device_init_info.prefer_discrete_gpu = true;
-        device_init_info.prefer_higher_api_version = true;
-        device_init_info.require_shader_float64 = false;
-        device_init_info.engine = "KEGE";
-        device_init_info.name = "dev";
-
         // choose the rendering API
-        switch ( device_init_info.preferred_API )
+        switch ( instance_info.preferred_API )
         {
             case GraphicsAPI::Vulkan:
             {
@@ -429,7 +282,7 @@ namespace kege{
             }
         }
 
-        if ( !_instance->initalize( device_init_info ) )
+        if ( !_instance->initalize( instance_info ) )
         {
             KEGE_LOG_ERROR << "Failed to initialize GraphicsInstance."<<Log::nl;
             return false;
@@ -440,7 +293,7 @@ namespace kege{
         kege::GraphicsSurface surface = window->createSurface( _instance.ref() );
 
         // next select the best graphics card for rendering
-        kege::PhysicalDevice* physical_device = _instance->getBestSuitablePhysicalDevice( device_init_info, surface );
+        kege::PhysicalDevice* physical_device = _instance->getBestSuitablePhysicalDevice( instance_info, surface );
 
         // with the physical device selected next create the logical device which is the main device the user interact with.
         _device = _instance->createDevice( physical_device, surface );
@@ -459,57 +312,17 @@ namespace kege{
             return false;
         }
 
-        // next create synchronization components
-        for (int i=0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)
-        {
-            //_render_finish_semaphore[i] = _device->createSemaphore();
-            _image_available_semaphores[i] = _device->createSemaphore();
-            if( _image_available_semaphores[i].id < 0 )
-            {
-                return false;
-            }
-
-            _cmb_submit_count = 0;
-            _cmb_fences[i].resize( _initial_submits_per_frame );
-            _cmb_semaphores[i].resize( _initial_submits_per_frame );
-            for (int k=0; k<_initial_submits_per_frame; ++k)
-            {
-                _cmb_fences[i][k] = _device->createFence();
-                _cmb_semaphores[i][k] = _device->createSemaphore();
-            }
-        }
-
         _shader_pipeline_manager.initalize( this );
-        _shader_resource_manager.initalize( _device );
         return true;
     }
 
     void Graphics::shutdown()
     {
-        _shader_resource_manager.shutdown();
         _shader_pipeline_manager.shutdown();
         
         if ( _device != nullptr )
         {
-            for (int i=0; i<kege::MAX_FRAMES_IN_FLIGHT; ++i)
-            {
-                //_device->destroySemaphore( _render_finish_semaphore[i] );
-                _device->destroySemaphore( _image_available_semaphores[i] );
-
-                for (int k=0; k<_initial_submits_per_frame; ++k)
-                {
-                    _device->destroyFence( _cmb_fences[i][k] );
-                    _device->destroySemaphore( _cmb_semaphores[i][k] );
-                }
-                _cmb_semaphores[i].clear();
-                _cmb_fences[i].clear();
-            }
-
-            if( !_swapchain )
-            {
-                _device->destroySwapchain( _swapchain );
-                _swapchain = {};
-            }
+            _device->shutdown();
             _device = nullptr;
         }
 
@@ -525,21 +338,9 @@ namespace kege{
         }
     }
 
-//    Graphics::Graphics( GraphicsAPIInfo info )
-//    :   _info( info )
-//    ,   _device()
-//    ,   _window()
-//    ,   _cmb_submit_count( 0 )
-//    ,   _initial_submits_per_frame( 5 )
-//    ,   _current_frame( 0 )
-//    {}
-
     Graphics::Graphics()
     :   _device( nullptr )
     ,   _window()
-    ,   _cmb_submit_count( 0 )
-    ,   _initial_submits_per_frame( 5 )
-    ,   _current_frame( 0 )
     {}
 
     Graphics::~Graphics()

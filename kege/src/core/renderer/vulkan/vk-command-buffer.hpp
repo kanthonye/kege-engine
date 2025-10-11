@@ -38,6 +38,16 @@ namespace kege::vk{
 
     public:
 
+        void transitionImageLayout
+        (
+            kege::ImageHandle image,
+            kege::ImageLayout oldLayout,
+            kege::ImageLayout newLayout
+        );
+
+        const vk::CommandBuffer* vk()const override{ return this; }
+        vk::CommandBuffer* vk()override{ return this; }
+
         CommandEncoder* createCommandEncoder() override;
 
         /**
@@ -84,7 +94,7 @@ namespace kege::vk{
          *
          * @return True if the command buffer began recording successfully, false otherwise.
          */
-        bool beginCommands() override;
+        bool beginCommands( CommandBufferUsage usage = CommandBufferUsage::SimultaneousUse ) override;
 
         /**
          * @brief Ends recording commands into the Vulkan command buffer.
@@ -117,10 +127,6 @@ namespace kege::vk{
          * `final_layout` as defined in `RenderingAttachmentInfo`.
          */
         void endRendering() override;
-
-
-
-        bool bindShaderResource( const ShaderResource& resource )override;
 
         /**
          * @brief Binds a Vulkan graphics pipeline to the command buffer.
@@ -183,13 +189,11 @@ namespace kege::vk{
          * @param registry Function object that maps logical Render Graph IDs to physical
          * device handles (Buffer* or Image*).
          */
-        void pipelineBarrierBatch(const std::vector<AbstractResourceBarrier>& abstract_barriers, const ResourceRegistry& registry) override;
+//        void pipelineBarrierBatch(const std::vector<AbstractResourceBarrier>& abstract_barriers, const ResourceRegistry& registry) override;
 
 
         void pipelineBarrier
         (
-            PipelineStageFlag src_stage_mask,
-            PipelineStageFlag dst_stage_mask,
             const std::vector< ImageMemoryBarrier >& image_barriers,
             const std::vector< BufferMemoryBarrier >& buffer_barriers
         )
@@ -298,18 +302,8 @@ namespace kege::vk{
          */
         VkCommandPool getVkCommandPool() const { return _command_pool; }
 
-        /**
-         * @brief Helper function to convert an abstract RenderGraph::ResourceState and Format to a Vulkan VkImageLayout.
-         *
-         * This function needs access to the Device or utility functions that handle
-         * the mapping between abstract resource states and Vulkan-specific image layouts,
-         * taking into account the format of the image.
-         *
-         * @param state The abstract resource state.
-         * @param format The format of the texture.
-         * @return The corresponding Vulkan VkImageLayout.
-         */
-        VkImageLayout stateToVkLayout(ResourceState state, Format format) const;
+
+        const VkCommandBuffer& handle()const{ return _handle; }
 
         /**
          * @brief Default destructor. No specific Vulkan resources are owned directly by this class.
@@ -360,7 +354,12 @@ namespace kege::vk{
         //const ComputePipeline* resolveComputePipeline(PipelineHandle handle) const;
         static PFN_vkCmdBeginRendering vkCmdBeginRenderingPfn;
         static PFN_vkCmdEndRendering vkCmdEndRenderingPfn;
+        friend vk::FrameRenderer;
         friend vk::Device;
+
+        friend vk::List< vk::CommandBuffer >;
+        vk::CommandBuffer* prev;
+        vk::CommandBuffer* next;
     };
 
 }

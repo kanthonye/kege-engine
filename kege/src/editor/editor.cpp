@@ -6,6 +6,8 @@
 //
 
 #include "editor.hpp"
+#include "terrain.hpp"
+#include "spherical-terrain.hpp"
 
 namespace kege{
 
@@ -49,7 +51,7 @@ namespace kege{
         ImageInfo scene_image_info = ImageInfo
         {
             .image = *_engine.renderGraph()->fetchImage( "scene_color" ),
-            .layout = ImageLayout::ShaderReadOnly,
+            .layout = ImageLayout::ShaderRead,
             .sampler = *_engine.renderGraph()->fetchSampler( "sampler-nearest-norep" )
         };
 
@@ -76,6 +78,26 @@ namespace kege{
         _viewport_panel.init( &_engine, _layout );
         _navbar_panel.init( &_engine, _layout );
 
+
+        Entity entity = Entity::create();
+        entity.add< Transform >({});
+        entity.add< Terrain >()->initialize
+        ({
+            .type = TerrainType::SPHERICAL,
+            .radius = 500,
+            .maximum_depth = 5,
+            .minimum_depth = 0,
+            .maximum_height = 0,
+            .minimum_height = 0,
+            .maximum_resolution = 1,
+            .graphics = _engine.graphics().get()
+        });
+        entity.add< Geometry >
+        ({
+            .mesh = entity.add< Terrain >()->getTerrainRenderer(),
+            .material = new Material({ entity.add< Terrain >()->getTerrainMaterial() })
+        });
+        _engine.scene().getScene()->insert( entity );
         return true;
     }
 
@@ -93,10 +115,11 @@ namespace kege{
             _engine.tick();
             _engine.input()->updateCurrentInputs();
             _input.processInputs( _engine.input()->getCurrentInputs() );
-            Communication::broadcast< const MappedInputs& >( _engine.input()->getMappedInputs() );
+            //Communication::broadcast< const MappedInputs& >( _engine.input()->getMappedInputs() );
 
             buildLayout();
 
+            _engine.scene().input( _engine.dms() );
             // 4. Step engine/game systems
             if ( !_paused )
             {
@@ -105,22 +128,8 @@ namespace kege{
             _engine.scene().render(0);
 
 
-            if ( 0 <= _engine.graphics()->beginFrame() )
-            {
-                _engine.renderGraph()->execute( *_engine.renderManager().getModule() );
-                _engine.renderManager()->clear();
-                
-                if ( !_engine.graphics()->endFrame() )
-                {
-                    KEGE_LOG_ERROR << "Failed to end Frame" <<Log::nl;
-                    _running = false;
-                }
-            }
-            else
-            {
-                KEGE_LOG_ERROR << "Failed to begin Frame" <<Log::nl;
-                _running = false;
-            }
+            _engine.renderGraph()->execute( *_engine.renderManager().getModule() );
+            _engine.renderManager()->clear();
             
             _engine.graphics()->getWindow()->pollEvents();
         }

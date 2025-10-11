@@ -441,7 +441,7 @@ namespace kege{
         kege::GraphicsPipelineDesc info;
         std::string path = getFilePath( filename );
         PipelineLoader::createPipelineFromFile( graphics, &info, json, path );
-        return graphics->createGraphicsPipeline( info );
+        return {};
     }
 
     bool PipelineLoader::createPipelineFromFile

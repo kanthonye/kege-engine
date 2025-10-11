@@ -39,7 +39,7 @@ namespace kege{
         return _render_queue;
     }
 
-    void RenderManager::drawObjects( CommandEncoder* encoder, RenderPass* pass, const ShaderPipeline& pipeline, const std::vector< RenderObject >& objects )
+    void RenderManager::drawObjects( CommandEncoder* encoder, RenderStage* pass, const ShaderPipeline& pipeline, const std::vector< RenderObject >& objects )
     {
         encoder->bindGraphicsPipeline( pipeline.handle() );
         
@@ -252,7 +252,7 @@ namespace kege{
         }
     }
 
-    void RenderManager::execute( RenderPass* pass )
+    void RenderManager::execute( RenderStage* pass )
     {
         const BufferHandle* buffer = _graph->fetchBuffer( "camera-buffer" );
         if ( buffer )
@@ -270,7 +270,7 @@ namespace kege{
             {
                 for ( kege::RenderPassQueue::iterator i = queue.objects.begin(); i != queue.objects.end(); i++ )
                 {
-                    drawObjects( encoder, pass, pipeline, i->second );
+                    drawObjects( encoder, pass, pipeline, i->second.second );
                 }
             }
         }
@@ -278,9 +278,9 @@ namespace kege{
         {
             for ( kege::RenderPassQueue::iterator i = queue.objects.begin(); i != queue.objects.end(); i++ )
             {
-                const std::vector< RenderObject >& objects = i->second;
-                const ShaderPipeline& pipeline = i->first;
-                drawObjects( encoder, pass, pipeline, objects );
+                const RenderPassQueue::RenderObjects& objects = i->second;
+//                const ShaderPipeline& pipeline = i->first;
+                drawObjects( encoder, pass, objects.first, objects.second );
             }
         }
     }

@@ -43,6 +43,9 @@ namespace kege{
     {
     public:
 
+        bool submit( const std::vector< kege::SubmitInfo >& submit_infos, kege::Swapchain* swapchain );
+        bool submit( const kege::SubmitInfo& submit_info );
+        bool present( kege::Swapchain* swapchain );
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // CommandBuffer lifecycle
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -60,8 +63,6 @@ namespace kege{
          * @warning Ensure the command buffer is no longer in use.
          */
         void destroyCommandBuffer(CommandBuffer* command_buffer);
-
-        void submitCommands( std::vector< CommandBuffer* > command_buffers );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // Image lifecycle
@@ -113,6 +114,8 @@ namespace kege{
         void* mapBuffer( const BufferHandle& handle, size_t offset = 0, size_t size = 0 );
         size_t bufferSize( const BufferHandle& handle );
 
+        bool resizeBuffer( const BufferHandle& handle, uint64_t size );
+
         /**
          * @brief Destroys a buffer resource.
          * @param handle Handle to the buffer to destroy.
@@ -158,13 +161,6 @@ namespace kege{
         void destroyPipelineLayout(PipelineLayoutHandle handle);
 
         std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc );
-
-        /**
-         * @brief Creates a graphics rendering pipeline.
-         * @param desc Complete graphics pipeline state description.
-         * @return Handle to the created pipeline.
-         */
-        PipelineHandle createGraphicsPipeline(const GraphicsPipelineDesc& desc);
 
         /**
          * @brief Destroys a graphics pipeline.
@@ -222,32 +218,22 @@ namespace kege{
         void freeSet( int set );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // UniformSets Lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-        ShaderResource allocateUniformSets( const UniformSetsDesc& description );
-
-        ShaderResource allocateUniformSet( const UniformSetDesc& description );
-
-        void freeUniformSet( const ShaderResource& resource );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // Fence Objects Lifecycle
+        // kege::Fence Objects Lifecycle
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         /**
          * @brief Creates a fence for CPU-GPU synchronization.
-         * @param initiallySignaled Whether the fence starts in signaled state.
+         * @param initially_signaled Whether the fence starts in signaled state.
          * @return Handle to the created fence.
          */
-        FenceHandle createFence(bool initiallySignaled = false);
+        kege::Ref< kege::Fence > createFence( bool initially_signaled = false );
 
         /**
          * @brief Destroys a fence.
-         * @param handle Handle to the fence to destroy.
+         * @param fence Handle to the fence to destroy.
          * @warning Ensure the fence is no longer in use.
          */
-        void destroyFence(FenceHandle handle);
+        void destroyFence( kege::Fence* fence );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // Semaphore lifecycle
@@ -255,32 +241,22 @@ namespace kege{
 
         /**
          * @brief Creates a semaphore for GPU-GPU synchronization.
-         * @return Handle to the created semaphore.
+         * @return Pointer to the created semaphore.
          */
-        SemaphoreHandle createSemaphore();
+        kege::Ref< kege::Semaphore > createSemaphore();
 
         /**
          * @brief Destroys a semaphore.
-         * @param handle Handle to the semaphore to destroy.
+         * @param semaphore Handle to the semaphore to destroy.
          * @warning Ensure the semaphore is no longer in use.
          */
-        void destroySemaphore(SemaphoreHandle handle);
+        void destroySemaphore( kege::Semaphore* semaphore );
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
         // Swapchain Access
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-        ImageHandle getSwapchainColorImage( uint32_t image_index );
-        ImageHandle getSwapchainDepthImage( uint32_t image_index );
-        std::vector< ImageHandle > getSwapchainColorImages();
-        std::vector< ImageHandle > getSwapchainDepthImages();
-        uint32_t getSwapchainImageCount();
-        uint32_t getSwapchainImageIndex();
-        Extent2D getSwapchainExtent();
-        Format getSwapchainColorFormat();
-        Format getSwapchainDepthFormat();
 
-        uint32_t getCurrFrameIndex()const;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
         //
@@ -288,6 +264,8 @@ namespace kege{
 
         kege::ShaderPipelineManager* getShaderPipelineManager();
         kege::GraphicsWindow* getWindow();
+        kege::Swapchain* getSwapchain();
+        int32_t getFrameIndex()const;
         int32_t windowHeight()const;
         int32_t windowWidth()const;
         void pollWindowEvents();
@@ -297,9 +275,9 @@ namespace kege{
         //
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-        int  beginFrame();
-        bool endFrame();
-        
+        bool beginFrame();
+        void endFrame();
+
         bool initalize
         (
             kege::Ref< kege::GraphicsWindow > window,
@@ -314,47 +292,16 @@ namespace kege{
 
     private:
 
-        kege::SemaphoreHandle _image_available_semaphores[ kege::MAX_FRAMES_IN_FLIGHT ];
-
-        /**
-         * An array of semaphore handles used for synchronizing command buffer execution across frames.
-         * Each frame in flight has its own set of signal semaphores that may be waited upon by subsequent
-         * command buffer submissions. These ensure proper GPU execution ordering and frame pacing.
-         *
-         * The array size is fixed to MAX_FRAMES_IN_FLIGHT to match the swapchain's concurrency model.
-         * The semaphores are typically signaled when a command buffer completes execution.
-         */
-        std::vector< kege::SemaphoreHandle > _cmb_semaphores[ kege::MAX_FRAMES_IN_FLIGHT ];
-
-        /**
-         * An array of fence handles used for CPU-GPU synchronization of command buffer execution.
-         * Each frame in flight has its own set of fences that ensure the CPU waits for GPU work
-         * completion before reusing or modifying associated resources.
-         *
-         * The array size matches MAX_FRAMES_IN_FLIGHT to maintain synchronization across the
-         * swapchain's frame pipeline. These fences are typically signaled when the GPU finishes
-         * executing the associated command buffers, allowing the CPU to safely proceed.
-         */
-        std::vector< kege::FenceHandle > _cmb_fences[ kege::MAX_FRAMES_IN_FLIGHT ];
-
-        SemaphoreHandle _wait_semaphore;
-
-        uint32_t _initial_submits_per_frame;
-        uint32_t _cmb_submit_count;
-
         kege::Ref< kege::GraphicsInstance > _instance;
         kege::Ref< kege::GraphicsWindow > _window;
         kege::GraphicsDevice* _device;
 
         kege::SwapchainDesc _swapchain_create_info;
-        kege::Swapchain _swapchain;
-        uint32_t _current_frame;
-        uint32_t _image_index;
+        kege::Swapchain* _swapchain;
 
         // Map of descriptor set layout bindings to their corresponding layout handles.
         std::unordered_map< size_t, UniformSetLayout > _uniform_set_layouts;
 
-        kege::ShaderResourceManager _shader_resource_manager;
         kege::ShaderPipelineManager _shader_pipeline_manager;
 
         //GraphicsAPIInfo _info;

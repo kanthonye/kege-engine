@@ -50,9 +50,9 @@ namespace kege{
             .mip_levels     = 1,
             .format         = Format::undefined,
             .sample_count   = SampleCount::Count1,
-            .usage          = ImageUsageFlags::None,
+            .usage          = ImageUsage::TransferDst,
             .memory_usage   = MemoryUsage::GpuOnly,
-            .name     = "image"
+            .name           = "image"
         });
     }
 

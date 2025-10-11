@@ -133,7 +133,7 @@ namespace kege::ui{
             .mip_levels = 1,
             .format = Format::rgba_u8_norm,
             .sample_count = SampleCount::Count1,
-            .usage = ImageUsageFlags::ShaderResource | ImageUsageFlags::ColorAttachment,
+            .usage = ImageUsage::TransferDst | ImageUsage::Sampled | ImageUsage::Color,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "font-image",
             .data = info.data.data()

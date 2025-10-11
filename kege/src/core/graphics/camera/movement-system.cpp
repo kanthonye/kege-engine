@@ -10,22 +10,20 @@
 namespace kege{
 
     MovementSystem::MovementSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "player-movement-system", 0 )
+    :   kege::EntitySystem( engine, "player-movement-system", REQUIRE_INPUT )
     {}
 
     bool MovementSystem::initialize()
     {
-        Communication::add< const MappedInputs&, MovementSystem >( this );
         return EntitySystem::initialize();
     }
 
     void MovementSystem::shutdown()
     {
-        Communication::remove< const MappedInputs&, MovementSystem >( this );
         EntitySystem::shutdown();
     }
 
-    void MovementSystem::operator()( const MappedInputs& input_commands )
+    void MovementSystem::input( double dms )
     {
         Entity entity = _engine->scene().getScene()->getPlayer();
         if( !entity ) return;
@@ -38,29 +36,30 @@ namespace kege{
 
         kege::vec3 speed = {0.f, 0.f, 0.f};
 
-        if ( input_commands[ kege::ACTION_MOVE_FORWARD ] )
+        const MappedInputs& inputs = _engine->input()->getMappedInputs();
+        if ( inputs[ kege::ACTION_MOVE_FORWARD ] )
         {
             speed.z -= control->speed.z;
         }
-        if ( input_commands[ kege::ACTION_MOVE_BACKWARD ] )
+        if ( inputs[ kege::ACTION_MOVE_BACKWARD ] )
         {
             speed.z += control->speed.z;
         }
 
-        if ( input_commands[ kege::ACTION_MOVE_RIGHTWARD ] )
+        if ( inputs[ kege::ACTION_MOVE_RIGHTWARD ] )
         {
             speed.x += control->speed.x;
         }
-        if ( input_commands[ kege::ACTION_MOVE_LEFTWARD ] )
+        if ( inputs[ kege::ACTION_MOVE_LEFTWARD ] )
         {
             speed.x -= control->speed.x;
         }
 
-        if ( input_commands[ kege::ACTION_MOVE_DOWNWARD ] )
+        if ( inputs[ kege::ACTION_MOVE_DOWNWARD ] )
         {
             speed.y -= control->speed.y;
         }
-        if ( input_commands[ kege::ACTION_MOVE_UPWARD ] )
+        if ( inputs[ kege::ACTION_MOVE_UPWARD ] )
         {
             speed.y += control->speed.y;
         }

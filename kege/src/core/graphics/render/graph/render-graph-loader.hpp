@@ -40,7 +40,7 @@ namespace kege{
         static ImageType getImageType( Json json );
         static BufferUsage getBufferUsage( Json json );
         static MemoryUsage getMemoryUsage( Json json );
-        static ImageUsageFlags getImageUsage( Json json );
+        static ImageUsage getImageUsage( Json json );
         static DescriptorType getDescriptorType( Json json );
         static ShaderStage getShaderStageFlag( Json json );
 

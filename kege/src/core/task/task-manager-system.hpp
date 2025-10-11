@@ -12,27 +12,27 @@
 
 namespace kege{
 
-    class TaskManagerSystem
+    class QueueManagerSystem
     {
     public:
 
         static void addTask( const std::function< void() >& task, Task::Status* status = nullptr, Task::Type type = Task::Type::General );
-        static void addTaskManager( Task::Type type );
+        static void addQueueManager( Task::Type type );
         static bool initialize();
         static void shutdown();
 
-        TaskManagerSystem();
-        ~TaskManagerSystem();
+        QueueManagerSystem();
+        ~QueueManagerSystem();
 
     private:
 
-        static TaskManager* createTaskManager( Task::Type type );
-        static TaskManager* getTaskManager( Task::Type type );
-        static TaskManager* taskManager( Task::Type type );
+        static QueueManager* createQueueManager( Task::Type type );
+        static QueueManager* getQueueManager( Task::Type type );
+        static QueueManager* taskManager( Task::Type type );
 
     private:
 
-        static std::vector< kege::Ref< TaskManager > > _task_managers;
+        static std::vector< kege::Ref< QueueManager > > _task_managers;
     };
 
 

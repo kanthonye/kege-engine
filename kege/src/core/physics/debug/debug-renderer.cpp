@@ -197,14 +197,14 @@ namespace kege {
         ({
             .size = _vbo_capacity,
             .data = nullptr,
-            .usage = kege::BufferUsage::VertexBuffer,
+            .usage = kege::BufferUsage::VertexBuffer | kege::BufferUsage::CopyDst,
             .memory_usage = kege::MemoryUsage::CpuToGpu
         });
         _ibo = _engine->graphics()->createBuffer
         ({
             .size = _vbo_capacity,
             .data = nullptr,
-            .usage = kege::BufferUsage::IndexBuffer,
+            .usage = kege::BufferUsage::IndexBuffer | kege::BufferUsage::CopyDst,
             .memory_usage = kege::MemoryUsage::CpuToGpu
         });
 

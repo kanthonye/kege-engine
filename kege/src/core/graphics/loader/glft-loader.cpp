@@ -150,7 +150,7 @@ namespace kege::gltf{
 
     Ref< Mesh > parseMesh( tinygltf::Model& model, tinygltf::Mesh& mesh )
     {
-        int submesh_index = 0;
+        //int submesh_index = 0;
         Ref< Mesh > refmesh = new Mesh;
         refmesh->sources.reserve( mesh.primitives.size() );
 

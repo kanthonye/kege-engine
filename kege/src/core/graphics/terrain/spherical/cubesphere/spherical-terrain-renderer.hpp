@@ -17,7 +17,7 @@ namespace kege{
 
     struct PatchDrawBuffer
     {
-        kege::ShaderResource descriptor_set;
+        kege::ShaderResrc descriptor_set;
         kege::BufferHandle patch_buffer;
         kege::BufferHandle draw_buffer;
         uint32_t instance_count;
@@ -27,58 +27,68 @@ namespace kege{
     {
     public:
 
+        const kege::mat33& getFaceAxies( int face_index )const;
+        const kege::vec4* getFaceVertices( int face_index )const;
+
         bool initialize();
-        const DynamicCubeMesh* getDynamicCubeMesh()const;
 
-        void begin( kege::CommandEncoder* encoder, Transform* transform );
+        void submit( int face_id, int index_buffer_id, PatchData& patch );
+        void begin();
         void end();
-
-        void draw( SphericalTerrainTile& node );
 
 
         ~SphericalTerrainRenderer();
-        SphericalTerrainRenderer();
+        SphericalTerrainRenderer( Graphics* graphics );
+
+
+        struct Batch
+        {
+            kege::IndexDrawCommand* draw_commands;
+            kege::PatchData* patchs;
+            uint32_t capacity;
+            int32_t index;
+        };
 
     private:
 
+        void generateCubeVertces
+        (
+            float scale,
+            std::array< kege::mat33, MAX_CUBE_FACES >& face_axies,
+            std::vector< kege::vec4 >& face_vertices
+        );
+
+        void generateCubeIndices
+        (
+            std::vector< int >& face_indices,
+            std::array< IndexDrawCommand, 16 >& draw_commands
+        );
+
+        Batch mapBatch( int index );
+        Batch newBatch();
+        void endBatch();
         void flush();
 
-        /**
-         * This ShaderResourceLayout will store the mesh vertices and indices
-         */
-        kege::ShaderResource _mesh_shader_resource;
+    private:
 
-        /**
-         * This uniform buffer will store the mesh vertices
-         */
-        kege::BufferHandle _vertices_uniform_buffer;
+        kege::MeshPrimitiveRef _mesh_primitive;
 
-        /**
-         * This uniform buffer will store the mesh indices
-         */
-        kege::BufferHandle _indices_uniform_buffer;
+        std::array< IndexDrawCommand, 16 > _draw_commands;
+        std::array< kege::mat33, MAX_CUBE_FACES > _face_axies;
+        std::vector< kege::vec4 > _face_vertices;
 
+        Batch _current_batch;
+        uint32_t _patch_count;
+        uint32_t _batch_count;
 
-
-        DynamicCubeMesh _cubemesh;
         kege::Graphics* _graphics;
         kege::Terrain* _terrain;
 
 
-        std::vector< char > _temp_buffer;
+        uint32_t _draw_command_stride;
+        uint32_t _patch_stride;
 
-        kege::VertexDrawCommand* _draw_param_buffer;
-        kege::PatchData* _patch_buffer;
-        uint32_t _max_instance_count;
-        uint32_t _instance_count;
-
-
-        std::vector< PatchDrawBuffer > _draw_buffers;
-
-
-        uint32_t _drawparam_stride;
-        uint32_t _patchdata_stride;
-        uint32_t _current_drawbatch;
+        uint32_t _max_draw_count;
 
         /**
          * Exponent value is used to compute buffer size

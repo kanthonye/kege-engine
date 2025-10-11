@@ -16,7 +16,7 @@
 
 namespace kege{
 
-    class PhysicalFlatTerrain;
+    class FlatTerrain;
 
     class FlatTerrainRenderer : public TerrainRenderer
     {
@@ -32,7 +32,7 @@ namespace kege{
             /**
              * a collection of Patch to render
              */
-            kege::ShaderResource resource_set;
+            kege::ShaderResrc resource_set;
 
             /**
              * a collection of DrawParams for each patch.

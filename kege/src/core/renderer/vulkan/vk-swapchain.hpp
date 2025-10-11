@@ -12,111 +12,113 @@
 
 namespace kege::vk{
 
+    struct FrameData
+    {
+        kege::ImageHandle color;
+        kege::ImageHandle depth;
+    };
+
+
+    struct FrameSync
+    {
+        VkSemaphore image_available_semaphore;
+        /* Signals when the swapchain image is ready to render into (after vkAcquireNextImageKHR).
+         * Usually, only the first render pass that writes to the swapchain image should wait on this.
+         */
+
+        VkSemaphore render_complete_semaphore;
+        /* Render Complete Semaphore:
+         * Signals when the final rendering for that image is done (so presentation can occur).
+         * The present operation waits on this.
+         */
+    };
+
     /**
      * @brief Wrapper for Vulkan swapchain resources
      *
      * Encapsulates a VkSwapchainKHR and all its associated resources,
      * including surface, images, views, and synchronization primitives.
      */
-    class Swapchain
+    class Swapchain : public kege::Swapchain
     {
     public:
 
-        /**
-         * @brief Acquire the next available swapchain image
-         *
-         * Retrieves the next available image from the swapchain for rendering.
-         *
-         * @param signal_semaphore Handle to a semaphore that will be signaled when the image is available
-         * @param out_image_ndex Reference to store the index of the acquired image
-         * @return true on success, false if the swapchain is out of date
-         */
-        bool acquireNextImage( SemaphoreHandle signal_semaphore, uint32_t* out_image_ndex );
+        std::vector< ImageHandle > getColorImages()const;
+        std::vector< ImageHandle > getDepthImages()const;
+        kege::Format getDepthFormat()const ;
+        kege::Format getColorFormat()const;
+        uint32_t getImageCount()const;
+        uint32_t getImageIndex()const;
+        Extent2D getExtent()const;
 
-        /**
-         * @brief Queue a swapchain image for presentation
-         *
-         * Submits a present operation to display the rendered image.
-         *
-         * @param wait_semaphore Handle to a semaphore to wait on before presenting
-         * @param image_ndex Index of the image to present
-         * @return true on success, false if the swapchain is out of date
-         */
-        bool present( SemaphoreHandle wait_semaphore, uint32_t image_ndex );
+        FrameSync& getFrameSync( uint32_t frame_index );
+        int32_t acquireNextImage();
+        int getFrameIndex()const;
 
-        /**
-         * @brief Get a texture handle for a swapchain image
-         *
-         * Returns a handle to the texture representing the specified swapchain image.
-         *
-         * @param image_ndex Index of the swapchain image
-         * @return Handle to the texture representing the swapchain image
-         */
-        ImageHandle getColorImage(uint32_t image_ndex);
-        ImageHandle getDepthImage(uint32_t image_ndex);
+        void setShouldRecreate( bool state );
+        bool shouldRecreate()const;
 
-        VkResult create( Device* device, const SwapchainDesc& desc );
+        Viewport getViewport()const;
+        Scissor getScissor()const;
 
+        VkResult create( const SwapchainDesc& desc );
+        VkResult recreate();
         void destroy();
 
-    private:
-
-        VkResult createSwapchain
-        (
-            Device* device,
-            const kege::SwapchainDesc& desc,
-            VkExtent2D extent,
-            VkSurfaceFormatKHR surface_format,
-            VkPresentModeKHR present_mode,
-            VkSurfaceCapabilitiesKHR capabilities,
-            uint32_t image_count
-        );
-
-        VkResult createSwapchainImages
-        (
-            Device* device,
-            const kege::SwapchainDesc& desc,
-            VkFormat format,
-            uint32_t image_count,
-            VkSwapchainKHR swapchain
-        );
+        const VkSwapchainKHR& getHandle()const;
+        Swapchain( Device* device );
+        ~Swapchain();
 
     private:
 
-        /** @brief Semaphores for image acquisition synchronization */
-        std::vector< kege::ImageHandle > _color_images;
-        std::vector< kege::ImageHandle > _depth_images;
+        std::vector< vk::FrameData > createFrames( uint32_t image_count );
+        VkResult createSwapchain( VkSwapchainKHR* swapchain );
+
+        vk::FrameData& getFrame( uint32_t frame_index );
+
+        const vk::Swapchain* vk()const{ return this; }
+        vk::Swapchain* vk(){ return this; }
+
+    private:
+
+        std::vector< vk::FrameSync > _frame_syncs;
+        /** @b _frame_syncs operators on a MAX_FRAMES_IN_FLIGHT basis.
+         *  thus it will be the size of MAX_FRAMES_IN_FLIGHT
+         */
+
+        std::vector< vk::FrameData > _frames;
+        /** @b _frames operators on a swapchain image_count basis. thus
+         *  it will be 3 if MAX_FRAMES_IN_FLIGHT = 2, 2 if MAX_FRAMES_IN_FLIGHT = 1
+         */
 
         /** @brief Native Vulkan swapchain handle */
-        VkSwapchainKHR _swapchain = VK_NULL_HANDLE;
+        VkSwapchainKHR _swapchain;
 
-        /** @brief Native Vulkan surface handle associated with this swapchain */
-        VkSurfaceKHR _surface = VK_NULL_HANDLE;
+        VkExtent2D _extent;
 
-        /** @brief Semaphores for image acquisition synchronization */
-        std::vector< kege::SemaphoreHandle > _image_available_semaphores;
-
-        /** @brief Original swapchain creation parameters for reference/recreation */
-        kege::SwapchainDesc _desc;
-
-        /** @brief Native format of the swapchain images */
-        kege::Format _color_format;
-        kege::Format _depth_format;
-
-        /** @brief Dimensions of the swapchain images */
-        kege::Extent2D _extent;
+        VkSurfaceFormatKHR _surface_format;
+        VkPresentModeKHR _present_mode;
+        VkFormat _depth_format;
 
         /** @brief Index of the currently acquired image */
-        uint32_t _curr_image_index = 0;
+        uint32_t _image_index;
+        uint32_t _image_count;
+        int32_t _curr_frame_index;
 
         /** @brief Flag indicating if the swapchain needs recreation (e.g., after resize) */
-        bool _needs_recreation = false;
+        bool _needs_recreation;
 
-        uint32_t _image_count = 0;
-        uint32_t _id;
+
+        kege::Viewport _viewport;
+        kege::Scissor _scissor;
 
         vk::Device* _device;
-        friend Device;
+
+        friend vk::QueueManager;
+        friend vk::Device;
+        friend vk::List< vk::Swapchain >;
+        vk::Swapchain* next;
+        vk::Swapchain* prev;
     };
 
 }

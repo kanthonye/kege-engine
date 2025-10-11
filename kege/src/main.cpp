@@ -15,150 +15,142 @@ int main(int argc, const char * argv[])
     return editor.run();
 }
 
-
-void test()
-{
-    kege::ShaderResrc resource = kege::UniformResourceLayout
-    {
-        .descriptors = kege::UniformDescriptorSets
-        {
-            kege::UniformDescriptorSet
-            {
-                .set = 0,
-                .descriptors =
-                {
-                    kege::UniformDescriptor
-                    {
-                        .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                        .binding = 0,
-                        .count = 1,
-                        .name = ""
-                    },
-                    kege::UniformDescriptor
-                    {
-                        .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                        .binding = 1,
-                        .count = 1,
-                        .name = ""
-                    }
-                }
-            },
-            kege::UniformDescriptorSet
-            {
-                .set = 1,
-                .descriptors =
-                {
-                    kege::UniformDescriptor
-                    {
-                        .descriptor_type = kege::DescriptorType::CombinedImageSampler,
-                        .binding = 0,
-                        .count = 1,
-                        .name = ""
-                    }
-                }
-            },
-            kege::UniformDescriptorSet
-            {
-                .set = 2,
-                .descriptors =
-                {
-                    kege::UniformDescriptor
-                    {
-                        .descriptor_type = kege::DescriptorType::UniformBuffer,
-                        .binding = 0,
-                        .count = 1,
-                        .name = ""
-                    }
-                }
-            },
-        },
-        .resources = kege::UniformResourceSets
-        {
-            kege::UniformResourceSet
-            {
-                kege::UniformResource
-                {
-                    .binding = 0,
-                    .uniform = kege::ImageBindings
-                    {
-                        kege::ImageInfo{ .image = {}, .sampler = {}, .layout  = kege::ImageLayout::ShaderReadOnly }
-                    }
-                },
-                kege::UniformResource
-                {
-                    .binding = 1,
-                    .uniform = kege::ImageBindings
-                    {
-                        kege::ImageInfo{ .image = {}, .sampler = {}, .layout  = kege::ImageLayout::ShaderReadOnly }
-                    }
-                }
-            },
-            kege::UniformResourceSet
-            {
-                kege::UniformResource
-                {
-                    .binding = 0,
-                    .uniform = kege::ImageBindings
-                    {
-                        kege::ImageInfo{ .image = {}, .sampler = {}, .layout  = kege::ImageLayout::ShaderReadOnly }
-                    }
-                }
-            },
-            kege::UniformResourceSet
-            {
-                kege::UniformResource
-                {
-                    .binding = 0,
-                    .uniform = kege::BufferBindings
-                    {
-                        kege::BufferInfo{}
-                    }
-                }
-            },
-        },
-        .graphics = nullptr
-    };
-
-
-    resource.getShaderBindings();
-
-
-//    kege::AssetManager rm;
-//    rm.initalize();
-//    rm.add< kege::BufferDefn >( "apple", {});
+//namespace kege{
 //
+//    template< typename T > class Mem
+//    {
+//    public:
 //
-//    rm.add< std::string >("apple", "apple");
-//    rm.add< std::string >("banana", "banana");
-//    rm.add< std::string >("grapes", "grapes");
-//    rm.add< std::string >("plums", "plums");
-//    rm.add< std::string >("mangos", "mangos");
-//    rm.add< std::string >("coconut", "coconut");
-//    rm.add< std::string >("limes", "limes");
-//    rm.add< std::string >("cherries", "cherries");
+//        inline friend bool operator ==( const Mem& a, const Mem& b )
+//        {
+//            return a._ref == b._ref;
+//        }
 //
-//    print(*rm.get< std::string >());
+//        inline friend bool operator !=( const Mem& a, const Mem& b )
+//        {
+//            return a._ref != b._ref;
+//        }
 //
-//    rm.remove< std::string >("apple");
-//    rm.remove< std::string >("cherries");
-//    rm.remove< std::string >("plums");
+//        inline friend bool operator ==( const T* a, const Mem& b )
+//        {
+//            return a == b._ref;
+//        }
 //
-//    print(*rm.get< std::string >());
+//        inline friend bool operator !=( const Mem& a, const T* b )
+//        {
+//            return a._ref != b;
+//        }
 //
-//    rm.fetch< std::string >( "" );
-//    rm.get< std::string >( 0 );
+//        inline Mem& operator =( const Mem& a )
+//        {
+//            if ( a._ref == _ref ) return *this;
+//            return initialize( a._ref );
+//        }
 //
-}
-
-
-
-
-
-void print( kege::ResourceManagerT< std::string >& lst)
-{
-    for (int i=lst.begin(); i >= 0; i = lst.next(i))
-    {
-        std::cout << lst.get( i ) << ", ";
-    }
-    std::cout <<"\n";
-}
+//        inline Mem& operator =( Mem&& a )
+//        {
+//            if ( _ref != nullptr )
+//                clear();
+//
+//            _ref = a._ref;
+//            a._ref = nullptr;
+//
+//            return *this;
+//        }
+//
+//        inline Mem& operator =( T* a )
+//        {
+//            return initialize( a );
+//        }
+//
+//        inline const T* operator ->()const
+//        {
+//            return _ref;
+//        }
+//        inline T* operator ->()
+//        {
+//            return _ref;
+//        }
+//
+//        inline const T* ref()const
+//        {
+//            return _ref;
+//        }
+//
+//        inline T* ref()
+//        {
+//            return _ref;
+//        }
+//
+//        inline const T& operator *()const
+//        {
+//            return *_ref;
+//        }
+//        
+//        inline T& operator *()
+//        {
+//            return *_ref;
+//        }
+//
+//        inline operator bool()const
+//        {
+//            return _ref != nullptr;
+//        }
+//
+//        virtual void clear()
+//        {
+//            if( _ref != nullptr )
+//            {
+//                _ref->decrementMemMemCounter();
+//                if( _ref->referenceMemCounter() <= 0 )
+//                {
+//                    delete _ref;
+//                }
+//                _ref = nullptr;
+//            }
+//        }
+//
+//        Mem( const Mem<T>& r )
+//        :   _ref( nullptr )
+//        {
+//            initialize( r._ref );
+//        }
+//
+//        Mem( Mem<T>&& r )
+//        :   _ref( r._ref )
+//        {
+//            r._ref = nullptr;
+//        }
+//
+//        Mem( T* r )
+//        :   _ref( nullptr )
+//        {
+//            initialize( r );
+//        }
+//        Mem()
+//        :   _ref( nullptr )
+//        {}
+//
+//        virtual ~Mem()
+//        {
+//            clear();
+//        }
+//
+//    protected:
+//
+//        Mem& initialize( T* a )
+//        {
+//            if ( _ref != nullptr )
+//                clear();
+//            _ref = a;
+//
+//            if ( a != nullptr )
+//                _ref->MemCounter::incrementMemMemCounter();
+//
+//            return *this;
+//        }
+//
+//        T* _ref;
+//    };
+//
+//}

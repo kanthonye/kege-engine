@@ -37,6 +37,9 @@
 namespace kege::vk{
     class Device;
     class Instance;
+    class FrameRenderer;
+    class CommandBuffer;
+    class QueueManager;
 
     /**
      * @brief Wrapper for Vulkan buffer resources
@@ -52,11 +55,9 @@ namespace kege::vk{
         /** @brief The buffer's memory */
         VkDeviceMemory memory = VK_NULL_HANDLE;
 
-        /** @brief VMA allocation that manages the buffer's memory */
-        //VmaAllocation allocation = VK_NULL_HANDLE;
-
-        /** @brief Original buffer creation parameters for reference/recreation */
-        kege::BufferDesc desc;
+        VkDeviceSize size;
+        VkBufferUsageFlags usage;
+        VkMemoryPropertyFlags memory_properties;
 
         /** @brief Pointer to mapped memory region (only valid if buffer is host-visible) */
         void* mapped_ptr = nullptr;
@@ -87,6 +88,8 @@ namespace kege::vk{
 
         /** @brief Current layout of the image for synchronization tracking */
         VkImageLayout current_layout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+        VkImageAspectFlags aspect;
     };
 
     /**
@@ -149,28 +152,6 @@ namespace kege::vk{
     };
 
     /**
-     * @brief Wrapper for Vulkan fence synchronization primitives
-     *
-     * Encapsulates a VkFence for CPU-GPU synchronization.
-     */
-    struct Fence
-    {
-        /** @brief Native Vulkan fence handle */
-        VkFence fence = VK_NULL_HANDLE;
-    };
-
-    /**
-     * @brief Wrapper for Vulkan semaphore synchronization primitives
-     *
-     * Encapsulates a VkSemaphore for GPU-GPU synchronization.
-     */
-    struct Semaphore
-    {
-        /** @brief Native Vulkan semaphore handle */
-        VkSemaphore semaphore = VK_NULL_HANDLE;
-    };
-
-    /**
      * @struct QueueInfo
      * @brief Holds information about a queue and its family
      */
@@ -181,6 +162,97 @@ namespace kege::vk{
 
         /** @brief Queue family index */
         uint32_t family_index = UINT32_MAX;
+    };
+
+    struct SubmitInfo
+    {
+        const kege::vk::CommandBuffer* command_buffer;
+        VkSemaphore signal_semaphore;
+        std::vector< VkSemaphore > wait_semaphores;
+        std::vector< VkPipelineStageFlags > wait_stages;
+    };
+
+
+
+
+    
+
+    template< typename TypeT > struct List
+    {
+        TypeT* insert( TypeT* link )
+        {
+            if ( head == nullptr )
+            {
+                tail = head = link;
+            }
+            else
+            {
+                tail->next = link;
+                link->prev = tail;
+                tail = link;
+            }
+            link->incrRefCounter();
+            count += 1;
+            return link;
+        }
+
+        TypeT* remove( TypeT* link )
+        {
+            if ( link == head )
+            {
+                head = head->next;
+                if( head ) head->prev = nullptr;
+                else tail = nullptr;
+            }
+            else if ( link == tail )
+            {
+                tail = tail->prev;
+                if( tail ) tail->next = nullptr;
+                else head = nullptr;
+            }
+            else if ( link->next != nullptr && link->prev != nullptr  )
+            {
+                link->next->prev = link->prev;
+                link->prev->next = link->next;
+                link->prev = nullptr;
+                link->next = nullptr;
+            }
+            count -= 1;
+            return link;
+        }
+
+        void clear()
+        {
+            TypeT* h = head;
+            while ( h != nullptr )
+            {
+                TypeT* link = h;
+                h = h->next;
+
+                link->decrRefCounter();
+                if( link->getRefCounter() <= 0 )
+                {
+                    delete link;
+                }
+            }
+            tail = head = nullptr;
+            count = 0;
+        }
+
+        List()
+        :   head( nullptr )
+        ,   tail( nullptr )
+        ,   count( 0 )
+        {}
+
+        ~List()
+        {
+            clear();
+        }
+
+        TypeT* head;
+        TypeT* tail;
+        int count;
     };
 
 }
@@ -319,7 +391,9 @@ namespace kege::vk{
      * @param aspect Engine image aspect
      * @return Corresponding VkImageAspectFlags value
      */
-    VkImageAspectFlags convertImageAspect(ImageAspectFlag aspect);
+    VkImageAspectFlags toVkImageAspect(ImageAspectFlag aspect);
+    ImageAspectFlag toImageAspect(VkImageAspectFlags aspect);
+    VkImageAspectFlags vkFormatToVkImageAspect( VkFormat format );
 
     /**
      * @brief Translate Vulkan physical device type to engine physical device type
@@ -385,13 +459,13 @@ namespace kege::vk{
     /**
      * @brief Translate engine texture usage flags to Vulkan image usage flags
      *
-     * Maps ImageUsageFlags bitfield to the appropriate VkImageUsageFlags.
+     * Maps ImageUsage bitfield to the appropriate VkImageUsageFlags.
      * Each bit in the input maps to a specific Vulkan usage flag.
      *
      * @param usage Engine texture usage flags
      * @return Corresponding VkImageUsageFlags
      */
-    VkImageUsageFlags convertTextureUsage(ImageUsageFlags usage);
+    VkImageUsageFlags convertImageUsage(ImageUsage usage);
 
     /**
      * @brief Translate engine buffer usage flags to Vulkan buffer usage flags
@@ -515,6 +589,9 @@ namespace kege::vk{
      */
     VkAccessFlags convertAccessFlag(AccessFlags access);
 
+
+    VkPipelineStageFlagBits convertPipelineStage( PipelineStageFlag stage );
+
     /**
      * @brief Translate engine pipeline stage flags to Vulkan pipeline stage flags
      *
@@ -536,7 +613,7 @@ namespace kege::vk{
       * @param format Format of the resource (needed for depth/stencil)
       * @return Corresponding VkImageLayout value
       */
-    VkImageLayout translatesToVkLayout(ResourceState state, Format format);
+    //VkImageLayout translatesToVkLayout(ResourceState state, Format format);
 
     /**
      * @brief Translate engine color component flags to Vulkan color component flags

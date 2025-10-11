@@ -11,7 +11,7 @@
 #include <cstdint>
 #include "../../memory/ref.hpp"
 #include "../../renderer/core/graphics.hpp"
-#include "../render/graph/render-pass.hpp"
+#include "../render/graph/render-stage.hpp"
 
 namespace kege{
 

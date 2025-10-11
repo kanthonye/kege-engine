@@ -9,20 +9,17 @@
 
 namespace kege{
 
-//    void TerrainSystem::operator()( kege::RenderPassContext* context )
-//    {
-//        kege::CommandEncoder* encoder = context->getCommandEncoder();
-//
-//        Terrain* terrain;
-//        Transform* transform;
-//        for ( Entity entity : *_entities )
-//        {
-//            terrain = entity.get< Terrain >();
-//            transform = entity.get< Transform >();
-//            terrain->render( encoder, transform );
-//        }
-//    }
+    void TerrainSystem::render( double dms )
+    {
+        if( !_entities ) return;
 
+        for (Entity entity : *_entities )
+        {
+            Terrain* terrain = entity.get< Terrain >();
+            terrain->submitVisibleGeometries();
+        }
+    }
+    
     void TerrainSystem::update( double dms )
     {
         if( !_entities ) return;

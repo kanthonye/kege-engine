@@ -17,12 +17,12 @@
 
 namespace kege{
 
-    struct RenderPass;
+    struct RenderStage;
     struct RenderGraph;
-    struct RenderPassContext;
 
     enum class RenderPassType
     {
+        BarrierTransition,   // Full-screen post-processing effects
         DepthPrePass,        // Z-prepass for depth filling
         ShadowMap,           // Shadow mapping pass
         Geometry,            // G-buffer generation (deferred)
@@ -48,6 +48,22 @@ namespace kege{
         int32_t index = -1;
     };
 
+    constexpr inline bool operator==(const kege::RgResrcHandle& a, const kege::RgResrcHandle& b)
+    {
+        return a.index == b.index;
+    }
+
+    constexpr inline bool operator!=(const kege::RgResrcHandle& a, const kege::RgResrcHandle& b)
+    {
+        return a.index != b.index;
+    }
+    constexpr inline bool operator<(const kege::RgResrcHandle& a, const kege::RgResrcHandle& b)
+    {
+        return a.index < b.index;
+    }
+
+
+
     struct BufferDefn
     {
         std::string name;
@@ -62,7 +78,6 @@ namespace kege{
     {
         std::string name;
         kege::SamplerDesc desc;
-        
         RgResrcHandle handle;
         kege::SamplerHandle physical_handle;
     };
@@ -71,8 +86,10 @@ namespace kege{
     {
         std::string name;
         uint32_t frames_in_flight;
-        ImageUsageFlags usages = ImageUsageFlags::None;
-        
+
+        ImageUsage usages = ImageUsage::Undefined;
+        ImageLayout layout = ImageLayout::Undefined;
+
         struct Info
         {
             uint32_t width;
@@ -82,11 +99,18 @@ namespace kege{
             kege::ImageType type;
         }
         info;
+        bool use_swapchain_image_index = false;
 
         RgResrcHandle handle = {};
         std::vector< kege::ImageHandle > physical_handle;
     };
 
+    struct RgImageLayoutTransition
+    {
+        std::string name;
+        ImageLayout layout = ImageLayout::Undefined;
+        ImageAspectFlag image_aspect;
+    };
 
     struct RgShaderResrcInfo
     {
@@ -111,7 +135,7 @@ namespace kege{
         std::string name;
         uint32_t set_index;
         uint32_t frames_in_flight;
-            std::vector< RgShaderResrcDesc > bindings;
+        std::vector< RgShaderResrcDesc > bindings;
 
         RgResrcHandle handle = {};
         ShaderResrcs physical_handles;
@@ -119,26 +143,34 @@ namespace kege{
 
 
 
+
+    struct RgResrcUsage
+    {
+        AccessFlags access = AccessFlags::None;
+        PipelineStageFlag stage = PipelineStageFlag::TopOfPipe;
+        ImageLayout layout = ImageLayout::Undefined;
+        AttachmentLoadOp load_op = AttachmentLoadOp::Clear;
+    };
+
     struct RgReadResrcDesc
     {
         std::string name;
         RgResrcType type;
-        AccessFlags access = AccessFlags::None; // HOW is it used?
-        PipelineStageFlag stage = PipelineStageFlag::None; // WHEN is it used?
-        RgResrcHandle handle;
+        RgResrcUsage usage;
+
+        RgResrcHandle handle; // still needed
     };
 
     struct RgWriteResrcDesc
     {
         std::string name;
         RgResrcType type;
-        AccessFlags access = AccessFlags::None; // HOW is it used?
-        PipelineStageFlag stage = PipelineStageFlag::None; // WHEN is it used?
-        ClearValue clear_value;
+        RgResrcUsage usage;
+
+        std::optional< ClearValue > clear_value;
+        
         RgResrcHandle handle;
     };
-
-
 
 
 
@@ -156,166 +188,18 @@ namespace kege{
          * the material. pipelines could be 0 or multiple.
          */
         std::vector< ShaderPipeline > pipelines;
-
-        //RgDrawMode draw_mode = RgDrawMode::PerObject;
-
     };
-
-    struct RgResrcUsage
-    {
-        int pass_index = -1;
-        AccessFlags access = AccessFlags::None;
-        ImageLayout layout = ImageLayout::Undefined;
-        PipelineStageFlag stage = PipelineStageFlag::TopOfPipe;
-    };
-
-//    /**
-//     * @brief Information for updating buffer-type descriptors
-//     */
-//    struct RgBufferInfo
-//    {
-//        RgResrcHandle buffer {};
-//        uint64_t offset = 0;
-//        uint64_t range = 0;
-//    };
-//
-//    /**
-//     * @brief Information for updating image-type descriptors
-//     */
-//    struct RgImageInfo
-//    {
-//        RgResrcHandle image {};
-//        RgResrcHandle sampler {};
-//        ImageLayout layout = ImageLayout::ShaderReadOnly;
-//    };
-//
-//    struct RgSamplerInfo
-//    {
-//        RgResrcHandle sampler {};
-//    };
-//
-//    struct RgBufferViewInfo
-//    {
-//        RgResrcHandle view {};
-//    };
-//    
-//    struct RgFetchResInfo
-//    {
-//        std::string name;
-//        RgResrcType type;
-//    };
-//
-//    struct RgShaderResource
-//    {
-//        enum Type { INVALID, BUFFER, IMAGE, SAMPLER, BUFFER_VIEW, FETCH_RESOURCE } type;
-//
-//        RgShaderResource& operator =( const RgShaderResource& info )
-//        {
-//            type = info.type;
-//            switch ( info.type )
-//            {
-//                case BUFFER: buffers = info.buffers; break;
-//                case IMAGE: images = info.images; break;
-//                case SAMPLER: samplers = info.samplers; break;
-//                case BUFFER_VIEW: views = info.views; break;
-//                case FETCH_RESOURCE: fetchs = info.fetchs; break;
-//                case INVALID: break;
-//            }
-//            return *this;
-//        }
-//
-//        RgShaderResource( const std::vector< kege::RgFetchResInfo >& info )
-//        :   fetchs( info )
-//        ,   type( FETCH_RESOURCE )
-//        {}
-//
-//        RgShaderResource( const std::vector< kege::RgBufferViewInfo >& info )
-//        :   views( info )
-//        ,   type( BUFFER_VIEW )
-//        {}
-//
-//        RgShaderResource( const std::vector< kege::RgBufferInfo >& info )
-//        :   buffers( info )
-//        ,   type( BUFFER )
-//        {}
-//
-//        RgShaderResource( const std::vector< kege::RgImageInfo >& info )
-//        :   images( info )
-//        ,   type( IMAGE )
-//        {}
-//
-//        RgShaderResource( const std::vector< kege::RgSamplerInfo >& info )
-//        :   samplers( info )
-//        ,   type( SAMPLER )
-//        {}
-//
-//        RgShaderResource( const RgShaderResource& info )
-//        :   type( info.type )
-//        {
-//            this->operator =( info );
-//        }
-//
-//        RgShaderResource()
-//        :   type( INVALID )
-//        {
-//        }
-//
-//        ~RgShaderResource()
-//        {
-//            switch (type)
-//            {
-//                case BUFFER: buffers.~vector(); break;
-//                case IMAGE: images.~vector(); break;
-//                case SAMPLER: samplers.~vector(); break;
-//                case BUFFER_VIEW: views.~vector(); break;
-//                case FETCH_RESOURCE: fetchs.~vector(); break;
-//                case INVALID: break;
-//            }
-//        }
-//
-//        union
-//        {
-//            std::vector< kege::RgImageInfo >      images;
-//            std::vector< kege::RgBufferInfo >     buffers;
-//            std::vector< kege::RgBufferViewInfo > views;
-//            std::vector< kege::RgSamplerInfo >    samplers;
-//            std::vector< kege::RgFetchResInfo >   fetchs;
-//        };
-//
-//    };
-//
-//    struct RgUniformResourceInfo
-//    {
-//        std::string name;
-//        uint32_t binding;
-//        DescriptorType descriptor_type;
-//        RgShaderResource resource;
-//    };
-//
-//    struct RgUniformResourceInfoSet
-//    {
-//        kege::array< kege::RgUniformResourceInfo > bindings;
-//        kege::ShaderResource shader_resource;
-//    };
-//
-//    struct RgShaderResourceDefn
-//    {
-//        kege::array< kege::RgUniformResourceInfoSet > resource_sets;
-//        RgResrcHandle resouce_handle;
-//    };
 
 
 
     struct RgResrcBarrierInfo
     {
-        kege::ImageHandle  image_handle  = {};
-        kege::BufferHandle buffer_handle = {};
+        kege::RgResrcHandle resource_handle  = {};
 
         PipelineStageFlag src_stage_mask = PipelineStageFlag::None;
         PipelineStageFlag dst_stage_mask = PipelineStageFlag::None;
         AccessFlags src_access_mask = AccessFlags::None;
         AccessFlags dst_access_mask = AccessFlags::None;
-        ImageLayout layout;
         ImageLayout old_layout = ImageLayout::Undefined;
         ImageLayout new_layout = ImageLayout::Undefined;
 
@@ -330,58 +214,29 @@ namespace kege{
         QueueType src_queue = QueueType::Graphics; ///< Queue family that previously owned the buffer
         QueueType dst_queue = QueueType::Graphics; ///< Queue family that will own the buffer
         /// @}
+        ///
+        std::string name;
     };
 
-    struct BarrierDescription
-    {
-        std::vector< RgResrcBarrierInfo > resource_barriers;
-    };
+    typedef std::vector< RgResrcBarrierInfo > BarrierDescriptions;
 
-
-
-
-    
-//    class RenderPassContext
+//    struct RgResrcHandleHash
 //    {
-//    public:
-//
-//        kege::ShaderResource* getPhysicalShaderResource( const RgResrcHandle& handle );
-//        kege::ShaderResource* getPhysicalShaderResource( const std::string& name );
-//
-//        const std::vector< kege::SamplerHandle >* getSampler( const std::string& name )const;
-//        const std::vector< kege::BufferHandle >* getBuffers( const std::string& name )const;
-//        const std::vector< kege::ImageHandle >* getImages( const std::string& name )const;
-//
-//        const std::vector< ShaderPipeline >& getShaderPipelines()const;
-//
-//        kege::BufferHandle getBuffer( const std::string& name );
-//        kege::ImageHandle getImage( const std::string& name );
-//
-//        RenderPassType getRenderPassType()const;
-//
-//        CommandEncoder* getCommandEncoder();
-//        CommandBuffer* getCommandBuffer();
-//        Rect2D getRenderArea()const;
-//
-//        kege::Graphics* getGraphics();
-//        
-//        bool hasFixedPipelines()const;
-//        const std::string& name();
-//
-//    private:
-//
-//        std::unordered_map< std::string, RgResrcHandle > _buffer_defn_map;
-//        std::unordered_map< std::string, RgResrcHandle > _image_defn_map;
-//        CommandBuffer* _command_buffer;
-//        kege::Graphics* _graphics;
-//        RenderPass* _pass;
-//        Rect2D _render_area;
-//
-//        std::string _name;
-//
-//        friend RenderGraph;
-//        friend RenderPass;
+//        std::size_t operator()(const RgResrcHandle& h) const noexcept
+//        {
+//            return std::hash<int>()(static_cast<int>(h.type)) ^ (std::hash<int>()(h.index) << 1);
+//        }
 //    };
+}
 
+namespace std{
+
+    template <> struct hash< kege::RgResrcHandle >
+    {
+        std::size_t operator()( const kege::RgResrcHandle& handle ) const
+        {
+            return std::hash<int>()(static_cast<int>( handle.type )) ^ (std::hash<int>()( handle.index ) << 1);
+        }
+    };
 }
 #endif /* render_pass_context_hpp */

@@ -102,7 +102,7 @@ namespace kege::vk{
          * This handle is used to bind descriptor sets to the pipeline.
          */
         VkResult result;
-        if (( result = _device->createPipelineLayout( &info, nullptr, &pipeline_layout->layout ) ) != VK_SUCCESS )
+        if (( result = _device->_manager.createPipelineLayout( &info, nullptr, &pipeline_layout->layout ) ) != VK_SUCCESS )
         {
             kege::Log::error << vkResultToString( result );
             return -1;
@@ -110,7 +110,7 @@ namespace kege::vk{
 
         if ( _instance->isValidationEnabled() && name != nullptr )
         {
-            _device->debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_IMAGE, name );
+            _device->_manager.debugSetObjectName( (uint64_t)pipeline_layout->layout, VK_OBJECT_TYPE_PIPELINE_LAYOUT, name );
         }
 
         return pipeline_layout_id;
@@ -124,7 +124,7 @@ namespace kege::vk{
         vk::PipelineLayout* layout = _pipeline_layouts.get( pipeline_layout_id );
         if ( layout != nullptr )
         {
-            _device->destroyPipelineLayout( layout->layout, nullptr );
+            _device->_manager.destroyPipelineLayout( layout->layout, nullptr );
             layout->layout = VK_NULL_HANDLE;
             _pipeline_layouts.free( pipeline_layout_id );
         }
@@ -192,7 +192,7 @@ namespace kege::vk{
          * This is the Vulkan handle that represents the descriptor set layout.
          */
         VkDescriptorSetLayout layout = VK_NULL_HANDLE;
-        VkResult result = _device->createDescriptorSetLayout( &create_info, nullptr, &layout );
+        VkResult result = _device->_manager.createDescriptorSetLayout( &create_info, nullptr, &layout );
         if ( result != VK_SUCCESS )
         {
             kege::Log::error << vkResultToString( result );
@@ -201,7 +201,7 @@ namespace kege::vk{
 
         if ( _instance->isValidationEnabled() && !name.empty() )
         {
-            _device->debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, name.c_str() );
+            _device->_manager.debugSetObjectName( (uint64_t)layout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT, name.c_str() );
         }
 
         // ... Store handle ...
@@ -264,7 +264,7 @@ namespace kege::vk{
         if ( _descriptor_set_layouts.get( handle ) != nullptr )
         {
             vk::DescriptorSetLayout* dsl = _descriptor_set_layouts.get( handle );
-            _device->destroyUniformSetLayout( dsl->handle, nullptr );
+            _device->_manager.destroyUniformSetLayout( dsl->handle, nullptr );
             dsl->handle = VK_NULL_HANDLE;
             dsl->bindings = {};
             _descriptor_set_layouts.free( handle );
@@ -361,7 +361,7 @@ namespace kege::vk{
 
         if ( !descriptor_writes.empty() )
         {
-            _device->updateDescriptorSets( static_cast<uint32_t>(descriptor_writes.size()), descriptor_writes.data(), 0, nullptr );
+            _device->_manager.updateDescriptorSets( static_cast<uint32_t>(descriptor_writes.size()), descriptor_writes.data(), 0, nullptr );
         }
         return true;
     }
@@ -518,7 +518,7 @@ namespace kege::vk{
 
         VkResult result;
         VkDescriptorSet descriptor_set[ quantity ];
-        if (( result = _device->allocateDescriptorSets( &alloc_info, descriptor_set ) ) != VK_SUCCESS )
+        if (( result = _device->_manager.allocateDescriptorSets( &alloc_info, descriptor_set ) ) != VK_SUCCESS )
         {
             kege::Log::error << vkResultToString( result );
             return false;
@@ -808,7 +808,7 @@ namespace kege::vk{
             create_info.pPoolSizes = pool_sizes.data();
             create_info.maxSets = maxsets;
 
-            if( _device->createDescriptorPool( &create_info, nullptr, &pool.handle ) != VK_SUCCESS )
+            if( _device->_manager.createDescriptorPool( &create_info, nullptr, &pool.handle ) != VK_SUCCESS )
             {
                 kege::Log::error << "createDescriptorPool";
                 return false;
@@ -1151,14 +1151,14 @@ namespace kege::vk{
         {
             if ( _pipeline_layouts.get( i ) != nullptr )
             {
-                _device->destroyPipelineLayout( _pipeline_layouts.get( i )->layout, nullptr );
+                _device->_manager.destroyPipelineLayout( _pipeline_layouts.get( i )->layout, nullptr );
             };
         }
         for ( uint32_t i = 0; i < _descriptor_set_layouts.count(); ++i )
         {
             if ( _descriptor_set_layouts.get( i ) != nullptr )
             {
-                _device->destroyUniformSetLayout( _descriptor_set_layouts.get( i )->handle, nullptr );
+                _device->_manager.destroyUniformSetLayout( _descriptor_set_layouts.get( i )->handle, nullptr );
             };
         }
         for ( uint32_t i = 0; i < _descriptor_allocators.count(); ++i )
@@ -1167,7 +1167,7 @@ namespace kege::vk{
             {
                 for ( uint32_t j = 0; j < _descriptor_allocators.get(i)->descriptor_pools.size(); ++j )
                 {
-                    _device->destroyDescriptorPool( _descriptor_allocators.get(i)->descriptor_pools[j].handle, nullptr );
+                    _device->_manager.destroyDescriptorPool( _descriptor_allocators.get(i)->descriptor_pools[j].handle, nullptr );
                 }
             };
         }

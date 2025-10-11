@@ -9,7 +9,7 @@
 
 namespace kege{
 
-    void TaskManager::addTask( const std::function< void() >& task, Task::Status* status )
+    void QueueManager::addTask( const std::function< void() >& task, Task::Status* status )
     {
         std::lock_guard<std::mutex> lock( _queue_mutex );
         _task_queue.push( Task( task, status ) );
@@ -27,7 +27,7 @@ namespace kege{
 //        _curr_index++;
     }
 
-    void TaskManager::shutdown()
+    void QueueManager::shutdown()
     {
         _running = false;
         if ( _thread.joinable() )
@@ -44,17 +44,17 @@ namespace kege{
         _executors.clear();
     }
 
-    Task::Type TaskManager::type()const
+    Task::Type QueueManager::type()const
     {
         return _type;
     }
 
-    void TaskManager::addTaskExecutor()
+    void QueueManager::addTaskExecutor()
     {
         _executors.push_back( new TaskExecutor );
     }
 
-    void TaskManager::run()
+    void QueueManager::run()
     {
         _running = true;
         uint32_t executors_index = 0;
@@ -100,7 +100,7 @@ namespace kege{
         
     }
 
-    TaskManager::TaskManager( Task::Type type )
+    QueueManager::QueueManager( Task::Type type )
     :   _type( type )
     ,   _curr_index( 0 )
     {
@@ -112,10 +112,10 @@ namespace kege{
         addTaskExecutor();
         addTaskExecutor();
         addTaskExecutor();
-        _thread = std::thread( &TaskManager::run, this );
+        _thread = std::thread( &QueueManager::run, this );
     }
 
-    TaskManager::~TaskManager()
+    QueueManager::~QueueManager()
     {
         shutdown();
     }

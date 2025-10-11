@@ -175,11 +175,11 @@ namespace kege{
 
         if ( name == "getSwapchainDepthFormat()" )
         {
-            return graph.getGraphics()->getSwapchainDepthFormat();
+            return graph.getGraphics()->getSwapchain()->getDepthFormat();
         }
         else if ( name == "getSwapchainColorFormat()" )
         {
-            return graph.getGraphics()->getSwapchainColorFormat();
+            return graph.getGraphics()->getSwapchain()->getColorFormat();
         }
 
         static std::map< std::string, Format > types;
@@ -328,23 +328,21 @@ namespace kege{
         return {};
     }
 
-    ImageUsageFlags RenderGraphLoader::getImageUsage( Json json )
+    ImageUsage RenderGraphLoader::getImageUsage( Json json )
     {
-        static std::map< std::string, ImageUsageFlags > types;
+        static std::map< std::string, ImageUsage > types;
         if ( types.empty() )
         {
-            types[ "None" ] = ImageUsageFlags::None;
-            types[ "CopySrc" ] = ImageUsageFlags::CopySrc;
-            types[ "CopyDst" ] = ImageUsageFlags::CopyDst;
-            types[ "ShaderResource" ] = ImageUsageFlags::ShaderResource;
-            types[ "Storage" ] = ImageUsageFlags::Storage;
-            types[ "ColorAttachment" ] = ImageUsageFlags::ColorAttachment;
-            types[ "DepthStencilAttachment" ] = ImageUsageFlags::DepthStencilAttachment;
-            types[ "TransientAttachment" ] = ImageUsageFlags::TransientAttachment;
-            types[ "InputAttachment" ] = ImageUsageFlags::InputAttachment;
-            types[ "ResolveSrc" ] = ImageUsageFlags::ResolveSrc;
-            types[ "ResolveDst" ] = ImageUsageFlags::ResolveDst;
-            types[ "Present" ] = ImageUsageFlags::Present;
+            types[ "None" ] = ImageUsage::Undefined;
+            types[ "CopySrc" ] = ImageUsage::TransferSrc;
+            types[ "CopyDst" ] = ImageUsage::TransferDst;
+            types[ "ShaderResource" ] = ImageUsage::Sampled;
+            types[ "Storage" ] = ImageUsage::Storage;
+            types[ "Color" ] = ImageUsage::Color;
+            types[ "DepthStencil" ] = ImageUsage::DepthStencil;
+            types[ "TransientAttachment" ] = ImageUsage::Transient;
+            types[ "InputAttachment" ] = ImageUsage::Input;
+            types[ "Present" ] = ImageUsage::Present;
         }
         auto m = types.find( json.value() );
         if ( m != types.end() )
@@ -352,7 +350,7 @@ namespace kege{
             return m->second;
         }
 
-        return {};
+        return ImageUsage::Undefined;
     }
 
     DescriptorType RenderGraphLoader::getDescriptorType( Json json )
@@ -468,17 +466,17 @@ namespace kege{
 
     int RenderGraphLoader::getSwapchainImageCount( kege::RenderGraph& graph, Json json )
     {
-        return graph.getGraphics()->getSwapchainImageCount();
+        return graph.getGraphics()->getSwapchain()->getImageCount();
     }
 
     int RenderGraphLoader::getSwapchainExtentHeight( kege::RenderGraph& graph, Json json )
     {
-        return graph.getGraphics()->getSwapchainExtent().height;
+        return graph.getGraphics()->getSwapchain()->getExtent().height;
     }
 
     int RenderGraphLoader::getSwapchainExtentWidth( kege::RenderGraph& graph, Json json )
     {
-        return graph.getGraphics()->getSwapchainExtent().width;
+        return graph.getGraphics()->getSwapchain()->getExtent().width;
     }
 
     int RenderGraphLoader::getFramesInFlight( kege::RenderGraph& graph, Json json )

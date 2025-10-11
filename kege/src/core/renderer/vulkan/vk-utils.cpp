@@ -122,7 +122,7 @@ namespace kege::vk{
         }
     }
 
-    VkImageAspectFlags convertImageAspect(ImageAspectFlag aspect)
+    VkImageAspectFlags toVkImageAspect(ImageAspectFlag aspect)
     {
         VkImageAspectFlags vk_aspect = 0;
         if ( (aspect & ImageAspectFlag::Color) != ImageAspectFlag::None ) {
@@ -135,6 +135,69 @@ namespace kege::vk{
             vk_aspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
         return vk_aspect;
+    }
+
+
+    ImageAspectFlag toVkImageAspect(VkImageAspectFlags aspect)
+    {
+        ImageAspectFlag iaf = ImageAspectFlag::None;
+        if ( (aspect & VK_IMAGE_ASPECT_COLOR_BIT) != 0 ) {
+            iaf |= ImageAspectFlag::Color;
+        }
+        if ( (aspect & VK_IMAGE_ASPECT_DEPTH_BIT) != 0 ) {
+            iaf |= ImageAspectFlag::Depth;
+        }
+        if ( (aspect & VK_IMAGE_ASPECT_STENCIL_BIT) != 0 ) {
+            iaf |= ImageAspectFlag::Stencil;
+        }
+        return iaf;
+    }
+
+    VkImageAspectFlags vkFormatToVkImageAspect( VkFormat format )
+    {
+        switch (format)
+        {
+            case VK_FORMAT_UNDEFINED: return VK_IMAGE_ASPECT_NONE;
+
+            // Depth formats
+            case VK_FORMAT_D16_UNORM:
+            case VK_FORMAT_D32_SFLOAT: return VK_IMAGE_ASPECT_DEPTH_BIT;
+
+            // Stencil formats
+            case VK_FORMAT_S8_UINT: return VK_IMAGE_ASPECT_STENCIL_BIT;
+
+            default: return VK_IMAGE_ASPECT_COLOR_BIT;
+        }
+    }
+
+    VkImageAspectFlags getImageAspectFlags( Format format )
+    {
+        switch (format)
+        {
+            // --- Depth+Stencil Formats ---
+            case Format::depth_16_stencil_8:
+            case Format::depth_24_stencil_8:
+            case Format::depth_32_stencil_8: // Combined depth and stencil
+                return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+
+            // --- Depth-Only Formats ---
+            case Format::depth_16:
+            case Format::depth_32:
+                return VK_IMAGE_ASPECT_DEPTH_BIT;
+
+            // --- Stencil-Only Format ---
+            case Format::stencil_u8:
+                return VK_IMAGE_ASPECT_STENCIL_BIT;
+
+                // --- Undefined Format ---
+            case Format::undefined:
+                Log::warning << "getImageAspectFlags called with Undefined format."  <<Log::nl;
+                return VK_IMAGE_ASPECT_NONE; // Or maybe COLOR_BIT? None is safer.
+
+            // --- Color Formats ---
+            default:
+                return VK_IMAGE_ASPECT_COLOR_BIT;
+        }
     }
 
 
@@ -388,143 +451,6 @@ namespace kege::vk{
         }
     }
 
-    VkImageAspectFlags getImageAspectFlags( Format format )
-    {
-        switch (format)
-        {
-            // --- Depth+Stencil Formats ---
-            case Format::depth_16_stencil_8:
-            case Format::depth_24_stencil_8:
-            case Format::depth_32_stencil_8: // Combined depth and stencil
-                return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-
-            // --- Depth-Only Formats ---
-            case Format::depth_16:
-            case Format::depth_32:
-                return VK_IMAGE_ASPECT_DEPTH_BIT;
-
-            // --- Stencil-Only Format ---
-            case Format::stencil_u8:
-                return VK_IMAGE_ASPECT_STENCIL_BIT;
-
-            // --- Color Formats ---
-
-            // 8-bit unsigned
-            case Format::r_u8:
-            case Format::rg_u8:
-            case Format::rgb_u8:
-            case Format::rgba_u8:
-
-            // 8-bit signed
-            case Format::r_s8:
-            case Format::rg_s8:
-            case Format::rgb_s8:
-            case Format::rgba_s8:
-
-            // 8-bit unsigned normalized
-            case Format::r_u8_norm:
-            case Format::rg_u8_norm:
-            case Format::rgb_u8_norm:
-            case Format::rgba_u8_norm:
-
-            // 8-bit signed normalized
-            case Format::r_s8_norm:
-            case Format::rg_s8_norm:
-            case Format::rgb_s8_norm:
-            case Format::rgba_s8_norm:
-
-            // 8-bit sRGB
-            case Format::r_8_srgb:
-            case Format::rg_8_srgb:
-            case Format::rgb_8_srgb:
-            case Format::rgba_8_srgb:
-
-            // BGR formats
-            case Format::bgr_8_srbg:
-            case Format::bgra_8_srbg:
-            case Format::bgr_u8:
-            case Format::bgr_s8:
-            case Format::bgr_s8_norm:
-            case Format::bgr_u8_norm:
-            case Format::bgra_u8:
-            case Format::bgra_s8:
-            case Format::bgra_s8_norm:
-            case Format::bgra_u8_norm:
-
-            // 16-bit unsigned
-            case Format::r_u16:
-            case Format::rg_u16:
-            case Format::rgb_u16:
-            case Format::rgba_u16:
-
-            // 16-bit signed
-            case Format::r_s16:
-            case Format::rg_s16:
-            case Format::rgb_s16:
-            case Format::rgba_s16:
-
-            // 16-bit unsigned normalized
-            case Format::r_u16_norm:
-            case Format::rg_u16_norm:
-            case Format::rgb_u16_norm:
-            case Format::rgba_u16_norm:
-
-            // 16-bit signed normalized
-            case Format::r_s16_norm:
-            case Format::rg_s16_norm:
-            case Format::rgb_s16_norm:
-            case Format::rgba_s16_norm:
-
-            // 32-bit unsigned
-            case Format::r_u32:
-            case Format::rg_u32:
-            case Format::rgb_u32:
-            case Format::rgba_u32:
-
-            // 32-bit signed
-            case Format::r_s32:
-            case Format::rg_s32:
-            case Format::rgb_s32:
-            case Format::rgba_s32:
-
-            // 32-bit float
-            case Format::r_f32:
-            case Format::rg_f32:
-            case Format::rgb_f32:
-            case Format::rgba_f32:
-
-            // 64-bit unsigned
-            case Format::r_u64:
-            case Format::rg_u64:
-            case Format::rgb_u64:
-            case Format::rgba_u64:
-
-            // 64-bit signed
-            case Format::r_s64:
-            case Format::rg_s64:
-            case Format::rgb_s64:
-            case Format::rgba_s64:
-
-            // 64-bit float
-            case Format::r_f64:
-            case Format::rg_f64:
-            case Format::rgb_f64:
-            case Format::rgba_f64:
-                return VK_IMAGE_ASPECT_COLOR_BIT;
-
-                // --- Undefined Format ---
-            case Format::undefined:
-                Log::warning << "getImageAspectFlags called with Undefined format."  <<Log::nl;
-                return VK_IMAGE_ASPECT_NONE; // Or maybe COLOR_BIT? None is safer.
-
-            default:
-                // This case ideally shouldn't be hit if all formats are listed,
-                // but serves as a fallback.
-                Log::warning << "Unhandled Format in getImageAspectFlags. Assuming COLOR_BIT."  <<Log::nl;
-                return VK_IMAGE_ASPECT_COLOR_BIT;
-        }
-    }
-
 
     VkImageType convertTextureType(ImageType type)
     {
@@ -644,83 +570,44 @@ namespace kege::vk{
         }
     }
 
-    VkImageUsageFlags convertTextureUsage(ImageUsageFlags usage)
+    VkImageUsageFlags convertImageUsage(ImageUsage usage)
     {
-        VkImageUsageFlags vk_usage = 0; // Start with no flags
+        VkImageUsageFlags vk_usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT; // Start with no flags
 
         // --- Direct Mappings ---
 
-        if ((usage & ImageUsageFlags::CopySrc) != ImageUsageFlags::None) {
+        if ( int(usage & ImageUsage::TransferSrc) != 0 )
+        {
             vk_usage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
         }
-        if ((usage & ImageUsageFlags::CopyDst) != ImageUsageFlags::None) {
+        if ( int(usage & ImageUsage::TransferDst) != 0 )
+        {
             vk_usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         }
-        if ((usage & ImageUsageFlags::ShaderResource) != ImageUsageFlags::None) {
-            vk_usage |= VK_IMAGE_USAGE_SAMPLED_BIT; // Allows binding as sampled image (texture())
+        if ( int(usage & ImageUsage::Sampled) != 0 )
+        {
+            vk_usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
         }
-        if ((usage & ImageUsageFlags::Storage) != ImageUsageFlags::None) {
-            vk_usage |= VK_IMAGE_USAGE_STORAGE_BIT; // Allows binding as storage image (imageLoad/Store)
+        if ( int(usage & ImageUsage::Storage) != 0 )
+        {
+            vk_usage |= VK_IMAGE_USAGE_STORAGE_BIT;
         }
-        if ((usage & ImageUsageFlags::ColorAttachment) != ImageUsageFlags::None) {
+        if ( int(usage & ImageUsage::Color) != 0 )
+        {
             vk_usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
         }
-        if ((usage & ImageUsageFlags::DepthStencilAttachment) != ImageUsageFlags::None) {
+        if ( int(usage & ImageUsage::DepthStencil) != 0 )
+        {
             vk_usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
         }
-        if ((usage & ImageUsageFlags::InputAttachment) != ImageUsageFlags::None) {
-            // Primarily for Vulkan subpasses (less common with dynamic rendering focus)
+        if ( int(usage & ImageUsage::Input) != 0 )
+        {
             vk_usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
         }
-
-        // --- Implied Mappings / Notes ---
-
-        // ImageUsageFlags::TransientAttachment:
-        // This flag is primarily a *hint* for the memory allocator (like VMA).
-        // It often implies ColorAttachment or DepthStencilAttachment usage as well,
-        // which should be explicitly set in the abstract flags.
-        // It doesn't usually translate to a direct VkImageUsageFlagBits itself,
-        // but VMA might use it along with other usage flags to select lazy allocation.
-        // So, ensure that if you use TransientAttachment, you also set ColorAttachment or DepthStencilAttachment.
-        if ((usage & ImageUsageFlags::TransientAttachment) != ImageUsageFlags::None)
+        if ( int(usage & ImageUsage::Transient) != 0 )
         {
-            // No direct Vulkan usage flag, but good practice checks:
-            if (((usage & ImageUsageFlags::ColorAttachment) == ImageUsageFlags::None) &&
-                ((usage & ImageUsageFlags::DepthStencilAttachment) == ImageUsageFlags::None))
-            {
-                // Optional: Log a warning - Transient usually implies render target usage
-                // std::cerr << "Warning: TransientAttachment flag set without ColorAttachment or DepthStencilAttachment." << std::endl;
-            }
+            vk_usage |= VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
         }
-
-        // ImageUsageFlags::ResolveSrc / ImageUsageFlags::ResolveDst:
-        // These don't have their own dedicated VkImageUsageFlagBits.
-        // The ability to be a resolve source/destination is implied by other flags:
-        // - Resolve Source: Typically needs VK_IMAGE_USAGE_TRANSFER_SRC_BIT (for vkCmdResolveImage)
-        //                   or potentially VK_IMAGE_USAGE_SAMPLED_BIT if resolving via shader.
-        //                   Ensure the corresponding flag is set if ResolveSrc is used.
-        // - Resolve Destination: Typically needs VK_IMAGE_USAGE_TRANSFER_DST_BIT (for vkCmdResolveImage)
-        //                       or VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT / DEPTH_STENCIL_ATTACHMENT_BIT
-        //                       if resolving via shader write.
-        //                       Ensure the corresponding flag is set if ResolveDst is used.
-        // Your Render Graph logic for resolving should ensure the concrete flags are present.
-
-        // ImageUsageFlags::Present:
-        // As discussed, this flag does NOT translate to a VkImageUsageFlagBits here.
-        // The necessary usage flags (like ColorAttachment, TransferDst) should be set
-        // based on how the application intends to write to the swapchain image *before*
-        // presentation. These flags are then passed during vkCreateSwapchainKHR.
-        if ((usage & ImageUsageFlags::Present) != ImageUsageFlags::None) {
-            // No direct flag added. Ensure other flags like ColorAttachment/TransferDst are set.
-        }
-
-
-        // Ensure *some* usage is specified if not explicitly 'None'
-        // (Though creating a texture with no usage is valid but useless)
-        // if (usage != ImageUsageFlags::None && vkUsage == 0) {
-        //     // Optional: Log warning/error for unusual usage combination
-        // }
-
         return vk_usage;
     }
 
@@ -1178,26 +1065,25 @@ namespace kege::vk{
     {
         switch ( image_layout )
         {
-
-            case ImageLayout::Undefined: return VK_IMAGE_LAYOUT_UNDEFINED;
-            case ImageLayout::General: return VK_IMAGE_LAYOUT_GENERAL;
-            case ImageLayout::ColorAttachment: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            case ImageLayout::DepthStencilAttachment: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-            case ImageLayout::DepthStencilRead: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-            case ImageLayout::ShaderReadOnly: return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            case ImageLayout::TransferSrc: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            case ImageLayout::TransferDst: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-            case ImageLayout::PreInitialized: return VK_IMAGE_LAYOUT_PREINITIALIZED;
-            //case ImageLayout:: IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMA: return VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL: return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL: return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL: return VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL: return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL: return VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_READ_ONLY_OPTIMAL: return VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
-            //case ImageLayout:: IMAGE_LAYOUT_ATTACHMENT_OPTIMAL: return VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
-            case ImageLayout::Present: return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-            default: KEGE_LOG_ERROR << "Unsupported ImageLayout" <<Log::nl;
+            case ImageLayout::Undefined:            return VK_IMAGE_LAYOUT_UNDEFINED;
+            case ImageLayout::General:              return VK_IMAGE_LAYOUT_GENERAL;
+            case ImageLayout::Color:                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            case ImageLayout::Depth:                return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+            case ImageLayout::DepthRead:            return VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_OPTIMAL;
+            case ImageLayout::Stencil:              return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
+            case ImageLayout::StencilRead:          return VK_IMAGE_LAYOUT_STENCIL_READ_ONLY_OPTIMAL;
+            case ImageLayout::DepthStencil:         return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            case ImageLayout::DepthStencilRead:     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+            case ImageLayout::DepthRead_Stencil:    return VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL;
+            case ImageLayout::Depth_StencilRead:    return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL;
+            case ImageLayout::ShaderRead:           return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            case ImageLayout::TransferSrc:          return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+            case ImageLayout::TransferDst:          return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            case ImageLayout::PreInitialized:       return VK_IMAGE_LAYOUT_PREINITIALIZED;
+            case ImageLayout::Present:              return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+            case ImageLayout::HostRead:             return VK_IMAGE_LAYOUT_GENERAL; // Vulkan has no direct "host" layout
+            case ImageLayout::HostWrite:            return VK_IMAGE_LAYOUT_GENERAL;
+            default:                                return VK_IMAGE_LAYOUT_GENERAL;
         }
         return {};
     }
@@ -1207,23 +1093,40 @@ namespace kege::vk{
     {
         VkAccessFlags vk_flags = 0;
 
-        if ((access & AccessFlags::IndirectCommandRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
-        if ((access & AccessFlags::IndexRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INDEX_READ_BIT;
-        if ((access & AccessFlags::VertexBufferRead) != AccessFlags::None) vk_flags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
-        if ((access & AccessFlags::UniformRead) != AccessFlags::None) vk_flags |= VK_ACCESS_UNIFORM_READ_BIT;
-        if ((access & AccessFlags::InputAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT; // Subpass specific
-        if ((access & AccessFlags::ShaderRead) != AccessFlags::None) vk_flags |= VK_ACCESS_SHADER_READ_BIT;
-        if ((access & AccessFlags::ShaderWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_SHADER_WRITE_BIT;
-        if ((access & AccessFlags::ColorAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        if ((access & AccessFlags::ColorAttachmentWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        if ((access & AccessFlags::DepthStencilAttachmentRead) != AccessFlags::None) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
-        if ((access & AccessFlags::DepthStencilAttachmentWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-        if ((access & AccessFlags::TransferRead) != AccessFlags::None) vk_flags |= VK_ACCESS_TRANSFER_READ_BIT;
-        if ((access & AccessFlags::TransferWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
-        if ((access & AccessFlags::HostRead) != AccessFlags::None) vk_flags |= VK_ACCESS_HOST_READ_BIT;
-        if ((access & AccessFlags::HostWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_HOST_WRITE_BIT;
-        if ((access & AccessFlags::MemoryRead) != AccessFlags::None) vk_flags |= VK_ACCESS_MEMORY_READ_BIT;
-        if ((access & AccessFlags::MemoryWrite) != AccessFlags::None) vk_flags |= VK_ACCESS_MEMORY_WRITE_BIT;
+        if ((access & AccessFlags::IndirectCommandRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+        if ((access & AccessFlags::IndexRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_INDEX_READ_BIT;
+        if ((access & AccessFlags::VertexBufferRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+        if ((access & AccessFlags::UniformRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_UNIFORM_READ_BIT;
+        if ((access & AccessFlags::InputRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_INPUT_ATTACHMENT_READ_BIT; // Subpass specific
+        if ((access & AccessFlags::ShaderRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_SHADER_READ_BIT;
+        if ((access & AccessFlags::ShaderWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_SHADER_WRITE_BIT;
+        if ((access & AccessFlags::ColorRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
+        if ((access & AccessFlags::ColorWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        if ((access & AccessFlags::DepthStencilRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+        if ((access & AccessFlags::DepthStencilWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        if ((access & AccessFlags::TransferRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_TRANSFER_READ_BIT;
+        if ((access & AccessFlags::TransferWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_TRANSFER_WRITE_BIT;
+        if ((access & AccessFlags::HostRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_HOST_READ_BIT;
+        if ((access & AccessFlags::HostWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_HOST_WRITE_BIT;
+        if ((access & AccessFlags::MemoryRead) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_MEMORY_READ_BIT;
+        if ((access & AccessFlags::MemoryWrite) != AccessFlags::None)
+            vk_flags |= VK_ACCESS_MEMORY_WRITE_BIT;
         // Add Acceleration Structure flags if needed (VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR, etc.)
 
         // Note: VK_ACCESS_NONE is 0, so if 'access' is None, vk_flags will correctly be 0.
@@ -1232,109 +1135,147 @@ namespace kege::vk{
     }
 
 
+    VkPipelineStageFlagBits convertPipelineStage( PipelineStageFlag stage )
+    {
+        switch( stage )
+        {
+            case PipelineStageFlag::TopOfPipe: return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            case PipelineStageFlag::DrawIndirect: return VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+            case PipelineStageFlag::VertexInput: return VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+            case PipelineStageFlag::VertexShader: return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+            case PipelineStageFlag::TessellationControlShader: return VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
+            case PipelineStageFlag::TessellationEvaluationShader: return VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
+            case PipelineStageFlag::GeometryShader: return VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT; // Requires feature
+            case PipelineStageFlag::FragmentShader: return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+            case PipelineStageFlag::EarlyFragmentTests: return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            case PipelineStageFlag::LateFragmentTests: return VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+            case PipelineStageFlag::ColorOutput: return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            case PipelineStageFlag::ComputeShader: return VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+            case PipelineStageFlag::Transfer: return VK_PIPELINE_STAGE_TRANSFER_BIT;
+            case PipelineStageFlag::BottomOfPipe: return VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+            case PipelineStageFlag::Host: return VK_PIPELINE_STAGE_HOST_BIT;
+            case PipelineStageFlag::RayTrace: return VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+
+            // Handle composite flags (optional, as individual bits are usually enough)
+            case PipelineStageFlag::AllGraphics: return VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+            case PipelineStageFlag::AllCommands: return VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+            default: break;
+        }
+        return VK_PIPELINE_STAGE_NONE;
+    }
+
     VkPipelineStageFlags convertPipelineStageFlag(PipelineStageFlag stages)
     {
-        VkPipelineStageFlags flags = 0;
+        VkPipelineStageFlags flags = VK_PIPELINE_STAGE_NONE;
 
-        if ((stages & PipelineStageFlag::TopOfPipe) != 0) flags |= VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-        if ((stages & PipelineStageFlag::DrawIndirect) != 0) flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-        if ((stages & PipelineStageFlag::VertexInput) != 0) flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
-        if ((stages & PipelineStageFlag::VertexShader) != 0) flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-        if ((stages & PipelineStageFlag::TessellationControlShader) != 0) flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
-        if ((stages & PipelineStageFlag::TessellationEvaluationShader) != 0) flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
-        if ((stages & PipelineStageFlag::GeometryShader) != 0) flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT; // Requires feature
-        if ((stages & PipelineStageFlag::FragmentShader) != 0) flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-        if ((stages & PipelineStageFlag::EarlyFragmentTests) != 0) flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        if ((stages & PipelineStageFlag::LateFragmentTests) != 0) flags |= VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-        if ((stages & PipelineStageFlag::ColorAttachmentOutput) != 0) flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        if ((stages & PipelineStageFlag::ComputeShader) != 0) flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-        if ((stages & PipelineStageFlag::Transfer) != 0) flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
-        if ((stages & PipelineStageFlag::BottomOfPipe) != 0) flags |= VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-        if ((stages & PipelineStageFlag::Host) != 0) flags |= VK_PIPELINE_STAGE_HOST_BIT;
-        if ((stages & PipelineStageFlag::RayTrace) != 0) flags |= VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+        if ((stages & PipelineStageFlag::TopOfPipe) != 0)
+            flags |= VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+        if ((stages & PipelineStageFlag::DrawIndirect) != 0)
+            flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+        if ((stages & PipelineStageFlag::VertexInput) != 0)
+            flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+        if ((stages & PipelineStageFlag::VertexShader) != 0)
+            flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+        if ((stages & PipelineStageFlag::TessellationControlShader) != 0)
+            flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
+        if ((stages & PipelineStageFlag::TessellationEvaluationShader) != 0)
+            flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
+        if ((stages & PipelineStageFlag::GeometryShader) != 0)
+            flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT; // Requires feature
+        if ((stages & PipelineStageFlag::FragmentShader) != 0)
+            flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+        if ((stages & PipelineStageFlag::EarlyFragmentTests) != 0)
+            flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        if ((stages & PipelineStageFlag::LateFragmentTests) != 0)
+            flags |= VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+        if ((stages & PipelineStageFlag::ColorOutput) != 0)
+            flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        if ((stages & PipelineStageFlag::ComputeShader) != 0)
+            flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+        if ((stages & PipelineStageFlag::Transfer) != 0)
+            flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
+        if ((stages & PipelineStageFlag::BottomOfPipe) != 0)
+            flags |= VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+        if ((stages & PipelineStageFlag::Host) != 0)
+            flags |= VK_PIPELINE_STAGE_HOST_BIT;
+        if ((stages & PipelineStageFlag::RayTrace) != 0)
+            flags |= VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
 
         // Handle composite flags (optional, as individual bits are usually enough)
-        if ((stages & PipelineStageFlag::AllGraphics) != 0) flags |= VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
-        if ((stages & PipelineStageFlag::AllCommands) != 0) flags |= VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
-
-        // Ensure that if no specific stage was requested (potentially an error in barrier logic),
-        // we use sensible defaults for src/dst to avoid validation errors.
-        // This logic might better belong in the barrier calculation itself.
-        if (flags == 0)
-        {
-            // Maybe default to ALL_COMMANDS for safety? Or TOP/BOTTOM?
-             flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT; // Or BOTTOM?
-        }
+        if ((stages & PipelineStageFlag::AllGraphics) != 0)
+            flags |= VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+        if ((stages & PipelineStageFlag::AllCommands) != 0)
+            flags |= VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
         return flags;
     }
 
 
     // Translates abstract resource state to appropriate Vulkan image layout
-    VkImageLayout translatesToVkLayout(ResourceState state, Format format)
-    {
-        switch ( state )
-        {
-            case ResourceState::Undefined:
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-
-            case ResourceState::RenderTargetColor:
-                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-            case ResourceState::RenderTargetDepthStencil:
-                // Could refine based on format if separating depth/stencil-only layouts
-                // if (isDepthOnlyFormat(format)) return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
-                // if (isStencilOnlyFormat(format)) return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
-                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-            case ResourceState::ShaderResource:
-                // Read-only access in shaders (textures, uniform texel buffers)
-                if ( isDepthStencilFormat(format) )
-                {
-                     // Depth/stencil formats often need a specific read-only layout
-                     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-                     // Could refine to DEPTH_READ_ONLY / STENCIL_READ_ONLY if needed
-                }
-                else
-                {
-                    return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                }
-
-            case ResourceState::UnorderedAccess:
-                // Read/Write access in shaders (storage images/texel buffers)
-                return VK_IMAGE_LAYOUT_GENERAL; // General layout is usually required for storage images
-
-            case ResourceState::CopySrc:
-                return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-
-            case ResourceState::CopyDst:
-                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-
-            case ResourceState::Present:
-                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-            // States primarily relevant for Buffers (Layout doesn't apply)
-            case ResourceState::VertexBuffer:
-            case ResourceState::IndexBuffer:
-            case ResourceState::UniformBuffer:
-            case ResourceState::StorageBufferRead:
-            case ResourceState::StorageBufferWrite:
-            case ResourceState::IndirectArgument:
-                // Buffers don't have image layouts. Return something reasonable or assert.
-                // Returning UNDEFINED might be safest if called erroneously for a buffer.
-                // std::cerr << "Warning: stateToVkLayout called for buffer-specific state." << std::endl;
-                return VK_IMAGE_LAYOUT_UNDEFINED; // Or VK_IMAGE_LAYOUT_GENERAL? Needs care.
-
-            // Add ResolveSrc/Dst cases if needed -> TRANSFER_SRC/DST usually appropriate
-            // case ResourceState::ResolveSrc: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            // case ResourceState::ResolveDst: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-
-            default:
-                std::cerr << "Warning: Unhandled ResourceState in stateToVkLayout. Defaulting to UNDEFINED." << std::endl;
-                return VK_IMAGE_LAYOUT_UNDEFINED;
-        }
-        return {};
-    }
+//    VkImageLayout translatesToVkLayout(ResourceState state, Format format)
+//    {
+//        switch ( state )
+//        {
+//            case ResourceState::Undefined:
+//                return VK_IMAGE_LAYOUT_UNDEFINED;
+//
+//            case ResourceState::RenderTargetColor:
+//                return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+//
+//            case ResourceState::RenderTargetDepthStencil:
+//                // Could refine based on format if separating depth/stencil-only layouts
+//                // if (isDepthOnlyFormat(format)) return VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
+//                // if (isStencilOnlyFormat(format)) return VK_IMAGE_LAYOUT_STENCIL_ATTACHMENT_OPTIMAL;
+//                return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+//
+//            case ResourceState::ShaderResource:
+//                // Read-only access in shaders (textures, uniform texel buffers)
+//                if ( isDepthStencilFormat(format) )
+//                {
+//                     // Depth/stencil formats often need a specific read-only layout
+//                     return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+//                     // Could refine to DEPTH_READ_ONLY / STENCIL_READ_ONLY if needed
+//                }
+//                else
+//                {
+//                    return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+//                }
+//
+//            case ResourceState::UnorderedAccess:
+//                // Read/Write access in shaders (storage images/texel buffers)
+//                return VK_IMAGE_LAYOUT_GENERAL; // General layout is usually required for storage images
+//
+//            case ResourceState::CopySrc:
+//                return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+//
+//            case ResourceState::CopyDst:
+//                return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+//
+//            case ResourceState::Present:
+//                return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+//
+//            // States primarily relevant for Buffers (Layout doesn't apply)
+//            case ResourceState::VertexBuffer:
+//            case ResourceState::IndexBuffer:
+//            case ResourceState::UniformBuffer:
+//            case ResourceState::StorageBufferRead:
+//            case ResourceState::StorageBufferWrite:
+//            case ResourceState::IndirectArgument:
+//                // Buffers don't have image layouts. Return something reasonable or assert.
+//                // Returning UNDEFINED might be safest if called erroneously for a buffer.
+//                // std::cerr << "Warning: stateToVkLayout called for buffer-specific state." << std::endl;
+//                return VK_IMAGE_LAYOUT_UNDEFINED; // Or VK_IMAGE_LAYOUT_GENERAL? Needs care.
+//
+//            // Add ResolveSrc/Dst cases if needed -> TRANSFER_SRC/DST usually appropriate
+//            // case ResourceState::ResolveSrc: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+//            // case ResourceState::ResolveDst: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+//
+//            default:
+//                std::cerr << "Warning: Unhandled ResourceState in stateToVkLayout. Defaulting to UNDEFINED." << std::endl;
+//                return VK_IMAGE_LAYOUT_UNDEFINED;
+//        }
+//        return {};
+//    }
 
     QueueFamilyIndices findQueueFamilies( VkPhysicalDevice physical_device, VkSurfaceKHR surface )
     {
@@ -1393,7 +1334,6 @@ namespace kege::vk{
                 // It's better to load this function pointer once after instance creation.
                 // Let's assume vkGetPhysicalDeviceSurfaceSupportKHR is available globally or via a loader.
 
-//                vkGetPhysicalDeviceSurfaceSupportKHR(VkPhysicalDevice , <#uint32_t queueFamilyIndex#>, VkSurfaceKHR, <#VkBool32 *pSupported#>)
                 VkResult present_check_result = vkGetPhysicalDeviceSurfaceSupportKHR( physical_device, i, surface, &support_present );
                 if ( present_check_result == VK_SUCCESS && support_present )
                 {

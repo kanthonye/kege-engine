@@ -274,13 +274,13 @@
             },
 
             {
-                "id": "entity-2",,
+                "id": "entity-3",,
                 "data":
                 {
                     "type": "entity",
                     "entity":
                     {
-                        "name": "box",
+                        "name": "box2",
                         "components":
                         [
                             {
@@ -290,9 +290,9 @@
                                     "type": "transform",
                                     "transform":
                                     {
-                                        "position": [0, 0, 0],
-                                        "orientation": [0.0, 0.0, 0.0, 1.0]
-                                        "scale": [1, 1, 1]
+                                        "orientation": [0.0, 0.0, 0.0, 1.0],
+                                        "position": [0, -1, 0],
+                                        "scale": [5, 0.02, 5]
                                     }
                                 }
                             },
@@ -303,7 +303,7 @@
                                     "type": "mesh-box",
                                     "mesh-box":
                                     {
-                                        "extent": [0.5, 0.5, 0.5]
+                                        "extent": [1, 1, 1]
                                     }
                                 }
                             },
@@ -328,7 +328,7 @@
                                             "damping": 0.05
                                         },
 
-                                        "center": [0.0, 0.0, 0.0],
+                                        "center": [0.0, -1.0, 0.0],
                                         "orientation": [0.0, 0.0, 0.0, 1.0],
                                         "immovable": "false",
                                         "sleeping": "false",
