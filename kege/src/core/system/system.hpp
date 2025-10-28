@@ -15,7 +15,7 @@
 #include "../math/algebra/matrices.hpp"
 #include "../math/algebra/quaternion.hpp"
 #include "../math/algebra/transform.hpp"
-#include "../renderer/core/graphics.hpp"
+#include "../graphics/render/core/graphics.hpp"
 #include "../input/input-context-manager.hpp"
 #include "../graphics/render/graph/render-graph.hpp"
 
@@ -42,7 +42,7 @@ namespace kege{
     protected:
 
 //        void setRenderGraph( kege::Ref< kege::RenderGraph > graphics );
-//        void setWindow( kege::Ref< kege::GraphicsWindow > window );
+//        void setWindow( kege::Ref< kege::AppWindow > window );
 //        void setGraphics( kege::Ref< kege::Graphics > graphics );
 
     protected:
@@ -106,7 +106,7 @@ namespace kege{
 #define KEGE_REGISTER_SYSTEM( CLASSNAME, NAME )                                 \
 struct AutoRegister##CLASSNAME                                                  \
 {                                                                               \
-    static kege::Ref< kege::System > createSystem( kege::Engine* engine )       \
+    static kege::Ref< kege::System > createSystem( kege::EntitySystemManager* esm )       \
     {                                                                           \
         return kege::Ref< kege::System >( new kege::CLASSNAME( engine ) );      \
     }                                                                           \

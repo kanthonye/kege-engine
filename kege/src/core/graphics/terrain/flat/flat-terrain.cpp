@@ -23,7 +23,7 @@ namespace kege{
         _renderer->end();
     }
 
-    void FlatTerrain::update( const kege::dvec3& camera_position )
+    void FlatTerrain::update( const kege::fvec3& camera_position )
     {
         _camera_position = camera_position;
 
@@ -695,7 +695,7 @@ namespace kege{
         ({
             .size = indices_arraysize,
             .data = indices.data(),
-            .usage = BufferUsage::IndexBuffer,
+            .usage = BufferUsages::IndexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "IndexBuffers"
         });
@@ -717,7 +717,7 @@ namespace kege{
         ({
             .size = vertex_count * sizeof( vertex[0] ),
             .data = vertex,
-            .usage = BufferUsage::VertexBuffer,
+            .usage = BufferUsages::VertexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "IndexBuffers"
         });

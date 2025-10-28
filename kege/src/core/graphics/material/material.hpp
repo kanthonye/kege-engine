@@ -10,7 +10,7 @@
 
 #include <cstdint>
 #include "../../memory/ref.hpp"
-#include "../../renderer/core/graphics.hpp"
+#include "../render/core/graphics.hpp"
 #include "../render/graph/render-stage.hpp"
 
 namespace kege{
@@ -80,12 +80,12 @@ namespace kege{
 
     struct PBRTextures
     {
-        kege::ImageHandle albedo;
-        kege::ImageHandle normal;
-        kege::ImageHandle roughness;
-        kege::ImageHandle metallic;
-        kege::ImageHandle ambient_occlusion;
-        kege::ImageHandle displacement;
+        ref::Image albedo;
+        ref::Image normal;
+        ref::Image roughness;
+        ref::Image metallic;
+        ref::Image ambient_occlusion;
+        ref::Image displacement;
     };
 
     struct PBRMaterialSource : public kege::MaterialSource

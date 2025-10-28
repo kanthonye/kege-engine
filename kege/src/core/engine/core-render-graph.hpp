@@ -36,29 +36,4 @@ namespace kege{
 
 }
 
-#include "../graphics/render/manager/render-manager.hpp"
-namespace kege{
-
-    class RenderManagerModule : public Module
-    {
-    public:
-
-        RenderManagerModule( kege::Engine* engine );
-
-        operator bool()const override{ return _module != nullptr; }
-        bool initialize()override;
-        void shutdown()override;
-        void add()override;
-
-        const kege::Ref< kege::RenderManager > operator ->() const { return _module; }
-        kege::Ref< kege::RenderManager > operator ->() { return _module; }
-        kege::RenderManager * getModule();
-
-    private:
-
-        kege::Ref< kege::RenderManager > _module;
-    };
-
-}
-
 #endif /* kege_render_graph_system_hpp */

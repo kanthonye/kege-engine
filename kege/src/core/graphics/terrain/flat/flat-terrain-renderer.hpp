@@ -37,8 +37,8 @@ namespace kege{
             /**
              * a collection of DrawParams for each patch.
              */
-            kege::BufferHandle draw_buffer;
-            kege::BufferHandle storage_buffer;
+            ref::Buffer draw_buffer;
+            ref::Buffer storage_buffer;
             
             /**
              * The total number of patch to draw.
@@ -89,8 +89,8 @@ namespace kege{
 
 
         std::vector< IndexDrawCommand > _index_draw_commands;
-        kege::BufferHandle _vertex_buffer;
-        kege::BufferHandle _index_buffer;
+        ref::Buffer _vertex_buffer;
+        ref::Buffer _index_buffer;
 
         /*
          The shader used to render the landscape.

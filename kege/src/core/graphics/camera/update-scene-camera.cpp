@@ -12,11 +12,20 @@ namespace kege{
     void UpdateSceneCamera::update( double dms )
     {
         if ( !_entities ) return;
-        
+
+        Entity camera_entity = getScene()->getCameraEntity();
         for( Entity entity : *_entities )
         {
             Camera* camera = entity.get< Camera >();
             Transform* transform = entity.get< Transform >();
+
+
+            if( !camera_entity )
+            {
+                getScene()->setCameraEntity( entity );
+                getScene()->setPlayer( entity );
+                camera_entity = entity;
+            }
 
             if ( camera->modified )
             {
@@ -26,7 +35,7 @@ namespace kege{
             camera->matrices.position = transform->position;
             camera->matrices.transform = viewMatrix( transform->orientation, transform->position );
 
-            _engine->renderManager()->setSceneCamera( camera->matrices );
+            getRenderExecutor()->setSceneCamera( camera->matrices );
         }
     }
 
@@ -41,8 +50,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    UpdateSceneCamera::UpdateSceneCamera( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "update-scene-camera", REQUIRE_UPDATE )
+    UpdateSceneCamera::UpdateSceneCamera( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "update-scene-camera", REQUIRE_UPDATE, esm  )
     {
         _signature = createEntitySignature< Camera, kege::Transform >();
     }

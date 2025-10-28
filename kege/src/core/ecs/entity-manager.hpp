@@ -277,6 +277,7 @@ namespace kege{
 
 
         std::ostream& print(std::ostream& os, uint32_t entity);
+        
     private:
 
         /**
@@ -357,4 +358,7 @@ namespace kege{
 
 }
 
+namespace kege::ref{
+    typedef kege::Ref< kege::EntityManager > EntityManager;
+}
 #endif /* entity_manager_hpp */

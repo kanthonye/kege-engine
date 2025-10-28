@@ -66,6 +66,23 @@ namespace kege{
             AssetManager* assets;
             std::string id;
             std::string type;
+
+
+//            Json asset;
+//            Json scene;
+//            Json scenes;
+//            Json entities;
+//            Json component_types;
+//            Json components;
+//            Json noise_generators;
+//            Json terrain_layouts;
+//            Json biomes;
+//            Json textures;
+//            Json systems;
+//            Json meshs;
+//            Json buffers;
+//            Json buffer_views;
+//            Json accessors;
         };
 
         typedef std::function< Ref< Mesh >( AssetManager* assets, Json json ) > MeshParserFunct;
@@ -83,6 +100,12 @@ namespace kege{
         typedef std::function< Ref< Collider >( Json json ) > ColliderFunct;
         typedef std::map< std::string, ColliderFunct > ColliderFunctMap;
 
+
+        typedef std::function< void( Entity&, Json ) > EntityComponentParser;
+        typedef std::map< std::string, EntityComponentParser > EntityComponentParsers;
+
+
+        static Entity parseEntity( kege::Json& entities, kege::Json& components, int entity_index );
         static kege::Ref< kege::Scene > load( const std::string& filename );
         SceneLoader();
 
@@ -165,6 +188,8 @@ namespace kege{
         static Ref< Emitter > emitterCylinder( Json json );
 
     private:
+
+        static EntityComponentParsers _entity_component_parsers;
 
         static MeshParserFunctMap _mesh_parser_funct_map;
         static ParticleBehaviorFunctMap _particle_behavior_creators;

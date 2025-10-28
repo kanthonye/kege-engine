@@ -152,7 +152,7 @@ namespace kege{
                     {
                         for (int u=0; u<layout.resources[set_index][binding_index].uniform.buffers.size(); ++u)
                         {
-                            layout.graphics->destroyBuffer( layout.resources[set_index][binding_index].uniform.buffers[u].buffer );
+                            layout.resources[set_index][binding_index].uniform.buffers[u].buffer.clear();
                         }
                         break;
                     }
@@ -161,7 +161,7 @@ namespace kege{
                     {
                         for (int u=0; u<layout.resources[set_index][binding_index].uniform.images.size(); ++u)
                         {
-                            layout.graphics->destroyImage( layout.resources[set_index][binding_index].uniform.images[u].image );
+                            layout.resources[set_index][binding_index].uniform.images[u].image.clear();
                         }
                         break;
                     }
@@ -170,7 +170,7 @@ namespace kege{
                     {
                         for (int u=0; u<layout.resources[set_index][binding_index].uniform.buffer_views.size(); ++u)
                         {
-                            layout.graphics->destroyBufferView( layout.resources[set_index][binding_index].uniform.buffer_views[u] );
+                            //layout.resources[set_index][binding_index].uniform.buffer_views[u].clear();
                         }
                         break;
                     }

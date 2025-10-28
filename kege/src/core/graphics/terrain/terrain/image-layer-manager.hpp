@@ -10,8 +10,7 @@
 
 #include <stdio.h>
 #include <list>
-#include "../../../math/algebra/vmath.hpp"
-#include "../../../renderer/core/graphics.hpp"
+#include "../../render/core/graphics.hpp"
 
 namespace kege{
 
@@ -73,7 +72,7 @@ namespace kege{
         ShaderResrc _shader_resource;
         Graphics* _graphics;
 
-        kege::SamplerHandle _sampler;
+        ref::Sampler _sampler;
 
         uint16_t _max_shader_resource_capacity;
         uint32_t _current_image_index;

@@ -41,8 +41,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    ParticleEmissionSystem::ParticleEmissionSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "particle-emitter-updater", REQUIRE_UPDATE )
+    ParticleEmissionSystem::ParticleEmissionSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "particle-emitter-updater", REQUIRE_UPDATE, esm  )
     {
         _signature = createEntitySignature< ParticleEffect, ParticleBuffer, Transform >();
     }

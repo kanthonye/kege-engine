@@ -22,7 +22,7 @@ namespace kege{
         kege::Json json = kege::JsonParser::load( filename.data() );
         if ( !json )
         {
-            KEGE_LOG_ERROR <<"fail to open file -> " << filename << Log::nl;
+            kege::Log::error <<"fail to open file -> " << filename << Log::nl;
             return {};
         }
 
@@ -41,18 +41,18 @@ namespace kege{
         kege::Json json = kege::JsonParser::load( filename.data() );
         if ( !json )
         {
-            KEGE_LOG_ERROR <<"fail to open file -> " << filename << Log::nl;
+            kege::Log::error <<"fail to open file -> " << filename << Log::nl;
             return {};
         }
 
         Json asset = json[ "asset" ];
         if ( !asset )
         {
-            KEGE_LOG_ERROR <<"missing asset json block -> " << filename << Log::nl;
+            kege::Log::error <<"missing asset json block -> " << filename << Log::nl;
             return {};
         }
 
-        const std::string name = asset[ "name" ].getString();
+        const std::string name = asset[ "name" ].toStr();
         auto itr = _name_index_map.find( name );
         if ( itr != _name_index_map.end() )
         {

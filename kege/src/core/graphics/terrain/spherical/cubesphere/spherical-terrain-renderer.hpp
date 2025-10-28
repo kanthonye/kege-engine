@@ -18,8 +18,8 @@ namespace kege{
     struct PatchDrawBuffer
     {
         kege::ShaderResrc descriptor_set;
-        kege::BufferHandle patch_buffer;
-        kege::BufferHandle draw_buffer;
+        ref::Buffer patch_buffer;
+        ref::Buffer draw_buffer;
         uint32_t instance_count;
     };
 
@@ -32,7 +32,7 @@ namespace kege{
 
         bool initialize();
 
-        void submit( int face_id, int index_buffer_id, PatchData& patch );
+        void submit( int face_id, int index_buffer_id, fvec4& patch );
         void begin();
         void end();
 
@@ -44,7 +44,7 @@ namespace kege{
         struct Batch
         {
             kege::IndexDrawCommand* draw_commands;
-            kege::PatchData* patchs;
+            kege::vec4* patchs;
             uint32_t capacity;
             int32_t index;
         };

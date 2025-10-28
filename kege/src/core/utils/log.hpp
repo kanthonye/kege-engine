@@ -151,6 +151,7 @@ namespace kege{
         const char* file;
     };
 }
+
 #define KEGE_LOG_ERROR kege::Log::error.from( __FUNCTION__, __FILE__ )
 #define KEGE_LOG_WARN  kege::Log::warning.from( __FUNCTION__, __FILE__ )
 #define KEGE_LOG_INFO  kege::Log::info

@@ -30,7 +30,7 @@ namespace kege{
 //        _encoder->bindGraphicsPipeline( _shader_pipeline );
 //        _encoder->bindVertexBuffers(0, { _vertex_buffer }, { 0 });
 //        _encoder->bindIndexBuffer( _index_buffer, 0, false );
-//        _encoder->setPushConstants( kege::ShaderStage::Vertex, 0, sizeof(m), m );
+//        _encoder->setPushConstants( kege::ShaderStageFlag::Vertex, 0, sizeof(m), m );
 //        _encoder->bindShaderResource( resource );
 //
 //        for ( int i=0; i<_batch_count; ++i )
@@ -87,7 +87,7 @@ namespace kege{
             ({
                 .size = storage_buffer_size,
                 .data = nullptr,
-                .usage = BufferUsage::StorageBuffer,
+                .usage = BufferUsages::StorageBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
                 .name = "terrain-storage-buffer"
             });
@@ -97,7 +97,7 @@ namespace kege{
             ({
                 .size = MAX_INSTANCE_BUFFER_SIZE * sizeof( IndexDrawCommand ),
                 .data = nullptr,
-                .usage = BufferUsage::IndirectBuffer,
+                .usage = BufferUsages::IndirectBuffer,
                 .memory_usage = MemoryUsage::CpuToGpu,
                 .name = "terrain-draw-command-buffer"
             });
@@ -108,7 +108,7 @@ namespace kege{
 //                    .binding = 0,
 //                    .count = 1,
 //                    .descriptor_type = DescriptorType::StorageBuffer,
-//                    .stage_flags = ShaderStage::Vertex
+//                    .stage_flags = ShaderStageFlag::Vertex
 //                }
 //            };
 //            _graphics->allocateShaderResources( descriptors, 1, &batch.resource_set );
@@ -152,8 +152,8 @@ namespace kege{
             });
              */
 
-            _batchs[ _batch_count ].params = (VertexDrawCommand*) _graphics->mapBuffer( _batchs[ _batch_count ].draw_buffer );
-            _batchs[ _batch_count ].patchs = (FlatTerrainPatch*) _graphics->mapBuffer( _batchs[ _batch_count ].storage_buffer );
+//            _batchs[ _batch_count ].params = (VertexDrawCommand*) _graphics->mapBuffer( _batchs[ _batch_count ].draw_buffer );
+//            _batchs[ _batch_count ].patchs = (FlatTerrainPatch*) _graphics->mapBuffer( _batchs[ _batch_count ].storage_buffer );
         }
 
         //_batchs[ _batch_count ].params.mapBuffer( _batchs[ _batch_count ].draw_buffer );
@@ -632,7 +632,7 @@ namespace kege{
         ({
             .size = indices_arraysize,
             .data = indices.data(),
-            .usage = BufferUsage::IndexBuffer,
+            .usage = BufferUsages::IndexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "IndexBuffers"
         });
@@ -654,7 +654,7 @@ namespace kege{
         ({
             .size = vertex_count * sizeof( vertex[0] ),
             .data = vertex,
-            .usage = BufferUsage::VertexBuffer,
+            .usage = BufferUsages::VertexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "IndexBuffers"
         });

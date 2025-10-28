@@ -21,12 +21,7 @@ namespace kege{
     {
     public:
 
-        /**
-         * @fn getResourceManager
-         *
-         * @return resource-manager of this scene
-         */
-        kege::AssetManager& getResourceManager();
+        struct Changed{ kege::Ref< kege::Scene > scene; };
 
         /**
          * @fn getEntityRegistry
@@ -122,6 +117,9 @@ namespace kege{
          */
         virtual void shutdown();
 
+
+        const std::string& name()const;
+    
         kege::Entity root();
         
         /**
@@ -131,12 +129,10 @@ namespace kege{
          */
         bool ready()const;
 
+        Scene( const std::string& name );
         ~Scene();
-        Scene();
 
     protected:
-
-        kege::AssetManager _asset_system;
 
         /**
          * The scene entity set group manager
@@ -167,7 +163,13 @@ namespace kege{
          * indicate weather the scene is ready for uses
          */
         bool _ready;
+
+        std::string _name;
     };
 
+}
+
+namespace kege::ref{
+    typedef kege::Ref< kege::Scene > Scene;
 }
 #endif /* scene_hpp */

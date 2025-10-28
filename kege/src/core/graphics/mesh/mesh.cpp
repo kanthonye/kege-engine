@@ -65,7 +65,7 @@ namespace kege{
     {
         return resource->getShaderBindings();
     }
-    const BufferHandle& InstanceBuffer::getBufferHandle()const
+    const ref::Buffer& InstanceBuffer::getBufferHandle()const
     {
         return resource->operator[](0)[0].uniform.buffers[0].buffer;
     }
@@ -80,7 +80,7 @@ namespace kege{
         return buffers[ index ].getShaderBindings();
     }
 
-    const BufferHandle& InstanceBufferList::getBufferHandle( int index )const
+    const ref::Buffer& InstanceBufferList::getBufferHandle( int index )const
     {
         return buffers[ index ].getBufferHandle();
     }
@@ -157,8 +157,8 @@ namespace kege{
 
     void MeshPrimitive::unload( kege::Graphics* graphics )
     {
-        if ( vertex_buffer ) graphics->destroyBuffer( vertex_buffer );
-        if ( index_buffer ) graphics->destroyBuffer( index_buffer );
+        if ( vertex_buffer ) vertex_buffer.clear();
+        if ( index_buffer ) index_buffer->clear();
         //this->graphics = graphics;
     }
 
@@ -167,7 +167,7 @@ namespace kege{
         vertex_buffer = graphics->createBuffer
         ({
             sizeof( kege::Vertex ) * vertices.size(), vertices.data(),
-            BufferUsage::VertexBuffer,
+            BufferUsages::VertexBuffer,
             MemoryUsage::GpuOnly
         });
 
@@ -176,7 +176,7 @@ namespace kege{
             index_buffer = graphics->createBuffer
             ({
                 sizeof( indices[0] ) * indices.size(), indices.data(),
-                BufferUsage::IndexBuffer,
+                BufferUsages::IndexBuffer,
                 MemoryUsage::GpuOnly
             });
         }

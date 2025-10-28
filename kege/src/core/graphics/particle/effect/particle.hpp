@@ -9,8 +9,7 @@
 #define particle_hpp
 
 #include "../../../utils/array.hpp"
-#include "../../../renderer/core/graphics.hpp"
-#include "../../../math/algebra/vmath.hpp"
+#include "../../render/core/graphics.hpp"
 
 namespace kege{
 

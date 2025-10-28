@@ -13,6 +13,11 @@
 
 namespace kege{
 
+//    enum BindingType
+//    {
+//        BUFFER, TEXTURE, PUSH_CONSTANTS, SHADER_RESOURCE
+//    };
+
     /**
      * @brief Describes a field within a push constant block.
      */
@@ -21,7 +26,7 @@ namespace kege{
         std::string name;
         uint32_t offset;
         uint32_t size;
-        MemberType type;
+        ShaderVarType type;
     };
 
     /**
@@ -33,7 +38,7 @@ namespace kege{
         std::string name;
         uint32_t offset;
         uint32_t size;
-        ShaderStage stages;
+        ShaderStageFlag stages;
     };
 
     /**
@@ -61,14 +66,10 @@ namespace kege{
         SampleCount render_sample_count = SampleCount::Count1;
     };
 
-    enum BindingType
-    {
-        BUFFER, TEXTURE, PUSH_CONSTANTS, SHADER_RESOURCE
-    };
     struct PipelineResourceBinding
     {
         std::string name;
-        BindingType type;
+        //BindingType type;
     };
 
     struct PipelineSupport
@@ -113,7 +114,7 @@ namespace kege{
          */
         std::vector< PushConstantInfo > push_constants;
 
-        VertexInputStateDesc vertex_input;
+        VertexBufferLayout vertex_input;
 
         PipelineStates states;
 
@@ -177,7 +178,7 @@ namespace kege{
          *   attributes and their buffer bindings. This must match the input interface
          *   declared in the vertex shader stage.
          */
-        VertexInputStateDesc vertex_input;
+        VertexBufferLayout vertex_input;
 
         /**
          * - states:

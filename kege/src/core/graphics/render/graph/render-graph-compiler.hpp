@@ -8,6 +8,7 @@
 #ifndef render_graph_compiler_hpp
 #define render_graph_compiler_hpp
 
+#include <set>
 #include "render-pass-context.hpp"
 
 namespace kege {

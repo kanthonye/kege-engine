@@ -18,7 +18,7 @@ namespace kege{
 //        }
 //        else
 //        {
-//            KEGE_LOG_ERROR << "system create function for -> "<< name <<" dont exist." <<Log::nl;
+//            kege::Log::error << "system create function for -> "<< name <<" dont exist." <<Log::nl;
 //        }
 //    }
 
@@ -43,10 +43,10 @@ namespace kege{
 //        return _mapped_inputs;
 //    }
 
-    kege::RenderManagerModule& Engine::renderManager()
-    {
-        return _render_manager;
-    }
+//    kege::RenderExecutorModule& Engine::renderManager()
+//    {
+//        return _render_executor;
+//    }
 
     kege::AssetManager& Engine::getAssetManager()
     {
@@ -63,10 +63,10 @@ namespace kege{
         return _graphics;
     }
 
-    kege::InputModule& Engine::input()
-    {
-        return _input;
-    }
+//    kege::InputModule& Engine::input()
+//    {
+//        return _input;
+//    }
 
 //    kege::EntitySystemManagerModule& Engine::esm()
 //    {
@@ -88,13 +88,13 @@ namespace kege{
         return _logger;
     }
 
-    kege::SceneManager& Engine::scene()
-    {
-        return _scene_manager;
-    }
+//    kege::SceneManager& Engine::scene()
+//    {
+//        return _scene_manager;
+//    }
 //    kege::RenderGraph* Engine::getRenderGraph()
 //
-//    kege::GraphicsWindow* Engine::getWindow()
+//    kege::AppWindow* Engine::getWindow()
 //    {
 //        return _window.ref();
 //    }
@@ -106,7 +106,6 @@ namespace kege{
 
     bool Engine::initialize()
     {
-        _asset_system.initalize();
         _root_directory = "/Users/kae/Developer/xcode/KE-GE/kege";
 
         if ( !initalizeCoreSystems() )
@@ -151,47 +150,47 @@ namespace kege{
 
     void Engine::run()
     {
-        _running = true;
-        tick();
-
-        while ( _running && !_graphics->windowIsOpen() )
-        {
-            try
-            {
-                _graphics->getWindow()->pollEvents();
-
-                tick();
-                _input->updateCurrentInputs();
-
-                if ( !_scene_manager.getScene()->ready() )
-                {
-                    _scene_manager.getScene()->initialize();
-                }
-                //while ( _lag >= _fixed_delta_time )
-                {
-                    _esm->update( _fixed_delta_time );
-                    _lag -= _fixed_delta_time;
-                }
-
-                _esm->render( _fixed_delta_time );
-
-                if ( _graphics->beginFrame() )
-                {
-                    //TODO: _render_manager->execute( _fixed_delta_time );
-                    _graphics->endFrame();
-                }
-                else
-                {
-                    KEGE_LOG_ERROR << "Failed to begin Frame" <<Log::nl;
-                    _running = false;
-                }
-            }
-            catch ( const std::exception& arg )
-            {
-                KEGE_LOG_ERROR << arg.what() <<Log::nl;
-                _running = false;
-            }
-        }
+//        _running = true;
+//        tick();
+//
+//        while ( _running && !_graphics->windowIsOpen() )
+//        {
+//            try
+//            {
+//                _graphics->getWindow()->pollEvents();
+//
+//                tick();
+//                _input->updateCurrentInputs();
+//
+//                if ( !_scene_manager.getScene()->ready() )
+//                {
+//                    _scene_manager.getScene()->initialize();
+//                }
+//                //while ( _lag >= _fixed_delta_time )
+//                {
+//                    _esm->update( _fixed_delta_time );
+//                    _lag -= _fixed_delta_time;
+//                }
+//
+//                _esm->render( _fixed_delta_time );
+//
+//                if ( _graphics->beginFrame() )
+//                {
+//                    //TODO: _render_executor->execute( _fixed_delta_time );
+//                    _graphics->endFrame();
+//                }
+//                else
+//                {
+//                    kege::Log::error << "Failed to begin Frame" <<Log::nl;
+//                    _running = false;
+//                }
+//            }
+//            catch ( const std::exception& arg )
+//            {
+//                kege::Log::error << arg.what() <<Log::nl;
+//                _running = false;
+//            }
+//        }
     }
 
     Duration Engine::now()
@@ -246,13 +245,13 @@ namespace kege{
     ,   _start_time( std::chrono::high_resolution_clock::now() )
     ,   _graphics( this )
     ,   _render_graph( this )
-    ,   _input( this )
-    ,   _esm( this )
-    ,   _ecs( this )
+//    ,   _input( this )
+//    ,   _esm( this )
+//    ,   _ecs( this )
     ,   _vfs( this )
     ,   _logger( this )
-    ,   _scene_manager( this )
-    ,   _render_manager( this )
+//    ,   _scene_manager( this )
+//    ,   _render_executor( this )
     ,   _modules()
     ,   _root_directory( "" )
     {

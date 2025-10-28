@@ -10,7 +10,7 @@
 
 #include "../../../memory/ref.hpp"
 #include "../../../math/algebra/vmath.hpp"
-#include "../../../renderer/core/graphics.hpp"
+#include "../../render/core/graphics.hpp"
 #include "landscape-settings.h"
 #include "terrain-material.hpp"
 
@@ -73,20 +73,39 @@ namespace kege{
     {
     public:
 
-        virtual TerrainTile* getTerrainTile( const kege::dvec3& position )const;
-        virtual double getHeight( const kege::dvec3& position )const;
+        virtual TerrainTile* getTerrainTile( const kege::fvec3& position )const;
+        virtual double getHeight( const kege::fvec3& position )const;
 
-        void setOrientation( const kege::dquat& orientation );
-        void setPosition( const kege::dvec3& position );
+        const kege::fvec3& getCenterToCamera() const { return _center_to_camera; }
+        const kege::fvec3& getCameraPosition() const { return _camera_position; }
+        const kege::fquat& getOrientation() const { return _orientation; }
+        const kege::fvec3& getPosition() const { return _position; }
 
-        virtual TerrainRenderer* getTerrainRenderer() = 0;
-        virtual MaterialSource* getTerrainMaterial() = 0;
+        void setCenterToCamera( const kege::fvec3& v ) { _center_to_camera = v; }
+        void setCameraPosition( const kege::fvec3& v ) { _camera_position = v; }
+        void setOrientation( const kege::fquat& q ) { _orientation = q; }
+        void setPosition( const kege::fvec3& v ) { _position = v; }
+
+        void setMaximumResolution( float v ) { _maximum_resolution = v; }
+        void setMinimumDepth( float v ) { _minimum_depth = v; }
+        void setMaximumDepth( float v ) { _maximum_depth = v; }
+        void setChuckSize( float v ) { _chuck_size = v; }
+        void setRadius( float v ) { _radius = v; }
+
+        float getMaximumResolution() const { return _maximum_resolution; }
+        float getMinimumDepth() const { return _minimum_depth; }
+        float getMaximumDepth() const { return _maximum_depth; }
+        float getChuckSize() const { return _chuck_size; }
+        float getRadius() const { return _radius; }
+
+        virtual TerrainRenderer* getRenderer() = 0;
+        virtual MaterialSource* getMaterial() = 0;
 
         const kege::TerrainSettings& settings()const;
         
-        virtual void update( const kege::dvec3& position );
+        virtual void update( const kege::fvec3& position );
         virtual void submitVisibleGeometries();
-        virtual bool initialize();
+        virtual bool initialize( kege::Graphics* graphics );
 
         PhysicalTerrain( kege::Terrain* terrain );
         virtual ~PhysicalTerrain();
@@ -98,23 +117,28 @@ namespace kege{
         /**
          * _center_to_camera holds the terrain position minus the camera position
          */
-        kege::dvec3  _center_to_camera;
+        kege::fvec3  _center_to_camera;
 
         /**
          * The camera position / point of interest
          */
-        kege::dvec3  _camera_position;
+        kege::fvec3  _camera_position;
 
         /**
          * This objects orientation
          */
-        kege::dquat _orientation;
+        kege::fquat _orientation;
 
         /**
          * This object's position
          */
-        kege::dvec3  _position;
+        kege::fvec3  _position;
 
+        float _maximum_resolution;
+        float _minimum_depth;
+        float _maximum_depth;
+        float _chuck_size;
+        float _radius;
 
         Terrain* _terrain;
     };

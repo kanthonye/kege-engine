@@ -28,10 +28,10 @@ namespace kege{
         create_window_info.decorated = true;
         create_window_info.vsync = false;
 
-        kege::Ref< kege::GraphicsWindow > window = new kege::GlfwWindow();
+        kege::Ref< kege::AppWindow > window = new kege::GlfwWindow();
         if ( !window->create( create_window_info ) )
         {
-            KEGE_LOG_ERROR << "Failed to initialize GraphicsWindow."<<Log::nl;
+            kege::Log::error << "Failed to initialize AppWindow."<<Log::nl;
             return false;
         }
         //System::setWindow( window );
@@ -59,17 +59,12 @@ namespace kege{
         swapchain_create_info.image_usage = kege::ImageUsage::Color | kege::ImageUsage::TransferDst;
 
         _module = new kege::Graphics();
-        if( !_module->initalize( window, device_init_info, swapchain_create_info ) )
+        if( !_module->initalize( device_init_info, swapchain_create_info ) )
         {
             kege::Log::error << "( INITIALIZATION_FAILED ) -> Graphics" << Log::nl;
             return false;
         }
 
-//        kege::string shader_file = kege::vfs( "graphics-shaders/copy/copy-color-depth.json" );
-//        if( !_module->getShaderPipelineManager()->load( shader_file.c_str() ) )
-//        {
-//            return false;
-//        }
         kege::string shader_file = kege::vfs( "graphics-shaders/basic/basic.json" );
         if( !_module->getShaderPipelineManager()->load( shader_file.c_str() ) )
         {

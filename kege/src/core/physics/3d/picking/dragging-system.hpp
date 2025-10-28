@@ -24,7 +24,7 @@ namespace kege{
         bool initialize()override;
         void shutdown()override;
 
-        EntityDraggingSystem( kege::Engine* engine );
+        EntityDraggingSystem( kege::EntitySystemManager* esm );
 
         kege::Entity _selected_entity;
         double _distance;

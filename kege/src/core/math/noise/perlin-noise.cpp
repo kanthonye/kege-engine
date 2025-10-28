@@ -80,13 +80,6 @@ namespace kege{
         double v = (h < 4) ? y : (h == 12 || h == 14) ? x : z;
         return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
     }
-//    double grad(int hash, double x, double y, double z)
-//    {
-//        int h = hash & 15;                      // CONVERT LO 4 BITS OF HASH CODE
-//        double u = h<8 ? x : y,                 // INTO 12 GRADIENT DIRECTIONS.
-//        v = h<4 ? y : h==12||h==14 ? x : z;
-//        return ((h&1) == 0 ? u : -u) + ((h&2) == 0 ? v : -v);
-//    }
 
     // Perlin noise function
     double perlin2D(double x, double y, const std::vector<int>& perm)
@@ -94,7 +87,8 @@ namespace kege{
         return perlin3D( x, 0, y, perm );
     }
 
-    double perlin3D(double x, double y, double z, const std::vector<int>& perm) {
+    double perlin3D(double x, double y, double z, const std::vector<int>& perm)
+    {
         // Unit cube coordinates
         int X = (int)std::floor(x) & 255;
         int Y = (int)std::floor(y) & 255;
@@ -106,9 +100,9 @@ namespace kege{
         z -= std::floor(z);
 
         // Fade curves
-        float u = fade(x);
-        float v = fade(y);
-        float w = fade(z);
+        double u = fade(x);
+        double v = fade(y);
+        double w = fade(z);
 
         // Hash coordinates of cube corners
         int A  = (perm[  X  ] + Y) & 255;
@@ -119,26 +113,22 @@ namespace kege{
         int BB = (perm[B + 1] + Z) & 255;
 
         // Add blended results from all corners
-        float res = lerp(
-                         lerp(
-                              lerp(grad(perm[AA], x, y, z),
-                                   grad(perm[BA], x - 1, y, z),
-                                   u),
-                              lerp(grad(perm[AB], x, y - 1, z),
-                                   grad(perm[BB], x - 1, y - 1, z),
-                                   u),
-                              v),
-                         lerp(
-                              lerp(grad(perm[AA + 1], x, y, z - 1),
-                                   grad(perm[BA + 1], x - 1, y, z - 1),
-                                   u),
-                              lerp(grad(perm[AB + 1], x, y - 1, z - 1),
-                                   grad(perm[BB + 1], x - 1, y - 1, z - 1),
-                                   u),
-                              v),
-                         w);
-
-        return res;
+        return lerp
+        (
+            lerp
+            (
+                lerp(grad(perm[AA], x, y, z), grad(perm[BA], x - 1, y, z), u),
+                lerp(grad(perm[AB], x, y - 1, z), grad(perm[BB], x - 1, y - 1, z), u),
+                v
+            ),
+            lerp
+            (
+                lerp(grad(perm[AA + 1], x, y, z - 1), grad(perm[BA + 1], x - 1, y, z - 1), u),
+                lerp(grad(perm[AB + 1], x, y - 1, z - 1), grad(perm[BB + 1], x - 1, y - 1, z - 1), u),
+                v
+            ),
+            w
+        );
     }
 
 //    double perlin3D(double x, double y, double z, const std::vector<int>& perm)

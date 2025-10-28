@@ -110,7 +110,22 @@ namespace kege
 
     std::string JsonValue::_nullstr;
 
-    const char* Json::getString( const std::string& key, const char* default_value )const
+    void Json::foreach( const std::function<void(const std::string&, const Json&)>& func )const
+    {
+        if ( _json == nullptr ) return;
+        return _json->foreach( func );
+    }
+
+    void Json::foreach( const std::function<void(const Json&)>& func )const
+    {
+        if ( _json == nullptr ) return;
+        return _json->foreach( func );
+    }
+
+
+
+
+    const char* Json::getStr( const std::string& key, const char* default_value )const
     {
         return ( _json == nullptr ) ? default_value : operator[]( key ).value();
     }
@@ -121,7 +136,13 @@ namespace kege
         return ( _json == nullptr ) ? default_value : atoi( v );
     }
 
-    double Json::getFloat( const std::string& key, float default_value )const
+    float Json::getFloat( const std::string& key, float default_value )const
+    {
+        const char* v = operator[]( key ).value();
+        return ( v == nullptr ) ? default_value : atof( v );
+    }
+
+    double Json::getDouble( const std::string& key, double default_value )const
     {
         const char* v = operator[]( key ).value();
         return ( v == nullptr ) ? default_value : atof( v );
@@ -133,41 +154,32 @@ namespace kege
         return ( v == nullptr ) ? default_value : strcmp( "true", v ) == 0 || strcmp( "1", v ) == 0;
     }
 
-    const char* Json::getString( const char* str )const
+
+
+
+    const char* Json::toStr( const char* str )const
     {
         return ( _json == nullptr ) ? "str" : _json->value().data();
     }
 
-    int32_t Json::getInt( int32_t val )const
+    int32_t Json::toInt( int32_t val )const
     {
         return ( _json == nullptr ) ? val : atoi( _json->value().data() );
     }
 
-    double Json::getDouble( double val )const
+    double Json::toDouble( double val )const
     {
         return ( _json == nullptr ) ? val : atof( _json->value().data() );
     }
 
-    float Json::getFloat( float val )const
+    float Json::toFloat( float val )const
     {
         return ( _json == nullptr ) ? val : atof( _json->value().data() );
     }
 
-    bool Json::getBool( bool val )const
+    bool Json::toBool( bool val )const
     {
         return ( _json == nullptr ) ? val : _json->value() == "true" || _json->value() == "1";
-    }
-
-    void Json::foreach( const std::function<void(const std::string&, const Json&)>& func )const
-    {
-        if ( _json == nullptr ) return;
-        return _json->foreach( func );
-    }
-
-    void Json::foreach( const std::function<void(const Json&)>& func )const
-    {
-        if ( _json == nullptr ) return;
-        return _json->foreach( func );
     }
 
     const Json Json::operator[]( const std::string& id )const

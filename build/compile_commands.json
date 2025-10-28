@@ -703,6 +703,30 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o"

@@ -8,7 +8,9 @@
 #ifndef uniform_resource_info_hpp
 #define uniform_resource_info_hpp
 
-#include "../../../renderer/core/graphics-core.hpp"
+#include "../../render/core/image.hpp"
+#include "../../render/core/buffer.hpp"
+#include "../../render/core/graphics-core.hpp"
 
 namespace kege{
 
@@ -18,7 +20,7 @@ namespace kege{
     struct BufferInfo
     {
         /** @brief Handle to the buffer resource */
-        BufferHandle buffer {};
+        kege::ref::Buffer buffer {};
 
         /** @brief Byte offset into the buffer */
         uint64_t offset = 0;
@@ -33,10 +35,10 @@ namespace kege{
     struct ImageInfo
     {
         /** @brief Handle to the texture resource */
-        ImageHandle image {};
+        ref::Image image {};
 
         /** @brief Optional sampler for combined image samplers */
-        SamplerHandle sampler {};
+        ref::Sampler sampler {};
 
         /**
          * @brief Layout the texture will be in during shader access
@@ -68,15 +70,6 @@ namespace kege{
         * @brief The type of resource bound to this binding.
         */
        enum Type { INVALID, BUFFER, IMAGE, BUFFER_VIEW };
-
-       inline friend bool operator!=( const Uniform& info, kege::ImageHandle handle );
-       inline friend bool operator!=( kege::ImageHandle handle, const Uniform& info );
-       inline friend bool operator==( const Uniform& info, kege::ImageHandle handle );
-       inline friend bool operator==( kege::ImageHandle handle, const Uniform& info );
-       inline friend bool operator!=( const Uniform& info, kege::BufferHandle handle );
-       inline friend bool operator!=( kege::BufferHandle handle, const Uniform& info );
-       inline friend bool operator==( const Uniform& info, kege::BufferHandle handle );
-       inline friend bool operator==( kege::BufferHandle handle, const Uniform& info );
 
        uint32_t count()const
        {
@@ -115,21 +108,21 @@ namespace kege{
             }
             return *this;
         }
-
-       Uniform( const BufferViewBindings& binding )
-       :   buffer_views( binding )
-       ,   type( BUFFER_VIEW )
-       {}
-
-       Uniform( const BufferBindings& binding )
-       :   buffers( binding )
-       ,   type( BUFFER )
-       {}
-
-       Uniform( const ImageBindings& binding )
-       :   images( binding )
-       ,   type( IMAGE )
-       {}
+        
+        Uniform( const BufferViewBindings& binding )
+        :   buffer_views( binding )
+        ,   type( BUFFER_VIEW )
+        {}
+        
+        Uniform( const BufferBindings& binding )
+        :   buffers( binding )
+        ,   type( BUFFER )
+        {}
+        
+        Uniform( const ImageBindings& binding )
+        :   images( binding )
+        ,   type( IMAGE )
+        {}
 
         Uniform( const Uniform& info )
         :   type( info.type )
@@ -266,13 +259,13 @@ namespace kege{
        /**
         * @brief Shader stages that can access this binding.
         */
-        kege::ShaderStage stage_flags = kege::ShaderStage::All;
+        kege::ShaderStageFlag stage_flags = kege::ShaderStageFlag::All;
 
        /**
         * @brief Optional immutable samplers (for sampler/image bindings).
         * When non-empty, overrides any sampler provided in descriptor set.
         */
-        std::vector< kege::SamplerHandle > immutable_samplers;
+        std::vector< ref::Sampler > immutable_samplers;
     };
 
 
@@ -296,6 +289,7 @@ namespace kege{
     struct UniformDescriptorSet
     {
         UniformDescriptors descriptors;
+        int frames_in_flight;
         int set;
     };
     typedef std::vector< UniformDescriptorSet > UniformDescriptorSets;
@@ -320,56 +314,6 @@ namespace kege{
 }
 
 namespace kege{
-
-    inline bool operator!=( const kege::Uniform& info, kege::ImageHandle handle )
-    {
-        return ( info.type == kege::Uniform::IMAGE )
-        ? info.images[0].image.id != handle.id
-        : false;
-    }
-    inline bool operator!=( kege::ImageHandle handle, const kege::Uniform& info )
-    {
-        return ( info.type == kege::Uniform::IMAGE )
-        ? info.images[0].image.id != handle.id
-        : false;
-    }
-    inline bool operator==( const kege::Uniform& info, kege::ImageHandle handle )
-    {
-        return ( info.type == kege::Uniform::IMAGE )
-        ? info.images[0].image.id != handle.id
-        : false;
-    }
-    inline bool operator==( kege::ImageHandle handle, const kege::Uniform& info )
-    {
-        return ( info.type == kege::Uniform::IMAGE )
-        ? info.images[0].image.id != handle.id
-        : false;
-    }
-    inline bool operator!=( const kege::Uniform& info, kege::BufferHandle handle )
-    {
-        return ( info.type == kege::Uniform::BUFFER )
-        ? info.buffers[0].buffer.id != handle.id
-        : false;
-    }
-    inline bool operator!=( kege::BufferHandle handle, const kege::Uniform& info )
-    {
-        return ( info.type == kege::Uniform::BUFFER )
-        ? info.buffers[0].buffer.id != handle.id
-        : false;
-    }
-    inline bool operator==( const kege::Uniform& info, kege::BufferHandle handle )
-    {
-        return ( info.type == kege::Uniform::BUFFER )
-        ? info.buffers[0].buffer.id != handle.id
-        : false;
-    }
-    inline bool operator==( kege::BufferHandle handle, const kege::Uniform& info )
-    {
-        return ( info.type == kege::Uniform::BUFFER )
-        ? info.buffers[0].buffer.id != handle.id
-        : false;
-    }
-
 
     std::size_t hash( const kege::UniformDescriptors& bindings );
     std::size_t hash( const kege::UniformDescriptor& binding );
@@ -441,8 +385,6 @@ namespace std{
 
 
 namespace std{
-
-
 
     template <> struct hash< std::vector< kege::DescriptorType > >
     {

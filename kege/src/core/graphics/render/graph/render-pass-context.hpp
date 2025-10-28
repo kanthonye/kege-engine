@@ -12,8 +12,7 @@
 #include "../../../utils/array.hpp"
 #include "../../../utils/communication.hpp"
 #include "../../../utils/json-parser.hpp"
-#include "../../../renderer/core/graphics.hpp"
-#include "../../../renderer/core/graphics.hpp"
+#include "../../render/core/graphics.hpp"
 
 namespace kege{
 
@@ -42,10 +41,10 @@ namespace kege{
     {
         //inline operator int32_t()const{ return index; }
         inline operator size_t()const{ return index; }
-        inline operator int32_t()const{ return index; }
-        inline operator bool()const{ return index >= 0; }
+        inline operator uint64_t()const{ return index; }
+        inline operator bool()const{ return index != 0; }
         RgResrcType type = RgResrcType::Invalid;
-        int32_t index = -1;
+        uint64_t index = 0;
     };
 
     constexpr inline bool operator==(const kege::RgResrcHandle& a, const kege::RgResrcHandle& b)
@@ -67,29 +66,50 @@ namespace kege{
     struct BufferDefn
     {
         std::string name;
-        uint32_t frames_in_flight;
+
+        /** @brief Number of frames in flight for this buffer */
+        uint32_t frames;
+
+        /** @brief Buffer description */
         BufferDesc info;
 
+        /** @brief Handle to the resource in the render graph */
         RgResrcHandle handle = {};
-        std::vector< kege::BufferHandle > physical_handle;
+
+        /** @brief Physical buffer handles for each frame in flight */
+        std::vector< ref::Buffer > physical_handle;
     };
 
     struct SamplerDefn
     {
+        /** @brief Name of the sampler resource */
         std::string name;
+
+        /** @brief Sampler description */
         kege::SamplerDesc desc;
+
+        /** @brief Handle to the resource in the render graph */
         RgResrcHandle handle;
-        kege::SamplerHandle physical_handle;
+
+        /** @brief Physical sampler handle */
+        ref::Sampler physical_handle;
     };
 
     struct ImageDefn
     {
+        /** @brief Name of the image resource */
         std::string name;
-        uint32_t frames_in_flight;
 
+        /** @brief Number of frames in flight for this image */
+        uint32_t frames;
+
+        /** @brief Image usage flags */
         ImageUsage usages = ImageUsage::Undefined;
+
+        /** @brief Initial image layout */
         ImageLayout layout = ImageLayout::Undefined;
 
+        /** @brief Image description and properties */
         struct Info
         {
             uint32_t width;
@@ -99,18 +119,20 @@ namespace kege{
             kege::ImageType type;
         }
         info;
+
+        /** @brief Indicates if the image uses the swapchain image at the current index */
         bool use_swapchain_image_index = false;
+        
+        /** @brief Handle to the resource in the render graph */
+        std::vector< ref::Image > physical_handle;
 
+        /** @brief Handle to the resource in the render graph */
         RgResrcHandle handle = {};
-        std::vector< kege::ImageHandle > physical_handle;
-    };
+     };
 
-    struct RgImageLayoutTransition
-    {
-        std::string name;
-        ImageLayout layout = ImageLayout::Undefined;
-        ImageAspectFlag image_aspect;
-    };
+
+
+
 
     struct RgShaderResrcInfo
     {
@@ -121,7 +143,7 @@ namespace kege{
 
     struct RgShaderResrcDesc
     {
-        kege::ShaderStage stages = kege::ShaderStage::All;
+        kege::ShaderStageFlag stages = kege::ShaderStageFlag::All;
         DescriptorType type;
         std::string name;
         uint32_t binding;
@@ -134,7 +156,7 @@ namespace kege{
     {
         std::string name;
         uint32_t set_index;
-        uint32_t frames_in_flight;
+        uint32_t frames;
         std::vector< RgShaderResrcDesc > bindings;
 
         RgResrcHandle handle = {};
@@ -158,39 +180,47 @@ namespace kege{
         RgResrcType type;
         RgResrcUsage usage;
 
-        RgResrcHandle handle; // still needed
+        RgResrcHandle handle;
     };
 
     struct RgWriteResrcDesc
     {
         std::string name;
+        
+        /**
+         * @brief Type of the resource being written to.
+         */
         RgResrcType type;
+
+        /**
+         * @brief Usage details for this resource within the render pass.
+         */
         RgResrcUsage usage;
 
-        std::optional< ClearValue > clear_value;
+        /**
+         * @brief Clear value to use if the resource is an attachment with loadOp Clear
+         */
+        ClearValue clear_value;
         
+        /**
+         * @brief Handle to the resource being written to.
+         */
         RgResrcHandle handle;
     };
 
 
 
-    struct RenderPassDefn
+    struct RgImageLayoutTransition
     {
+        /** @brief Name of the image resource */
         std::string name;
-        QueueType type;
-        RenderPassType pass;
-        std::vector< RgReadResrcDesc > reads;
-        std::vector< RgWriteResrcDesc > writes;
 
-        /**
-         * Supported pipelines for post process render passes, shadow passes, etc.
-         * If defined these pipelines are used, instead of the pipelines used by
-         * the material. pipelines could be 0 or multiple.
-         */
-        std::vector< ShaderPipeline > pipelines;
+        /** @brief Handle to the resource in the render graph */
+        ImageLayout layout = ImageLayout::Undefined;
+
+        /** @brief Aspect of the image to transition */
+        ImageAspectFlag image_aspect;
     };
-
-
 
     struct RgResrcBarrierInfo
     {
@@ -220,13 +250,42 @@ namespace kege{
 
     typedef std::vector< RgResrcBarrierInfo > BarrierDescriptions;
 
-//    struct RgResrcHandleHash
-//    {
-//        std::size_t operator()(const RgResrcHandle& h) const noexcept
-//        {
-//            return std::hash<int>()(static_cast<int>(h.type)) ^ (std::hash<int>()(h.index) << 1);
-//        }
-//    };
+
+
+    struct RenderPassDefn
+    {
+        std::string name;
+        QueueType type;
+        RenderPassType pass;
+
+        /**
+         * Resources read/consumed by this render pass.
+         * These resources are produced by previous passes.
+         */
+        std::vector< RgReadResrcDesc > reads;
+
+        /**
+         * Resources written/produced by this render pass.
+         * These resources can be used as inputs for subsequent passes.
+         */
+        std::vector< RgWriteResrcDesc > writes;
+
+        /**
+         * Supported pipelines for post process render passes, shadow passes, etc.
+         * If defined these pipelines are used, instead of the pipelines used by
+         * the material. pipelines could be 0 or multiple.
+         */
+        std::vector< ShaderPipeline > pipelines;
+
+        /**
+         * Barriers to apply at the start of this render pass.
+         * These ensure proper resource state transitions before usage.
+         * Node: Populating barriers is optional. If left empty then the barriers 
+         * will be automatically generated by the render graph.
+         */
+        std::vector< RgResrcBarrierInfo > barriers;
+    };
+
 }
 
 namespace std{

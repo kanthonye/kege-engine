@@ -10,9 +10,9 @@
 
 namespace kege{
 
-    EntityLogic::EntityLogic( kege::Engine* engine, const std::string& name )
+    EntityLogic::EntityLogic( const std::string& name )
     :   _entities( nullptr )
-    ,   _engine( engine )
+    ,   _scene( nullptr )
     ,   _name( name )
     {}
 
@@ -26,12 +26,17 @@ namespace kege{
         return _name;
     }
 
-    void EntityLogic::onSceneChange()
+    void EntityLogic::setScene( kege::Scene* scene )
     {
-        if ( _signature.any() && _engine->scene() )
+        _scene = scene;
+        if ( _signature.any() && _scene )
         {
-            _entities = _engine->scene().getScene()->getEntityRegistry().getEntityView( _signature );
+            _entities = _scene->getEntityRegistry().getEntityView( _signature );
         }
+    }
+    kege::Scene* EntityLogic::scene()
+    {
+        return _scene;
     }
 
     EntityView* EntityLogic::getEntities()

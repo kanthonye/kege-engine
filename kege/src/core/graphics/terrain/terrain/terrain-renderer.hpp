@@ -31,6 +31,7 @@ namespace kege{
     {
     public:
 
+        virtual void submit( int face_id, int index_buffer_id, fvec4& patch ) = 0;
         virtual void begin() = 0;
         virtual void end() = 0;
         virtual ~TerrainRenderer(){}

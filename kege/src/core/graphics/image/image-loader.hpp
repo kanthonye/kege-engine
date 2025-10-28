@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include "../../utils/log.hpp"
-#include "../../renderer/core/graphics.hpp"
+#include "../render/core/graphics.hpp"
 
 namespace kege{
 
@@ -28,9 +28,8 @@ namespace kege{
         };
 
         static bool load( ImageLoader::Info& info, const std::string& filename );
-        static ImageHandle load( Graphics* graphics, const std::string& filename );
+        static ref::Image load( Graphics* graphics, const std::string& filename );
     };
 
 }
-
 #endif /* image_loader_hpp */

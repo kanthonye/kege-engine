@@ -9,8 +9,8 @@
 
 namespace kege{
 
-    MovementSystem::MovementSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "player-movement-system", REQUIRE_INPUT )
+    MovementSystem::MovementSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "player-movement-system", REQUIRE_INPUT, esm  )
     {}
 
     bool MovementSystem::initialize()
@@ -25,7 +25,7 @@ namespace kege{
 
     void MovementSystem::input( double dms )
     {
-        Entity entity = _engine->scene().getScene()->getPlayer();
+        Entity entity = getScene()->getPlayer();
         if( !entity ) return;
 
         kege::Rigidbody* body = entity.get< Rigidbody >();
@@ -36,7 +36,7 @@ namespace kege{
 
         kege::vec3 speed = {0.f, 0.f, 0.f};
 
-        const MappedInputs& inputs = _engine->input()->getMappedInputs();
+        const MappedInputs& inputs = getMappedInputs();
         if ( inputs[ kege::ACTION_MOVE_FORWARD ] )
         {
             speed.z -= control->speed.z;

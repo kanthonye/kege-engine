@@ -8,7 +8,7 @@
 #ifndef cube_mesh_shader_resource_hpp
 #define cube_mesh_shader_resource_hpp
 
-#include "../../../../renderer/core/graphics.hpp"
+//#include "../../../../render/core/graphics.hpp"
 #include "cube-face-mesh-data.hpp"
 
 namespace kege{
@@ -37,12 +37,12 @@ namespace kege{
 //        /**
 //         * This uniform buffer will store the mesh vertices
 //         */
-//        kege::BufferHandle vertices_uniform_buffer;
+//        ref::Buffer vertices_uniform_buffer;
 //
 //        /**
 //         * This uniform buffer will store the mesh indices
 //         */
-//        kege::BufferHandle indices_uniform_buffer;
+//        ref::Buffer indices_uniform_buffer;
 //
 //        /**
 //         * This struct represents the vertex data for all 6 faces that make up the

@@ -39,7 +39,7 @@ namespace kege{
 
     bool FlatTerrainTile::splitable( FlatTerrainQuadtree& node )const
     {
-        kege::dvec3 node_to_eye = _terrain->_camera_position - node.center;
+        kege::dvec3 node_to_eye;// = _terrain->_camera_position - node.center;
         double dist = magnSq( node_to_eye );
 
         double length_sq = kege::sq< double >( node.diameter + node.diameter );

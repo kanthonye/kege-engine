@@ -8,7 +8,7 @@
 #ifndef compute_camera_ray_hpp
 #define compute_camera_ray_hpp
 
-#include "../../../esm/entity-system.hpp"
+#include "../../../ecs/entity-system.hpp"
 
 namespace kege{
 
@@ -17,7 +17,7 @@ namespace kege{
     public:
 
         void operator()( const MappedInputs& inputs );
-        ComputeCameraRaySystem( Engine* engine );
+        ComputeCameraRaySystem( kege::EntitySystemManager* esm );
         bool initialize();
         void shutdown();
         vec2 pointer;

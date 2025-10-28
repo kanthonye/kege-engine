@@ -165,40 +165,40 @@ namespace kege {
         }
     }
 
-    ImageLayout RenderGraphCompiler::inferLayout( AccessFlags access )
-    {
-        if ( hasFlag( access, AccessFlags::ColorWrite ) )
-            return ImageLayout::Color;
-
-        if ( hasFlag( access, AccessFlags::ColorRead ) )
-            return ImageLayout::ShaderRead; // some engines use same layout for read/write
-
-        if ( hasFlag( access, AccessFlags::DepthStencilWrite ) )
-            return ImageLayout::DepthStencil;
-
-        if ( hasFlag( access, AccessFlags::DepthStencilRead ) )
-            return ImageLayout::DepthStencilRead;
-
-        if ( hasFlag( access, AccessFlags::ShaderRead ) )
-            return ImageLayout::ShaderRead;
-
-        if ( hasFlag( access, AccessFlags::ShaderWrite ) )
-            return ImageLayout::General;
-
-        if ( hasFlag( access, AccessFlags::TransferRead ) )
-            return ImageLayout::TransferSrc;
-
-        if ( hasFlag( access, AccessFlags::TransferWrite ) )
-            return ImageLayout::TransferDst;
-
-        if ( hasFlag( access, AccessFlags::HostRead ) )
-            return ImageLayout::HostRead;
-
-        if ( hasFlag( access, AccessFlags::HostWrite ) )
-            return ImageLayout::HostWrite;
-
-        return ImageLayout::Undefined;
-    }
+//    ImageLayout RenderGraphCompiler::inferLayout( AccessFlags access )
+//    {
+//        if ( hasFlag( access, AccessFlags::ColorWrite ) )
+//            return ImageLayout::Color;
+//
+//        if ( hasFlag( access, AccessFlags::ColorRead ) )
+//            return ImageLayout::ShaderRead; // some engines use same layout for read/write
+//
+//        if ( hasFlag( access, AccessFlags::DepthStencilWrite ) )
+//            return ImageLayout::DepthStencil;
+//
+//        if ( hasFlag( access, AccessFlags::DepthStencilRead ) )
+//            return ImageLayout::DepthStencilRead;
+//
+//        if ( hasFlag( access, AccessFlags::ShaderRead ) )
+//            return ImageLayout::ShaderRead;
+//
+//        if ( hasFlag( access, AccessFlags::ShaderWrite ) )
+//            return ImageLayout::General;
+//
+//        if ( hasFlag( access, AccessFlags::TransferRead ) )
+//            return ImageLayout::TransferSrc;
+//
+//        if ( hasFlag( access, AccessFlags::TransferWrite ) )
+//            return ImageLayout::TransferDst;
+//
+//        if ( hasFlag( access, AccessFlags::HostRead ) )
+//            return ImageLayout::HostRead;
+//
+//        if ( hasFlag( access, AccessFlags::HostWrite ) )
+//            return ImageLayout::HostWrite;
+//
+//        return ImageLayout::Undefined;
+//    }
 
     void emitBarrier
     (
@@ -226,22 +226,50 @@ namespace kege {
             barriers->push_back( barrier );
         }
     };
-//
-//    void RenderGraphCompiler::transitionToInitialImageLayout( const std::vector< int >& sorted_pass_indices )
-//    {
-//        std::map< RgResrcHandle, ImageLayout > image_layout_last_state;
-//        for (int pass_index : sorted_pass_indices)
-//        {
-//            for (RgReadResrcDesc& read : _passes->at( pass_index )._defn.reads)
-//            {
-//                image_layout_last_state[ read.handle ] = read.usage.layout;
-//            }
-//            for (RgWriteResrcDesc& write : _passes->at( pass_index )._defn.writes)
-//            {
-//                image_layout_last_state[ write.handle ] = write.usage.layout;
-//            }
-//        }
-//    }
+
+    RgResrcUsage readImageUsage( const ImageUsage& usage )
+    {
+        if ( checkFlag(usage, ImageUsage::Sampled))
+        {
+            if ( checkFlag(usage, ImageUsage::Color))
+            {
+                return RgResrcUsage
+                {
+                    .layout = ImageLayout::ShaderRead,
+                    .access = AccessFlags::ColorRead
+                };
+            }
+            else if ( checkFlag(usage, ImageUsage::DepthStencil))
+            {
+                return RgResrcUsage
+                {
+                    .layout = ImageLayout::ShaderRead,
+                    .access = AccessFlags::DepthStencilRead
+                };
+            }
+        }
+        return {};
+    }
+    RgResrcUsage writeImageUsage( const ImageUsage& usage )
+    {
+        if ( checkFlag(usage, ImageUsage::Color))
+        {
+            return RgResrcUsage
+            {
+                .layout = ImageLayout::Color,
+                .access = AccessFlags::ColorWrite,
+            };
+        }
+        else if ( checkFlag(usage, ImageUsage::DepthStencil))
+        {
+            return RgResrcUsage
+            {
+                .layout = ImageLayout::Depth,
+                .access = AccessFlags::DepthStencilWrite
+            };
+        }
+        return {};
+    }
 
     void RenderGraphCompiler::generateBarriers(const std::vector<int>& sorted_pass_indices)
     {
@@ -292,6 +320,8 @@ namespace kege {
                 // create a barrier that transitions FROM the last usage TO this read.
                 if (last.stage && last.stage != stage && read.type == RgResrcType::Image )
                 {
+//                    _graph->getImageDefn( read.handle );
+//                    readImageUsage(<#const ImageUsage &usage#>)
                     // Only emit if there’s an actual difference between usages.
                     if (last.usage.layout != read.usage.layout ||
                         last.usage.stage  != read.usage.stage  ||
@@ -488,7 +518,7 @@ namespace kege {
                         ImageDefn* def = _graph->_asset_manager.fetch< ImageDefn >( write.name );
                         if ( def == nullptr )
                         {
-                            KEGE_LOG_ERROR <<"undefinded image resource - " << write.name <<Log::nl;
+                            kege::Log::error <<"undefinded image resource - " << write.name <<Log::nl;
                             return false;
                         }
                         write.handle = def->handle;
@@ -498,7 +528,7 @@ namespace kege {
                         BufferDefn* def = _graph->_asset_manager.fetch< BufferDefn >( write.name );
                         if ( def == nullptr )
                         {
-                            KEGE_LOG_ERROR <<"undefinded buffer resource - " << write.name <<Log::nl;
+                            kege::Log::error <<"undefinded buffer resource - " << write.name <<Log::nl;
                             return false;
                         }
                         write.handle = def->handle;

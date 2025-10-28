@@ -8,7 +8,7 @@
 #ifndef pipeline_loader_hpp
 #define pipeline_loader_hpp
 
-#include "../../../renderer/core/graphics.hpp"
+#include "../../render/core/graphics.hpp"
 #include "../../../utils/json-parser.hpp"
 
 namespace kege{
@@ -17,18 +17,18 @@ namespace kege{
     std::string getFilePath( const std::string& filename );
 
     /**
-     * @brief Convert a shader stage string to ShaderStage enum.
+     * @brief Convert a shader stage string to ShaderStageFlag enum.
      * @param stage The shader stage as a string.
-     * @return Corresponding ShaderStage enum value.
+     * @return Corresponding ShaderStageFlag enum value.
      */
-    kege::ShaderStage convertShaderStage( const std::string& stage );
+    kege::ShaderStageFlag convertShaderStage( const std::string& stage );
 
     /**
-     * @brief Convert a JSON array of shader stages to ShaderStage enum flags.
+     * @brief Convert a JSON array of shader stages to ShaderStageFlag enum flags.
      * @param json JSON array containing shader stage strings.
-     * @return Combined ShaderStage enum flags.
+     * @return Combined ShaderStageFlag enum flags.
      */
-    kege::ShaderStage convertShaderStageFlages( kege::Json json );  
+    kege::ShaderStageFlag convertShaderStageFlages( kege::Json json );  
 
     /**
      * @brief Compile GLSL source code to SPIR-V bytecode.
@@ -40,7 +40,7 @@ namespace kege{
     std::vector< uint32_t > compileGlslToSpv
     (
         const char* shader_name,
-        ShaderStage shader_stage,
+        ShaderStageFlag shader_stage,
         const std::vector< char >& source
     );
     

@@ -14,9 +14,9 @@
 #include "../scene/scene-loader.hpp"
 
 #include "core-ecs.hpp"
-#include "core-esm.hpp"
+#include "ecs-layer.hpp"
 #include "core-vfs.hpp"
-#include "input-module.hpp"
+#include "input-layer.hpp"
 #include "scene-module.hpp"
 #include "core-graphics.hpp"
 #include "core-render-graph.hpp"
@@ -37,15 +37,15 @@ namespace kege{
 
         kege::AssetManager& getAssetManager();
 
-        kege::RenderManagerModule& renderManager();
+        //kege::RenderExecutorModule& renderManager();
         kege::CoreRenderGraph& renderGraph();
         kege::GraphicsModule& graphics();
-        kege::InputModule& input();
+        //kege::InputModule& input();
         //kege::EntitySystemManagerModule& esm();
         //kege::ECSModule& ecs();
         kege::VirtualDirectoryModule& vfs();
         kege::LoggerModule& logger();
-        kege::SceneManager& scene();
+        //kege::SceneManager& scene();
 
 
         double dms()const;
@@ -73,12 +73,12 @@ namespace kege{
         kege::LoggerModule _logger;
         kege::GraphicsModule _graphics;
         kege::CoreRenderGraph _render_graph;
-        kege::InputModule _input;
-        kege::EntitySystemManagerModule _esm;
-        kege::ECSModule _ecs;
+        //kege::InputModule _input;
+        //kege::EntitySystemManagerModule _esm;
+        //kege::ECSModule _ecs;
         kege::VirtualDirectoryModule _vfs;
-        kege::SceneManager _scene_manager;
-        kege::RenderManagerModule _render_manager;
+        //kege::SceneManager _scene_manager;
+        //kege::RenderExecutorModule _render_executor;
         kege::AssetManager _asset_system;
 
         std::vector< kege::Module* > _modules;

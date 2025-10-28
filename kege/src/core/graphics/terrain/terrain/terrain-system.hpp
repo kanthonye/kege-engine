@@ -8,7 +8,7 @@
 #ifndef kege_system_terrain_hpp
 #define kege_system_terrain_hpp
 
-#include "../../../esm/entity-system.hpp"
+#include "../../../ecs/entity-system.hpp"
 #include "terrain.hpp"
 
 namespace kege{
@@ -53,7 +53,7 @@ namespace kege{
         void update( double dms );
         bool initialize();
 
-        TerrainSystem( kege::Engine* engine );
+        TerrainSystem( kege::EntitySystemManager* esm );
         ~TerrainSystem();
     };
 

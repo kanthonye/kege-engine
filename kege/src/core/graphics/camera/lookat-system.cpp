@@ -11,6 +11,8 @@ namespace kege{
 
     void LookAtSystem::update( double dms )
     {
+        if( _entities == nullptr ) return;
+        
         vec3 direction;
         LookAt* look;
         Transform* target;
@@ -40,8 +42,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    LookAtSystem::LookAtSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "lookat-system", REQUIRE_UPDATE )
+    LookAtSystem::LookAtSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "lookat-system", REQUIRE_UPDATE, esm  )
     {
         _signature = createEntitySignature< LookAt, Transform >();
     }

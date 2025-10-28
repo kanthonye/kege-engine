@@ -44,20 +44,6 @@ namespace kege{
         return str;
     }
 
-    bool match( const char* s1, const char* s2 )
-    {
-        if( *s1 != 0 && *s2 != 0 )
-        {
-            while ( *s1 == *s2 && *s1 != 0 && *s2 != 0 )
-            {
-                s1++;
-                s2++;
-            }
-            return *s1 == 0 || *s2 == 0;
-        }
-        return *s1 == *s2;
-    }
-
     kege::string dtostr(double n, int space)
     {
         char str[32];
@@ -90,8 +76,6 @@ namespace kege{
         return string(str, w);
     }
 
-
-
     string operator +(const char* a, const string& b)
     {
         int64_t a_length = strlen( a );
@@ -120,10 +104,16 @@ namespace kege{
         return strcmp( a._str, b._str ) == 0;
     }
 
+    bool operator <(const string& a, const string& b)
+    {
+        return StringHash()(a) < StringHash()(b);
+    }
+
     const char& string::operator [](uint64_t i)const
     {
         return _str[ i ];
     }
+
     char& string::operator [](uint64_t i)
     {
         return _str[ i ];
@@ -134,7 +124,7 @@ namespace kege{
         string s = string::operator +( str );
 
         clear();
-        //_allocated = true;
+
         _length = s._length;
         _str = s._str;
 
@@ -146,19 +136,19 @@ namespace kege{
         string s = string::operator +( str );
 
         clear();
-        //_allocated = true;
+
         _length = s._length;
         _str = s._str;
 
         s._str = nullptr;
         return *this;
     }
-    string& string::operator +=( const char chr )
+    string& string::operator +=( int chr )
     {
         string s = string::operator +( chr );
 
         clear();
-        //_allocated = true;
+        
         _length = s._length;
         _str = s._str;
 
@@ -249,149 +239,109 @@ namespace kege{
         return *_str;
     }
 
+//    string::operator std::string()const
+//    {
+//        return std::string( _str );
+//    }
+
     string::operator bool()const
     {
         return (_str == nullptr) ? false: *_str != 0;
     }
     
-    void string::copyFrom( uint64_t size, const char* str )
+//    void string::copyFrom( uint64_t size, const char* str )
+//    {
+//        clear();
+//        char* s = new char[ size + 1];
+//        memcpy(s, str, size);
+//        s[size] = 0;
+//        //_allocated = true;
+//        _length = size;
+//        _str = s;
+//    }
+
+
+    string& string::copyFrom( uint64_t offset, uint64_t size, const char* str )
     {
-        clear();
-        char* s = new char[ size + 1];
-        memcpy(s, str, size);
-        s[size] = 0;
-        //_allocated = true;
-        _length = size;
-        _str = s;
+        if ( empty() )
+        {
+            resize( offset + size );
+        }
+        memcpy(&_str[ offset ], str, size);
+        return *this;
+    }
+    string& string::copyTo( uint64_t offset, uint64_t size, char* str )
+    {
+        if ( empty() )
+        {
+            resize( offset + size );
+        }
+
+        ASSERT(offset + size == _length, "string buffer overflow: offset + size exceeds buffer length!");
+        memcpy(str, &_str[ offset ], size);
+        return *this;
     }
 
-    bool string::cmp( const char* str )const
+    string& string::copyFrom( uint64_t offset, const string& str )
     {
-        if (_str==nullptr || str==nullptr) return 0;
-        if (*_str=='\0' || *str=='\0') return true;
-        const char *r = str;
-        const char *l = _str;
-        while (*r == *l && *r != '\0' && *l != '\0')
+        if ( empty() )
         {
-            r++;
-            l++;
+            resize( offset + str._length );
         }
-        if( *r != '\0' && *l != '\0' )
-        {
-            return true;
-        }
-        if( *r == '\0' && *l != '\0' )
-        {
-            l--;
-            return (*r == *l);
-        }
-        return false;
+        memcpy(&_str[ offset ], str._str, str._length);
+        return *this;
     }
-    
-//    string string::read( const char* flags )const
+
+    string& string::copyTo( uint64_t offset, string& str )
+    {
+        if ( empty() )
+        {
+            resize( offset + str._length );
+        }
+
+        ASSERT(offset + str._length == _length, "string buffer overflow: offset + size exceeds buffer length!");
+        memcpy(str._str, &_str[ offset ], str._length);
+        return *this;
+    }
+
+    bool string::match( uint64_t offset, const char* str )const
+    {
+        const char *s1 = str;
+        const char *s2 = &_str[ offset ];
+        if( *s1 != 0 && *s2 != 0 )
+        {
+            while ( *s1 == *s2 && *s1 != 0 && *s2 != 0 )
+            {
+                s1++;
+                s2++;
+            }
+            return *s1 == 0 || *s2 == 0;
+        }
+        return *s1 == *s2;
+    }
 //    {
-//        char* s = _str;
-//        while (*s != 0)
-//        {
-//            if ( ischar(*s, flags) )
-//                break;
-//            s++;
-//        }
-//        int64_t size = s - _str;
-//        char* dst = new char[ size + 1 ];
-//        memcpy(dst, _str, size);
-//        dst[ size ] = 0;
-//        return string( dst, size, true );
-//    }
+//        if (_str == nullptr || str == nullptr || *_str == '\0' || *str == '\0' || _length <= offset )
+//            return false;
 //
-//    int64_t string::position(const char* flags)const
-//    {
-//        const char* f;
-//        char* s = _str;
-//        while (*s != 0)
+//        const char *r = str;
+//        const char *l = &_str[ offset ];
+//        while (*r == *l && *r != '\0' && *l != '\0')
 //        {
-//            f = flags;
-//            while (*f != 0)
-//            {
-//                if (*s == *f++)
-//                {
-//                    return (s - _str);
-//                }
-//            }
-//            s++;
+//            r++;
+//            l++;
 //        }
-//        return (s - _str);
-//    }
-//    string string::seekfwd(const char* flags)const
-//    {
-//        const char* f;
-//        char* s = _str;
-//        while (*s != 0)
+//        if( *r != '\0' && *l != '\0' )
 //        {
-//            f = flags;
-//            while (*f != 0)
-//            {
-//                if (*s == *f++)
-//                {
-//                    return string( s, _length - (s - _str), false );
-//                }
-//            }
-//            s++;
+//            return true;
 //        }
-//        return string( s, _length - (s - _str), false );
-//    }
-//    string string::seekbwd(const char* flags)const
-//    {
-//        const char* f;
-//        char* s = &_str[ _length - 1 ];
-//        while ((s - _str) != 0)
+//        if( *r == '\0' && *l != '\0' )
 //        {
-//            f = flags;
-//            while (*f != 0)
-//            {
-//                if (*s == *f++)
-//                {
-//                    return string( s, _length - (s - _str), false );
-//                }
-//            }
-//            s--;
+//            l--;
+//            return (*r == *l);
 //        }
-//        return string( s, _length - (s - _str), false );
+//        return false;
 //    }
-//
-//    string string::skipfwd(const char* flags)const
-//    {
-//        const char * f;
-//        char* s = _str;
-//        while (*s != 0)
-//        {
-//            f = flags;
-//            while(*s != *f && *f != 0) f++;
-//            if(*f != 0) s++;
-//            else break;
-//        }
-//        return string( s, _length - (s - _str), false );
-//    }
-//    string string::skipbwd(const char* flags)const
-//    {
-//        const char * f;
-//        char* s = &_str[ _length - 1 ];
-//        while ( s - _str >= 0 )
-//        {
-//            f = flags;
-//            while(*s != *f && *f != 0) f++;
-//            if(*f != 0) s--;
-//            else break;
-//        }
-//        s++;
-//        
-//        int64_t l = s - _str;
-//        s = new char[ l + 1 ];
-//        strncpy( s, _str, l );
-//        s[l] = 0;
-//
-//        return string( s, l );
-//    }
+  
     void string::insert( size_t pos, size_t count, char ch )
     {
         if (count == 0) return;
@@ -472,7 +422,7 @@ namespace kege{
         return ( _str != nullptr )? strchr( _str, c ) != nullptr : false;
     }
 
-    string string::parse_fname()const
+    string string::parseFileName()const
     {
         char* s = &_str[ _length - 1 ];
         while( !ischar(*s, "/\\") ) s--;
@@ -480,7 +430,7 @@ namespace kege{
         return kege::string( s, _length - (s - _str) );
     }
 
-    string string::parse_fpath()const
+    string string::parseFilePath()const
     {
         char* s = &_str[ _length - 1 ];
         while( !ischar(*s, "/\\") ) s--;
@@ -491,7 +441,15 @@ namespace kege{
         return kege::string( s, size );
     }
 
-    string string::parse_name()const
+    string string::parseFileExt()const
+    {
+        char* s = &_str[ _length - 1 ];
+        while( !ischar(*s, ".") ) s--;
+        s++;
+        return kege::string( s, _length - (s - _str) );
+    }
+
+    string string::parseName()const
     {
         char* s = &_str[ _length - 1 ];
         while( !ischar(*s, "./\\") ) s--;
@@ -520,6 +478,7 @@ namespace kege{
         s[ _length ] = 0;
         return string( s, _length );
     }
+    
     string string::uppercase()const
     {
         char* s = new char[ _length + 1 ];
@@ -569,36 +528,6 @@ namespace kege{
     {
         return _str;
     }
-    
-//    std::size_t string::hash(const char* str)
-//    {
-////        std::size_t n = std::hash<std::string>{}( str );
-////        return n;
-//        if (str == NULL) return 0;
-//
-//        enum
-//        {
-//            A = 54059, /* a prime */
-//            B = 76963, /* another prime */
-//            C = 86969, /* yet another prime */
-//            FIRSTH  =37 /* also prime */
-//        };
-//
-//        const char * s = str;
-//
-//        std::size_t h = FIRSTH;
-//        while (*s)
-//        {
-//            h = (h * A) ^ (s[0] * B);
-//            s++;
-//        }
-//        return h;
-//    };
-
-//    std::size_t string::hash()const
-//    {
-//        return string::hash( _str );
-//    };
 
     double string::toFloat()const
     {
@@ -647,7 +576,6 @@ namespace kege{
     {
         if ( str != nullptr )
         {
-            //_allocated = true;
             _length = strlen( str );
             _str = new char[ _length + 1 ];
             memcpy( _str, str, _length );
@@ -661,7 +589,6 @@ namespace kege{
     {
         if ( str._str != nullptr )
         {
-            //_allocated = true;
             _length = str._length;
             _str = new char[ _length + 1 ];
             memcpy( _str, str._str, _length );
@@ -686,5 +613,37 @@ namespace kege{
     {
         clear();
     }
+
+
+
+//    std::size_t string::hash(const char* str)
+//    {
+////        std::size_t n = std::hash<std::string>{}( str );
+////        return n;
+//        if (str == NULL) return 0;
+//
+//        enum
+//        {
+//            A = 54059, /* a prime */
+//            B = 76963, /* another prime */
+//            C = 86969, /* yet another prime */
+//            FIRSTH  =37 /* also prime */
+//        };
+//
+//        const char * s = str;
+//
+//        std::size_t h = FIRSTH;
+//        while (*s)
+//        {
+//            h = (h * A) ^ (s[0] * B);
+//            s++;
+//        }
+//        return h;
+//    };
+
+//    std::size_t string::hash()const
+//    {
+//        return string::hash( _str );
+//    };
 
 }

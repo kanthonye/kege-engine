@@ -14,7 +14,6 @@
 #include "../../core/input/input-context.hpp"
 #include "../../core/input/input-context-loader.hpp"
 #include "../../core/input/user-input-receiver.hpp"
-#include "../renderer/core/graphics-window.hpp"
 
 namespace kege{
 
@@ -27,7 +26,7 @@ namespace kege{
         std::vector< kege::Input >& getCurrentInputs();
         MappedInputs& getMappedInputs();
 
-        bool initialize( GraphicsWindow* window );
+        bool initialize( AppWindow* window );
         void updateCurrentInputs();
         void shutdown();
 
@@ -49,5 +48,7 @@ namespace kege{
     };
 
 }
-
+namespace kege::ref{
+    typedef kege::Ref< kege::InputContextManager > InputContextManager;
+}
 #endif /* input_context_manager_hpp */

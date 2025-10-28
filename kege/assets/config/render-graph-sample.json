@@ -1,0 +1,221 @@
+{
+    "resources": 
+    [
+        {
+            "type": "sampler",
+            "name": "sampler-nearest-norep",
+            "info":
+            {
+                "mag_filter": "Nearest",
+                "min_filter": "Nearest",
+                "mipmap_mode": "Nearest",
+                "address_mode_u": "ClampToEdge",
+                "address_mode_v": "ClampToEdge",
+                "address_mode_w": "ClampToEdge"
+            }
+        },
+        {
+            "type": "sampler",
+            "name": "sampler-nearest-rep",
+            "info":
+            {
+                "mag_filter": "Nearest",
+                "min_filter": "Nearest",
+                "mipmap_mode": "Nearest",
+                "address_mode_u": "Repeat",
+                "address_mode_v": "Repeat",
+                "address_mode_w": "Repeat"
+            }
+        },
+        {
+            "type": "sampler",
+            "name": "sampler-linear-norep",
+            "info":
+            {
+                "mag_filter": "Nearest",
+                "min_filter": "Nearest",
+                "mipmap_mode": "Nearest",
+                "address_mode_u": "ClampToEdge",
+                "address_mode_v": "ClampToEdge",
+                "address_mode_w": "ClampToEdge"
+            }
+        },
+        {
+            "type": "sampler",
+            "name": "sampler-linear-rep",
+            "info":
+            {
+                "mag_filter": "Nearest",
+                "min_filter": "Nearest",
+                "mipmap_mode": "Nearest",
+                "address_mode_u": "Repeat",
+                "address_mode_v": "Repeat",
+                "address_mode_w": "Repeat"
+            }
+        },
+
+        {
+            "type":             "image",
+            "name":             "swapchain_color",
+            "physical_handle":  "SWAPCHAIN_COLOR_IMAGES",
+            "usages":           [ "Color", "ShaderRead" ],
+        },
+        {
+            "type":             "image",
+            "name":             "swapchain_depth",
+            "physical_handle":  "SWAPCHAIN_DEPTH_IMAGES",
+            "usages":           [ "Depth", "ShaderRead" ],
+        },
+
+        {
+            "type":             "image",
+            "name":             "color",
+            "frames":           "2",
+
+            "info":
+            {
+                "type":         "Type2D",
+                "format":       "rgba_u8_norm",
+                "width":        "SWAPCHAIN_IMAGE_WIDTH",
+                "height":       "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth":        1,
+            },
+
+            "usages":           [ "Color", "ShaderRead" ],
+        },
+        {
+            "type":             "image",
+            "name":             "depth",
+            "frames":           "2",
+
+            "info":
+            {
+                "type":         "Type2D",
+                "format":       "depth_32",
+                "width":        "SWAPCHAIN_IMAGE_WIDTH",
+                "height":       "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth":        1,
+            },
+
+            "usages":           [ "Depth", "ShaderRead" ],
+        },
+
+        {
+            "type":             "buffer",
+            "name":             "camera-buffer",
+            "frames":           "2",
+
+            "info":
+            {
+                "size":         256,
+                "data":         "nullptr",
+                "usage":        "UniformBuffer",
+                "memory_usage": "CpuToGpu",
+            }
+        },
+        {
+            "type":             "buffer",
+            "name":             "light-buffer",
+            "frames":           "2",
+
+            "info":
+            {
+                "size":         65536,
+                "data":         "nullptr",
+                "usage":        "StorageBuffer",
+                "memory_usage": "CpuToGpu",
+            }
+        }
+    ],
+
+    "stages":
+    [
+        {
+            "type": "GRAPHICS",
+            "name": "geometry",
+            "reads":
+            [
+                { 
+                    "type":         "buffer", 
+                    "name":         "camera-buffer", 
+                    "access":       "ShaderRead", 
+                }
+            ],
+            "writes":
+            [
+                { 
+                    "type":         "image", 
+                    "name":         "color", 
+                    "layout":       "Color", 
+                    "access":       "ColorWrite",        
+                    "stage":        ["ColorOutput"], 
+                    "clear_color":  [0,0,0,1], 
+                },
+                { 
+                    "type":         "image", 
+                    "name":         "depth", 
+                    "layout":       "Depth", 
+                    "access":       "DepthStencilWrite", 
+                    "stage":        ["EarlyFragmentTests", "LateFragmentTests"], 
+                    "clear_color":  [0,0,0,1], 
+                }
+            ],
+            "enable": "true"
+        },
+
+        {
+            "type": "GRAPHICS",
+            "name": "final",
+            "reads":
+            [
+                { 
+                    "name":     "color", 
+                    "type":     "image", 
+                    "layout":   "ShaderRead",      
+                    "access":   "ShaderRead", 
+                    "stage":    ["VertexShader", "FragmentShader"]
+                },
+                { 
+                    "name":     "depth", 
+                    "type":     "image", 
+                    "layout":   "DepthStencilRead", 
+                    "access":   "ShaderRead", 
+                    "stage":    ["VertexShader", "FragmentShader"]
+                }
+            ],
+            "writes":
+            [
+                { 
+                    "name":         "swapchain_color", 
+                    "type":         "image", 
+                    "layout":       "Color", 
+                    "access":       "ColorWrite",        
+                    "stage":        ["ColorOutput"], 
+                    "clear_color":  [0,0,0,1] 
+                },
+                { 
+                    "name":         "swapchain_depth", 
+                    "type":         "image", 
+                    "layout":       "Depth", 
+                    "access":       "DepthStencilWrite", 
+                    "stage":        ["EarlyFragmentTests", "LateFragmentTests"], 
+                    "clear_depth":  1.0 
+                }
+            ]
+        },
+
+        {
+            "type": "GRAPHICS",
+            "name": "present",
+            "barriers":
+            [
+                { 
+                    "type":       "image", 
+                    "name":       "swapchain_color", 
+                    "old_layout": "Color",
+                    "new_layout": "Present"
+                }
+            ]
+        },
+    ],
+}

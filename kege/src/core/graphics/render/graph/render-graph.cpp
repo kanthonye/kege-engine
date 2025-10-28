@@ -39,7 +39,7 @@ namespace kege{
 
     kege::RgResrcHandle RenderGraph::defnShaderResource( const RgShaderResrcDefn& defn )
     {
-        int id = _asset_manager.add< RgShaderResrcDefn >( defn.name, defn );
+        uint64_t id = _asset_manager.add< RgShaderResrcDefn >( defn.name, defn );
 
         RgShaderResrcDefn* resrc = _asset_manager.get< RgShaderResrcDefn >( id );
         resrc->handle.type = RgResrcType::ShaderResource;
@@ -49,7 +49,7 @@ namespace kege{
 
     void RenderGraph::removeShaderResource( const RgResrcHandle& handle )
     {
-        _asset_manager.remove< RgShaderResrcDefn >( handle.index );
+        _asset_manager.erase< RgShaderResrcDefn >( handle.index );
     }
 
     void RenderGraph::removeShaderResource( const std::string& name )
@@ -60,7 +60,7 @@ namespace kege{
 
     
 
-    kege::RgResrcHandle RenderGraph::importBuffer( std::string name, const std::vector<kege::BufferHandle>& handles )
+    kege::RgResrcHandle RenderGraph::importBuffer( std::string name, const std::vector<ref::Buffer>& handles )
     {
         BufferDefn defn;
         defn.name = name;
@@ -68,18 +68,18 @@ namespace kege{
         return defnBuffer( defn );
     }
 
-    const kege::BufferHandle* RenderGraph::getBuffer( const RgResrcHandle& handle )const
+    ref::Buffer RenderGraph::getBuffer( const RgResrcHandle& handle )const
     {
         const kege::BufferDefn* def = _asset_manager.get< kege::BufferDefn >( handle.index );
         uint32_t frame_index = _graphics->getFrameIndex() % def->physical_handle.size();
-        return &def->physical_handle[ frame_index ];
+        return def->physical_handle[ frame_index ];
     }
 
-    const kege::BufferHandle* RenderGraph::fetchBuffer( const std::string& name )const 
+    ref::Buffer RenderGraph::fetchBuffer( const std::string& name )const
     {
         const kege::BufferDefn* def = _asset_manager.fetch< kege::BufferDefn >( name );
         uint32_t frame_index = _graphics->getFrameIndex() % def->physical_handle.size();
-        return &def->physical_handle[ frame_index ];
+        return def->physical_handle[ frame_index ];
     }
 
     kege::RgResrcHandle RenderGraph::defnBuffer( const kege::BufferDefn& defn )
@@ -87,7 +87,7 @@ namespace kege{
         kege::BufferDefn* def = _asset_manager.fetch< kege::BufferDefn >( defn.name );
         if ( def == nullptr )
         {
-            int index = _asset_manager.add< kege::BufferDefn >( defn.name, defn );
+            uint64_t index = _asset_manager.add< kege::BufferDefn >( defn.name, defn );
             def = _asset_manager.get< kege::BufferDefn >( index );
             def->handle = {kege::RgResrcType::Buffer, index};
             return def->handle;
@@ -101,7 +101,7 @@ namespace kege{
 
     void RenderGraph::removeBuffer( const RgResrcHandle& handle )
     {
-        _asset_manager.remove< kege::BufferDefn >( handle.index );
+        _asset_manager.erase< kege::BufferDefn >( handle.index );
     }
 
     void RenderGraph::removeBuffer( const std::string& name )
@@ -114,7 +114,7 @@ namespace kege{
         return _asset_manager.fetch< kege::BufferDefn >( name );
     }
 
-    RgResrcHandle RenderGraph::importImage( std::string name, const std::vector< kege::ImageHandle >& handles )
+    RgResrcHandle RenderGraph::importImage( std::string name, const std::vector< ref::Image >& handles )
     {
         ImageDefn defn;
         defn.name = name;
@@ -127,7 +127,7 @@ namespace kege{
         kege::ImageDefn* def = _asset_manager.fetch< kege::ImageDefn >( defn.name );
         if ( def == nullptr )
         {
-            int index = _asset_manager.add< kege::ImageDefn >( defn.name, defn );
+            uint64_t index = _asset_manager.add< kege::ImageDefn >( defn.name, defn );
             def = _asset_manager.get< kege::ImageDefn >( index );
             def->handle = {kege::RgResrcType::Image, index};
             return def->handle;
@@ -148,7 +148,7 @@ namespace kege{
     }
 
 
-    const kege::ImageHandle* RenderGraph::getImage( const kege::RgResrcHandle& handle )const
+    const ref::Image RenderGraph::getImage( const kege::RgResrcHandle& handle )const
     {
         const kege::ImageDefn* def = _asset_manager.get< kege::ImageDefn >( handle.index );
         uint32_t frame_index = 0;
@@ -160,19 +160,19 @@ namespace kege{
         {
             frame_index = _graphics->getFrameIndex() % def->physical_handle.size();
         }
-        return &def->physical_handle[ frame_index ];
+        return def->physical_handle[ frame_index ];
     }
 
-    const kege::ImageHandle* RenderGraph::fetchImage( const std::string& name )const
+    const ref::Image RenderGraph::fetchImage( const std::string& name )const
     {
         const kege::ImageDefn* def = _asset_manager.fetch< kege::ImageDefn >( name );
         uint32_t frame_index = _graphics->getFrameIndex() % def->physical_handle.size();
-        return &def->physical_handle[ frame_index ];
+        return def->physical_handle[ frame_index ];
     }
 
     void RenderGraph::removeImage( const kege::RgResrcHandle& handle )
     {
-        _asset_manager.remove< kege::ImageDefn >( handle.index );
+        _asset_manager.erase< kege::ImageDefn >( handle.index );
     }
     
     void RenderGraph::removeImage( const std::string& name )
@@ -182,7 +182,7 @@ namespace kege{
 
 
 
-    RgResrcHandle RenderGraph::importSampler( std::string name, const kege::SamplerHandle& handle )
+    RgResrcHandle RenderGraph::importSampler( std::string name, const ref::Sampler& handle )
     {
         SamplerDefn defn;
         defn.name = name;
@@ -195,7 +195,7 @@ namespace kege{
         kege::SamplerDefn* def = _asset_manager.fetch< kege::SamplerDefn >( defn.name );
         if ( def == nullptr )
         {
-            int index = _asset_manager.add< kege::SamplerDefn >( defn.name, defn );
+            uint64_t index = _asset_manager.add< kege::SamplerDefn >( defn.name, defn );
             def = _asset_manager.get< kege::SamplerDefn >( index );
             def->handle = {kege::RgResrcType::Sampler, index};
             return def->handle;
@@ -206,21 +206,21 @@ namespace kege{
         }
     }
 
-    const kege::SamplerHandle* RenderGraph::getSampler( const RgResrcHandle& handle )const
+    const ref::Sampler RenderGraph::getSampler( const RgResrcHandle& handle )const
     {
         const kege::SamplerDefn* def = _asset_manager.get< kege::SamplerDefn >( handle.index );
-        return &def->physical_handle;
+        return def->physical_handle;
     }
 
-    const kege::SamplerHandle* RenderGraph::fetchSampler( const std::string& name )const
+    const ref::Sampler RenderGraph::fetchSampler( const std::string& name )const
     {
         const kege::SamplerDefn* def = _asset_manager.fetch< kege::SamplerDefn >( name );
-        return &def->physical_handle;
+        return def->physical_handle;
     }
 
     void RenderGraph::removeSampler( const kege::RgResrcHandle& handle )
     {
-        _asset_manager.remove< kege::ImageDefn >( handle.index );
+        _asset_manager.erase< kege::ImageDefn >( handle.index );
     }
 
     void RenderGraph::removeSampler( const std::string& name )
@@ -266,33 +266,14 @@ namespace kege{
         return _graphics;
     }
 
-    void RenderGraph::execute( RenderManager& render_manager )
+    ref::RenderExecutor RenderGraph::getRenderExecutor()
     {
-        if( _execution_order.empty() )
-        {
-            KEGE_LOG_ERROR << "calling RenderGraph::execute with out compiling." <<Log::nl;
-            return;
-        }
+        return _executor;
+    }
 
-        if ( !_graphics->beginFrame() )
-        {
-            KEGE_LOG_ERROR << "Failed to begin Frame" <<Log::nl;
-            return;
-        }
-
-        std::vector< kege::SubmitInfo > submits;
-        for (int i = 0; i < _execution_order.size(); ++i)
-        {
-            RenderStage* pass = _execution_order[i];
-            if( pass->execute( render_manager ) )
-            {
-                submits.push_back( pass->getSubmitInfo() );
-            }
-        }
-        _graphics->submit( submits, _graphics->getSwapchain() );
-        _graphics->endFrame();
-
-        _graphics->present( _graphics->getSwapchain() );
+    void RenderGraph::execute(const ref::Semaphore& image_available_sem, const ref::Semaphore& render_complete_sem)
+    {
+        _executor->execute( this, image_available_sem, render_complete_sem );
     }
 
     bool RenderGraph::compile()
@@ -303,8 +284,8 @@ namespace kege{
 
     void RenderGraph::createShaderResource( RgShaderResrcDefn* def )
     {
-        def->physical_handles.resize( def->frames_in_flight );
-        for (int frame=0; frame<def->frames_in_flight; ++frame)
+        def->physical_handles.resize( def->frames );
+        for (int frame=0; frame<def->frames; ++frame)
         {
             UniformResourceSet resources;
             UniformDescriptorSet descriptors;
@@ -339,7 +320,7 @@ namespace kege{
                                 createSampler( *sampler );
                             }
 
-                            int index = image->physical_handle.size() % def->frames_in_flight;
+                            int index = image->physical_handle.size() % def->frames;
 
                             images[i] = ImageInfo
                             {
@@ -365,7 +346,7 @@ namespace kege{
                                 createBuffer( *buffer );
                             }
 
-                            int index = buffer->physical_handle.size() % def->frames_in_flight;
+                            int index = buffer->physical_handle.size() % def->frames;
 
                             buffers[i] = BufferInfo
                             {
@@ -400,9 +381,10 @@ namespace kege{
         desc.data         = defn.info.data;
         desc.memory_usage = defn.info.memory_usage;
         desc.usage        = defn.info.usage;
+        //desc.frames       = defn.info.frames;
 
-        defn.physical_handle.resize( defn.frames_in_flight );
-        for (int i = 0; i<defn.frames_in_flight; ++i )
+        defn.physical_handle.resize( defn.frames );
+        for (int i = 0; i<defn.frames; ++i )
         {
             defn.physical_handle[i] = _graphics->createBuffer( desc );
         }
@@ -410,17 +392,18 @@ namespace kege{
 
     void RenderGraph::createImage( ImageDefn& defn )
     {
-        kege::ImageDesc desc = {};
-        desc.width      = defn.info.width;
-        desc.height     = defn.info.height;
-        desc.depth      = defn.info.depth;
-        desc.format     = defn.info.format;
-        desc.type       = defn.info.type;
-        desc.name       = defn.name;
-        desc.usage      = defn.usages;
+        kege::Image::Desc desc = {};
+        desc.extent.width   = defn.info.width;
+        desc.extent.height  = defn.info.height;
+        desc.extent.depth   = defn.info.depth;
+        desc.format         = defn.info.format;
+        desc.type           = defn.info.type;
+        desc.debug_name     = defn.name;
+        desc.usage          = defn.usages;
+        //desc.frames         = defn.frames;
 
-        defn.physical_handle.resize( defn.frames_in_flight );
-        for (int i = 0; i<defn.frames_in_flight; ++i )
+        defn.physical_handle.resize( defn.frames );
+        for (int i = 0; i<defn.frames; ++i )
         {
             defn.physical_handle[i] = _graphics->createImage( desc );
         }
@@ -435,52 +418,59 @@ namespace kege{
     {
         if ( _graphics )
         {
-            ResourceManagerT< RgShaderResrcDefn >* resources = _asset_manager.get< RgShaderResrcDefn >();
-            for (int i=resources->begin(); 0<=i; i=resources->next(i))
+            AssetCacheTable< RgShaderResrcDefn >* resources = _asset_manager.getAssetCacheTable< RgShaderResrcDefn >();
+            for (uint64_t i=resources->begin(); i != 0; i=resources->next(i))
             {
-                std::vector< kege::Ref< ShaderResrc > >& handles = resources->get( i ).physical_handles;
+                std::vector< kege::Ref< ShaderResrc > >& handles = resources->get( i )->physical_handles;
                 handles.clear();
             }
+            resources->clear();
 
-            ResourceManagerT< BufferDefn >* buffers = _asset_manager.get< BufferDefn >();
-            for (int i=buffers->begin(); 0<=i; i=buffers->next(i))
+            AssetCacheTable< BufferDefn >* buffers = _asset_manager.getAssetCacheTable< BufferDefn >();
+            for (uint64_t i=buffers->begin(); i != 0; i=buffers->next(i))
             {
-                std::vector< kege::BufferHandle >& handles = buffers->get( i ).physical_handle;
+                std::vector< ref::Buffer >& handles = buffers->get( i )->physical_handle;
                 for (int i=0; i<handles.size(); ++i)
                 {
-                    _graphics->destroyBuffer( handles[i] );
+                    handles[i].clear();
                 }
             }
+            buffers->clear();
 
-            ResourceManagerT< ImageDefn >* images = _asset_manager.get< ImageDefn >();
-            for (int i=images->begin(); 0<=i; i=images->next(i))
+            AssetCacheTable< ImageDefn >* images = _asset_manager.getAssetCacheTable< ImageDefn >();
+            for (uint64_t i=images->begin(); i != 0; i=images->next(i))
             {
-                std::vector< kege::ImageHandle >& handles = images->get( i ).physical_handle;
+                std::vector< ref::Image >& handles = images->get( i )->physical_handle;
                 for (int i=0; i<handles.size(); ++i)
                 {
                     _graphics->destroyImage( handles[i] );
                 }
             }
+            images->clear();
 
-            ResourceManagerT< SamplerDefn >* samplers = _asset_manager.get< SamplerDefn >();
-            for (int i=samplers->begin(); 0<=i; i=samplers->next(i))
+            AssetCacheTable< SamplerDefn >* samplers = _asset_manager.getAssetCacheTable< SamplerDefn >();
+            for (uint64_t i=samplers->begin(); i != 0; i=samplers->next(i))
             {
-                _graphics->destroySampler( samplers->get( i ).physical_handle );
+                _graphics->destroySampler( samplers->get( i )->physical_handle );
             }
+            samplers->clear();
 
             for ( auto& pass : _passes )
             {
                 pass.destroy();
             }
+
+            _graphics = nullptr;
         }
         _asset_manager.shutdown();
         _passes.clear();
+        _executor.clear();
     }
 
     RenderGraph::RenderGraph( kege::Graphics* graphics )
     :   _graphics( graphics )
+    ,   _executor( new RenderExecutor( graphics, MAX_FRAMES_IN_FLIGHT ) )
     {
-        _asset_manager.initalize();
     }
     
     RenderGraph::~RenderGraph()

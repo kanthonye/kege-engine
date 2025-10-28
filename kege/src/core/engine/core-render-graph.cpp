@@ -33,7 +33,7 @@ namespace kege{
         // Use the graphics system to get the swapchain and other graphics resources
         // This will allow the render graph to manage rendering operations
         // across multiple frames and handle resources efficiently.
-        uint32_t frames_in_flight = MAX_FRAMES_IN_FLIGHT;
+        uint32_t frames = MAX_FRAMES_IN_FLIGHT;
         kege::Graphics* graphics = _engine->graphics().get();
         _module = new kege::RenderGraph( graphics );
 
@@ -100,7 +100,7 @@ namespace kege{
         _module->defnImage
         ({
             .name = "swapchain_color_output",
-            .frames_in_flight = graphics->getSwapchain()->getImageCount(),
+            .frames = graphics->getSwapchain()->getImageCount(),
             .usages = kege::ImageUsage::Color | kege::ImageUsage::Sampled,
             .info = ImageDefn::Info
             {
@@ -110,13 +110,13 @@ namespace kege{
                 .format = graphics->getSwapchain()->getColorFormat(),
                 .type = kege::ImageType::Type2D
             },
-            .physical_handle = graphics->getSwapchain()->getColorImages(),
+            //TODO: .physical_handle = graphics->getSwapchain()->getColorImages(),
             .use_swapchain_image_index = true,
         });
         _module->defnImage
         ({
             .name = "swapchain_depth_output",
-            .frames_in_flight = graphics->getSwapchain()->getImageCount(),
+            .frames = graphics->getSwapchain()->getImageCount(),
             .usages = kege::ImageUsage::DepthStencil | kege::ImageUsage::Sampled,
             .info = ImageDefn::Info
             {
@@ -126,7 +126,7 @@ namespace kege{
                 .format = graphics->getSwapchain()->getDepthFormat(),
                 .type = kege::ImageType::Type2D
             },
-            .physical_handle = graphics->getSwapchain()->getDepthImages(),
+            //TODO: .physical_handle = graphics->getSwapchain()->getDepthImages(),
             .use_swapchain_image_index = true,
         });
 
@@ -135,7 +135,7 @@ namespace kege{
         _module->defnImage
         ({
             .name = "scene_color",
-            .frames_in_flight = frames_in_flight,
+            .frames = frames,
             .usages = kege::ImageUsage::Color | kege::ImageUsage::Sampled,
             .info = ImageDefn::Info
             {
@@ -149,7 +149,7 @@ namespace kege{
         _module->defnImage
         ({
             .name = "scene_depth",
-            .frames_in_flight = frames_in_flight,
+            .frames = frames,
             .usages = kege::ImageUsage::DepthStencil | kege::ImageUsage::Sampled,
             .info = ImageDefn::Info
             {
@@ -167,14 +167,14 @@ namespace kege{
             RgShaderResrcDefn
             {
                 .name = "scene-graphics",
-                .frames_in_flight = 1,
+                .frames = 1,
                 .bindings =
                 {
                     kege::RgShaderResrcDesc
                     {
                         .count = 1,
                         .binding = 0,
-                        .stages = ShaderStage::All,
+                        .stages = ShaderStageFlag::All,
                         .type = kege::DescriptorType::CombinedImageSampler,
                         .targets =
                         {
@@ -185,7 +185,7 @@ namespace kege{
                     {
                         .count = 1,
                         .binding = 1,
-                        .stages = ShaderStage::All,
+                        .stages = ShaderStageFlag::All,
                         .type = kege::DescriptorType::CombinedImageSampler,
                         .targets =
                         {
@@ -201,13 +201,13 @@ namespace kege{
         _module->defnBuffer
         ({
             .name = "camera-buffer",
-            .frames_in_flight = frames_in_flight,
+            .frames = frames,
             .info = BufferDesc
             {
                 .name = "camera-buffer",
                 .size =  2 * sizeof( mat44 ) + sizeof( vec4 ),
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .usage = BufferUsage::UniformBuffer,
+                .usage = BufferUsages::UniformBuffer,
                 .data = nullptr,
             },
         });
@@ -217,14 +217,14 @@ namespace kege{
             {
                 .name = "camera-buffer",
                 .set_index = 0,
-                .frames_in_flight = frames_in_flight,
+                .frames = frames,
                 .bindings =
                 {
                     kege::RgShaderResrcDesc
                     {
                         .count = 1,
                         .binding = 0,
-                        .stages = ShaderStage::All,
+                        .stages = ShaderStageFlag::All,
                         .type = kege::DescriptorType::UniformBuffer,
                         .targets = {{ .type = kege::RgResrcType::Buffer, .name = "camera-buffer" }}
                     },
@@ -235,13 +235,13 @@ namespace kege{
         _module->defnBuffer
         ({
             .name = "light-buffer",
-            .frames_in_flight = frames_in_flight,
+            .frames = frames,
             .info = BufferDesc
             {
                 .name = "light-buffer",
                 .size =  100 * sizeof( Light ),
                 .memory_usage = MemoryUsage::CpuToGpu,
-                .usage = BufferUsage::UniformBuffer,
+                .usage = BufferUsages::UniformBuffer,
                 .data = nullptr,
             },
         });
@@ -251,14 +251,14 @@ namespace kege{
             {
                 .name = "light-buffer",
                 .set_index = 1,
-                .frames_in_flight = frames_in_flight,
+                .frames = frames,
                 .bindings =
                 {
                     kege::RgShaderResrcDesc
                     {
                         .count = 1,
                         .binding = 0,
-                        .stages = ShaderStage::All,
+                        .stages = ShaderStageFlag::All,
                         .type = kege::DescriptorType::UniformBuffer,
                         .targets = {{ .type = kege::RgResrcType::Buffer, .name = "light-buffer" }}
                     },
@@ -276,14 +276,14 @@ namespace kege{
             RgShaderResrcDefn
             {
                 .name = "scene-color",
-                .frames_in_flight = 1,
+                .frames = 1,
                 .bindings =
                 {
                     kege::RgShaderResrcDesc
                     {
                         .count = 1,
                         .binding = 0,
-                        .stages = ShaderStage::Fragment,
+                        .stages = ShaderStageFlag::Fragment,
                         .type = kege::DescriptorType::CombinedImageSampler,
                         .targets = {{ .type = kege::RgResrcType::Image, .name = "scene_color" }}
                     },
@@ -461,53 +461,48 @@ namespace kege{
 
 
 
-namespace kege{
-
-    RenderManagerModule::RenderManagerModule( kege::Engine* engine )
-    :   Module( engine, "RenderManagerModule" )
-    {}
-
-    bool RenderManagerModule::initialize( )
-    {
-        if ( _module != nullptr )
-        {
-            kege::Log::error << "( INITIALIZATION_FAILED ) -> RenderGraph" << Log::nl;
-            return false;
-        }
-
-        _module = new kege::RenderManager
-        ({
-            .engine = _engine,
-            .graphics = _engine->graphics().get(),
-            .graph = _engine->renderGraph().get(),
-            .frames_in_flight = MAX_FRAMES_IN_FLIGHT,
-        });
-
-        _module->initialize();
-        // ------- Setup Image Sampler Resources -------
-
-
-        return true;
-    }
-
-    kege::RenderManager * RenderManagerModule::getModule()
-    {
-        return _module.ref();
-    }
-
-    void RenderManagerModule::shutdown()
-    {
-        if ( _module )
-        {
-            _module->shutdown();
-            _module.clear();
-        }
-    }
-
-    void RenderManagerModule::add()
-    {
-        _engine->addModule( this );
-        kege::Log::info << "RenderManagerModule added to engine" << Log::nl;
-    }
-
-}
+//namespace kege{
+//
+//    RenderExecutorModule::RenderExecutorModule( kege::Engine* engine )
+//    :   Module( engine, "RenderExecutorModule" )
+//    {}
+//
+//    bool RenderExecutorModule::initialize( )
+//    {
+//        if ( _module != nullptr )
+//        {
+//            kege::Log::error << "( INITIALIZATION_FAILED ) -> RenderGraph" << Log::nl;
+//            return false;
+//        }
+//
+//        _module = new kege::RenderExecutor
+//        (_engine->renderGraph().get(), MAX_FRAMES_IN_FLIGHT);
+//
+//        _module->initialize();
+//        // ------- Setup Image Sampler Resources -------
+//
+//
+//        return true;
+//    }
+//
+//    kege::RenderExecutor * RenderExecutorModule::getModule()
+//    {
+//        return _module.ref();
+//    }
+//
+//    void RenderExecutorModule::shutdown()
+//    {
+//        if ( _module )
+//        {
+//            _module->shutdown();
+//            _module.clear();
+//        }
+//    }
+//
+//    void RenderExecutorModule::add()
+//    {
+//        _engine->addModule( this );
+//        kege::Log::info << "RenderExecutorModule added to engine" << Log::nl;
+//    }
+//
+//}

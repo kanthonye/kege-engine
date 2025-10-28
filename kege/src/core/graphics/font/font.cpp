@@ -55,12 +55,12 @@ namespace kege::ui{
         return font_size * _glyphs[ c ].advance;
     }
 
-    kege::SamplerHandle Font::getSampler()const
+    ref::Sampler Font::getSampler()const
     {
         return _sampler;
     }
 
-    kege::ImageHandle Font::getImage()const
+    ref::Image Font::getImage()const
     {
         return _image;
     }
@@ -70,7 +70,7 @@ namespace kege::ui{
         return !_glyphs.empty() && _image;
     }
 
-    Font::Font( const std::vector< ui::Glyph >& glyphs, kege::ImageHandle image, kege::SamplerHandle sampler )
+    Font::Font( const std::vector< ui::Glyph >& glyphs, ref::Image image, ref::Sampler sampler )
     :   _sampler( sampler )
     ,   _image( image )
     ,   _glyphs( glyphs )

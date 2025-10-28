@@ -13,10 +13,33 @@ namespace kege{
     {
         if( !_entities ) return;
 
+        RenderObject object = {};
         for (Entity entity : *_entities )
         {
             Terrain* terrain = entity.get< Terrain >();
+            Transform* transform = entity.get< Transform >();
+
             terrain->submitVisibleGeometries();
+
+            kege::mat44* m = reinterpret_cast< kege::mat44* >( object.constant.data );
+            m[1] = kege::quatToM44( transform->orientation );
+            m[0][0] = kege::vec4( m[1][0].xyz * transform->scale.x, 0.0 );
+            m[0][1] = kege::vec4( m[1][1].xyz * transform->scale.y, 0.0 );
+            m[0][2] = kege::vec4( m[1][2].xyz * transform->scale.z, 0.0 );
+            m[0][3] = kege::vec4( transform->position, 1.0 );
+
+            m[1][3].x = terrain->getPhysicalTerrain()->getRadius();
+
+            object.constant.size = 2 * sizeof( kege::mat44 );
+            object.constant.stages = ShaderStageFlag::Vertex;
+
+            for ( Ref< MeshSource >& source : terrain->getTerrainRenderer()->sources )
+            {
+                object.mesh = source;
+                object.material = terrain->getTerrainMaterial();
+
+                getRenderExecutor()->submit( object );
+            }
         }
     }
     
@@ -25,9 +48,9 @@ namespace kege{
         if( !_entities ) return;
 
         vec3 camera_position;
-        if ( _engine->scene().getScene()->getCameraEntity() )
+        if ( getScene()->getCameraEntity() )
         {
-            camera_position = _engine->scene().getScene()->getCameraEntity().get< Transform >()->position;
+            camera_position = getScene()->getCameraEntity().get< Transform >()->position;
         }
         else
         {
@@ -39,9 +62,9 @@ namespace kege{
             Terrain* terrain = entity.get< Terrain >();
             Transform* transform = entity.get< Transform >();
 
-            terrain->setOrientation( (quatd) transform->orientation );
-            terrain->setPosition( (vec3d) transform->position );
-            terrain->update( (vec3d) camera_position );
+            terrain->setOrientation( transform->orientation );
+            terrain->setPosition( transform->position );
+            terrain->update( camera_position );
         }
     }
 
@@ -54,8 +77,8 @@ namespace kege{
     TerrainSystem::~TerrainSystem()
     {}
 
-    TerrainSystem::TerrainSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "terrain-system", REQUIRE_UPDATE | REQUIRE_RENDER )
+    TerrainSystem::TerrainSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "terrain-system", REQUIRE_UPDATE | REQUIRE_RENDER, esm  )
     {}
 
 

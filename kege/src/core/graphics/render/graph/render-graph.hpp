@@ -10,7 +10,9 @@
 
 #include "render-stage.hpp"
 #include "asset-manager.hpp"
+#include "render-executor.hpp"
 #include "render-graph-compiler.hpp"
+#include "render-graph-loader.hpp"
 
 namespace kege{
 
@@ -37,11 +39,11 @@ namespace kege{
         void removeShaderResource( const std::string& name );
         RgResrcHandle getRgResrcShaderResrc( const std::string& name );
 
-        kege::RgResrcHandle importBuffer( std::string name, const std::vector<kege::BufferHandle>& handles );
+        kege::RgResrcHandle importBuffer( std::string name, const std::vector<ref::Buffer>& handles );
         const kege::BufferDefn* getBufferDefn( const std::string& name );
         kege::RgResrcHandle defnBuffer( const kege::BufferDefn& defn );
-        const kege::BufferHandle* getBuffer( const RgResrcHandle& handle )const;
-        const kege::BufferHandle* fetchBuffer( const std::string& name )const;
+        ref::Buffer getBuffer( const RgResrcHandle& handle )const;
+        ref::Buffer fetchBuffer( const std::string& name )const;
         void removeBuffer( const RgResrcHandle& handle );
         void removeBuffer( const std::string& name );
         RgResrcHandle getRgResrcBuffer( const std::string& name );
@@ -51,23 +53,21 @@ namespace kege{
         const ImageDefn* getImageDefn( const kege::RgResrcHandle& handle );
         const ImageDefn* getImageDefn( const std::string& name );
 
-        RgResrcHandle importImage( std::string name, const std::vector<kege::ImageHandle>& handles );
-        const kege::ImageHandle* getImage( const kege::RgResrcHandle& handle )const;
-        const kege::ImageHandle* fetchImage( const std::string& name )const;
+        RgResrcHandle importImage( std::string name, const std::vector<ref::Image>& handles );
+        const ref::Image getImage( const kege::RgResrcHandle& handle )const;
+        const ref::Image fetchImage( const std::string& name )const;
         void removeImage( const kege::RgResrcHandle& handle );
         void removeImage( const std::string& name );
         RgResrcHandle getRgResrcImage( const std::string& name );
 
 
-        RgResrcHandle importSampler( std::string name, const kege::SamplerHandle& handle );
+        RgResrcHandle importSampler( std::string name, const ref::Sampler& handle );
         RgResrcHandle defnSampler( const kege::SamplerDefn& defn );
-        const kege::SamplerHandle* getSampler( const RgResrcHandle& handle )const;
-        const kege::SamplerHandle* fetchSampler( const std::string& name )const;
+        const ref::Sampler getSampler( const RgResrcHandle& handle )const;
+        const ref::Sampler fetchSampler( const std::string& name )const;
         void removeSampler( const kege::RgResrcHandle& handle );
         void removeSampler( const std::string& name );
         RgResrcHandle getRgResrcSampler( const std::string& name );
-
-
 
         /**
          * @brief Adds a graphics pass to the render graph.
@@ -76,9 +76,17 @@ namespace kege{
         void addPass(const RenderPassDefn& definition);
 
         /**
+         * @brief Get the render executor for this render graph.
+         *
+         *  The render executor handle the drawing of render objects.
+         *  Render objects are submitted to the render executor for rendering
+         */
+        ref::RenderExecutor getRenderExecutor();
+        
+        /**
          * @brief Executes the compiled render graph.
          */
-        void execute( RenderManager& render_manager );
+        void execute(const ref::Semaphore& image_available_sem, const ref::Semaphore& render_complete_sem);
 
         /**
          * @brief Compiles the render graph for execution.
@@ -134,8 +142,6 @@ namespace kege{
 
     private:
 
-        AssetManager _asset_manager;
-
         std::vector< RgImageLayoutTransition > _initial_image_transitions;
 
         /**
@@ -150,10 +156,17 @@ namespace kege{
 
         kege::Graphics* _graphics;
 
+        ref::RenderExecutor _executor;
+        AssetManager _asset_manager;
+
         friend RenderGraphCompiler;
+        friend RenderExecutor;
         friend RenderStage;
     };
 
 }
 
+namespace kege::ref{
+    typedef kege::Ref< kege::RenderGraph > RenderGraph;
+}
 #endif /* render_graph_hpp */

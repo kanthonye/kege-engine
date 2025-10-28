@@ -8,7 +8,7 @@
 #ifndef physics_system_hpp
 #define physics_system_hpp
 
-#include "../../../../core/esm/entity-system.hpp"
+#include "../../../../core/ecs/entity-system.hpp"
 #include "../simulation/physics-simulation.hpp"
 
 namespace kege{
@@ -22,7 +22,7 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        PhysicsSystem( kege::Engine* engine );
+        PhysicsSystem( kege::EntitySystemManager* esm );
 
     private:
 

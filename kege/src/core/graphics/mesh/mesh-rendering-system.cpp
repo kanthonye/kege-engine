@@ -53,14 +53,14 @@ namespace kege{
                         m[0] = kege::quatToM44( transform->orientation );
                     }
                     object.constant.size = 2 * sizeof( kege::mat44 );
-                    object.constant.stages = ShaderStage::Vertex;
+                    object.constant.stages = ShaderStageFlag::Vertex;
                 }
 
                 if ( source->primative )
                 {
                     if ( !source->primative->vertex_buffer )
                     {
-                        source->primative->upload( _engine->graphics().get() );
+                        source->primative->upload( getGraphics() );
                     }
                 }
 
@@ -79,28 +79,27 @@ namespace kege{
 
                 object.mesh = source;
 
-                _engine->renderManager()->submit( object );
+                getRenderExecutor()->submit( object );
             }
         }
     }
 
     bool MeshRenderingSystem::initialize()
     {
-        Ref< Material >* material = _engine->getAssetManager().fetch< Ref< Material > >( "default-material" );
-        if ( !material )
-        {
-            ShaderPipeline pipeline = _engine->graphics()->getShaderPipelineManager()->load
-            (
-                kege::vfs( "graphics-shaders/basic/basic.json" ).c_str()
-            );
-
-            _default_material = new Material({ new MaterialSource(RenderPassType::Geometry, pipeline, false, false, {}) });
-            _engine->getAssetManager().add< Ref< Material > >( "default-material", _default_material );
-        }
-        else
-        {
-            _default_material = *material;
-        }
+//        Ref< Material >* material = getAssetManager()->fetch< Ref< Material > >( "default-material" );
+//        if ( !material )
+//        {
+//            ShaderPipeline pipeline = getGraphics()->getShaderPipelineManager()->load
+//            (
+//                kege::vfs( "graphics-shaders/basic/basic.json" ).c_str()
+//            );
+//            _default_material = new Material({ new MaterialSource(RenderPassType::Geometry, pipeline, false, false, {}) });
+//            getAssetManager()->add< Ref< Material > >( "default-material", _default_material );
+//        }
+//        else
+//        {
+//            _default_material = *material;
+//        }
         return EntitySystem::initialize();
     }
 
@@ -109,8 +108,8 @@ namespace kege{
         EntitySystem::shutdown();
     }
 
-    MeshRenderingSystem::MeshRenderingSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "mesh-rendering-system", REQUIRE_RENDER )
+    MeshRenderingSystem::MeshRenderingSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "mesh-rendering-system", REQUIRE_RENDER, esm  )
     {
         _signature = createEntitySignature< kege::Geometry, kege::Transform >();
     }

@@ -8,10 +8,7 @@
 #ifndef font_hpp
 #define font_hpp
 
-#include <vector>
-#include "../../memory/ref.hpp"
-#include "../../math/algebra/vmath.hpp"
-#include "../../renderer/core/graphics.hpp"
+#include "../render/core/graphics.hpp"
 
 namespace kege::ui{
 
@@ -44,20 +41,20 @@ namespace kege::ui{
 
         const std::vector< Glyph >& glyphs()const;
 
-        kege::SamplerHandle getSampler()const;
-        kege::ImageHandle getImage()const;
+        ref::Sampler getSampler()const;
+        ref::Image getImage()const;
 
         operator bool()const;
 
-        Font( const std::vector< ui::Glyph >& glyphs, kege::ImageHandle image, kege::SamplerHandle sampler );
+        Font( const std::vector< ui::Glyph >& glyphs, ref::Image image, ref::Sampler sampler );
         ~ Font();
         Font();
 
     protected:
 
         std::vector< ui::Glyph > _glyphs;
-        kege::SamplerHandle _sampler;
-        kege::ImageHandle _image;
+        ref::Sampler _sampler;
+        ref::Image _image;
         std::string _filename;
     };
 

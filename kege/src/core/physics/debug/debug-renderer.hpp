@@ -40,7 +40,7 @@ namespace kege {
 
         void reset();
         ~ DebugLineRenderSystem();
-        DebugLineRenderSystem( kege::Engine* engine );
+        DebugLineRenderSystem( kege::EntitySystemManager* esm );
 
     private:
 
@@ -51,8 +51,8 @@ namespace kege {
         uint64_t _vbo_capacity;
         uint64_t _ibo_capacity;
         
-        kege::BufferHandle _vbo;
-        kege::BufferHandle _ibo;
+        ref::Buffer _vbo;
+        ref::Buffer _ibo;
 
         uint64_t _vsize;
         uint64_t _isize;

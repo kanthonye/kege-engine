@@ -111,7 +111,7 @@ namespace kege::ui{
         ImageLoader::Info info;
         if ( !ImageLoader::load( info, font_texture_path ) )
         {
-            KEGE_LOG_ERROR << "Failed to load font texture: " << font_texture_path;
+            kege::Log::error << "Failed to load font texture: " << font_texture_path;
             return {};
         }
 
@@ -124,22 +124,21 @@ namespace kege::ui{
             info.data.data()
         });
 
-        kege::ImageHandle image = graphics->createImage
+        ref::Image image = graphics->createImage
         ({
             .type = ImageType::Type2D,
-            .width = uint32_t( info.width ),
-            .height = uint32_t( info.height ),
-            .depth = 1,
+            .extent = {uint32_t( info.width ),uint32_t( info.height ),1},
+            .array_layers = 1,
             .mip_levels = 1,
             .format = Format::rgba_u8_norm,
-            .sample_count = SampleCount::Count1,
+            .samples = SampleCount::Count1,
             .usage = ImageUsage::TransferDst | ImageUsage::Sampled | ImageUsage::Color,
             .memory_usage = MemoryUsage::GpuOnly,
-            .name = "font-image",
+            .debug_name = "font-image",
             .data = info.data.data()
         });
 
-        kege::SamplerHandle sampler = graphics->createSampler
+        ref::Sampler sampler = graphics->createSampler
         ({
             .mag_filter = Filter::Linear,
             .min_filter = Filter::Linear,

@@ -21,20 +21,20 @@ namespace kege{
     public:
 
 
-        virtual TerrainTile* getTerrainTile( const kege::dvec3& position )const;
-        virtual double getHeight( const kege::dvec3& position )const;
-        
+        virtual TerrainTile* getTerrainTile( const kege::fvec3& position )const;
+        virtual double getHeight( const kege::fvec3& position )const;
+
+        void setOrientation( const kege::fquat& orientation );
+        void setPosition( const kege::fvec3& position );
+
         virtual bool initialize( const kege::SphericalTerrainSettings& settings );
         virtual void notify( void* sender, int event, void* data );
 
-        virtual void update( const kege::dvec3& eye );
+        virtual void update( const kege::fvec3& eye );
         virtual void submitVisibleGeometries();
 
         void setPhysicalTerrain( kege::Ref< PhysicalTerrain > eye );
         const kege::PhysicalTerrain* getPhysicalTerrain()const;
-
-        void setOrientation( const kege::dquat& orientation );
-        void setPosition( const kege::dvec3& position );
 
         TerrainRenderer* getTerrainRenderer();
         MaterialSource* getTerrainMaterial();

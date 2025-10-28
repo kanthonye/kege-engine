@@ -1,0 +1,49 @@
+//
+//  scene-manager.hpp
+//  physics
+//
+//  Created by Kenneth Esdaile on 10/23/25.
+//
+
+#ifndef kege_scene_manager_hpp
+#define kege_scene_manager_hpp
+
+#include "scene.hpp"
+#include "communication.hpp"
+
+namespace kege{
+
+    class SceneManager : public kege::RefCounter
+    {
+    public:
+
+        ref::Scene createScene( const std::string& name );
+        ref::Scene findScene( const std::string& name );
+        ref::Scene getScene();
+
+        bool loadScenes( const std::string& name );
+        bool saveScenes( const std::string& name );
+
+        void setScene( ref::Scene scene );
+
+        bool initialize();
+        void shutdown();
+
+        ~SceneManager() = default;
+        SceneManager() = default;
+
+    private:
+
+        std::unordered_map< std::string, size_t > _scene_fast_index_lookup;
+        std::vector< ref::Scene > _scenes;
+
+        ref::Scene _curr_scene;
+
+        kege::Communication _communication;
+    };
+
+}
+namespace kege::ref{
+    typedef kege::Ref< kege::SceneManager > SceneManager;
+}
+#endif /* kege_scene_manager_hpp */

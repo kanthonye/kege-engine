@@ -7,35 +7,31 @@
 
 #include "asset-manager.hpp"
 
-namespace kege{
-
-    uint32_t ResourceManager::_enumerator = 0;
-
+namespace kege
+{
+    uint32_t AssetTable::_type_enumerator = 0;
 }
 
 namespace kege{
 
-    void AssetManager::initalize()
-    {
-        _managers.resize( ResourceManager::getMaxTypeCount() );
-    }
-
     void AssetManager::shutdown()
     {
-        for ( int i=0; i<_managers.size(); ++i)
+        for ( int i=0; i<_assets.size(); ++i)
         {
-            if ( _managers[i] != nullptr )
+            if ( _assets[i] != nullptr )
             {
-                delete _managers[i];
-                _managers[i] = nullptr;
+                delete _assets[i];
+                _assets[i] = nullptr;
             }
         }
-        _managers.clear();
+        _assets.clear();
     }
+
     AssetManager::~AssetManager()
     {
         shutdown();
     }
+    
     AssetManager::AssetManager()
     {}
 }

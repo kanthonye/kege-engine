@@ -8,23 +8,24 @@
 #ifndef entity_logic_hpp
 #define entity_logic_hpp
 
-#include "../ecs/entity.hpp"
-#include "../ecs/entity-registry.hpp"
+#include "../scene/scene.hpp"
 
 namespace kege{
 
-    class Engine;
+    class Scene;
 
     class EntityLogic : public kege::RefCounter
     {
     public:
 
-        EntityLogic( kege::Engine* engine, const std::string& name );
-        
+        EntityLogic( const std::string& name );
+
         const kege::EntitySignature& getEntitySignature()const;
         const std::string& getName() const;
         EntityView* getEntities();
-        void onSceneChange();
+
+        void setScene( kege::Scene* scene );
+        kege::Scene* scene();
 
         virtual ~EntityLogic();
 
@@ -32,8 +33,8 @@ namespace kege{
 
         kege::EntitySignature _signature;
         EntityView* _entities;
-        Engine* _engine;
-        
+        kege::Scene* _scene;
+
         std::string _name;
     };
 

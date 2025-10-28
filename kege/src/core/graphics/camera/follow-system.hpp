@@ -8,7 +8,7 @@
 #ifndef follow_system_hpp
 #define follow_system_hpp
 
-#include "../../esm/entity-system.hpp"
+#include "../../ecs/entity-system.hpp"
 
 namespace kege{
 
@@ -16,7 +16,7 @@ namespace kege{
     {
     public:
 
-        FollowSystem( kege::Engine* engine );
+        FollowSystem( kege::EntitySystemManager* esm );
         void update( double dms )override;
         bool initialize()override;
         void shutdown()override;

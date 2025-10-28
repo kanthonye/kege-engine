@@ -24,7 +24,7 @@ namespace kege {
         T data[ N ];
     };
 }
-#endif
+#endif // !kege_arr_T_N_hpp
 
 namespace kege {
 
@@ -36,6 +36,12 @@ namespace kege {
 
         void foreach( const std::function<void(const std::string&, const Json&)>& )const;
         void foreach( const std::function<void(const Json&)>& )const;
+
+        template< typename T > T operator()( T(*func)( const std::string& s ), const T& subsitute )const
+        {
+            return ( value()[0] != '\0' ) ? func( value() ) : subsitute;
+        }
+
 
         template< typename T, int N > arr< T,N > getArray( T(*func)(const char* s) )const
         {
@@ -58,16 +64,28 @@ namespace kege {
             return a;
         };
 
-        const char* getString(const std::string& key, const char* default_value)const;
-        double getFloat(const std::string& key, float default_value = 0.0f)const;
-        bool getBool(const std::string& key, bool default_value = false)const;
-        int32_t getInt(const std::string& key, int default_value = 0)const;
+        template< typename T > std::vector< T > getVector( T(*func)(const Json& j) )const
+        {
+            std::vector< T > a;
+            a.reserve( count() );
+            for( int i = 0; i < count(); ++i )
+            {
+                a.push_back( func( operator[]( i ) ) );
+            }
+            return a;
+        };
 
-        const char* getString( const char* str = "" )const;
-        double getDouble( double val = 0.0 )const;
-        float getFloat( float val = 0.0 )const;
-        bool getBool( bool val = false )const;
-        int32_t getInt( int32_t val = 0 )const;
+        const char* getStr( const std::string& key, const char* str = "" )const;
+        double getDouble( const std::string& key, double val = 0.0 )const;
+        float getFloat( const std::string& key, float val = 0.0 )const;
+        bool getBool( const std::string& key, bool val = false )const;
+        int32_t getInt( const std::string& key, int32_t val = 0 )const;
+
+        const char* toStr( const char* str = "" )const;
+        double toDouble( double val = 0.0 )const;
+        float toFloat( float val = 0.0 )const;
+        bool toBool( bool val = false )const;
+        int32_t toInt( int32_t val = 0 )const;
 
         const Json operator[]( const std::string& id )const;
         const Json operator[]( const char* id )const;

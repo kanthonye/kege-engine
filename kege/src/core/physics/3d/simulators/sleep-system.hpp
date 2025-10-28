@@ -24,7 +24,7 @@
 //         bool initialize();
 //         void shutdown();
 
-//         SleepSystem( kege::Engine* engine );
+//         SleepSystem( kege::EntitySystemManager* esm );
 
 //         float _sleep_threshold;     // Velocity threshold to enter sleep
 //         float _sleep_motion_bias;   // Damping factor for the body calculation

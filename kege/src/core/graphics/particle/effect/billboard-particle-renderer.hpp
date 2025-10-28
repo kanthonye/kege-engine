@@ -9,7 +9,7 @@
 #define render_particle_system_hpp
 
 #include "particle-effect.hpp"
-#include "../../../esm/entity-system.hpp"
+#include "../../../ecs/entity-system.hpp"
 
 namespace kege{
 
@@ -30,7 +30,7 @@ namespace kege{
 
     class BillboardSprite
     {
-        kege::ImageHandle texture;
+        ref::Image texture;
     };
 
     class BillboardParticleRenderer : public kege::EntitySystem
@@ -38,13 +38,13 @@ namespace kege{
     public:
 
         //void operator()( kege::RenderPassContext* context );
-        BillboardParticleRenderer( kege::Engine* engine );
+        BillboardParticleRenderer( kege::EntitySystemManager* esm );
         bool initialize();
         void shutdown();
 
 
         kege::PipelineHandle _pipeline;
-        kege::BufferHandle _storage_buffer;
+        ref::Buffer _storage_buffer;
     };
 
 }

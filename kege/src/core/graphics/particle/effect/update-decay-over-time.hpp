@@ -21,7 +21,7 @@ namespace kege{
     {
     public:
 
-        UpdateDecayOverTime( kege::Engine* engine );
+        UpdateDecayOverTime( kege::EntitySystemManager* esm );
         void update( double dms );
         bool initialize();
     };

@@ -92,7 +92,7 @@ namespace kege{
         }
     }
 
-    bool InputContextManager::initialize( GraphicsWindow* window )
+    bool InputContextManager::initialize( AppWindow* window )
     {
         return _user_input_receiver.initialize( window );
     }

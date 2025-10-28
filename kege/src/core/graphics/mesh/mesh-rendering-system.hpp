@@ -8,10 +8,10 @@
 #ifndef mesh_rendering_system_hpp
 #define mesh_rendering_system_hpp
 
-#include "../../esm/entity-system.hpp"
+#include "../../ecs/entity-system.hpp"
 #include "../../input/input-commands.hpp"
 #include "../../graphics/mesh/mesh.hpp"
-#include "../../renderer/core/graphics.hpp"
+#include "../render/core/graphics.hpp"
 
 namespace kege{
 
@@ -23,7 +23,7 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        MeshRenderingSystem( kege::Engine* engine );
+        MeshRenderingSystem( kege::EntitySystemManager* esm );
 
 
         Ref< Material > _default_material;

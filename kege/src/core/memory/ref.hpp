@@ -5,14 +5,13 @@
 //  Created by Kenneth Esdaile on 1/15/23.
 //
 
-#ifndef KEGE_REF
-#define KEGE_REF
+#ifndef kege_ref_hpp
+#define kege_ref_hpp
 
 #include <stdlib.h>
 
 namespace kege
 {
-
     class RefCounter
     {
     public:
@@ -30,12 +29,11 @@ namespace kege
 
         mutable int _ref_counter;
     };
-    
 }
 
 
-namespace kege{
-
+namespace kege
+{
     template< typename T > class Ref
     {
     public:
@@ -167,7 +165,5 @@ namespace kege{
 
         T* _ref;
     };
-
 }
-
-#endif /* KEGE_REF */
+#endif /* kege_ref_hpp */

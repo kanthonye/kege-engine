@@ -8,7 +8,7 @@
 #ifndef selection_system_hpp
 #define selection_system_hpp
 
-#include "../../../esm/entity-system.hpp"
+#include "../../../ecs/entity-system.hpp"
 #include "../collision/rayhit/rayhit.hpp"
 
 namespace kege{
@@ -22,7 +22,7 @@ namespace kege{
         bool initialize()override;
         void shutdown()override;
         
-        EntitySelectionSystem( kege::Engine* engine );
+        EntitySelectionSystem( kege::EntitySystemManager* esm );
         bool _make_selection;
     };
 

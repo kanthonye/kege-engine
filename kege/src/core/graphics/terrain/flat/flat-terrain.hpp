@@ -22,10 +22,7 @@ namespace kege{
     public:
 
         void render( kege::CommandEncoder* encoder, Transform* transform );
-        void update( const kege::dvec3& camera_position );
-
-        void setRotation( const kege::quat& rotation );
-        void setPosition( const kege::vec3& position );
+        void update( const kege::fvec3& camera_position );
 
         bool initialize();
         

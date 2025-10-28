@@ -37,8 +37,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    FollowSystem::FollowSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "follow-system", REQUIRE_UPDATE )
+    FollowSystem::FollowSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "follow-system", REQUIRE_UPDATE, esm  )
     {
         _signature = createEntitySignature< Follow, Transform >();
     }

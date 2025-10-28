@@ -79,12 +79,11 @@ namespace kege{
                 .image = _graphics->createImage
                 ({
                     .type = ImageType::Type2D,
-                    .width = _image_width,
-                    .height = _image_width,
-                    .depth = _image_layers,
+                    .extent = {_image_width,_image_width, 1 },
+                    .array_layers = _image_layers,
                     .mip_levels = 1,
                     .format = Format::r_f32,
-                    .sample_count = SampleCount::Count1,
+                    .samples = SampleCount::Count1,
                     .usage = ImageUsage::TransferDst,
                     .memory_usage = MemoryUsage::GpuOnly,
                     .data =  nullptr
@@ -96,12 +95,11 @@ namespace kege{
                 .image = _graphics->createImage
                 ({
                     .type = ImageType::Type2D,
-                    .width = _image_width,
-                    .height = _image_width,
-                    .depth = _image_layers,
+                    .extent = {_image_width,_image_width, 1 },
+                    .array_layers = _image_layers,
                     .mip_levels = 1,
                     .format = Format::rgba_8_srgb,
-                    .sample_count = SampleCount::Count1,
+                    .samples = SampleCount::Count1,
                     .usage = ImageUsage::TransferDst,
                     .memory_usage = MemoryUsage::GpuOnly,
                     .data =  nullptr
@@ -212,13 +210,13 @@ namespace kege{
 //                .count = _max_shader_resource_capacity,
 //                .name = "HeightmapImageArray",
 //                .descriptor_type = DescriptorType::CombinedImageSampler,
-//                .stage_flags = ShaderStage::Vertex | ShaderStage::Fragment
+//                .stage_flags = ShaderStageFlag::Vertex | ShaderStageFlag::Fragment
 //            },
 //            UniformDesc{
 //                .count = _max_shader_resource_capacity,
 //                .name = "NormalmapImageArray",
 //                .descriptor_type = DescriptorType::CombinedImageSampler,
-//                .stage_flags = ShaderStage::Vertex | ShaderStage::Fragment
+//                .stage_flags = ShaderStageFlag::Vertex | ShaderStageFlag::Fragment
 //            }
 //        });
 //        for (int i=0; i<_max_shader_resource_capacity; ++i)

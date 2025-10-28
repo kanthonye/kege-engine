@@ -15,7 +15,7 @@ namespace kege{
     std::vector< uint32_t > compileGlslToSpv
     (
         const char* shader_name,
-        ShaderStage shader_stage,
+        ShaderStageFlag shader_stage,
         const std::vector< char >& source
     )
     {
@@ -25,39 +25,39 @@ namespace kege{
 
         switch ( shader_stage )
         {
-            case kege::ShaderStage::Compute:
+            case kege::ShaderStageFlag::Compute:
             {
                 shaderc_shader_type = shaderc_compute_shader;
                 break;
             }
-            case kege::ShaderStage::Vertex:
+            case kege::ShaderStageFlag::Vertex:
             {
                 shaderc_shader_type = shaderc_vertex_shader;
                 break;
             }
-            case kege::ShaderStage::Fragment:
+            case kege::ShaderStageFlag::Fragment:
             {
                 shaderc_shader_type = shaderc_fragment_shader;
                 break;
             }
-            case kege::ShaderStage::Geometry:
+            case kege::ShaderStageFlag::Geometry:
             {
                 shaderc_shader_type = shaderc_geometry_shader;
                 break;
             }
-            case kege::ShaderStage::TessellationEvaluation:
+            case kege::ShaderStageFlag::TessellationEvaluation:
             {
                 shaderc_shader_type = shaderc_tess_evaluation_shader;
                 break;
             }
-            case kege::ShaderStage::TessellationControl:
+            case kege::ShaderStageFlag::TessellationControl:
             {
                 shaderc_shader_type = shaderc_tess_control_shader;
                 break;
             }
             default:
             {
-                KEGE_LOG_ERROR <<"Invalid shader state in compileGlslTextToByteCode()" << Log::nl;
+                kege::Log::error <<"Invalid shader state in compileGlslTextToByteCode()" << Log::nl;
                 return {};
             }
         }
@@ -71,7 +71,7 @@ namespace kege{
         );
         if (result.GetCompilationStatus() != shaderc_compilation_status_success)
         {
-            KEGE_LOG_ERROR <<"error in compileGlslTextToByteCode(): "<< result.GetErrorMessage().data() << Log::nl;
+            kege::Log::error <<"error in compileGlslTextToByteCode(): "<< result.GetErrorMessage().data() << Log::nl;
             return {};
         }
         return std::vector< uint32_t >(result.cbegin(), result.cend());
@@ -108,46 +108,46 @@ namespace kege{
         return path;
     }
 
-    kege::ShaderStage converShaderStage( const std::string& stage )
+    kege::ShaderStageFlag converShaderStage( const std::string& stage )
     {
-        kege::ShaderStage shader_type = {};
+        kege::ShaderStageFlag shader_type = {};
         if ( stage == "vertex" )
         {
-            shader_type = kege::ShaderStage::Vertex;
+            shader_type = kege::ShaderStageFlag::Vertex;
         }
         else if ( stage == "fragment" )
         {
-            shader_type = kege::ShaderStage::Fragment;
+            shader_type = kege::ShaderStageFlag::Fragment;
         }
         else if ( stage == "compute" )
         {
-            shader_type = kege::ShaderStage::Compute;
+            shader_type = kege::ShaderStageFlag::Compute;
         }
         else if ( stage == "geometry" )
         {
-            shader_type = kege::ShaderStage::Geometry;
+            shader_type = kege::ShaderStageFlag::Geometry;
         }
         else if ( stage == "tess-control" )
         {
-            shader_type = kege::ShaderStage::TessellationControl;
+            shader_type = kege::ShaderStageFlag::TessellationControl;
         }
         else if ( stage == "tess-evaluation" )
         {
-            shader_type = kege::ShaderStage::TessellationEvaluation;
+            shader_type = kege::ShaderStageFlag::TessellationEvaluation;
         }
         else
         {
-            return kege::ShaderStage::Invalid;
+            return kege::ShaderStageFlag::Invalid;
         }
         return shader_type;
     }
 
-    kege::ShaderStage convertShaderStageFlages( kege::Json json )
+    kege::ShaderStageFlag convertShaderStageFlages( kege::Json json )
     {
-        kege::ShaderStage stages = kege::ShaderStage::Invalid;
+        kege::ShaderStageFlag stages = kege::ShaderStageFlag::Invalid;
         for (int i = 0; i < json.count(); ++i)
         {
-            stages |= convertShaderStage( json[i].getString() );
+            stages |= convertShaderStage( json[i].toStr() );
         }
         return stages;
     }
@@ -163,7 +163,7 @@ namespace kege{
         json = json[ "stages" ];
         if ( json.count() == 0 )
         {
-            KEGE_LOG_ERROR <<"empty shader stages not allowed in loadShaderPipelineParams()" << Log::nl;
+            kege::Log::error <<"empty shader stages not allowed in loadShaderPipelineParams()" << Log::nl;
             return {};
         }
 
@@ -173,7 +173,7 @@ namespace kege{
             std::vector< char > source;
             if( !loadTextFile( source, shader_filename.data()) )
             {
-                KEGE_LOG_ERROR << "fail open shader file -> " << shader_filename << Log::nl;
+                kege::Log::error << "fail open shader file -> " << shader_filename << Log::nl;
                 return false;
             }
 
@@ -210,13 +210,13 @@ namespace kege{
             kege::UniformDesc dslb;
 
             kege::Json descriptor =  descriptors[i];
-            dslb.descriptor_type = convertDescriptorType( descriptor[ "type" ].getString() );
+            dslb.descriptor_type = convertDescriptorType( descriptor[ "type" ].toStr() );
             dslb.stage_flags = convertShaderStageFlages( descriptor[ "stages" ] );
-            dslb.binding = descriptor[ "binding" ].getInt();
-            dslb.count = descriptor[ "count" ].getInt();
-            dslb.name = descriptor[ "name" ].getString();
+            dslb.binding = descriptor[ "binding" ].toInt();
+            dslb.count = descriptor[ "count" ].toInt();
+            dslb.name = descriptor[ "name" ].toStr();
 
-            kege::UniformSetDesc& dsl = dslb_map[ descriptor[ "set" ].getInt() ];
+            kege::UniformSetDesc& dsl = dslb_map[ descriptor[ "set" ].toInt() ];
             dsl.push_back( dslb );
         }
 
@@ -244,8 +244,8 @@ namespace kege{
         {
             kege::PushConstantRange constant;
             constant.stage_flags = convertShaderStageFlages( json[i][ "stages" ] );
-            constant.offset = json[i][ "offset" ].getInt();
-            constant.size = json[i][ "size" ].getInt();
+            constant.offset = json[i][ "offset" ].toInt();
+            constant.size = json[i][ "size" ].toInt();
             push_constants_ranges.push_back( constant );
         }
 
@@ -271,7 +271,7 @@ namespace kege{
         info->name = name;
         if ( info->pipeline_layout.id < 0 )
         {
-            KEGE_LOG_ERROR << "pipeline-layout create failed in createPipelineLayout()" << Log::nl;
+            kege::Log::error << "pipeline-layout create failed in createPipelineLayout()" << Log::nl;
             return false;
         }
         return true;
@@ -289,12 +289,8 @@ namespace kege{
         {
             for (int i = 0; i < params.count(); ++i)
             {
-                kege::VertexInputBindingDesc v;
-                v.stride = params[i]["stride"].getInt();
-                v.binding = params[i]["binding"].getInt();
-                v.input_rate = ( strcmp("vertex", params[i]["input_rate"].getString()) == 0 )
-                ? kege::VertexInputRate::Vertex : kege::VertexInputRate::Instance;
-                info->vertex_input_state.bindings.push_back( v );
+                //kege::VertexInputBindingDesc v;
+                info->vertex_input_state.strides.push_back( params[i]["stride"].toInt() );
             }
         }
         params = json[ "vertex_inputs" ];
@@ -303,10 +299,14 @@ namespace kege{
             for (int i = 0; i < params.count(); ++i)
             {
                 kege::VertexInputAttributeDesc v;
-                v.location = params[i]["location"].getInt();
-                v.binding = params[i]["binding"].getInt();
-                v.offset = params[i]["offset"].getInt();
-                v.format = convertVertexInputType( params[i][ "format" ].getString() );
+                v.location = params[i]["location"].toInt();
+                v.binding = params[i]["binding"].toInt();
+                v.offset = params[i]["offset"].toInt();
+                v.type = convertVertexInputType( params[i][ "format" ].toStr() );
+                //v.stride = params[i]["stride"].toInt();
+                v.binding = params[i]["binding"].toInt();
+                v.input_rate = ( strcmp("vertex", params[i]["input_rate"].toStr()) == 0 )
+                ? kege::VertexInputRate::Vertex : kege::VertexInputRate::Instance;
                 info->vertex_input_state.attributes.push_back( v );
             }
         }
@@ -318,28 +318,28 @@ namespace kege{
         DepthStencilStateDesc desc = {};
         if ( json )
         {
-            desc.depth_test_enable = json[ "depth_test" ].getBool( false );
-            desc.depth_write_enable = json[ "depth_write" ].getBool( true );
-            desc.depth_compare_op = stringToCompareOp( json[ "depth_compare_op" ].getString( "less" ) );
+            desc.depth_test_enable = json[ "depth_test" ].toBool( false );
+            desc.depth_write_enable = json[ "depth_write" ].toBool( true );
+            desc.depth_compare_op = stringToCompareOp( json[ "depth_compare_op" ].getStr( "less" ) );
 
-            desc.stencil_test_enable = json[ "stencil_test_enable" ].getBool( false );
+            desc.stencil_test_enable = json[ "stencil_test_enable" ].toBool( false );
             if ( desc.stencil_test_enable )
             {
                 Json front_op = json[ "front_op" ];
-                desc.front_op.fail_op = stringToStencilOp( front_op[ "fail_op" ].getString( "keep" ) );
-                desc.front_op.depth_fail_op = stringToStencilOp( front_op[ "depth_fail_op" ].getString( "keep" ) );
-                desc.front_op.compare_op = stringToCompareOp( front_op[ "compare_op" ].getString( "always" ) );
-                desc.front_op.compare_mask = front_op[ "compare_mask" ].getInt( 0xFFFFFFFF );
-                desc.front_op.write_mask = front_op[ "write_mask" ].getInt( 0xFFFFFFFF );
-                desc.front_op.reference = front_op[ "reference" ].getInt( 0 );
+                desc.front_op.fail_op = stringToStencilOp( front_op[ "fail_op" ].getStr( "keep" ) );
+                desc.front_op.depth_fail_op = stringToStencilOp( front_op[ "depth_fail_op" ].getStr( "keep" ) );
+                desc.front_op.compare_op = stringToCompareOp( front_op[ "compare_op" ].getStr( "always" ) );
+                desc.front_op.compare_mask = front_op[ "compare_mask" ].toInt( 0xFFFFFFFF );
+                desc.front_op.write_mask = front_op[ "write_mask" ].toInt( 0xFFFFFFFF );
+                desc.front_op.reference = front_op[ "reference" ].toInt( 0 );
 
                 Json back_op = json[ "back_op" ];
-                desc.back_op.fail_op = stringToStencilOp( back_op[ "fail_op" ].getString( "keep" ) );
-                desc.back_op.depth_fail_op = stringToStencilOp( back_op[ "depth_fail_op" ].getString( "keep" ) );
-                desc.back_op.compare_op = stringToCompareOp( back_op[ "compare_op" ].getString( "keep" ) );
-                desc.back_op.compare_mask = back_op[ "compare_mask" ].getInt( 0xFFFFFFFF );
-                desc.back_op.write_mask = back_op[ "write_mask" ].getInt( 0xFFFFFFFF );
-                desc.back_op.reference = back_op[ "reference" ].getInt( 0 );
+                desc.back_op.fail_op = stringToStencilOp( back_op[ "fail_op" ].getStr( "keep" ) );
+                desc.back_op.depth_fail_op = stringToStencilOp( back_op[ "depth_fail_op" ].getStr( "keep" ) );
+                desc.back_op.compare_op = stringToCompareOp( back_op[ "compare_op" ].getStr( "keep" ) );
+                desc.back_op.compare_mask = back_op[ "compare_mask" ].toInt( 0xFFFFFFFF );
+                desc.back_op.write_mask = back_op[ "write_mask" ].toInt( 0xFFFFFFFF );
+                desc.back_op.reference = back_op[ "reference" ].toInt( 0 );
             }
         }
         return desc;
@@ -350,13 +350,13 @@ namespace kege{
         ColorBlendAttachmentState state = {};
         if ( json )
         {
-            state.blend_enable = json[ "blend_enable" ].getBool( false );
-            state.src_color_blend_factor = stringToBlendFactor( json[ "src_color_blend_factor" ].getString( "one" ) );
-            state.dst_color_blend_factor = stringToBlendFactor( json[ "dst_color_blend_factor" ].getString( "zero" ) );
-            state.color_blend_op = stringToBlendOp( json[ "color_blend_op" ].getString( "add" ) );
-            state.src_alpha_blend_factor = stringToBlendFactor( json[ "src_alpha_blend_factor" ].getString( "one" ) );
-            state.dst_alpha_blend_factor = stringToBlendFactor( json[ "dst_alpha_blend_factor" ].getString( "zero" ) );
-            state.alpha_blend_op = stringToBlendOp( json[ "alpha_blend_op" ].getString( "add" ) );
+            state.blend_enable = json[ "blend_enable" ].toBool( false );
+            state.src_color_blend_factor = stringToBlendFactor( json[ "src_color_blend_factor" ].getStr( "one" ) );
+            state.dst_color_blend_factor = stringToBlendFactor( json[ "dst_color_blend_factor" ].getStr( "zero" ) );
+            state.color_blend_op = stringToBlendOp( json[ "color_blend_op" ].getStr( "add" ) );
+            state.src_alpha_blend_factor = stringToBlendFactor( json[ "src_alpha_blend_factor" ].getStr( "one" ) );
+            state.dst_alpha_blend_factor = stringToBlendFactor( json[ "dst_alpha_blend_factor" ].getStr( "zero" ) );
+            state.alpha_blend_op = stringToBlendOp( json[ "alpha_blend_op" ].getStr( "add" ) );
             state.color_write_mask = ColorComponentFlags::All;
         }
         return state;
@@ -367,9 +367,9 @@ namespace kege{
         ColorBlendStateDesc desc = {};
         if ( json )
         {
-            desc.logic_op_enable = json[ "logic_op_enable" ].getBool( false );
-            desc.logic_op = stringToColorBlendLogicOp( json[ "logic_op" ].getString( "copy") );
-            
+            desc.logic_op_enable = json[ "logic_op_enable" ].toBool( false );
+            desc.logic_op = stringToColorBlendLogicOp( json[ "logic_op" ].getStr( "copy") );
+
             Json color_blend_attachments = json[ "color_blend_attachments" ];
             for (int i=0; i<color_blend_attachments.count(); ++i)
             {
@@ -435,7 +435,7 @@ namespace kege{
         kege::Json json = kege::JsonParser::load( filename.data() );
         if ( !json )
         {
-            KEGE_LOG_ERROR <<"fail to open file -> " << filename << Log::nl;
+            kege::Log::error <<"fail to open file -> " << filename << Log::nl;
             return {};
         }
         kege::GraphicsPipelineDesc info;
@@ -459,7 +459,7 @@ namespace kege{
         info->depth_stencil_state = getDepthStencilState( json[ "depth_stencil_state" ] );
         info->rasterization_state = getRasterizationState( json[ "rasterization_state" ] );
         info->input_assembly_state.primitive_restart_enable = true;
-        info->input_assembly_state.topology = stringToPrimitiveTopology( json["primatives"][0].getString( "triangle-strip" ) );
+        info->input_assembly_state.topology = stringToPrimitiveTopology( json["primatives"][0].getStr( "triangle-strip" ) );
 
         Json rendering_output = json[ "rendering_output" ];
         if ( rendering_output )
@@ -508,7 +508,7 @@ namespace kege{
         std::vector< int > indices( json.count() );
         for (int i = 0; i < json.count(); ++i )
         {
-            indices[i] = json[i].getInt();
+            indices[i] = json[i].toInt();
         }
         return indices;
     }
@@ -519,7 +519,7 @@ namespace kege{
         if ( json )
         {
             state.primitive_restart_enable = true;
-            state.topology = stringToPrimitiveTopology( json["topology"].getString() );
+            state.topology = stringToPrimitiveTopology( json["topology"].toStr() );
         }
         return state;
     }
@@ -545,8 +545,8 @@ namespace kege{
         for (int i = 0; i < json.count(); ++i)
         {
             kege::Json layout =  json[i];
-            int set = layout[ "set" ].getInt();
-            std::string name = layout[ "name" ].getString();
+            int set = layout[ "set" ].toInt();
+            std::string name = layout[ "name" ].toStr();
             Json bindings = layout[ "bindings" ];
 
             kege::UniformDescriptorSet& dsl = dslb_map[ set ];
@@ -557,11 +557,11 @@ namespace kege{
                 Json bind = bindings[i];
 
                 kege::UniformDescriptor ud = {};
-                ud.name = bind[ "name" ].getString();
-                ud.descriptor_type = convertDescriptorType( bind[ "type" ].getString() );
+                ud.name = bind[ "name" ].toStr();
+                ud.descriptor_type = convertDescriptorType( bind[ "type" ].toStr() );
                 //dslb.stage_flags = convertShaderStageFlages( bind[ "stages" ] );
-                ud.binding = bind[ "binding" ].getInt();
-                ud.count = bind[ "count" ].getInt();
+                ud.binding = bind[ "binding" ].toInt();
+                ud.count = bind[ "count" ].toInt();
                 dsl.descriptors.push_back( ud );
             }
         }
@@ -584,9 +584,9 @@ namespace kege{
         for (int i = 0; i < json.count(); ++i)
         {
             push_constants[i].stages = convertShaderStageFlages( json[i][ "stages" ] );
-            push_constants[i].offset = json[i][ "offset" ].getInt();
-            push_constants[i].size = json[i][ "size" ].getInt();
-            push_constants[i].name = json[i][ "name" ].getString();
+            push_constants[i].offset = json[i][ "offset" ].toInt();
+            push_constants[i].size = json[i][ "size" ].toInt();
+            push_constants[i].name = json[i][ "name" ].toStr();
 
             Json fields = json[ "fields" ];
             push_constants[i].fields.resize( fields.count() );
@@ -594,16 +594,16 @@ namespace kege{
             {
                 push_constants[i].fields[f].name   = fields[ "name" ].value();
                 push_constants[i].fields[f].type   = stringToMemberType( fields[ "type" ].value() );
-                push_constants[i].fields[f].offset = fields[ "offset" ].getInt();
-                push_constants[i].fields[f].size   = fields[ "size" ].getInt();
+                push_constants[i].fields[f].offset = fields[ "offset" ].toInt();
+                push_constants[i].fields[f].size   = fields[ "size" ].toInt();
             }
         }
         return push_constants;
     }
 
-    VertexInputStateDesc parsePipelineVertexInput( kege::Json json )
+    VertexBufferLayout parsePipelineVertexInput( kege::Json json )
     {
-        VertexInputStateDesc desc;
+        VertexBufferLayout desc;
         if ( json )
         {
             kege::Json attributes = json[ "attributes" ];
@@ -612,10 +612,13 @@ namespace kege{
                 kege::Json attribute = attributes[i];
 
                 kege::VertexInputAttributeDesc v;
-                v.location = attribute["location"].getInt();
-                v.binding = attribute["binding"].getInt();
-                v.offset = attribute["offset"].getInt();
-                v.format = convertVertexInputType( attribute[ "format" ].getString() );
+                v.location = attribute["location"].toInt();
+                v.binding = attribute["binding"].toInt();
+                v.offset = attribute["offset"].toInt();
+                v.type = convertVertexInputType( attribute[ "format" ].toStr() );
+                v.binding = attribute["binding"].toInt();
+                v.input_rate = ( strcmp("vertex", attribute["input_rate"].toStr()) == 0 )
+                ? kege::VertexInputRate::Vertex : kege::VertexInputRate::Instance;
                 desc.attributes.push_back( v );
             }
             
@@ -623,13 +626,7 @@ namespace kege{
             for (int i = 0; i < bindings.count(); ++i)
             {
                 kege::Json binding = bindings[i];
-                
-                kege::VertexInputBindingDesc v;
-                v.stride = binding["stride"].getInt();
-                v.binding = binding["binding"].getInt();
-                v.input_rate = ( strcmp( binding["input_rate"].getString(), "vertex" ) == 0 )
-                ? kege::VertexInputRate::Vertex : kege::VertexInputRate::Instance;
-                desc.bindings.push_back( v );
+                desc.strides.push_back( binding["stride"].toInt() );
             }
         }
         return desc;
@@ -655,17 +652,17 @@ namespace kege{
             for (int i = 0; i < json.count(); ++i)
             {
                 Json output = json[i];
-                if ( strcmp( output[ "semantic"].getString(), "COLOR" ) == 0 )
+                if ( strcmp( output[ "semantic"].toStr(), "COLOR" ) == 0 )
                 {
-                    outputs.color_attachment_formats.push_back( stringToFormat( output[ "format"].getString() ) );
+                    outputs.color_attachment_formats.push_back( stringToFormat( output[ "format"].toStr() ) );
                 }
-                else if ( strcmp( output[ "semantic"].getString(), "DEPTH" ) == 0 )
+                else if ( strcmp( output[ "semantic"].toStr(), "DEPTH" ) == 0 )
                 {
-                    outputs.depth_attachment_format = stringToFormat( output[ "format"].getString() );
+                    outputs.depth_attachment_format = stringToFormat( output[ "format"].toStr() );
                 }
-                else if ( strcmp( output[ "semantic"].getString(), "STENCIL" ) == 0 )
+                else if ( strcmp( output[ "semantic"].toStr(), "STENCIL" ) == 0 )
                 {
-                    outputs.stencil_attachment_format = stringToFormat( output[ "format"].getString() );
+                    outputs.stencil_attachment_format = stringToFormat( output[ "format"].toStr() );
                 }
             }
         }
@@ -682,13 +679,13 @@ namespace kege{
             for (int i = 0; i < json.count(); ++i)
             {
                 Json element = json[i];
-                int id = element[ "id" ].getInt();
+                int id = element[ "id" ].toInt();
 
                 auto m = specialization_constants.find( element[ "name" ].value() );
                 if ( m != specialization_constants.end() )
                 {
                     constants[ id ].first = m->second;
-                    constants[ id ].second = element[ "value" ].getInt();
+                    constants[ id ].second = element[ "value" ].toInt();
                 }
             }
         }
@@ -726,7 +723,7 @@ namespace kege{
                 Json element = json[i];
                 PipelineResourceBinding binding;
                 binding.name = element[ "name" ].value();
-                binding.type = stringToBindingType( element[ "type" ].value() );
+                //TODO: binding.type = stringToBindingType( element[ "type" ].value() );
                 bindings[i] = binding;
             }
         }
@@ -741,7 +738,7 @@ namespace kege{
             Json pipeline = json[i];
             kege::PipelineInfo* info = &pipelines[i];
 
-            info->name = pipeline[ "name" ].getString();
+            info->name = pipeline[ "name" ].toStr();
             info->stages = parseShaderStageIndices( pipeline[ "stages" ] ) ;
             info->states = parsePipelineStates( pipeline[ "states" ] );
             info->layouts = parsePipelineUniformLayouts( pipeline[ "layouts" ] );
@@ -766,17 +763,17 @@ namespace kege{
             Json element = shaders[i];
 
             kege::ShaderDesc shader_desc;
-            shader_desc.stage = converShaderStage( element[ "type" ].getString() );
-            shader_desc.entry_point = element[ "entry-point" ].getString();
-            shader_desc.name = element[ "name" ].getString();
+            shader_desc.stage = converShaderStage( element[ "type" ].toStr() );
+            shader_desc.entry_point = element[ "entry-point" ].toStr();
+            shader_desc.name = element[ "name" ].toStr();
 
-            const char* uri = element[ "uri" ].getString();
+            const char* uri = element[ "uri" ].toStr();
             std::string filename = path + uri;
 
             std::vector< char > source;
             if( !loadTextFile( source, filename.data()) )
             {
-                KEGE_LOG_ERROR << "fail open shader file -> " << filename << Log::nl;
+                kege::Log::error << "fail open shader file -> " << filename << Log::nl;
                 return {};
             }
 

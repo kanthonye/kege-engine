@@ -8,7 +8,7 @@
 #ifndef lookat_system_hpp
 #define lookat_system_hpp
 
-#include "../../esm/entity-system.hpp"
+#include "../../ecs/entity-system.hpp"
 
 namespace kege{
 
@@ -16,7 +16,7 @@ namespace kege{
     {
     public:
 
-        LookAtSystem( kege::Engine* engine );
+        LookAtSystem( kege::EntitySystemManager* esm );
         void update( double dms )override;
         bool initialize()override;
         void shutdown()override;

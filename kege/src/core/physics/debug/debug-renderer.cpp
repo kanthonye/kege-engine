@@ -165,8 +165,7 @@ namespace kege {
     {
         if ( _vsize + size < _vbo_capacity )
         {
-            _engine->graphics()->updateBuffer( _vbo, _isize, size, data );
-            //_vbo->writeBufferData( _vsize, size, data );
+            //TODO: getGraphics()->updateBuffer( _vbo, _isize, size, data );
             _vsize += size;
             _vcount += count;
         }
@@ -175,8 +174,7 @@ namespace kege {
     {
         if ( _isize + size < _ibo_capacity )
         {
-            _engine->graphics()->updateBuffer( _ibo, _isize, size, data );
-            //_ibo->writeBufferData( _isize, size, data );
+            //TODO: getGraphics()->updateBuffer( _ibo, _isize, size, data );
             _isize += size;
             _icount += count;
         }
@@ -193,20 +191,20 @@ namespace kege {
         _vbo_capacity = MAX_VERTEX_COUNT * sizeof( vec3 );
         _ibo_capacity = MAX_VERTEX_COUNT * sizeof( uint32_t );
 
-        _vbo = _engine->graphics()->createBuffer
-        ({
-            .size = _vbo_capacity,
-            .data = nullptr,
-            .usage = kege::BufferUsage::VertexBuffer | kege::BufferUsage::CopyDst,
-            .memory_usage = kege::MemoryUsage::CpuToGpu
-        });
-        _ibo = _engine->graphics()->createBuffer
-        ({
-            .size = _vbo_capacity,
-            .data = nullptr,
-            .usage = kege::BufferUsage::IndexBuffer | kege::BufferUsage::CopyDst,
-            .memory_usage = kege::MemoryUsage::CpuToGpu
-        });
+//        _vbo = getGraphics()->createBuffer
+//        ({
+//            .size = _vbo_capacity,
+//            .data = nullptr,
+//            .usage = kege::BufferUsages::VertexBuffer | kege::BufferUsages::CopyDst,
+//            .memory_usage = kege::MemoryUsage::CpuToGpu
+//        });
+//        _ibo = getGraphics()->createBuffer
+//        ({
+//            .size = _vbo_capacity,
+//            .data = nullptr,
+//            .usage = kege::BufferUsages::IndexBuffer | kege::BufferUsages::CopyDst,
+//            .memory_usage = kege::MemoryUsage::CpuToGpu
+//        });
 
         return true;
     }
@@ -218,8 +216,10 @@ namespace kege {
         Communication::remove< const MsgDrawLine&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawAABB&, DebugLineRenderSystem >( this );
         Communication::remove< const MsgDrawOBB&,  DebugLineRenderSystem >( this );
-        _engine->graphics()->destroyBuffer( _vbo );
-        _engine->graphics()->destroyBuffer( _ibo );
+        _vbo.clear();
+        _ibo.clear();
+        //TODO: getGraphics()->destroyBuffer( _vbo );
+        //TODO: getGraphics()->destroyBuffer( _ibo );
     }
 
     void DebugLineRenderSystem::render()
@@ -233,8 +233,8 @@ namespace kege {
         _isize = 0;
     }
 
-    DebugLineRenderSystem::DebugLineRenderSystem( kege::Engine* engine )
-    :   kege::System( engine, "line-renderer" )
+    DebugLineRenderSystem::DebugLineRenderSystem( kege::EntitySystemManager* esm )
+    :   kege::System( nullptr, "line-renderer" )
     ,   _vcount( 0 )
     ,   _vsize( 0 )
     ,   _icount( 0 )
@@ -247,7 +247,7 @@ namespace kege {
     }
 
 
-    KEGE_REGISTER_SYSTEM( DebugLineRenderSystem, "drawline" );
+    //TODO: KEGE_REGISTER_SYSTEM( DebugLineRenderSystem, "drawline" );
 }
 
 

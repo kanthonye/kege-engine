@@ -14,7 +14,7 @@ namespace kege::ui{
         FILE* file = fopen( filename.c_str(), "w+" );
         if ( file == nullptr )
         {
-            KEGE_LOG_ERROR << "Failed to open font metadata file: " << filename;
+            kege::Log::error << "Failed to open font metadata file: " << filename;
             return {};
         }
 
@@ -50,9 +50,9 @@ namespace kege::ui{
         }
         std::string path = s;
 
-        kege::ImageHandle image = ImageLoader::load( graphics, path + name );;
+        ref::Image image = ImageLoader::load( graphics, path + name );;
 
-        kege::SamplerHandle sampler = graphics->createSampler
+        ref::Sampler sampler = graphics->createSampler
         ({
             .mag_filter = Filter::Linear,
             .min_filter = Filter::Linear,

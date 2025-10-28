@@ -76,8 +76,8 @@
 //         return EntitySystem::shutdown();
 //     }
 
-//     SleepSystem::SleepSystem( kege::Engine* engine )
-//     :   kege::EntitySystem( manager, "sleep-system", REQUIRE_UPDATE )
+//     SleepSystem::SleepSystem( kege::EntitySystemManager* esm )
+//     :   kege::EntitySystem( manager, "sleep-system", REQUIRE_UPDATE, esm  )
 //     ,   _sleep_threshold( 0.0005 )
 //     ,   _sleep_motion_bias( 0.98f )
 //     ,   _wake_sleepable_objects( false )

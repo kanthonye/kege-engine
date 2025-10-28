@@ -1,0 +1,32 @@
+//
+//  navbar-panel.hpp
+//  physics
+//
+//  Created by Kenneth Esdaile on 8/18/25.
+//
+
+#ifndef navbar_panel_hpp
+#define navbar_panel_hpp
+
+#include "../elements/ui-menu.hpp"
+#include "../elements/ui-options.hpp"
+#include "../elements/ui-button.hpp"
+#include "editor-panel.hpp"
+
+namespace kege{
+
+    class NavbarPanel : public kege::EditorPanel
+    {
+    public:
+
+        NavbarPanel( kege::ProjectManager* pm, ui::Layout* l );
+        void update();
+
+    public:
+
+        ui::Options file;
+        ui::EID _main;
+    };
+}
+
+#endif /* navbar_panel_hpp */

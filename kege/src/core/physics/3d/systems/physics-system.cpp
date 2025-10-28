@@ -35,8 +35,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    PhysicsSystem::PhysicsSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "physics-system", REQUIRE_UPDATE )
+    PhysicsSystem::PhysicsSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "physics-system", REQUIRE_UPDATE, esm )
     {}
 
     KEGE_REGISTER_ENTITY_SYSTEM( PhysicsSystem, "physics" );

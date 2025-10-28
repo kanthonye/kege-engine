@@ -29,7 +29,7 @@ namespace kege{
         _inputs.push( Input( Input::SCROLL, xoffset, yoffset ) );
     }
 
-    bool UserInputReceiver::initialize( GraphicsWindow* window )
+    bool UserInputReceiver::initialize( AppWindow* window )
     {
         window->addListener( this );
         return true;

@@ -33,7 +33,7 @@ namespace kege{
          * member is necessary for culling and computing the level of detail of
          * this QuadtreePatchNode.
          */
-        kege::dvec4 sphere;
+        kege::fvec4 sphere;
 
         /**
          * The face normal of this QuadtreePatchNode.

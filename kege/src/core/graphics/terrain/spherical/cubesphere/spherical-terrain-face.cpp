@@ -34,9 +34,9 @@ namespace kege{
         operator()( _root, axes[ 2 ], scale, radius, depth );
     }
 
-    void SphericalTerrainFace::operator()( SphericalTerrainTile& node, const kege::vec3& position, float scale, double radius, int depth )
+    void SphericalTerrainFace::operator()( SphericalTerrainTile& node, const kege::vec3& position, float scale, float radius, int depth )
     {
-        kege::dvec3 sphere_position = _terrain->getSettings().radius * normalize( dvec3( position ) );
+        kege::fvec3 sphere_position = _terrain->getRadius() * normalize( fvec3( position ) );
 
         node.sphere = { sphere_position, radius };
         node.patch.transform = { position, scale };
@@ -68,12 +68,12 @@ namespace kege{
 //            node.patch.elevations[5] - 2.f * node.patch.elevations[6] - node.patch.elevations[7]
 //        };
 //        node.normal = normalize( node.normal );
-        _terrain->_total_nodes++;
+//        _terrain->_total_nodes++;
     }
 
     void SphericalTerrainFace::update( SphericalTerrainTile& node, SphericalTerrainTile* neighbors[4] )
     {
-        _terrain->_total_levels = kege::max( _terrain->_total_levels, node.depth );
+//        _terrain->_total_levels = kege::max( _terrain->_total_levels, node.depth );
 
         node.index_buffer_id = 0;
 //        if ( neighbors[ NORTH ]) node.patch.patch_index_id |= 1;
@@ -142,10 +142,10 @@ namespace kege{
 
     bool SphericalTerrainFace::canSubDivide( SphericalTerrainTile& node )
     {
-        kege::dvec3 world_position = node.sphere.xyz + _terrain->_position;// + rotate( _terrain->_orientation, node.sphere.xyz );
-        kege::dvec3 v = _terrain->_camera_position - world_position;
+        kege::fvec3 world_position = _terrain->getPosition() + rotate( _terrain->getOrientation(), node.sphere.xyz );
+        kege::fvec3 v = _terrain->getCameraPosition() - world_position;
 
-        double a = dot( _terrain->_center_to_camera, world_position);
+        double a = dot( _terrain->getCenterToCamera(), world_position);
         if (a < 0 )
         {
             node.visible = false;
@@ -158,12 +158,12 @@ namespace kege{
         double radius_sq = kege::sq( node.sphere.w + node.sphere.w );
         double dist = magnSq( v );
         double resolution = (dist / radius_sq);
-        return ( node.depth < _terrain->getSettings().minimum_depth ) ? true : resolution < _terrain->getSettings().maximum_resolution;
+        return ( node.depth < _terrain->getMinimumDepth() ) ? true : resolution < _terrain->getMaximumResolution();
     }
 
     bool SphericalTerrainFace::splitable( SphericalTerrainTile& node )
     {
-        return !node.children && node.depth < _terrain->getSettings().maximum_depth;
+        return !node.children && node.depth < _terrain->getMaximumDepth();
     }
 
     void SphericalTerrainFace::split( SphericalTerrainTile& node )
@@ -200,7 +200,7 @@ namespace kege{
 
             delete node.children;
             node.children = nullptr;
-            _terrain->_total_nodes--;
+            //_terrain->_total_nodes--;
         }
     }
 

@@ -37,7 +37,7 @@ namespace kege{
         kege::File file = _virdir->open( filename );
         if ( !file )
         {
-            KEGE_LOG_ERROR << "file not found -> %s" << filename.c_str() <<Log::nl;
+            kege::Log::error << "file not found -> %s" << filename.c_str() <<Log::nl;
             return {};
         }
         std::vector< char > buffer( file.size() + 1 );
@@ -76,7 +76,7 @@ namespace kege{
         kege::File file = kege::File::open(filename.c_str(), "r");
         if ( !file )
         {
-            KEGE_LOG_ERROR << "directories file %s not found at" << filename.c_str() <<Log::nl;
+            kege::Log::error << "directories file %s not found at" << filename.c_str() <<Log::nl;
             return false;
         }
 
@@ -156,7 +156,7 @@ namespace kege{
         const std::string command = exe + " " + filename + " -o " + output;
         if( system( command.data() ) != 0 )
         {
-            KEGE_LOG_ERROR<< "something went wrong while converting GLSL file %s to SPIRV file %s" << filename.c_str() << output.c_str() <<Log::nl;
+            kege::Log::error<< "something went wrong while converting GLSL file %s to SPIRV file %s" << filename.c_str() << output.c_str() <<Log::nl;
             //throw std::runtime_error("");
             return "";
         }
@@ -181,7 +181,7 @@ namespace kege{
             const std::string spirv_filename = creatSPIRVFileFromGLSLFile( _virdir->fetch( filename.c_str() ).c_str() );
             if ( spirv_filename == "" )
             {
-                KEGE_LOG_ERROR <<"failed to compile file -> %s" << filename.c_str()<< " to SPIR-V !!" <<Log::nl;
+                kege::Log::error <<"failed to compile file -> %s" << filename.c_str()<< " to SPIR-V !!" <<Log::nl;
                 return {};
             }
             else

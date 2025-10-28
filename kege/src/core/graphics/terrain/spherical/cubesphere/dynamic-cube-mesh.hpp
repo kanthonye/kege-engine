@@ -8,8 +8,7 @@
 #ifndef dynamic_cube_mesh_hpp
 #define dynamic_cube_mesh_hpp
 
-#include "../../../../renderer/core/graphics.hpp"
-#include "../../../../math/algebra/vmath.hpp"
+#include "../../../render/core/graphics.hpp"
 #include "../../../mesh/mesh.hpp"
 
 namespace kege{

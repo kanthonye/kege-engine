@@ -5,64 +5,216 @@
 //  Created by Kenneth Esdaile on 6/25/25.
 //
 
+#include "render-graph.hpp"
 #include "render-graph-loader.hpp"
 
 namespace kege{
 
-    RenderGraphLoader::FunctionMap RenderGraphLoader::_parsers;
-    RenderGraphLoader::IntFunctMap RenderGraphLoader::_int_funct_maps;
-
-    bool RenderGraphLoader::load( kege::RenderGraph& graph, const std::string& filename )
+    struct RGParser
     {
-        Json json = kege::JsonParser::load( filename.c_str() );
-        if ( !json )
-        {
-            return false;
-        }
+        typedef std::function< void( kege::RenderGraph&, Json ) > Function;
+        typedef std::map< std::string, Function > FunctionMap;
 
-        Json resources = json[ "resources" ];
-        if ( !resources )
-        {
-            return false;
-        }
+        typedef std::function< int( kege::RenderGraph&, Json ) > IntFunct;
+        typedef std::map< std::string, IntFunct > IntFunctMap;
 
-        Json passes = json[ "passes" ];
-        if ( !passes )
+        void parse( std::string type, kege::RenderGraph& graph, Json& json )
         {
-            return false;
-        }
-
-
-        for( uint32_t i = 0; i < resources.count(); ++i )
-        {
-            Json res = resources[i];
-            std::string type = res[ "type" ].value();
-            FunctionMap::iterator parser = _parsers.find( type );
-            if ( parser == _parsers.end() )
+            FunctionMap::iterator parser = parsers.find( type );
+            if ( parser != parsers.end() )
             {
-                parser->second( graph, res );
+                parser->second( graph, json );
             }
         }
 
-        for( uint32_t i = 0; i < passes.count(); ++i )
+        static RGParser& instance()
         {
-            Json pass = passes[i];
-            std::string type = pass[ "type" ].value();
-            FunctionMap::iterator parser = _parsers.find( type );
-            if ( parser == _parsers.end() )
-            {
-                parser->second( graph, pass );
-            }
+            static RGParser instance;
+            return instance;
         }
 
-        return true;
+        RGParser();
+
+        FunctionMap parsers;
+        IntFunctMap int_funct_maps;
+    };
+
+    int parseInt( kege::RenderGraph& graph, Json json )
+    {
+        RGParser::IntFunctMap::iterator m = RGParser::instance().int_funct_maps.find( json.value() );
+        if ( m != RGParser::instance().int_funct_maps.end() )
+        {
+            return m->second( graph, json );
+        }
+        return json.toInt();
     }
 
-    void RenderGraphLoader::graphicsPass( kege::RenderGraph& graph, Json json )
-    {}
-    void RenderGraphLoader::computePass( kege::RenderGraph& graph, Json json )
-    {}
-    void RenderGraphLoader::shaderResource( kege::RenderGraph& graph, Json json )
+    Format getFormat( kege::RenderGraph& graph, const std::string& name )
+    {
+        if ( name == "SWAPCHAIN_DEPTH_FORMAT()" )
+        {
+            return graph.getGraphics()->getSwapchain()->getDepthFormat();
+        }
+        else if ( name == "SWAPCHAIN_COLOR_FORMAT()" )
+        {
+            return graph.getGraphics()->getSwapchain()->getColorFormat();
+        }
+        return stringToFormat( name );
+    }
+
+    int getSwapchainImageCount( kege::RenderGraph& graph, Json json )
+    {
+        return graph.getGraphics()->getSwapchain()->getImageCount();
+    }
+
+    int getSwapchainExtentHeight( kege::RenderGraph& graph, Json json )
+    {
+        return graph.getGraphics()->getSwapchain()->getExtent().height;
+    }
+
+    int getSwapchainExtentWidth( kege::RenderGraph& graph, Json json )
+    {
+        return graph.getGraphics()->getSwapchain()->getExtent().width;
+    }
+
+    RgResrcType stringToRgResrcType( const std::string& name )
+    {
+        static std::map< std::string, RgResrcType > types;
+        if ( types.empty() )
+        {
+            types[ "buffer" ] = RgResrcType::Buffer;
+            types[ "image" ] = RgResrcType::Image;
+            types[ "sampler" ] = RgResrcType::Sampler;
+            types[ "buffer-view" ] = RgResrcType::BufferView;
+            types[ "shader-resource" ] = RgResrcType::ShaderResource;
+        }
+        auto m = types.find( name );
+        if ( m != types.end() )
+        {
+            return m->second;
+        }
+        kege::Log::error << "unsupported RgResrcType -> " <<name <<kege::Log::nl;
+        return RgResrcType::Invalid;
+    }
+
+    ImageUsage parseImageUsage( Json json )
+    {
+        ImageUsage usage = stringToImageUsage( json[ 0 ].value() );
+        for (int i=1; i<json.count(); ++i)
+        {
+            usage = usage | stringToImageUsage( json[ i ].value() );
+        }
+        return usage;
+    }
+
+    PipelineStageFlag parsePipelineStageFlags( Json json )
+    {
+        if( !json )
+            return PipelineStageFlag::None;
+
+        PipelineStageFlag stages = stringToPipelineStageFlags( json[ 0 ].value() );
+        for (int i=1; i<json.count(); ++i)
+        {
+            stages = stages | stringToPipelineStageFlags( json[ i ].value() );
+        }
+        return stages;
+    }
+
+    kege::SamplerDesc parseSamplerDesc( const Json& json )
+    {
+        Json info = json[ "info" ];
+        return  kege::SamplerDesc
+        {
+            .name = json[ "name" ].value(),
+            .mag_filter = info[ "mag_filter" ]( stringToFilter, Filter::Linear ),
+            .min_filter = info[ "min_filter" ]( stringToFilter, Filter::Linear ),
+            .mipmap_mode = info[ "mipmap_mode" ]( stringToMipmapMode, MipmapMode::Linear ),
+            .address_mode_u = info[ "address_mode_u" ]( stringToAddressMode, AddressMode::Repeat ),
+            .address_mode_v = info[ "address_mode_v" ]( stringToAddressMode, AddressMode::Repeat ),
+            .address_mode_w = info[ "address_mode_w" ]( stringToAddressMode, AddressMode::Repeat )
+        };
+    }
+
+    RgReadResrcDesc parseReadResrcDesc( const Json& json )
+    {
+        return RgReadResrcDesc
+        {
+            .name = json[ "name" ].value(),
+            .type = json[ "type" ]( stringToRgResrcType, RgResrcType::Invalid ),
+            .usage =
+            {
+                .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
+                .stage = parsePipelineStageFlags( json[ "stage" ] ),
+                .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
+                .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear )
+            }
+        };
+    }
+
+    RgWriteResrcDesc parseWriteResrcDesc( const Json& json )
+    {
+        bool has_clear_value = false;
+        ClearValue clear_value;
+        if ( json[ "clear_color" ] )
+        {
+            arr< double,4 > vals = json[ "clear_color" ].getArray<double, 4>(atof);
+            clear_value.color[0] = vals.data[0];
+            clear_value.color[1] = vals.data[1];
+            clear_value.color[2] = vals.data[2];
+            clear_value.color[3] = vals.data[3];
+        }
+        else if ( json[ "clear_depth" ] )
+        {
+            clear_value.depth_stencil.depth = json.getFloat( "clear_depth" );
+        }
+
+        return RgWriteResrcDesc
+        {
+            .name = json[ "name" ].value(),
+            .type = json[ "type" ]( stringToRgResrcType, RgResrcType::Invalid ),
+            .usage =
+            {
+                .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
+                .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
+                .stage = parsePipelineStageFlags( json[ "stage" ] ),
+                .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear )
+            },
+            .clear_value = ((has_clear_value)? clear_value : std::optional< ClearValue >{}),
+        };
+    }
+
+    std::vector< RgReadResrcDesc > parseReadResrcDescs( const Json& json )
+    {
+        std::vector< RgReadResrcDesc > reads;
+        json.foreach([ &reads ]( const Json& j ){ reads.push_back( parseReadResrcDesc( j ) ); });
+        return reads;
+    }
+
+    std::vector< RgWriteResrcDesc > parseWriteResrcDescs( const Json& json )
+    {
+        std::vector< RgWriteResrcDesc > writes;
+        json.foreach([ &writes ]( const Json& j ){ writes.push_back( parseWriteResrcDesc( j ) ); });
+        return writes;
+    }
+
+    std::vector< ShaderPipeline > parseShaderPipelines( const Json& json )
+    {
+        return {};
+    }
+
+    void parseRenderStage( kege::RenderGraph& graph, Json json )
+    {
+        graph.addPass
+        ({
+            .name = json[ "name" ].value(),
+            .type = stringToQueueType( json[ "type" ].value() ),
+            .reads = parseReadResrcDescs( json[ "reads" ] ),
+            .writes = parseWriteResrcDescs( json[ "writes" ] ),
+            .pipelines = parseShaderPipelines( json[ "shaders" ] ),
+        });
+    }
+
+    void parseShaderResourceDefn( kege::RenderGraph& graph, Json json )
     {
 //        uint32_t frames_in_flight = getInt( graph, json[ "frames_in_flight" ] );
 //        Json json_bindings = json[ "bindings" ];
@@ -95,410 +247,119 @@ namespace kege{
         //graph.updateShaderResource( handle, targets );
     }
 
-    void RenderGraphLoader::sampler( kege::RenderGraph& graph, Json json )
+    void parseSamplerDefn( kege::RenderGraph& graph, Json json )
     {
-        kege::SamplerDesc desc = {};
-
-        desc.name = json[ "id" ].value();
-        desc.mag_filter = toFilter( json[ "mag_filter" ].value() );
-        desc.min_filter = toFilter( json[ "min_filter" ].value() );
-        desc.mipmap_mode = toMipmapMode( json[ "mipmap_mode" ].value() );
-        desc.address_mode_u = toAddressMode( json[ "address_mode_u" ].value() );
-        desc.address_mode_v = toAddressMode( json[ "address_mode_v" ].value() );
-        desc.address_mode_w = toAddressMode( json[ "address_mode_w" ].value() );
-
-        graph.defnSampler({
-            .name = desc.name,
-            .desc = desc
+        graph.defnSampler
+        ({
+            .name = json[ "name" ].value(),
+            .desc = parseSamplerDesc( json )
         });
     }
 
-    void RenderGraphLoader::buffer( kege::RenderGraph& graph, Json json )
+    void parseBufferDefn( kege::RenderGraph& graph, Json json )
     {
-        kege::BufferDefn desc = {};
-
-        desc.frames_in_flight = getInt( graph, json[ "frames_in_flight" ] );
-        desc.name = json[ "name" ].value();
-        desc.info.data = nullptr;
-        desc.info.size = json[ "info" ][ "size" ].getInt();
-        desc.info.usage = getBufferUsage( json[ "usage" ] );
-        desc.info.memory_usage = getMemoryUsage( json[ "memory_usage" ] );
-
-        graph.defnBuffer( desc );
+        Json info = json[ "info" ];
+        graph.defnBuffer
+        ({
+            .name              = json[ "name" ].value(),
+            .frames            = (uint32_t) json.getInt( "frames" ),
+            .info.size         = (uint32_t) info.getInt( "size" ),
+            .info.usage        = stringToBufferUsage( info.getStr( "usage" ) ),
+            .info.memory_usage = stringToMemoryUsage( info.getStr( "memory_usage" ) ),
+            .info.data         = nullptr,
+        });
     }
 
-    void RenderGraphLoader::image( kege::RenderGraph& graph, Json json )
+    void parseImageDefn( kege::RenderGraph& graph, Json json )
     {
         kege::ImageDefn desc = {};
+        Json info = json[ "info" ];
 
         desc.name = json[ "name" ].value();
-        desc.frames_in_flight = getInt( graph, json[ "frames_in_flight" ] );
-        desc.usages = getImageUsage( json[ "usages" ] );
-        desc.info.width  = getInt( graph, json[ "info" ][ "width" ] );
-        desc.info.height = getInt( graph, json[ "info" ][ "width" ] );
-        desc.info.depth  = getInt( graph, json[ "info" ][ "depth" ] );
-        desc.info.type   = getImageType( json[ "info" ][ "type" ] );
-        desc.info.format = getFormat( graph, json[ "info" ][ "format" ] );
+        desc.usages = parseImageUsage( json[ "usages" ] );
 
         Json physical_handle = json[ "physical_handle" ];
         if ( physical_handle )
         {
-            if ( strcmp( physical_handle.value(), "getSwapchainColorImages()" ) == 0 )
+            kege::Swapchain* swapchain = graph.getGraphics()->getSwapchain();
+            if ( strcmp( physical_handle.value(), "SWAPCHAIN_COLOR_IMAGES" ) == 0 )
             {
-                //desc.physical_handle =
+                desc.physical_handle = swapchain->getColorImages();
+                desc.frames         = swapchain->getImageCount();
+                desc.info.format    = swapchain->getColorFormat();
+                desc.info.width     = swapchain->getExtent().width;
+                desc.info.height    = swapchain->getExtent().height;
+                desc.info.type      = ImageType::Type2D;
+                desc.info.depth     = 1;
             }
+            else if ( strcmp( physical_handle.value(), "SWAPCHAIN_DEPTH_IMAGES" ) == 0 )
+            {
+                desc.physical_handle = graph.getGraphics()->getSwapchain()->getDepthImages();
+                desc.frames         = swapchain->getImageCount();
+                desc.info.format    = swapchain->getDepthFormat();
+                desc.info.width     = swapchain->getExtent().width;
+                desc.info.height    = swapchain->getExtent().height;
+                desc.info.type      = ImageType::Type2D;
+                desc.info.depth     = 1;
+            }
+        }
+        else
+        {
+            desc.frames         = json.getInt( "frames" );
+            desc.info.width     = parseInt( graph, info[ "width" ] );
+            desc.info.height    = parseInt( graph, info[ "width" ] );
+            desc.info.depth     = parseInt( graph, info[ "depth" ] );
+            desc.info.type      = stringToImageType( info.getStr( "type" ) );
+            desc.info.format    = getFormat( graph, info.getStr( "format" ) );
         }
 
         graph.defnImage( desc );
     }
 
-    RgShaderResrcDefn RenderGraphLoader::getRgShaderResource( Json json )
+    RGParser::RGParser()
     {
-        std::string name = json.value();
-        
-        return {};
-    }
+        parsers[ "GRAPHICS" ] = parseRenderStage;
+        parsers[ "COMPUTE" ] = parseRenderStage;
 
-    int RenderGraphLoader::getInt( kege::RenderGraph& graph, Json json )
+        parsers[ "shader_resource" ] = parseShaderResourceDefn;
+        parsers[ "sampler" ] = parseSamplerDefn;
+        parsers[ "buffer" ] = parseBufferDefn;
+        parsers[ "image" ] = parseImageDefn;
+
+        int_funct_maps[ "SWAPCHAIN_IMAGE_COUNT" ] = getSwapchainImageCount;
+        int_funct_maps[ "SWAPCHAIN_IMAGE_HEIGHT" ] = getSwapchainExtentHeight;
+        int_funct_maps[ "SWAPCHAIN_IMAGE_WIDTH" ] = getSwapchainExtentWidth;
+    };
+
+    bool RenderGraphLoader::load( kege::RenderGraph& graph, const std::string& filename )
     {
-        IntFunctMap::iterator m = _int_funct_maps.find( json.value() );
-        if ( m != _int_funct_maps.end() )
+        Json json = kege::JsonParser::load( filename.c_str() );
+        if ( !json )
         {
-            return m->second( graph, json );
+            return false;
         }
-        return 0;
+
+        Json resources = json[ "resources" ];
+        Json stages = json[ "stages" ];
+        if ( !resources || !stages )
+        {
+            return false;
+        }
+
+        RGParser& parser = RGParser::instance();
+        for( uint32_t i = 0; i < resources.count(); ++i )
+        {
+            Json res = resources[i];
+            std::string type = res[ "type" ].value();
+            parser.parse( type, graph, res );
+        }
+        for( uint32_t i = 0; i < stages.count(); ++i )
+        {
+            Json res = stages[i];
+            std::string type = res[ "type" ].value();
+            parser.parse( type, graph, res );
+        }
+
+        return true;
     }
-
-    Format RenderGraphLoader::getFormat( kege::RenderGraph& graph, Json json )
-    {
-        std::string name = json.value();
-
-        if ( name == "getSwapchainDepthFormat()" )
-        {
-            return graph.getGraphics()->getSwapchain()->getDepthFormat();
-        }
-        else if ( name == "getSwapchainColorFormat()" )
-        {
-            return graph.getGraphics()->getSwapchain()->getColorFormat();
-        }
-
-        static std::map< std::string, Format > types;
-        if ( types.empty() )
-        {
-            types[ "r_s8" ] = Format::r_s8;
-            types[ "rg_s8" ] = Format::rg_s8;
-            types[ "rgb_s8" ] = Format::rgb_s8;
-            types[ "rgba_s8" ] = Format::rgba_s8;
-
-            types[ "r_u8" ] = Format::r_u8;
-            types[ "rg_u8" ] = Format::rg_u8;
-            types[ "rgb_u8" ] = Format::rgb_u8;
-            types[ "rgba_u8" ] = Format::rgba_u8;
-
-            types[ "r_s16" ] = Format::r_s16;
-            types[ "rg_s16" ] = Format::rg_s16;
-            types[ "rgb_s16" ] = Format::rgb_s16;
-            types[ "rgba_s16" ] = Format::rgba_s16;
-
-            types[ "r_u16" ] = Format::r_u16;
-            types[ "rg_u16" ] = Format::rg_u16;
-            types[ "rgb_u16" ] = Format::rgb_u16;
-            types[ "rgba_u16" ] = Format::rgba_u16;
-
-            types[ "r_s32" ] = Format::r_s32;
-            types[ "rg_s32" ] = Format::rg_s32;
-            types[ "rgb_s32" ] = Format::rgb_s32;
-            types[ "rgba_s23" ] = Format::rgba_s32;
-
-            types[ "r_u32" ] = Format::r_u32;
-            types[ "rg_u32" ] = Format::rg_u32;
-            types[ "rgb_u32" ] = Format::rgb_u32;
-            types[ "rgba_u32" ] = Format::rgba_u32;
-
-            types[ "r_s64" ] = Format::r_s64;
-            types[ "rg_s64" ] = Format::rg_s64;
-            types[ "rgb_s46" ] = Format::rgb_s64;
-            types[ "rgba_s64" ] = Format::rgba_s64;
-
-            types[ "r_u64" ] = Format::r_u64;
-            types[ "rg_u64" ] = Format::rg_u64;
-            types[ "rgb_u46" ] = Format::rgb_u64;
-            types[ "rgba_u64" ] = Format::rgba_u64;
-
-
-            types[ "r_s8_norm" ] = Format::r_s8_norm;
-            types[ "rg_s8_norm" ] = Format::rg_s8_norm;
-            types[ "rgb_s8_norm" ] = Format::rgb_s8_norm;
-            types[ "rgba_s8_norm" ] = Format::rgba_s8_norm;
-
-            types[ "r_u8_norm" ] = Format::r_u8_norm;
-            types[ "rg_u8_norm" ] = Format::rg_u8_norm;
-            types[ "rgb_u8_norm" ] = Format::rgb_u8_norm;
-            types[ "rgba_u8_norm" ] = Format::rgba_u8_norm;
-
-
-            types[ "r_8_srgb" ] = Format::r_8_srgb;
-            types[ "rg_8_srgb" ] = Format::rg_8_srgb;
-            types[ "rgb_8_srgb" ] = Format::rgb_8_srgb;
-            types[ "rgba_8_srgb" ] = Format::rgba_8_srgb;
-
-            types[ "bgr_8_srgb" ] = Format::rgba_8_srgb;
-            types[ "bgra_8_srgb" ] = Format::rgba_8_srgb;
-
-
-            types[ "bgr_u8" ] = Format::bgr_u8;
-            types[ "bgr_s8" ] = Format::bgr_s8;
-            types[ "bgr_s8_norm" ] = Format::bgr_s8_norm;
-            types[ "bgr_u8_norm" ] = Format::bgr_u8_norm;
-            types[ "bgra_u8" ] = Format::bgra_u8;
-            types[ "bgra_s8" ] = Format::bgra_s8;
-            types[ "bgra_s8_norm" ] = Format::bgra_s8_norm;
-            types[ "bgra_u8_norm" ] = Format::bgra_u8_norm;
-            types[ "bgra_u8_norm_srbg" ] = Format::bgra_u8_norm_srbg;
-        }
-        auto m = types.find( name );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-        return {};
-    }
-
-    ImageType RenderGraphLoader::getImageType( Json json )
-    {
-        static std::map< std::string, ImageType > types;
-        if ( types.empty() )
-        {
-            types[ "Type1D" ] = ImageType::Type1D;
-            types[ "Type1DArray" ] = ImageType::Type1DArray;
-            types[ "Type2D" ] = ImageType::Type2D;
-            types[ "Type2DArray" ] = ImageType::Type2DArray;
-            types[ "TypeCube" ] = ImageType::TypeCube;
-            types[ "TypeCubeArray" ] = ImageType::TypeCubeArray;
-            types[ "Type3D" ] = ImageType::Type3D;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-        return {};
-    }
-
-    BufferUsage RenderGraphLoader::getBufferUsage( Json json )
-    {
-        static std::map< std::string, BufferUsage > types;
-        if ( types.empty() )
-        {
-            types[ "None" ] = BufferUsage::None;
-            types[ "CopySrc" ] = BufferUsage::CopySrc;
-            types[ "CopyDst" ] = BufferUsage::CopyDst;
-            types[ "VertexBuffer" ] = BufferUsage::VertexBuffer;
-            types[ "IndexBuffer" ] = BufferUsage::IndexBuffer;
-            types[ "UniformBuffer" ] = BufferUsage::UniformBuffer;
-            types[ "StorageBuffer" ] = BufferUsage::StorageBuffer;
-            types[ "IndirectBuffer" ] = BufferUsage::IndirectBuffer;
-            types[ "UniformTexelBuffer" ] = BufferUsage::UniformTexelBuffer;
-            types[ "StorageTexelBuffer" ] = BufferUsage::StorageTexelBuffer;
-            types[ "ShaderDeviceAddress" ] = BufferUsage::ShaderDeviceAddress;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-        return {};
-    }
-
-    MemoryUsage RenderGraphLoader::getMemoryUsage( Json json )
-    {
-        static std::map< std::string, MemoryUsage > types;
-        if ( types.empty() )
-        {
-            types[ "GpuOnly" ] = MemoryUsage::GpuOnly;
-            types[ "CpuToGpu" ] = MemoryUsage::CpuToGpu;
-            types[ "GpuToCpu" ] = MemoryUsage::GpuToCpu;
-            types[ "CpuOnly" ] = MemoryUsage::CpuOnly;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-        return {};
-    }
-
-    ImageUsage RenderGraphLoader::getImageUsage( Json json )
-    {
-        static std::map< std::string, ImageUsage > types;
-        if ( types.empty() )
-        {
-            types[ "None" ] = ImageUsage::Undefined;
-            types[ "CopySrc" ] = ImageUsage::TransferSrc;
-            types[ "CopyDst" ] = ImageUsage::TransferDst;
-            types[ "ShaderResource" ] = ImageUsage::Sampled;
-            types[ "Storage" ] = ImageUsage::Storage;
-            types[ "Color" ] = ImageUsage::Color;
-            types[ "DepthStencil" ] = ImageUsage::DepthStencil;
-            types[ "TransientAttachment" ] = ImageUsage::Transient;
-            types[ "InputAttachment" ] = ImageUsage::Input;
-            types[ "Present" ] = ImageUsage::Present;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return ImageUsage::Undefined;
-    }
-
-    DescriptorType RenderGraphLoader::getDescriptorType( Json json )
-    {
-        static std::map< std::string, DescriptorType > types;
-
-        if ( types.empty() )
-        {
-            types[ "Invalid" ] = DescriptorType::Invalid;
-            types[ "Sampler" ] = DescriptorType::Sampler;
-            types[ "CombinedImageSampler" ] = DescriptorType::CombinedImageSampler;
-            types[ "SampledImage" ] = DescriptorType::SampledImage;
-            types[ "StorageImage" ] = DescriptorType::StorageImage;
-            types[ "UniformTexelBuffer" ] = DescriptorType::UniformTexelBuffer;
-            types[ "StorageTexelBuffer" ] = DescriptorType::StorageTexelBuffer;
-            types[ "UniformBuffer" ] = DescriptorType::UniformBuffer;
-            types[ "StorageBuffer" ] = DescriptorType::StorageBuffer;
-            types[ "UniformBufferDynamic" ] = DescriptorType::UniformBufferDynamic;
-            types[ "StorageBufferDynamic" ] = DescriptorType::StorageBufferDynamic;
-            types[ "InputAttachment" ] = DescriptorType::InputAttachment;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return {};
-    }
-
-    ShaderStage RenderGraphLoader::getShaderStageFlag( Json json )
-    {
-        static std::map< std::string, ShaderStage > types;
-
-        if ( types.empty() )
-        {
-            types[ "Invalid" ] = ShaderStage::Invalid;
-            types[ "vertex" ] = ShaderStage::Vertex;
-            types[ "fragment" ] = ShaderStage::Fragment;
-            types[ "compute" ] = ShaderStage::Compute;
-            types[ "geometry" ] = ShaderStage::Geometry;
-            types[ "tessellation-control" ] = ShaderStage::TessellationControl;
-            types[ "tessellation-evaluation" ] = ShaderStage::TessellationEvaluation;
-            types[ "all-graphics" ] = ShaderStage::AllGraphics;
-            types[ "all" ] = ShaderStage::All;
-        }
-        auto m = types.find( json.value() );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return {};
-    }
-
-
-    kege::Filter RenderGraphLoader::toFilter( const std::string& name )
-    {
-        static std::map< std::string, Filter > types;
-
-        if ( types.empty() )
-        {
-            types[ "linear" ] = Filter::Linear;
-            types[ "nearest" ] = Filter::Nearest;
-        }
-        auto m = types.find( name );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return {};
-    }
-
-    kege::MipmapMode RenderGraphLoader::toMipmapMode( const std::string& name )
-    {
-        static std::map< std::string, MipmapMode > types;
-
-        if ( types.empty() )
-        {
-            types[ "linear" ] = MipmapMode::Linear;
-            types[ "nearest" ] = MipmapMode::Nearest;
-        }
-        auto m = types.find( name );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return {};
-    }
-
-    kege::AddressMode RenderGraphLoader::toAddressMode( const std::string& name )
-    {
-        static std::map< std::string, AddressMode > types;
-
-        if ( types.empty() )
-        {
-            types[ "repeat" ] = AddressMode::Repeat;
-            types[ "mirrored-repeat" ] = AddressMode::MirroredRepeat;
-            types[ "clamp-to-edge" ] = AddressMode::ClampToEdge;
-            types[ "clamp-to-border" ] = AddressMode::ClampToBorder;
-            types[ "mirror-clamp-to-edge" ] = AddressMode::MirrorClampToEdge;
-        }
-        auto m = types.find( name );
-        if ( m != types.end() )
-        {
-            return m->second;
-        }
-
-        return {};
-    }
-
-    int RenderGraphLoader::getSwapchainImageCount( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getImageCount();
-    }
-
-    int RenderGraphLoader::getSwapchainExtentHeight( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getExtent().height;
-    }
-
-    int RenderGraphLoader::getSwapchainExtentWidth( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getExtent().width;
-    }
-
-    int RenderGraphLoader::getFramesInFlight( kege::RenderGraph& graph, Json json )
-    {
-        return MAX_FRAMES_IN_FLIGHT;
-    }
-
-    RenderGraphLoader::RenderGraphLoader()
-    {
-        _parsers[ "graphics" ] = graphicsPass;
-        _parsers[ "compute" ] = computePass;
-        
-        _parsers[ "shader_resource" ] = shaderResource;
-        _parsers[ "sampler" ] = sampler;
-        _parsers[ "buffer" ] = buffer;
-        _parsers[ "image" ] = image;
-
-
-        _int_funct_maps[ "getSwapchainImageCount()" ] = getSwapchainImageCount;
-        _int_funct_maps[ "getSwapchainExtentHeight()" ] = getSwapchainExtentHeight;
-        _int_funct_maps[ "getSwapchainExtentWidth()" ] = getSwapchainExtentWidth;
-        _int_funct_maps[ "FRAMES_IN_FLIGHT" ] = getFramesInFlight;
-    }
-
 }

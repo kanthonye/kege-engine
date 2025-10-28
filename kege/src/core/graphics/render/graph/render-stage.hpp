@@ -12,7 +12,7 @@
 
 namespace kege{
     
-    class RenderManager;
+    class RenderExecutor;
 
     /**
      * @struct RenderStage
@@ -28,14 +28,14 @@ namespace kege{
     public:
 
         const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
-        const kege::SamplerHandle* getSampler( const RgResrcHandle& handle )const;
-        const kege::BufferHandle* getBuffer( const RgResrcHandle& handle )const;
-        const kege::ImageHandle* getImage( const RgResrcHandle& handle )const;
+        const ref::Sampler getSampler( const RgResrcHandle& handle )const;
+        const ref::Buffer getBuffer( const RgResrcHandle& handle )const;
+        const ref::Image getImage( const RgResrcHandle& handle )const;
 
         const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
-        const kege::SamplerHandle* fetchSampler( const std::string& name )const;
-        const kege::BufferHandle* fetchBuffer( const std::string& name )const;
-        const kege::ImageHandle* fetchImage( const std::string& name )const;
+        const ref::Sampler fetchSampler( const std::string& name )const;
+        const ref::Buffer fetchBuffer( const std::string& name )const;
+        const ref::Image fetchImage( const std::string& name )const;
 
 
         const std::vector< RgResrcHandle >& getShaderResources()const;
@@ -63,7 +63,7 @@ namespace kege{
         RenderPassType getType()const;
         int getPassId()const;
 
-        bool execute( RenderManager& render_manager );
+        bool execute();
         void destroy();
         ~RenderStage();
         RenderStage();
@@ -103,7 +103,6 @@ namespace kege{
          */
         int _id;
 
-        bool _begin;
         Rect2D _render_area;
         
         friend RenderGraph;

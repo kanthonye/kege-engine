@@ -18,7 +18,7 @@ namespace kege{
     }
     void EntitySelectionSystem::update( double dms )
     {
-        if ( !_engine->scene().getScene()->getCameraEntity() )
+        if ( !getScene()->getCameraEntity() )
         {
             return;
         }
@@ -29,8 +29,8 @@ namespace kege{
         }
 
         _make_selection = false;
-        kege::vec3 ray = _engine->scene().getScene()->getSceneRay();
-        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = getScene()->getSceneRay();
+        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
 
         std::vector< std::pair< kege::Entity, double > > selections;
 
@@ -83,8 +83,8 @@ namespace kege{
         kege::EntitySystem::shutdown();
     }
 
-    EntitySelectionSystem::EntitySelectionSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "entity-selection-system", REQUIRE_UPDATE | REQUIRE_INPUT )
+    EntitySelectionSystem::EntitySelectionSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "entity-selection-system", REQUIRE_UPDATE | REQUIRE_INPUT, esm  )
     ,   _make_selection( false )
     {
         _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();

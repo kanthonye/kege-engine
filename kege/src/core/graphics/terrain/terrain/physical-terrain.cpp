@@ -10,23 +10,13 @@
 
 namespace kege{
 
-    TerrainTile* PhysicalTerrain::getTerrainTile( const kege::dvec3& position )const
+    TerrainTile* PhysicalTerrain::getTerrainTile( const kege::fvec3& position )const
     {
         return nullptr;
     }
-    double PhysicalTerrain::getHeight( const kege::dvec3& position )const
+    double PhysicalTerrain::getHeight( const kege::fvec3& position )const
     {
         return 0.0;
-    }
-
-    void PhysicalTerrain::setOrientation( const kege::dquat& orientation )
-    {
-        _orientation = orientation;
-    }
-
-    void PhysicalTerrain::setPosition( const kege::dvec3& position )
-    {
-        _position = position;
     }
 
     const kege::TerrainSettings& PhysicalTerrain::settings()const
@@ -34,7 +24,7 @@ namespace kege{
         return _settings;
     }
 
-    bool PhysicalTerrain::initialize()
+    bool PhysicalTerrain::initialize( kege::Graphics* graphics )
     {
         return false;
     }
@@ -42,11 +32,16 @@ namespace kege{
     void PhysicalTerrain::submitVisibleGeometries()
     {}
 
-    void PhysicalTerrain::update( const kege::dvec3& position )
+    void PhysicalTerrain::update( const kege::fvec3& position )
     {}
 
     PhysicalTerrain::PhysicalTerrain( kege::Terrain* terrain )
     :   _terrain( terrain )
+    ,   _maximum_resolution(1)
+    ,   _minimum_depth(0)
+    ,   _maximum_depth(0)
+    ,   _chuck_size(2)
+    ,   _radius(1)
     {}
     
     PhysicalTerrain:: ~PhysicalTerrain()

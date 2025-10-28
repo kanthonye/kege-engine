@@ -50,14 +50,14 @@ namespace kege{
     {
         if ( _scene_files.size() <= scene_id )
         {
-            KEGE_LOG_ERROR << "INVALID_SCENE_INDEX : scene index out of bound." <<Log::nl;
+            kege::Log::error << "INVALID_SCENE_INDEX : scene index out of bound." <<Log::nl;
             return;
         }
 
         kege::Ref< kege::Scene > scene = SceneLoader::load( _scene_files[ scene_id ] );
         if ( scene == nullptr )
         {
-            KEGE_LOG_ERROR << "LOADING_FAILED : loadScene -> " << _scene_files[ scene_id ] <<Log::nl;
+            kege::Log::error << "LOADING_FAILED : loadScene -> " << _scene_files[ scene_id ] <<Log::nl;
             return;
         }
 
@@ -80,13 +80,13 @@ namespace kege{
             if ( !_module )
             {
                 kege::Log::error << "( LOADING_FAILED ) -> " << _scene_files[0] << Log::nl;
-                KEGE_LOG_ERROR << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;
+                kege::Log::error << "Failed to create scene from file " << _scene_files[0] << kege::Log::nl;
                 return false;
             }
         }
         else
         {
-            _module = kege::Ref< kege::Scene >( new kege::Scene() );
+            _module = kege::Ref< kege::Scene >( new kege::Scene( "" ) );
         }
 
         _module->initialize(); // Initialize the newly created scene

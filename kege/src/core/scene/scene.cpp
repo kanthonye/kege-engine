@@ -10,11 +10,6 @@
 
 namespace kege{
 
-    kege::AssetManager& Scene::getResourceManager()
-    {
-        return _asset_system;
-    }
-
     EntityRegistry& Scene::getEntityRegistry()
     {
         return _registry;
@@ -110,8 +105,6 @@ namespace kege{
 
     void Scene::shutdown()
     {
-        _asset_system.shutdown();
-
         _ready = false;
         if( _camera ) _camera.destroy();
         if( _player ) _player.destroy();
@@ -130,15 +123,20 @@ namespace kege{
         return _ready;
     }
 
+    const std::string& Scene::name()const
+    {
+        return _name;
+    }
+
     Scene::~Scene()
     {
         shutdown();
     }
 
-    Scene::Scene()
-    :   _ready( false )
+    Scene::Scene( const std::string& name )
+    :   _name( name )
+    ,   _ready( false )
     {
-        _asset_system.initalize();
         _root = kege::Entity::create();
         _root.add< EntityTag >( "world" );
     }

@@ -52,7 +52,7 @@ namespace kege{
 ////                    .size = buffer->particle_count * sizeof( BillboardParticleData ),
 ////                    .data = nullptr,
 ////                    .memory_usage = MemoryUsage::CpuToGpu,
-////                    .usage = BufferUsage::VertexBuffer
+////                    .usage = BufferUsages::VertexBuffer
 ////                });
 ////            }
 ////
@@ -70,17 +70,17 @@ namespace kege{
 ////            model_matrices = ModelMatrices( *transform );
 ////
 ////            encoder->bindVertexBuffers( 0, { _storage_buffer }, { 0 });
-////            encoder->setPushConstants(ShaderStage::Vertex, 0, sizeof( model_matrices ), &model_matrices );
+////            encoder->setPushConstants(ShaderStageFlag::Vertex, 0, sizeof( model_matrices ), &model_matrices );
 ////            encoder->draw( 4, buffer->particle_count, 0, 0 );
 //        }
 //    }
 
     bool BillboardParticleRenderer::initialize()
     {
-        //TODO: _pipeline = _engine->graphics()->getShaderPipelineManager()->get( "billboard-particle-shader" );
+        //TODO: _pipeline = getGraphics()->getShaderPipelineManager()->get( "billboard-particle-shader" );
         if( !_pipeline )
         {
-            KEGE_LOG_ERROR << "billboard-particle-shader not loaded.";
+            kege::Log::error << "billboard-particle-shader not loaded.";
             return false;
         }
 
@@ -94,8 +94,8 @@ namespace kege{
         EntitySystem::shutdown();
     }
 
-    BillboardParticleRenderer::BillboardParticleRenderer( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "billboard-particle-rendering-system", 0 )
+    BillboardParticleRenderer::BillboardParticleRenderer( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "billboard-particle-rendering-system", 0, esm  )
     {
         _signature = kege::createEntitySignature< kege::Transform, kege::ParticleBuffer, kege::BillboardSprite >();
     }

@@ -77,8 +77,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    ParticleEffectSystem::ParticleEffectSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "particle-effect-updater", REQUIRE_UPDATE )
+    ParticleEffectSystem::ParticleEffectSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "particle-effect-updater", REQUIRE_UPDATE, esm  )
     {}
 
     KEGE_REGISTER_ENTITY_SYSTEM( ParticleEffectSystem, "particle-effect-updater" );

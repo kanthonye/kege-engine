@@ -10,11 +10,6 @@ namespace kege{
 
     TerrainMaterial::TerrainMaterial()
     {
-
-//            RenderPassType pass,
-//            const ShaderPipeline& p,
-//            bool receive_shadows,
-//            bool casts_shadows
     }
 
 }

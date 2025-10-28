@@ -32,7 +32,7 @@ namespace kege{
             int depth
         );
 
-        void operator()( SphericalTerrainTile& node, const kege::vec3& position, float scale, double radius, int depth );
+        void operator()( SphericalTerrainTile& node, const kege::vec3& position, float scale, float radius, int depth );
 
         /**
          * @fn update

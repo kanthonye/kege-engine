@@ -10,11 +10,11 @@
 
 #include "../input/inputs.hpp"
 #include "../input/thread-safe-vector.hpp"
-#include "../renderer/core/graphics-window.hpp"
+#include "../app/app-window.hpp"
 
 namespace kege{
 
-    class GraphicsWindow;
+    class AppWindow;
 
     class UserInputReceiver : public WindowListener
     {
@@ -26,7 +26,7 @@ namespace kege{
         void onScroll( double xoffset, double yoffset );
 
         void getInputs( std::vector< Input >& inputs );
-        bool initialize( GraphicsWindow* window );
+        bool initialize( AppWindow* window );
         void shutdown();
         UserInputReceiver();
 

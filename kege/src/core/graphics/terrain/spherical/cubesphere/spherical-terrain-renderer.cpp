@@ -33,28 +33,12 @@ namespace kege{
         generateCubeVertces( 1.0, _face_axies, _face_vertices );
         generateCubeIndices( face_indices, _draw_commands );
 
-
-        const vec4 vertex_position[ 9 ] =
-        {
-            vec4( 1.f, 1.f, 0.f, 0.f ),
-            vec4( 0.f, 1.f, 0.f, 0.f ),
-            vec4(-1.f, 1.f, 0.f, 0.f ),
-
-            vec4( 1.f, 0.f, 0.f, 0.f ),
-            vec4( 0.f, 0.f, 0.f, 0.f ),
-            vec4(-1.f, 0.f, 0.f, 0.f ),
-
-            vec4( 1.f,-1.f, 0.f, 0.f ),
-            vec4( 0.f,-1.f, 0.f, 0.f ),
-            vec4(-1.f,-1.f, 0.f, 0.f )
-        };
-
         _mesh_primitive = new MeshPrimitive;
         _mesh_primitive->vertex_buffer = _graphics->createBuffer
         ({
-            .size = 9 * sizeof( vertex_position[0] ),
-            .data = vertex_position,
-            .usage = BufferUsage::VertexBuffer,
+            .size = _face_vertices.size() * sizeof( _face_vertices[0] ),
+            .data = _face_vertices.data(),
+            .usage = BufferUsages::VertexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "terrain_cube_mesh_vertices"
         });
@@ -62,7 +46,7 @@ namespace kege{
         ({
             .size = face_indices.size() * sizeof( face_indices[0] ),
             .data = face_indices.data(),
-            .usage = BufferUsage::IndexBuffer,
+            .usage = BufferUsages::IndexBuffer,
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "terrain_cube_mesh_indices"
         });
@@ -71,7 +55,7 @@ namespace kege{
         return true;
     }
 
-    void SphericalTerrainRenderer::submit( int face_id, int index_buffer_id, PatchData& patch )
+    void SphericalTerrainRenderer::submit( int face_id, int index_buffer_id, vec4& patch )
     {
         if( this->sources.empty() )
         {
@@ -99,11 +83,12 @@ namespace kege{
 //        _current_batch.draw_commands[ _patch_count ].first_instance = _patch_count;
 //        _current_batch.draw_commands[ _patch_count ].vertex_offset = 9 * face_id;
 
-        _current_batch.draw_commands[ _patch_count ].first_index = _draw_commands[ 15 ].first_index;
-        _current_batch.draw_commands[ _patch_count ].first_instance = 0;
-        _current_batch.draw_commands[ _patch_count ].index_count = 24;
+
+        _current_batch.draw_commands[ _patch_count ].first_index = _draw_commands[ index_buffer_id ].first_index;
+        _current_batch.draw_commands[ _patch_count ].index_count = _draw_commands[ index_buffer_id ].index_count;
+        _current_batch.draw_commands[ _patch_count ].first_instance = _patch_count;
         _current_batch.draw_commands[ _patch_count ].instance_count = 1;
-        _current_batch.draw_commands[ _patch_count ].vertex_offset = 0;
+        _current_batch.draw_commands[ _patch_count ].vertex_offset = 9 * face_id;
 
 
         _patch_count += 1;
@@ -111,16 +96,14 @@ namespace kege{
 
     SphericalTerrainRenderer::Batch SphericalTerrainRenderer::mapBatch( int index )
     {
-        kege::Ref< ShaderResrc >& sr =this->sources[ index ]->instance_buffer_list->buffers[0].resource;
-        void* patchs = _graphics->mapBuffer( (*sr)[0][0].uniform.buffers[0].buffer );
-
-        BufferHandle& drawbuffer = this->sources[ index ]->indirect_draw_buffer_list->buffers[0].buffer;
-        void* draw_commands = _graphics->mapBuffer( drawbuffer );
+        kege::Ref< ShaderResrc >& sr = this->sources[ index ]->instance_buffer_list->buffers[0].resource;
+        void* patchs = (*sr)[0][0].uniform.buffers[0].buffer->map();
+        void* draw_commands = this->sources[ index ]->indirect_draw_buffer_list->buffers[0].buffer->map();
 
         return Batch
         {
             .draw_commands = reinterpret_cast< kege::IndexDrawCommand* >( draw_commands ),
-            .patchs = reinterpret_cast< kege::PatchData* >( patchs ),
+            .patchs = reinterpret_cast< kege::vec4* >( patchs ),
             .capacity = _max_draw_count,
             .index = index
         };
@@ -134,10 +117,9 @@ namespace kege{
             this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].count = _patch_count;
 
             kege::Ref< ShaderResrc >& sr =this->sources[ _current_batch.index ]->instance_buffer_list->buffers[0].resource;
-            _graphics->unmapBuffer( (*sr)[0][0].uniform.buffers[0].buffer );
+            (*sr)[0][0].uniform.buffers[0].buffer->unmap();
 
-            BufferHandle& drawbuffer = this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].buffer;
-            _graphics->unmapBuffer( drawbuffer );
+            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].buffer->unmap();
 
             _current_batch.draw_commands = nullptr;
             _current_batch.patchs = nullptr;
@@ -167,7 +149,7 @@ namespace kege{
                     ({
                         .size = _max_draw_count * _draw_command_stride,
                         .data = nullptr,
-                        .usage = BufferUsage::IndirectBuffer,
+                        .usage = BufferUsages::IndirectBuffer,
                         .memory_usage = MemoryUsage::CpuToGpu,
                         .name = "terrain_draw_buffer"
                     })
@@ -212,7 +194,7 @@ namespace kege{
                                             ({
                                                 .size = patch_buffer_size,
                                                 .data = nullptr,
-                                                .usage = BufferUsage::StorageBuffer,
+                                                .usage = BufferUsages::StorageBuffer,
                                                 .memory_usage = MemoryUsage::CpuToGpu,
                                                 .name = "terrain_patch_buffer"
                                             })

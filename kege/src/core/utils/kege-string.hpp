@@ -7,10 +7,28 @@
 
 #ifndef kege_string_hpp
 #define kege_string_hpp
+
+#include <assert.h>
+#include <cstdint>
+#include <cstddef>
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 #include <iostream>
+
+#ifdef DEBUG
+    #define ASSERT(cond, msg) \
+        do { \
+            if (!(cond)) { \
+                fprintf(stderr, "ASSERTION FAILED: %s\nFile: %s:%d\n", msg, __FILE__, __LINE__); \
+                std::abort(); \
+            } \
+        } while(0)
+#else
+    #define ASSERT(cond, msg) do {} while(0)
+#endif
+
 namespace kege{
 
     class string
@@ -19,6 +37,8 @@ namespace kege{
 
         friend std::ostream& operator <<(std::ostream& os, const kege::string& str);
 
+        friend  bool operator <(const string& a, const string& b);
+        
         //friend string operator +(const string& a, const string& b);
         //friend string operator +(const string& a, const char* b);
         friend string operator +(const char* a, const string& b);
@@ -32,8 +52,8 @@ namespace kege{
 
         string& operator +=( const string& str );
         string& operator +=( const char* str );
-        string& operator +=( const char chr );
-        
+        string& operator +=( int chr );
+
         string operator +( const string& str )const;
         string operator +( const char* str )const;
         string operator +( int chr )const;
@@ -44,26 +64,26 @@ namespace kege{
         const char& operator *()const;
         char& operator *();
 
+        //explicit operator std::string()const;
         operator bool()const;
-        
-        void copyFrom( uint64_t size, const char* str );
-        bool cmp( const char* str )const;
-        
-//        string read( const char* flags )const;
-//        int64_t position(const char* s)const;
-//        string seekfwd(const char* s)const;
-//        string seekbwd(const char* s)const;
-//
-//        string skipfwd(const char* s)const;
-//        string skipbwd(const char* s)const;
+
+        string& copyFrom( uint64_t offset, uint64_t size, const char* str );
+        string& copyTo( uint64_t offset, uint64_t size, char* str );
+
+        string& copyFrom( uint64_t offset, const string& str );
+        string& copyTo( uint64_t offset, string& str );
+
+        bool match( uint64_t offset, const char* str )const;
+
         void insert(size_t pos, size_t count, char ch);
         void insert(size_t pos, const char* str);
         void erase(size_t pos, size_t count);
         bool find( char c )const;
 
-        string parse_fname()const;
-        string parse_fpath()const;
-        string parse_name()const;
+        string parseFileName()const;
+        string parseFilePath()const;
+        string parseFileExt()const;
+        string parseName()const;
 
         string lowercase()const;
         string uppercase()const;
@@ -74,16 +94,12 @@ namespace kege{
         const char* c_str()const;
         char* str();
 
-//        static std::size_t hash(const char* str);
-//        std::size_t hash()const;
-
         double  toFloat()const;
         int64_t toInt64()const;
         int32_t toInt32()const;
 
         bool empty()const;
         void clear();
-
 
         string( char* str, uint64_t length );
         string( const char* str );
@@ -106,6 +122,25 @@ namespace kege{
         char* _str;
     };
 
+    struct StringHash // FNV-1a 64-bit (Simple, Fast, Excellent for Strings)
+    {
+        static constexpr uint64_t offset = 14695981039346656037ULL;
+        static constexpr uint64_t prime = 1099511628211ULL;
+
+        std::size_t operator()( const kege::string& s ) const noexcept
+        {
+            uint64_t hash = offset;
+            for (size_t i = 0; i < s.length(); ++i)
+            {
+                hash ^= static_cast<uint64_t>(static_cast<unsigned char>(s[i]));
+                hash *= prime;
+            }
+            return static_cast<std::size_t>(hash);
+        }
+    };
+
+
+
 
     kege::string dtostr(double n, int space);
     kege::string ftostr(float n, int space);
@@ -122,13 +157,7 @@ namespace kege{
 
 namespace std
 {
-    template <> struct hash< kege::string >
-    {
-        std::size_t operator()(const kege::string& str) const
-        {
-            if ( str.empty() ) return 0;
-            return std::hash<std::string>()( str.c_str() );
-        }
-    };
+    template<> struct hash< kege::string > : kege::StringHash {};
 }
+
 #endif /* kege_string_hpp */

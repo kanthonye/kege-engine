@@ -23,7 +23,7 @@ namespace kege{
         }
         for ( kege::Entity& entity : dead_entities )
         {
-            _engine->scene().getScene()->remove( entity );
+            getScene()->remove( entity );
         }
     }
     bool UpdateDecayOverTime::initialize()
@@ -32,7 +32,7 @@ namespace kege{
         return EntitySystem::initialize();
     }
 
-    UpdateDecayOverTime::UpdateDecayOverTime( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "update-decay-overtime", REQUIRE_UPDATE )
+    UpdateDecayOverTime::UpdateDecayOverTime( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "update-decay-overtime", REQUIRE_UPDATE, esm  )
     {}
 }

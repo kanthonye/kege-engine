@@ -73,7 +73,7 @@ namespace kege{
         _selected_entity = msg.entity;
 
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
-        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
 
         _distance = kege::magn( body->center - origin );
         Communication::broadcast< const MsgEntitySelectionDistance& >({ _distance });
@@ -84,8 +84,8 @@ namespace kege{
         if ( !_drag_entity || !_selected_entity ) return;
 
         _drag_entity = false;
-        kege::vec3 ray = _engine->scene().getScene()->getSceneRay();
-        kege::vec3 origin = _engine->scene().getScene()->getCameraEntity().get< kege::Transform >()->position;
+        kege::vec3 ray = getScene()->getSceneRay();
+        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
         kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
 
         if ( body == nullptr ) return;
@@ -114,8 +114,8 @@ namespace kege{
         kege::EntitySystem::shutdown();
     }
 
-    EntityDraggingSystem::EntityDraggingSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "entity-dragging-system", REQUIRE_UPDATE | REQUIRE_INPUT )
+    EntityDraggingSystem::EntityDraggingSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "entity-dragging-system", REQUIRE_UPDATE | REQUIRE_INPUT, esm  )
     ,   _drag_entity( false )
     ,   _selected_entity({})
     {}

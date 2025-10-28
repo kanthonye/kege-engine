@@ -11,34 +11,34 @@ namespace kege{
 
     void CameraControlSystem::input( double dms )
     {
-        Entity entity = _engine->scene().getScene()->getCameraEntity();
+        Entity entity = getScene()->getCameraEntity();
         if( !entity ) return;
 
 
         CameraControls* controls = entity.get< CameraControls >();
         if( !controls ) return;
 
-        const MappedInputs& inputs = _engine->input()->getMappedInputs();
-        if ( inputs[ kege::ACTION_CONTROL_CAMERA ] )
-        {
-            if ( inputs[ kege::ACTION_LOOK_LEFT ] )
-            {
-                controls->angles.y += controls->sensitivity * inputs[ kege::ACTION_LOOK_LEFT ];
-            }
-            else if ( inputs[ kege::ACTION_LOOK_RIGHT ] )
-            {
-                controls->angles.y += controls->sensitivity * inputs[ kege::ACTION_LOOK_RIGHT ];
-            }
-
-            if ( inputs[ kege::ACTION_LOOK_UP ] )
-            {
-                controls->angles.x += controls->sensitivity * inputs[ kege::ACTION_LOOK_UP ];
-            }
-            else if ( inputs[ kege::ACTION_LOOK_DOWN ] )
-            {
-                controls->angles.x += controls->sensitivity * inputs[ kege::ACTION_LOOK_DOWN ];
-            }
-        }
+//        const MappedInputs& inputs = getMappedInputs();
+//        if ( inputs[ kege::ACTION_CONTROL_CAMERA ] )
+//        {
+//            if ( inputs[ kege::ACTION_LOOK_LEFT ] )
+//            {
+//                controls->angles.y += controls->sensitivity * inputs[ kege::ACTION_LOOK_LEFT ];
+//            }
+//            else if ( inputs[ kege::ACTION_LOOK_RIGHT ] )
+//            {
+//                controls->angles.y += controls->sensitivity * inputs[ kege::ACTION_LOOK_RIGHT ];
+//            }
+//
+//            if ( inputs[ kege::ACTION_LOOK_UP ] )
+//            {
+//                controls->angles.x += controls->sensitivity * inputs[ kege::ACTION_LOOK_UP ];
+//            }
+//            else if ( inputs[ kege::ACTION_LOOK_DOWN ] )
+//            {
+//                controls->angles.x += controls->sensitivity * inputs[ kege::ACTION_LOOK_DOWN ];
+//            }
+//        }
     }
 
     void CameraControlSystem::update( double dms )
@@ -63,8 +63,8 @@ namespace kege{
                 up = vec3( 0.f ,1.f , 0.f );
             }
 
-            controls->euler.x = lerp( controls->euler.x, controls->angles.x, dms * controls->smoothness );
-            controls->euler.y = lerp( controls->euler.y, controls->angles.y, dms * controls->smoothness );
+            controls->euler.x = lerp( controls->euler.x, controls->angles.x, dms * controls->stiffness );
+            controls->euler.y = lerp( controls->euler.y, controls->angles.y, dms * controls->stiffness );
 
             quat rotation = quat( controls->euler.y, up );
             *orientation = quat( controls->euler.x, getAxesX( rotation ) ) * rotation;
@@ -81,8 +81,8 @@ namespace kege{
         return EntitySystem::shutdown();
     }
 
-    CameraControlSystem::CameraControlSystem( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "camera-controller", REQUIRE_UPDATE | REQUIRE_INPUT )
+    CameraControlSystem::CameraControlSystem( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "camera-controller", REQUIRE_UPDATE | REQUIRE_INPUT, esm )
     {
         _signature = createEntitySignature< kege::Camera, kege::CameraControls >();
     }

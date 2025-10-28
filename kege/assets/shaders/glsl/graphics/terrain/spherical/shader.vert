@@ -14,8 +14,9 @@ layout(set = 0, binding = 0) uniform CameraBlock
 layout( push_constant ) uniform ObjectMatrices
 {
     mat4  transform;
-    float radius;
-} model;
+    mat4  rotation;
+}
+model;
 
 
 struct PatchData
@@ -30,43 +31,22 @@ layout( std140, set = 1, binding = 0 ) buffer PatchDataBuffer
 
 void main()
 {
-    const vec3 vertex_position[ 9 ] = vec3[]
-    (
-        vec3( 1.f, 1.f, 0.f ),
-        vec3( 0.f, 1.f, 0.f ),
-        vec3(-1.f, 1.f, 0.f ),
+    //gl_Position = camera.projection * camera.transform * model.transform * vec4( _vertex_position.xyz, 1.0);
 
-        vec3( 1.f, 0.f, 0.f ),
-        vec3( 0.f, 0.f, 0.f ),
-        vec3(-1.f, 0.f, 0.f ),
+    float radius  = model.rotation[3][0];
+    vec3 translation  = patch_data[ gl_InstanceIndex ].translation_scale.xyz;
+    float scale = patch_data[ gl_InstanceIndex ].translation_scale.w;
+    vec3 position = translation + _vertex_position.xyz * scale;
 
-        vec3( 1.f,-1.f, 0.f ),
-        vec3( 0.f,-1.f, 0.f ),
-        vec3(-1.f,-1.f, 0.f )
-    );
+    float xx = position.x * position.x;
+    float yy = position.y * position.y;
+    float zz = position.z * position.z;
+    position.x = position.x * sqrt(1.0 - (yy + zz) / 2.0 + (yy * zz) / 3);
+    position.y = position.y * sqrt(1.0 - (zz + xx) / 2.0 + (zz * xx) / 3);
+    position.z = position.z * sqrt(1.0 - (xx + yy) / 2.0 + (xx * yy) / 3);
 
-    gl_Position = vec4( _vertex_position.xyz, 1.0);
-
-
-
-
-//    vec4  translation_scale = patch_data[ gl_InstanceIndex ].translation_scale;
-//    vec3  translation  = translation_scale.xyz;
-//    float scale = translation_scale.w;
-//
-//    vec3 position = translation + _vertex.xyz * scale;
-//
-//    float xx = position.x * position.x;
-//    float yy = position.y * position.y;
-//    float zz = position.z * position.z;
-//    position.x = position.x * sqrt(1.0 - (yy + zz) / 2.0 + (yy * zz) / 3);
-//    position.y = position.y * sqrt(1.0 - (zz + xx) / 2.0 + (zz * xx) / 3);
-//    position.z = position.z * sqrt(1.0 - (xx + yy) / 2.0 + (xx * yy) / 3);
-//
-//    position = model.radius * position;
-//
-//    gl_Position = camera.projection * camera.transform * model.transform * vec4( position, 1.0);
-//    gl_Position.y = -gl_Position.y;
+    gl_Position = camera.projection * camera.transform * model.transform * vec4( position * radius, 1.0);
+    gl_Position.y = -gl_Position.y;
 
 
 

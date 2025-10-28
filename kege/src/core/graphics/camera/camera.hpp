@@ -134,7 +134,7 @@ namespace kege{
         kege::vec3 angles = {0.f, 0.f, 0.f};
         kege::vec3 euler = {0.f, 0.f, 0.f};
         float sensitivity = 0.125f;
-        float smoothness = 10.0f;
+        float stiffness = 10.0f;
     };
 
 }

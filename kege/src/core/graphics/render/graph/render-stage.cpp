@@ -7,7 +7,7 @@
 
 #include "render-stage.hpp"
 #include "render-graph.hpp"
-#include "../manager/render-manager.hpp"
+#include "../graph/render-executor.hpp"
 
 namespace kege{
 
@@ -16,15 +16,15 @@ namespace kege{
         return _graph->getShaderResource( handle );
     }
 
-    const kege::SamplerHandle* RenderStage::getSampler( const RgResrcHandle& handle )const
+    const ref::Sampler RenderStage::getSampler( const RgResrcHandle& handle )const
     {
         return _graph->getSampler( handle );
     }
-    const kege::BufferHandle* RenderStage::getBuffer( const RgResrcHandle& handle )const
+    const ref::Buffer RenderStage::getBuffer( const RgResrcHandle& handle )const
     {
         return _graph->getBuffer( handle );
     }
-    const kege::ImageHandle* RenderStage::getImage( const RgResrcHandle& handle )const
+    const ref::Image RenderStage::getImage( const RgResrcHandle& handle )const
     {
         return _graph->getImage( handle );
     }
@@ -33,15 +33,15 @@ namespace kege{
     {
         return _graph->fetchShaderResource( name );
     }
-    const kege::SamplerHandle* RenderStage::fetchSampler( const std::string& name )const
+    const ref::Sampler RenderStage::fetchSampler( const std::string& name )const
     {
         return _graph->fetchSampler( name );
     }
-    const kege::BufferHandle* RenderStage::fetchBuffer( const std::string& name )const
+    const ref::Buffer RenderStage::fetchBuffer( const std::string& name )const
     {
         return _graph->fetchBuffer( name );
     }
-    const kege::ImageHandle* RenderStage::fetchImage( const std::string& name )const
+    const ref::Image RenderStage::fetchImage( const std::string& name )const
     {
         return _graph->fetchImage( name );
     }
@@ -57,18 +57,21 @@ namespace kege{
         return _fixed_shader_pipelines;
     }
 
-    bool RenderStage::execute( RenderManager& render_manager )
+    bool RenderStage::execute()
     {
         // begin the command recording
         if( getCommandBuffer()->beginCommands() )
         {
-            beginRendering();
-            if ( this->_defn.pass != RenderPassType::BarrierTransition )
+            applyBarriers( _barriers );
+            if ( !_defn.writes.empty() )
             {
-                render_manager.execute( this );
+                beginRendering();
+                if ( this->_defn.pass != RenderPassType::BarrierTransition )
+                {
+                    _graph->getRenderExecutor()->execute( this );
+                }
+                endRendering();
             }
-            endRendering();
-
             getCommandBuffer()->endCommands();
             return true;
         }
@@ -99,7 +102,7 @@ namespace kege{
                     bmb.offset = barrier.offset;
                     bmb.size = barrier.size;
 
-                    bmb.buffer = *_graph->getBuffer( barrier.resource_handle );
+                    bmb.buffer = _graph->getBuffer( barrier.resource_handle );
 
                     buffer_barriers.push_back( bmb );
                     break;
@@ -124,7 +127,7 @@ namespace kege{
                         .layer_count      = 1,
                     };
 
-                    imb.image = *_graph->getImage( barrier.resource_handle );
+                    imb.image = _graph->getImage( barrier.resource_handle );
 
                     image_barriers.push_back(imb);
                     break;
@@ -144,68 +147,59 @@ namespace kege{
 
     void RenderStage::beginRendering()
     {
-        applyBarriers( _barriers );
+        const int IMAGE_INDEX = _graph->_graphics->getSwapchain()->getImageIndex();
 
-        if ( !_defn.writes.empty() )
+        kege::RenderingInfo rendering_info;
+        const ImageDefn* defn = nullptr;
+
+        ClearValue clear_value = {};
+        for ( int i=0; i<_defn.writes.size(); ++i )
         {
-            const int IMAGE_INDEX = _graph->_graphics->getSwapchain()->getImageIndex();
-
-            kege::RenderingInfo rendering_info;
-            const ImageDefn* defn = nullptr;
-
-            for ( int i=0; i<_defn.writes.size(); ++i )
+            const RgWriteResrcDesc& write = _defn.writes[i];
+            if ( write.type == RgResrcType::Image )
             {
-                const RgWriteResrcDesc& write = _defn.writes[i];
-                if ( write.type == RgResrcType::Image )
+                defn = _graph->_asset_manager.get< ImageDefn >( write.handle );
+                int img_idx = IMAGE_INDEX % int( defn->physical_handle.size() );
+
+                _render_area = { 0, 0, defn->info.width, defn->info.height };
+
+                rendering_info.render_area = _render_area;
+                rendering_info.layer_count = defn->info.depth;
+                if ( hasFlag( write.usage.access, AccessFlags::ColorWrite ) )
                 {
-                    defn = _graph->_asset_manager.get< ImageDefn >( write.handle );
-                    int img_idx = IMAGE_INDEX % int( defn->physical_handle.size() );
-
-                    _render_area = { 0, 0, defn->info.width, defn->info.height };
-
-                    rendering_info.render_area = _render_area;
-                    rendering_info.layer_count = defn->info.depth;
-                    if ( hasFlag( write.usage.access, AccessFlags::ColorWrite ) )
-                    {
-                        rendering_info.color_attachments.push_back
-                        (
-                            kege::RenderingAttachmentInfo
-                            {
-                                .image_view_handle = defn->physical_handle[ img_idx ],
-                                .clear_value = write.clear_value.value(),
-                                .store_op = kege::AttachmentStoreOp::Store,
-                                .load_op = write.usage.load_op,
-                                .image_layout = write.usage.layout,
-                            }
-                        );
-                    }
-                    else if ( hasFlag( write.usage.access, AccessFlags::DepthStencilWrite ) )
-                    {
-                        rendering_info.depth_attachment = kege::RenderingAttachmentInfo
+                    rendering_info.color_attachments.push_back
+                    (
+                        kege::RenderingAttachmentInfo
                         {
-                            .image_view_handle = defn->physical_handle[ img_idx ],
-                            .clear_value = write.clear_value.value(),
+                            .image = defn->physical_handle[ img_idx ],
+                            .clear_value = (write.clear_value)?write.clear_value.value():clear_value,
                             .store_op = kege::AttachmentStoreOp::Store,
                             .load_op = write.usage.load_op,
                             .image_layout = write.usage.layout,
-                        };
-                    }
+                        }
+                    );
+                }
+                else if ( hasFlag( write.usage.access, AccessFlags::DepthStencilWrite ) )
+                {
+                    rendering_info.depth_attachment = kege::RenderingAttachmentInfo
+                    {
+                        .image = defn->physical_handle[ img_idx ],
+                        .clear_value = (write.clear_value)?write.clear_value.value():clear_value,
+                        .store_op = kege::AttachmentStoreOp::Store,
+                        .load_op = write.usage.load_op,
+                        .image_layout = write.usage.layout,
+                    };
                 }
             }
-
-            // begin the rendering
-            getCommandBuffer()->beginRendering( rendering_info );
-            _begin = true;
         }
+
+        // begin the rendering
+        getCommandBuffer()->beginRendering( rendering_info );
     }
 
     void RenderStage::endRendering()
     {
-        if( _begin )
-        {
-            getCommandBuffer()->endRendering();
-            _begin = false;
-        }
+        getCommandBuffer()->endRendering();
     }
 
     const std::vector< RgWriteResrcDesc >& RenderStage::getWrites()const
@@ -312,7 +306,6 @@ namespace kege{
     }
 
     RenderStage::RenderStage()
-    :   _begin( false )
     {
     }
 

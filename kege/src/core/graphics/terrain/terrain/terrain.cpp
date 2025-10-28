@@ -11,12 +11,12 @@
 
 namespace kege{
 
-    TerrainTile* Terrain::getTerrainTile( const kege::dvec3& position )const
+    TerrainTile* Terrain::getTerrainTile( const kege::fvec3& position )const
     {
         return _physical_terrain->getTerrainTile( position );
     }
 
-    double Terrain::getHeight( const kege::dvec3& position )const
+    double Terrain::getHeight( const kege::fvec3& position )const
     {
         return _physical_terrain->getHeight( position );
     }
@@ -26,7 +26,7 @@ namespace kege{
         if ( settings.type == TerrainType::SPHERICAL )
         {
             _physical_terrain = new SphericalTerrain( this, settings );
-            return _physical_terrain->initialize();
+            return _physical_terrain->initialize( settings.graphics );
         }
         else
         {
@@ -35,12 +35,12 @@ namespace kege{
         return true;
     }
 
-    void Terrain::setOrientation( const kege::dquat& orientation )
+    void Terrain::setOrientation( const kege::fquat& orientation )
     {
         _physical_terrain->setOrientation( orientation );
     }
 
-    void Terrain::setPosition( const kege::dvec3& position )
+    void Terrain::setPosition( const kege::fvec3& position )
     {
         _physical_terrain->setPosition( position );
     }
@@ -53,7 +53,7 @@ namespace kege{
         _physical_terrain->submitVisibleGeometries();
     }
 
-    void Terrain::update( const kege::dvec3& eye )
+    void Terrain::update( const kege::fvec3& eye )
     {
         _physical_terrain->update( eye );
     }
@@ -70,11 +70,11 @@ namespace kege{
 
     TerrainRenderer* Terrain::getTerrainRenderer()
     {
-        return _physical_terrain->getTerrainRenderer();
+        return _physical_terrain->getRenderer();
     }
     MaterialSource* Terrain::getTerrainMaterial()
     {
-        return _physical_terrain->getTerrainMaterial();
+        return _physical_terrain->getMaterial();
     }
 
     Terrain:: ~Terrain()

@@ -65,12 +65,13 @@ namespace kege{
     struct InstanceBuffer
     {
         const ShaderBindings& getShaderBindings()const;
-        const BufferHandle& getBufferHandle()const;
+        const ref::Buffer& getBufferHandle()const;
 
         kege::Ref< ShaderResrc > resource;
         uint32_t instance_count;
         uint32_t first_instance;
     };
+    
     class InstanceBufferList : public kege::RefCounter
     {
     public:
@@ -78,7 +79,7 @@ namespace kege{
         InstanceBufferList( const std::vector< InstanceBuffer >& buffers );
 
         const ShaderBindings& getShaderBindings( int index )const;
-        const BufferHandle& getBufferHandle( int index )const;
+        const ref::Buffer& getBufferHandle( int index )const;
 
         ~InstanceBufferList();
         InstanceBufferList();
@@ -88,7 +89,7 @@ namespace kege{
 
     struct IndirectDrawBuffer
     {
-        kege::BufferHandle buffer;
+        ref::Buffer buffer;
         uint64_t offset;
         uint32_t count;
         uint32_t stride;
@@ -130,10 +131,10 @@ namespace kege{
         std::vector< uint32_t > indices;
 
         // GPU vertex buffer handle
-        kege::BufferHandle vertex_buffer;
+        ref::Buffer vertex_buffer;
 
         // GPU index buffer handle
-        kege::BufferHandle index_buffer;
+        ref::Buffer index_buffer;
 
         kege::vec3 aabb_min;
         kege::vec3 aabb_max;

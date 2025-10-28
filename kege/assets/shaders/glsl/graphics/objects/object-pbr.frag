@@ -6,7 +6,7 @@ layout(location = 1) in vec3 _normal;
 layout(location = 2) in vec2 _texcoord;
 layout(location = 3) in vec3 _camera_position;
 
-#define MAX_LIGHTS 10;
+#define MAX_LIGHTS 10
 const int LIGHT_TYPE_SPOT = 0;
 const int LIGHT_TYPE_POINT = 1;
 const int LIGHT_TYPE_DIRECTIONAL = 2;

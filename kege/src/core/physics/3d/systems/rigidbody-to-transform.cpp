@@ -9,8 +9,8 @@
 
 namespace kege{
 
-    RigidbodyToTransform::RigidbodyToTransform( kege::Engine* engine )
-    :   kege::EntitySystem( engine, "rigidbody-to-transform", REQUIRE_UPDATE )
+    RigidbodyToTransform::RigidbodyToTransform( kege::EntitySystemManager* esm )
+    :   kege::EntitySystem( "rigidbody-to-transform", REQUIRE_UPDATE, esm  )
     {
         _signature = createEntitySignature< kege::Rigidbody, kege::Transform >();
     }

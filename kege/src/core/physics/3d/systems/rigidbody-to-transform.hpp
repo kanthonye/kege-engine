@@ -8,7 +8,7 @@
 #ifndef rigidbody_to_transform_hpp
 #define rigidbody_to_transform_hpp
 
-#include "../../../../core/esm/entity-system.hpp"
+#include "../../../../core/ecs/entity-system.hpp"
 #include "../simulation/physics-simulation.hpp"
 
 namespace kege{
@@ -17,7 +17,7 @@ namespace kege{
     {
     public:
 
-        RigidbodyToTransform( kege::Engine* engine );
+        RigidbodyToTransform( kege::EntitySystemManager* esm );
         void update( double dms );
         bool initialize();
         void shutdown();

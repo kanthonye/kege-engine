@@ -1,27 +1,118 @@
 {
-    "name": "object-pbr-shader",
-    "pipeline": "graphics",
-    "primatives": ["triangle-list"],
-    "polygon-modes": ["fill"],
-    
-    "attribute-bindings":
-    [
-        {
-            "binding": 0,
-            "stride": 56,
-            "input-rate": "per-vertex",
-        }
-    ],
+    "asset":
+    {
+        "version": "1.0",
+        "generator": "KEGE",
+        "name": "basic-pipeline",
+    },
 
-    "stages":
+    "shaders":
     [
         {
+            "entry-point": "main",
+            "name": "basic.vert",
             "type": "vertex",
-            "file":  "basic.vert"
+            "uri": "basic.vert"
         },
         {
+            "entry-point": "main",
+            "name": "basic.frag",
             "type": "fragment",
-            "file":  "basic.frag"
-        }
+            "uri": "basic.frag"
+        },
+    ],
+
+    "pipelines":
+    [
+        {
+            "name": "basic-pipeline",
+            "stages": [0, 1],
+            "states":
+            {
+                "rasterizer":
+                {
+                    "cull_mode": "cull_none",
+                    "front_face": "ccw",
+                    "polygon_mode": "line",
+                    "rasterizer_disable": "false",
+                },
+                "depth_stencil":
+                {
+                    "depth_test": "true",
+                    "depth_write": "true",
+                    "depth_compare_op": "less"
+                },
+                "color_blend":
+                {
+                    "logic_op_enable": "false",
+                    "logic_op": "copy",
+                    "color_blend_attachments":
+                    [
+                        {
+                            "blend_enable": "true",
+
+                            "color_blend_op": "add",
+                            "src_color_blend_factor": "src-alpha",
+                            "dst_color_blend_factor": "one-minus-src-alpha",
+
+                            "alpha_blend_op": "add",
+                            "src_alpha_blend_factor": "one",
+                            "dst_alpha_blend_factor": "zero",
+                        }
+                    ],
+                },
+                "input_assembly":
+                {
+                    "topology": "triangle-list"
+                }
+            },
+
+            "vertex_input":
+            {
+                "attributes":
+                [
+                    {
+                        "binding": 0,
+                        "location": 0,
+                        "format": "vec3",
+                        "semantic": "POSITION",
+                        "name": "_position"
+                    },
+                    {
+                        "binding": 0,
+                        "location": 1,
+                        "format": "vec3",
+                        "semantic": "NORMAL",
+                        "name": "_normal"
+                    },
+                ],
+                "bindings":
+                [
+                    {
+                        "binding": 0,
+                        "stride": 56,
+                        "input_rate": "vertex"
+                    },
+                ],
+            },
+
+            "outputs":
+            [
+                {
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "out_color"
+                }
+            ],
+
+            "globals":
+            [
+                {
+                    "name": "camera-buffer",
+                    "type": "SHADER_RESOURCE"
+                }
+            ]
+        },
     ]
 }
