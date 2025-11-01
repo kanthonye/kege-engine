@@ -15,21 +15,6 @@
 
 namespace kege{
 
-//    struct ShaderPipelineCreateInfo
-//    {
-//        kege::PipelineCreateInfo pipeline_info;
-//        std::vector< int > stages;
-//    };
-//
-//    bool parseShaderPipelineInfo
-//    (
-//        kege::Graphics* graphics,
-//        std::vector< ref::Shader >* shaders,
-//        std::vector< kege::ShaderPipelineCreateInfo >* pipelines,
-//        kege::Json json,
-//        const std::string& path
-//    );
-//
     struct PipelinInfo
     {
         struct Output
@@ -75,27 +60,29 @@ namespace kege{
         std::map< int, std::vector< Layout > > sets;
     };
 
-    bool parseShaderPipeline
+    struct ShaderPipelineLibContext
+    {
+        std::vector< ref::ShaderStructBlock > uniforms;
+        std::vector< RasterizationStateDesc > rasterizer_states;
+        std::vector< DepthStencilStateDesc > depth_stencil_states;
+        std::vector< ColorBlendStateDesc > color_blend_states;
+        std::vector< VertexBufferLayout > vertex_layouts;
+        std::vector< ref::Shader > shaders;
+
+    };
+
+    bool parseShaderPipelineLib
     (
-        kege::Graphics* graphics,
-        kege::Json json,
         const std::string& path,
-        std::vector< ref::ShaderStructBlock >* uniforms,
-        std::vector< RasterizationStateDesc >* rasterizer_states,
-        std::vector< DepthStencilStateDesc >* depth_stencil_states,
-        std::vector< ColorBlendStateDesc >* color_blend_states,
-        std::vector< VertexBufferLayout >* vertex_layouts,
-        std::vector< PipelinInfo >* pipelines,
-        std::vector< ref::Shader >* shaders
+        kege::Graphics* graphics,
+        kege::Json& shader_pipeline_library,
+        ShaderPipelineLibContext* context,
+        std::vector< PipelinInfo >* pipelines
     );
 
-
-
-    class PipelineLoader {
-    public:
-
-        static std::vector< ref::ShaderPipeline > load
-        ( kege::Graphics* graphics, const std::string& filename );
-    };
+    ref::ShaderPipeline createShaderPipeline
+    (
+        kege::Graphics* graphics, ShaderPipelineLibContext& context, const PipelinInfo& info
+    );
 }
 #endif /* pipeline_loader_hpp */

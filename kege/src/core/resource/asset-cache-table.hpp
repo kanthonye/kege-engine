@@ -1,12 +1,12 @@
 //
-//  asset-manager.hpp
-//  kege
+//  asset-cache-table.hpp
+//  editor
 //
-//  Created by Kenneth Esdaile on 10/1/24.
+//  Created by Kenneth Esdaile on 11/1/25.
 //
 
-#ifndef kege_resource_manager_hpp
-#define kege_resource_manager_hpp
+#ifndef asset_cache_table_hpp
+#define asset_cache_table_hpp
 
 #include "asset-cache.hpp"
 
@@ -33,7 +33,7 @@ namespace kege{
         static uint32_t getType(){ return _type_enumerator++; }
 
     protected:
-        
+
         std::unordered_map< std::string, uint64_t > _lookup_table;
         static uint32_t _type_enumerator;
         friend AssetManager;
@@ -214,99 +214,4 @@ namespace kege{
 
 
 
-
-
-namespace kege{
-
-    /**
-     * @brief Manages multiple resource managers for different asset types.
-     *
-     * This class provides a unified interface to manage various types of resources,
-     * such as textures, shaders, and models. It maintains a collection of
-     * AssetCacheTable instances, each responsible for a specific resource type.
-     */
-    class AssetManager : public kege::RefCounter
-    {
-    public:
-
-        template< typename Item > uint64_t add( const std::string& name, Item res )
-        {
-            return this->getAssetCacheTable< Item >()->add( name, res );
-        }
-
-        template< typename Item > const Item* fetch( const std::string& name )const
-        {
-            return this->getAssetCacheTable< Item >()->fetch(name);
-        }
-
-        template< typename Item > Item* fetch( const std::string& name )
-        {
-            return this->getAssetCacheTable< Item >()->fetch( name );
-        }
-
-        template< typename Item > const Item* get( uint64_t handle )const
-        {
-            return this->getAssetCacheTable< Item >()->get( handle );
-        }
-
-        template< typename Item > Item* get( uint64_t handle )
-        {
-            return this->getAssetCacheTable< Item >()->get( handle );
-        }
-
-        template< typename Item > uint64_t getId( const std::string& name )const
-        {
-            return this->getAssetCacheTable< Item >()->getId( name );
-        }
-
-        template< typename Item > void remove( const std::string& name )
-        {
-            return this->getAssetCacheTable< Item >()->remove( name );
-        }
-
-        template< typename Item > void erase( uint64_t handle )
-        {
-            return this->getAssetCacheTable< Item >()->erase( handle );
-        }
-
-        template< typename Item > void clear()
-        {
-            return this->getAssetCacheTable< Item >()->clear();
-        }
-
-        template<typename Item> const AssetCacheTable<Item>* getAssetCacheTable()const
-        {
-            if ( _assets.empty() ) _assets.resize( AssetTable::_type_enumerator );
-            if ( _assets[ AssetCacheTable< Item >::_type ] == nullptr )
-            {
-                _assets[ AssetCacheTable< Item >::_type ] = new AssetCacheTable< Item >;
-            }
-            return reinterpret_cast< AssetCacheTable< Item >* >( _assets[ AssetCacheTable< Item >::_type ] );
-        }
-
-        template<typename Item> AssetCacheTable< Item >* getAssetCacheTable()
-        {
-            if ( _assets.empty() ) _assets.resize( AssetTable::_type_enumerator );
-            if ( _assets[ AssetCacheTable< Item >::_type ] == nullptr )
-            {
-                _assets[ AssetCacheTable< Item >::_type ] = new AssetCacheTable< Item >;
-            }
-            return reinterpret_cast< AssetCacheTable< Item >* >( _assets[ AssetCacheTable< Item >::_type ] );
-        }
-
-        void shutdown();
-
-        ~AssetManager();
-        AssetManager();
-
-    private:
-
-        mutable std::vector< AssetTable* > _assets;
-    };
-
-}
-
-namespace kege::ref{
-    typedef kege::Ref< kege::AssetManager > AssetManager;
-}
-#endif /* kege_resource_manager_hpp */
+#endif /* asset_cache_table_hpp */

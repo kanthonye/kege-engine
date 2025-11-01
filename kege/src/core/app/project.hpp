@@ -9,7 +9,7 @@
 #define kege_app_project_hpp
 
 #include <filesystem>
-#include "../utils/asset-manager.hpp"
+#include "../resource/asset-manager.hpp"
 #include "scene-manager.hpp"
 
 namespace kege{

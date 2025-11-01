@@ -152,136 +152,6 @@ namespace kege{
         return stages;
     }
 
-//    bool createShaderModules
-//    (
-//        kege::Graphics* graphics,
-//        kege::GraphicsPipelineDesc* info,
-//        const std::string& path,
-//        kege::Json json
-//    )
-
-//
-//    bool createDescriptorSetLayout
-//    (
-//        kege::Graphics* graphics,
-//        std::vector< kege::UniformSetLayout >& descriptor_set_layouts,
-//        kege::Json descriptors
-//    )
-//    {
-//        if ( descriptors.count() == 0 )
-//        {
-//            return false;
-//        }
-//        using LayoutBinding = std::map< int, kege::UniformSetDesc >;
-//        LayoutBinding dslb_map;
-//        for (int i = 0; i < descriptors.count(); ++i)
-//        {
-//            kege::UniformDesc dslb;
-//
-//            kege::Json descriptor =  descriptors[i];
-//            dslb.descriptor_type = convertDescriptorType( descriptor[ "type" ].toStr() );
-//            dslb.stage_flags = convertShaderStageFlages( descriptor[ "stages" ] );
-//            dslb.binding = descriptor[ "binding" ].toInt();
-//            dslb.count = descriptor[ "count" ].toInt();
-//            dslb.name = descriptor[ "name" ].toStr();
-//
-//            kege::UniformSetDesc& dsl = dslb_map[ descriptor[ "set" ].toInt() ];
-//            dsl.push_back( dslb );
-//        }
-//
-//        for ( LayoutBinding::iterator m = dslb_map.begin(); m != dslb_map.end(); m++ )
-//        {
-//            //kege::UniformSetLayout handle = graphics->createUniformSetLayout( m->second );
-//            //descriptor_set_layouts.push_back( handle );
-//        }
-//        return true;
-//    }
-//
-//    bool parsePushConstantRange
-//    (
-//        kege::Graphics* graphics,
-//        std::vector< kege::PushConstantRange >& push_constants_ranges,
-//        kege::Json json
-//    )
-//    {
-//        if ( json.count() == 0 )
-//        {
-//            return false;
-//        }
-//
-//        for (int i = 0; i < json.count(); ++i)
-//        {
-//            kege::PushConstantRange constant;
-//            constant.stage_flags = convertShaderStageFlages( json[i][ "stages" ] );
-//            constant.offset = json[i][ "offset" ].toInt();
-//            constant.size = json[i][ "size" ].toInt();
-//            push_constants_ranges.push_back( constant );
-//        }
-//
-//        return true;
-//    }
-//
-//    bool createPipelineLayout
-//    (
-//        kege::Graphics* graphics,
-//        kege::GraphicsPipelineDesc* info,
-//        const std::string& name,
-//        kege::Json json
-//    )
-//    {
-//        if ( json.count() == 0 )
-//        {
-//            return false;
-//        }
-//        kege::PipelineLayoutDesc layout_info;
-//        createDescriptorSetLayout( graphics, layout_info.descriptor_set_layouts, json[ "descriptor_set_layouts" ] );
-//        parsePushConstantRange( graphics, layout_info.push_constant_ranges, json[ "push_constants_ranges" ] );
-//        info->pipeline_layout = graphics->createPipelineLayout( layout_info );
-//        info->name = name;
-//        if ( info->pipeline_layout.id < 0 )
-//        {
-//            kege::Log::error << "pipeline-layout create failed in createPipelineLayout()" << Log::nl;
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    bool parseVertexInput
-//    (
-//        kege::Graphics* graphics,
-//        kege::GraphicsPipelineDesc* info,
-//        kege::Json json
-//    )
-//    {
-//        kege::Json params = json[ "vertex_bindings" ];
-//        if ( params.count() != 0 )
-//        {
-//            for (int i = 0; i < params.count(); ++i)
-//            {
-//                //kege::VertexInputBindingDesc v;
-//                info->vertex_input_state.strides.push_back( params[i]["stride"].toInt() );
-//            }
-//        }
-//        params = json[ "vertex_inputs" ];
-//        if ( params.count() != 0 )
-//        {
-//            for (int i = 0; i < params.count(); ++i)
-//            {
-//                kege::VertexInputAttributeDesc v;
-//                v.location = params[i]["location"].toInt();
-//                v.binding = params[i]["binding"].toInt();
-//                v.offset = params[i]["offset"].toInt();
-//                v.type = convertVertexInputType( params[i][ "format" ].toStr() );
-//                //v.stride = params[i]["stride"].toInt();
-//                v.binding = params[i]["binding"].toInt();
-//                v.input_rate = ( strcmp("vertex", params[i]["input_rate"].toStr()) == 0 )
-//                ? kege::VertexInputRate::Vertex : kege::VertexInputRate::Instance;
-//                info->vertex_input_state.attributes.push_back( v );
-//            }
-//        }
-//        return true;
-//    }
-//
     void parseDepthStencilStates( std::vector< DepthStencilStateDesc >* depth_stencil_states, kege::Json json )
     {
         for (int i = 0; i < json.count(); ++i)
@@ -551,70 +421,6 @@ namespace kege{
         return true;
     }
 
-//    UniformDescriptorSets parsePipelineUniformLayouts( kege::Json json )
-//    {
-//        using LayoutBinding = std::map< int, kege::UniformDescriptorSet >;
-//        LayoutBinding dslb_map;
-//        for (int i = 0; i < json.count(); ++i)
-//        {
-//            kege::Json layout =  json[i];
-//            int set = layout[ "set" ].toInt();
-//            std::string name = layout[ "name" ].toStr();
-//            Json bindings = layout[ "bindings" ];
-//
-//            kege::UniformDescriptorSet& dsl = dslb_map[ set ];
-//            dsl.set = set;
-//            dsl.descriptors.reserve( bindings.count() );
-//            for (int i = 0; i < bindings.count(); ++i)
-//            {
-//                Json bind = bindings[i];
-//
-//                kege::UniformDescriptor ud = {};
-//                ud.name = bind[ "name" ].toStr();
-//                ud.descriptor_type = convertDescriptorType( bind[ "type" ].toStr() );
-//                //dslb.stage_flags = convertShaderStageFlages( bind[ "stages" ] );
-//                ud.binding = bind[ "binding" ].toInt();
-//                ud.count = bind[ "count" ].toInt();
-//                dsl.descriptors.push_back( ud );
-//            }
-//        }
-//
-//        UniformDescriptorSets desc_sets;
-//        if ( !dslb_map.empty() )
-//        {
-//            desc_sets.reserve( dslb_map.size() );
-//            for ( LayoutBinding::iterator m = dslb_map.begin(); m != dslb_map.end(); m++ )
-//            {
-//                desc_sets.push_back( m->second );
-//            }
-//        }
-//        return desc_sets;
-//    }
-
-//    std::vector< ref::ShaderBindingPointConstant > parsePipelinePushCnstants( kege::Json json )
-//    {
-//        std::vector< ref::ShaderBindingPointConstant > push_constants( json.count() );
-//        for (int i = 0; i < json.count(); ++i)
-//        {
-//            push_constants[i]->stages = convertShaderStageFlages( json[i][ "stages" ] );
-//            push_constants[i]->offset = json[i][ "offset" ].toInt();
-//            push_constants[i]->size = json[i][ "size" ].toInt();
-//            push_constants[i]->name = json[i][ "name" ].toStr();
-//
-//            Json fields = json[ "fields" ];
-//            std::vector< ShaderStructField > shader_block_fields( json[ "fields" ].count() );
-//            for (int f = 0; f < fields.count(); ++f)
-//            {
-//                shader_block_fields[f].name   = fields[ "name" ].value();
-//                shader_block_fields[f].type   = stringToMemberType( fields[ "type" ].value() );
-//                shader_block_fields[f].offset = fields[ "offset" ].toInt();
-//                shader_block_fields[f].size   = fields[ "size" ].toInt();
-//            }
-//            push_constants[i]->struct_block = new ShaderStructBlock( shader_block_fields );
-//        }
-//        return push_constants;
-//    }
-
     ShaderStageFlag parseShaderStageFlag( const Json& json )
     {
         ShaderStageFlag stages = stringToShaderStageFlag( json[0].value() );
@@ -734,126 +540,85 @@ namespace kege{
         return true;
     }
 
-    bool parseShaderPipeline
+    bool parseShaderPipelineLib
     (
-        kege::Graphics* graphics,
-        kege::Json json,
         const std::string& path,
-        std::vector< ref::ShaderStructBlock >* uniforms,
-        std::vector< RasterizationStateDesc >* rasterizer_states,
-        std::vector< DepthStencilStateDesc >* depth_stencil_states,
-        std::vector< ColorBlendStateDesc >* color_blend_states,
-        std::vector< VertexBufferLayout >* vertex_layouts,
-        std::vector< PipelinInfo >* pipelines,
-        std::vector< ref::Shader >* shaders
+        kege::Graphics* graphics,
+        kege::Json& shader_pipeline_library,
+        ShaderPipelineLibContext& context,
+        std::vector< PipelinInfo >* pipelines
     )
     {
-        parseShaderStructBlocks( uniforms, json[ "uniforms" ] );
-        parseColorBlendStates( color_blend_states, json[ "color_blend_states" ] );
-        parseDepthStencilStates( depth_stencil_states, json[ "depth_stencil_states" ] );
-        parseRasterizationState( rasterizer_states, json[ "rasterizer_states" ] );
-        parsePipelineVertexInput( vertex_layouts, json[ "vertex_layouts" ] );
-        parseShaderStages( graphics, shaders, json[ "shaders" ], path );
-        parsePipelines( pipelines, json[ "pipelines" ] );
+        parseShaderStructBlocks( &context.uniforms, shader_pipeline_library[ "uniforms" ] );
+        parseColorBlendStates( &context.color_blend_states, shader_pipeline_library[ "color_blend_states" ] );
+        parseDepthStencilStates( &context.depth_stencil_states, shader_pipeline_library[ "depth_stencil_states" ] );
+        parseRasterizationState( &context.rasterizer_states, shader_pipeline_library[ "rasterizer_states" ] );
+        parsePipelineVertexInput( &context.vertex_layouts, shader_pipeline_library[ "vertex_layouts" ] );
+        parseShaderStages( graphics, &context.shaders, shader_pipeline_library[ "shaders" ], path );
+        parsePipelines( pipelines, shader_pipeline_library[ "pipelines" ] );
         return true;
     }
 
 
-
-    std::vector< ref::ShaderPipeline > PipelineLoader::load
+    ref::ShaderPipeline createShaderPipeline
     (
-        kege::Graphics* graphics, const std::string& filename
+        kege::Graphics* graphics, ShaderPipelineLibContext& context, const PipelinInfo& info
     )
     {
-        Json json = JsonParser::load( filename.data() );
-        if ( json )
+        PipelineCreateInfo create_info = {};
+
+        create_info.name = info.name;
+        create_info.pipeline_type = info.type;
+        create_info.input_assembly.topology = info.topology;
+        create_info.color_blend = context.color_blend_states[ info.color_blend ];
+        create_info.depth_stencil = context.depth_stencil_states[ info.depth_stencil ];
+        create_info.rasterization = context.rasterizer_states[ info.rasterizer ];
+        create_info.vertex_input = context.vertex_layouts[ info.vertex_layout ];
+        create_info.shaders.reserve( info.stages.size() );
+
+        for (int i = 0; i<info.stages.size(); ++i)
         {
-            kege::Log::error << "FILE_LOAD_FAILED -> " << filename << Log::nl;
-            return {};
+            create_info.shaders.push_back( context.shaders[ info.stages[i] ] );
         }
 
-        std::string path;
-
-        std::vector< ref::ShaderStructBlock > uniforms;
-        std::vector< RasterizationStateDesc > rasterizer_states;
-        std::vector< DepthStencilStateDesc > depth_stencil_states;
-        std::vector< ColorBlendStateDesc > color_blend_states;
-        std::vector< VertexBufferLayout > vertex_layouts;
-        std::vector< PipelinInfo > pipelines;
-        std::vector< ref::Shader > shaders;
-
-        parseShaderPipeline
-        (
-            graphics, json, path,
-            &uniforms,
-            &rasterizer_states,
-            &depth_stencil_states,
-            &color_blend_states,
-            &vertex_layouts,
-            &pipelines,
-            &shaders
-        );
-
-
-        std::vector< ref::ShaderPipeline > shader_pipelines;
-        for (const PipelinInfo& info : pipelines)
+        create_info.shader_layout.set_layout_config.resize( info.sets.size() );
+        for (const auto& [set_index, layout] : info.sets)
         {
-            PipelineCreateInfo create_info = {};
+            IndexedSetConfig& set = create_info.shader_layout.set_layout_config[ set_index ];
+            set.bindings.resize( layout.size() );
+            set.index = set_index;
 
-            create_info.name = info.name;
-            create_info.pipeline_type = info.type;
-            create_info.input_assembly.topology = info.topology;
-            create_info.color_blend = color_blend_states[ info.color_blend ];
-            create_info.depth_stencil = depth_stencil_states[ info.depth_stencil ];
-            create_info.rasterization = rasterizer_states[ info.rasterizer ];
-            create_info.vertex_input = vertex_layouts[ info.vertex_layout ];
-            create_info.shaders.reserve( info.stages.size() );
-
-            for (int i = 0; i<info.stages.size(); ++i)
+            for (int i = 0; i<layout.size(); ++i)
             {
-                create_info.shaders.push_back( shaders[ info.stages[i] ] );
-            }
+                set.bindings[i].binding = layout[i].binding;
+                set.bindings[i].name    = layout[i].name;
+                set.bindings[i].count   = layout[i].count;
+                set.bindings[i].stages  = layout[i].stages;
+                set.bindings[i].usage   = layout[i].usage;
 
-            create_info.shader_layout.set_layout_config.resize( info.sets.size() );
-            for (const auto& [set_index, layout] : info.sets)
-            {
-                IndexedSetConfig& set = create_info.shader_layout.set_layout_config[ set_index ];
-                set.bindings.resize( layout.size() );
-                set.index = set_index;
-
-                for (int i = 0; i<layout.size(); ++i)
+                if ( layout[i].uniform >= 0 )
                 {
-                    set.bindings[i].binding = layout[i].binding;
-                    set.bindings[i].name    = layout[i].name;
-                    set.bindings[i].count   = layout[i].count;
-                    set.bindings[i].stages  = layout[i].stages;
-                    set.bindings[i].usage   = layout[i].usage;
-
-                    if ( layout[i].uniform >= 0 )
-                    {
-                        set.bindings[i].block = uniforms[ layout[i].uniform ];
-                    }
+                    set.bindings[i].block = context.uniforms[ layout[i].uniform ];
                 }
             }
-
-            create_info.shader_layout.push_block_layout.resize( info.push_constants.size() );
-            for (int i = 0; i<info.push_constants.size(); ++i)
-            {
-                PushBlock& block = create_info.shader_layout.push_block_layout[i];
-                block.size = info.push_constants[i].size;
-                block.offset = info.push_constants[i].offset;
-                block.name = info.push_constants[i].name;
-                block.stages = info.push_constants[i].stages;
-                block.count = info.push_constants[i].count;
-                if ( info.push_constants[i].uniform >= 0 )
-                {
-                    block.block = uniforms[ info.push_constants[i].uniform ];
-                }
-            }
-
-            ref::ShaderPipeline sp = graphics->createShaderPipeline( create_info );
-            shader_pipelines.push_back( sp );
         }
-        return {};
+
+        create_info.shader_layout.push_block_layout.resize( info.push_constants.size() );
+        for (int i = 0; i<info.push_constants.size(); ++i)
+        {
+            PushBlock& block = create_info.shader_layout.push_block_layout[i];
+            block.size = info.push_constants[i].size;
+            block.offset = info.push_constants[i].offset;
+            block.name = info.push_constants[i].name;
+            block.stages = info.push_constants[i].stages;
+            block.count = info.push_constants[i].count;
+            if ( info.push_constants[i].uniform >= 0 )
+            {
+                block.block = context.uniforms[ info.push_constants[i].uniform ];
+            }
+        }
+
+        return graphics->createShaderPipeline( create_info );
     }
+
 }
