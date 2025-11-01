@@ -12,6 +12,8 @@ namespace kege{
 
     bool Application::initialize()
     {
+        _asset_manager = new kege::AssetManager();
+
         /**
          * Here i am setting up the virtual directorys aliases and path.
          */
@@ -106,10 +108,10 @@ namespace kege{
         success = _app_layer_stack->push( new kege::InputLayer( icm ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::RenderLayer( _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager, _render_graph, _project_manager ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::ECSLayer( icm, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::ECSLayer( icm, _asset_manager, _render_graph, _project_manager ) );
         if( !success ) return false;
 
         _running = success;
@@ -118,6 +120,7 @@ namespace kege{
 
     void Application::shutdown()
     {
+        _asset_manager.clear();
         _app_layer_stack.clear();
         _project_manager.clear();
         _render_graph.clear();

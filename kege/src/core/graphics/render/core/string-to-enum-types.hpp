@@ -13,11 +13,13 @@
 #include <unordered_map>
 #include "graphics-core.hpp"
 #include "string-to-enum-types.hpp"
-#include "uniform-resource.hpp"
+#include "image.hpp"
+#include "buffer.hpp"
+#include "../pipeline/shader-io.hpp"
 
 namespace kege{
 
-    ShaderVarType stringToMemberType( const char* str );
+    ShaderVarType stringToShaderVarType( const char* str );
 
     kege::CompareOp stringToCompareOp( const std::string& type );
 
@@ -55,7 +57,7 @@ namespace kege{
 
     ImageUsage stringToImageUsage( const std::string& name );
 
-    kege::DescriptorType stringToDescriptorType( const std::string& name );
+    kege::BindingUsage stringToBindingUsage( const std::string& name );
 
     ShaderStageFlag stringToShaderStageFlag( const std::string& name );
 

@@ -31,9 +31,9 @@ namespace kege{
 
         void addInitialImageTransition( const RgImageLayoutTransition& transition );
 
-        kege::RgResrcHandle importShaderResource( std::string name, const ShaderResrcs& handles );
-        const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
-        const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
+        kege::RgResrcHandle importShaderResource( std::string name, const ref::ShaderSet& handles );
+        const kege::ShaderSet* fetchShaderResource( const std::string& name )const;
+        const kege::ShaderSet* getShaderResource( const RgResrcHandle& handle )const;
         kege::RgResrcHandle defnShaderResource( const RgShaderResrcDefn& defn );
         void removeShaderResource( const RgResrcHandle& handle );
         void removeShaderResource( const std::string& name );

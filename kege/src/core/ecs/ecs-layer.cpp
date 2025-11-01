@@ -10,11 +10,12 @@
 
 namespace kege{
 
-    ECSLayer::ECSLayer( ref::InputContextManager icm, ref::RenderGraph rg, const ref::ProjectManager& pm )
+    ECSLayer::ECSLayer( ref::InputContextManager icm, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm )
     :   kege::AppLayer( "ECSLayer" )
     ,   _input_context_manager( icm )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
+    ,   _asset_manager( am )
     {}
 
     bool ECSLayer::initialize()

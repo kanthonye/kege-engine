@@ -11,70 +11,82 @@
 
 namespace kege::vk{
 
-    bool CommandEncoder::bind( const std::vector< ShaderBinding >& shader_bindings )
+    bool CommandEncoder::bind( int32_t set_index, const ref::ShaderSet& set )
     {
-        for ( int i=0; i<shader_bindings.size(); ++i )
-        {
-            if ( !bind( shader_bindings[i] ) )
-            {
-                Log::error << "INVALID_SHADER_BINDING in std::vector< ShaderBinding >" <<"["<<i<<"]"<< Log::nl;
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool CommandEncoder::bind( const ShaderBinding& shader_binding )
-    {
-        const DescriptorSet* set = _command_buffer->_device->getSet( shader_binding.resource );
         if ( set == nullptr )
         {
-            Log::error << "INVALID_SHADER_BINDING -> " << shader_binding.name << Log::nl;
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
             return false;
         }
+        return bind( set_index, set->vk() );
+    }
 
-        const int frame = _command_buffer->_device->getFrameIndex();
+    bool CommandEncoder::bind( const ref::ShaderSet& set )
+    {
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
+            return false;
+        }
+        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
+        int set_index = layout->getSetIndex( set->vk()->getSetLayout() );
+        return bind( set_index, set->vk() );
+    }
 
+    bool CommandEncoder::bind( int32_t set_index, const vk::ShaderSet* set )
+    {
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
+            return false;
+        }
         vkCmdBindDescriptorSets
         (
             _handle,
             _current_pipeline_bindpoint,
-            _current_pipeline_layout->layout,
-            shader_binding.set_index,
-            1, &set->set[ frame % set->frames_in_flight ],
+            _pipeline_layout,
+            set_index,
+            1, &set->handle(),
             0, nullptr
         );
         return true;
     }
 
-    void CommandEncoder::bindGraphicsPipeline( kege::PipelineHandle pipeline_handle )
+    void CommandEncoder::setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )
     {
-        const GraphicsPipeline* pipeline = _command_buffer->_device->getGraphicsPipeline( pipeline_handle );
-        if ( !pipeline )
+        VkShaderStageFlags stage_flags = convertShaderStageMask( stages );
+        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
+        vkCmdPushConstants( _handle, layout->handle(), stage_flags, offset, size, data );
+    }
+
+    void CommandEncoder::bindShaderPipeline( const ref::ShaderPipeline& shader_pipeline )
+    {
+        _curr_bind_pipeline = shader_pipeline->vk();
+        if ( !_curr_bind_pipeline )
         {
+            _curr_bind_pipeline = nullptr;
             kege::Log::error << "Invalid pipeline handle in bindGraphicsPipeline." <<Log::nl;
              return;
         }
 
-        vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline );
+        vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, _curr_bind_pipeline->handle() );
 
-        // Store layout for subsequent binds/push constants
-        _current_pipeline_layout = _command_buffer->_device->getPipelineLayout( pipeline->pipeline_layout_id );
-        _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Graphics ) {
+            _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        }
+        else if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Compute ) {
+            _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+        }
+        _pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk()->handle();
     }
 
-    void CommandEncoder::bindComputePipeline(PipelineHandle pipeline_handle)
+    void CommandEncoder::bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16)
     {
-        const ComputePipeline* pipeline = _command_buffer->_device->getComputePipeline(pipeline_handle);
-        if (!pipeline)
-        {
-            kege::Log::error << "Invalid pipeline handle in bindComputePipeline."<<Log::nl;
-             return;
-        }
+        const vk::Buffer* b = buffer->vk();
+        int frame = _command_buffer->_device->getFrameIndex() & b->frames();
 
-        vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
-        _current_pipeline_layout = _command_buffer->_device->getPipelineLayout( pipeline->desc.pipeline_layout.id );
-        _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+        VkIndexType index_type = use_uint16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32;
+        vkCmdBindIndexBuffer( _handle, b->getSource( frame ).handle, static_cast<VkDeviceSize>(offset), index_type);
     }
 
     void CommandEncoder::bindVertexBuffers
@@ -110,21 +122,6 @@ namespace kege::vk{
         }
 
         vkCmdBindVertexBuffers( _handle, first_binding, static_cast<uint32_t>(vk_buffers.size()), vk_buffers.data(), vk_offsets.data());
-    }
-
-    void CommandEncoder::bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16)
-    {
-        const vk::Buffer* b = buffer->vk();
-        int frame = _command_buffer->_device->getFrameIndex() & b->frames();
-
-        VkIndexType index_type = use_uint16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32;
-        vkCmdBindIndexBuffer( _handle, b->getSource( frame ).handle, static_cast<VkDeviceSize>(offset), index_type);
-    }
-
-    void CommandEncoder::setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )
-    {
-        VkShaderStageFlags stage_flags = convertShaderStageMask( stages );
-        vkCmdPushConstants( _handle, _current_pipeline_layout->layout, stage_flags, offset, size, data );
     }
 
     void CommandEncoder::setViewport(const Viewport& viewport)

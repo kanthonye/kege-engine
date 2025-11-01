@@ -6,6 +6,7 @@
 //
 
 #include "camera-controller.hpp"
+#include "../../physics/3d/bodies/rigidbody.hpp"
 
 namespace kege{
 

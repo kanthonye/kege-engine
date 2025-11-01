@@ -20,6 +20,7 @@ namespace kege{
     public:
 
         DockingPanel( kege::ProjectManager* pm, ui::Layout* l );
+        
         void add( ref::EditorPanel panel );
         void update();
 

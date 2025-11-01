@@ -17,7 +17,7 @@ namespace kege{
 
     struct PatchDrawBuffer
     {
-        kege::ShaderResrc descriptor_set;
+        ref::ShaderSet descriptor_set;
         ref::Buffer patch_buffer;
         ref::Buffer draw_buffer;
         uint32_t instance_count;

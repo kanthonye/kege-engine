@@ -24,16 +24,15 @@ namespace kege{
     {
         RenderPassQueue& queue = _queues[ object.material->pass ];
 
-        auto a = queue.objects.find( object.material->pipeline.id() );
+        auto a = queue.objects.find( object.material->pipeline );
         if ( a == queue.objects.end() )
         {
-            RenderPassQueue::RenderObjects& objects = queue.objects[ object.material->pipeline.id() ];
-            objects.first = object.material->pipeline;
-            objects.second.push_back( object );
+            RenderPassQueue::RenderObjects& objects = queue.objects[ object.material->pipeline ];
+            objects.push_back( object );
         }
         else
         {
-            a->second.second.push_back( object );
+            a->second.push_back( object );
         }
     }
 

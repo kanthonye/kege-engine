@@ -154,7 +154,7 @@ namespace kege{
     RgWriteResrcDesc parseWriteResrcDesc( const Json& json )
     {
         bool has_clear_value = false;
-        ClearValue clear_value;
+        ClearValue clear_value = {};
         if ( json[ "clear_color" ] )
         {
             arr< double,4 > vals = json[ "clear_color" ].getArray<double, 4>(atof);
@@ -179,7 +179,7 @@ namespace kege{
                 .stage = parsePipelineStageFlags( json[ "stage" ] ),
                 .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear )
             },
-            .clear_value = ((has_clear_value)? clear_value : std::optional< ClearValue >{}),
+            .clear_value = clear_value,
         };
     }
 

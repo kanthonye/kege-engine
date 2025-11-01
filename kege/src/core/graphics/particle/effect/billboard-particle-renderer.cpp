@@ -70,7 +70,7 @@ namespace kege{
 ////            model_matrices = ModelMatrices( *transform );
 ////
 ////            encoder->bindVertexBuffers( 0, { _storage_buffer }, { 0 });
-////            encoder->setPushConstants(ShaderStageFlag::Vertex, 0, sizeof( model_matrices ), &model_matrices );
+////            encoder->setPushBlock(ShaderStageFlag::Vertex, 0, sizeof( model_matrices ), &model_matrices );
 ////            encoder->draw( 4, buffer->particle_count, 0, 0 );
 //        }
 //    }

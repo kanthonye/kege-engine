@@ -61,13 +61,13 @@ namespace kege{
 
 
 
-    const ShaderBindings& InstanceBuffer::getShaderBindings()const
+    const ref::ShaderSet& InstanceBuffer::getShaderBindings()const
     {
-        return resource->getShaderBindings();
+        return {};//resource->getShaderBindings();
     }
     const ref::Buffer& InstanceBuffer::getBufferHandle()const
     {
-        return resource->operator[](0)[0].uniform.buffers[0].buffer;
+        return {};//resource->operator[](0)[0].uniform.buffers[0].buffer;
     }
 
 
@@ -75,7 +75,7 @@ namespace kege{
 
 
     
-    const ShaderBindings& InstanceBufferList::getShaderBindings( int index )const
+    const ref::ShaderSet& InstanceBufferList::getShaderBindings( int index )const
     {
         return buffers[ index ].getShaderBindings();
     }

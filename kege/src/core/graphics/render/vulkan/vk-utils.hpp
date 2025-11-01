@@ -173,52 +173,20 @@ namespace kege::vk{
     class FrameRenderer;
     class CommandBuffer;
     class QueueManager;
-    class DescriptorAllocator;
+    class SetAllocator;
+    class SetLayout;
 
-    /**
-     * @brief Wrapper for Vulkan shader module resources
-     *
-     * Encapsulates a VkShaderModule and its associated metadata.
-     */
-    struct Shader
+
+    struct DescriptorSet
     {
-        /** @brief Native Vulkan shader module handle */
-        VkShaderModule shader_module = VK_NULL_HANDLE;
-
-        /** @brief Original shader creation parameters for reference/recreation */
-        kege::ShaderDesc desc;
+        /** @brief Native Vulkan descriptor set handle */
+        VkDescriptorSet set[ MAX_FRAMES_IN_FLIGHT ];
+        int32_t frames;
+        int32_t pool;
+        //int32_t prev;
+        //int32_t next;
     };
 
-    /**
-     * @brief Wrapper for Vulkan graphics pipeline resources
-     *
-     * Encapsulates a VkPipeline configured for graphics operations.
-     * Could be extended to support pipeline caching.
-     */
-    struct GraphicsPipeline
-    {
-        /** @brief Native Vulkan pipeline handle */
-        VkPipeline pipeline = VK_NULL_HANDLE;
-
-        /** @brief Original pipeline creation parameters for reference/recreation */
-        kege::GraphicsPipelineDesc desc;
-        VkPipelineBindPoint bind_point;
-        int pipeline_layout_id;
-    };
-
-    /**
-     * @brief Wrapper for Vulkan compute pipeline resources
-     *
-     * Encapsulates a VkPipeline configured for compute operations.
-     */
-    struct ComputePipeline
-    {
-        /** @brief Native Vulkan pipeline handle */
-        VkPipeline pipeline = VK_NULL_HANDLE;
-
-        /** @brief Original pipeline creation parameters for reference/recreation */
-        kege::ComputePipelineDesc desc;
-    };
 
     /**
      * @struct QueueInfo
@@ -555,6 +523,8 @@ namespace kege::vk{
      */
     VkDescriptorType convertDescriptorType( DescriptorType type );
 
+    VkDescriptorType toDescriptorType(kege::BindingUsage usage);
+    
     /**
      * @brief Translate engine image layout to Vulkan image layout
      *

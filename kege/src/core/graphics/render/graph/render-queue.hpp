@@ -33,8 +33,8 @@ namespace kege{
     // A container for objects in a specific pass
     struct RenderPassQueue
     {
-        typedef std::pair< ShaderPipeline, std::vector< RenderObject > > RenderObjects;
-        typedef std::map< int, RenderObjects > RenderObjectMap;
+        typedef std::vector< RenderObject > RenderObjects;
+        typedef std::map< const ref::ShaderPipeline, RenderObjects > RenderObjectMap;
         typedef RenderObjectMap::const_iterator iterator;
         
         RenderObjectMap objects;

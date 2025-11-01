@@ -433,13 +433,7 @@ namespace kege::vk{
         {
             // Wait for device to be idle before destroying swapchain resources
             _device->waitIdle(); // Simplest synchronization
-
-            // Destroy Color Image
-//            for( FrameData& fbo : _frames )
-//            {
-//                fbo.color.clear();
-//                fbo.depth.clear();
-//            }
+            
             _frames.clear();
             _frame_syncs.clear();
 

@@ -3,272 +3,295 @@
     {
         "version": "1.0",
         "generator": "KEGE",
-        "name": "basic-pipeline",
+        "name": "shader-library",
+        "date_created": "10/29/2025",
+        "last_modified": "10/29/2025"
     },
 
-    "shaders":
-    [
-        { "name": "basic.vert", "type": "vertex",   "uri": "shaders/basic.vert" },
-        { "name": "basic.frag", "type": "fragment", "uri": "shaders/basic.frag" },
-        { "name": "unlit.vert", "type": "vertex", "  uri": "shaders/unlit.vert" },
-        { "name": "unlit.frag", "type": "fragment", "uri": "shaders/unlit.frag" }
-    ],
-
-    "pipelines":
+    "uniform_blocks":
     [
         {
-            "name": "basicPipeline",
-            "stages": [0, 1],
-            "states":
-            {
-                "rasterizer":
+            "name": "Camera",
+            "type": "buffer",
+            "count": 1,
+            "fields":
+            [
                 {
-                    "cull_mode": "back",
-                    "front_face": "ccw",
-                    "polygon_mode": "line",
-                    "rasterizer_disable": "false",
+                    "name": "projection",
+                    "type": "mat4",
+                    "offset": 0,
+                    "count":  1,
+                    "size": 64,
                 },
-                "depth_stencil":
                 {
-                    "depth_test": false,
-                    "depth_write": true,
-                    "depth_compare_op": "less"
-                },
-                "color_blend":
-                {
-                    "logic_op_enable": "false",
-                    "logic_op": "copy",
-                    "color_blend_attachments":
-                    [
-                        {
-                            "blend_enable": "true",
-
-                            "color_blend_op": "add",
-                            "src_color_blend_factor": "src-alpha",
-                            "dst_color_blend_factor": "one-minus-src-alpha",
-
-                            "alpha_blend_op": "add",
-                            "src_alpha_blend_factor": "one",
-                            "dst_alpha_blend_factor": "zero",
-                        }
-                    ],
-                },
-                "input_assembly":
-                {
-                    "topology": "triangle-strip"
+                    "name": "resolution",
+                    "type": "vec4",
+                    "offset": 64,
+                    "count":  1,
+                    "size": 12,
                 }
-            },
+            ]
+        },
+        {
+            "name": "Lights",
+            "type": "buffer",
+            "fields":
+            [
+                {
+                    "name": "position",
+                    "type": "vec3",
+                    "offset": 0,
+                    "count":  1,
+                    "size": 12,
+                },
+                {
+                    "name": "color",
+                    "type": "vec4",
+                    "offset": 0,
+                    "count":  1,
+                    "size": 16,
+                }
+            ]
+        },
+        {
+            "name": "PerObjectBlock",
+            "type": "data-block",
+            "fields":
+            [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "offset": 0,
+                    "size": 64,
+                },
+                {
+                    "name": "resolution",
+                    "type": "vec4",
+                    "offset": 64,
+                    "size": 12,
+                }
+            ]
+        },
+        {
+            "name": "PerUIBatchDrawBlock",
+            "type": "data-block",
+            "fields":
+            [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "offset": 0,
+                    "size": 64,
+                },
+                {
+                    "name": "resolution",
+                    "type": "vec4",
+                    "offset": 64,
+                    "size": 12,
+                }
+            ]
+        },
+        {
+            "name": "Font",
+            "type": "texture",
+        },
+        {
+            "name": "Theme",
+            "type": "texture",
+        }
+    ],
+
+    "rasterizer_states":
+    [
+        {
+            "cull_mode": "back",
+            "front_face": "ccw",
+            "polygon_mode": "fill",
+            "rasterizer_disable": "false",
+        }
+    ],
+
+    "depth_stencil_states":
+    [
+        {
+            "depth_test": "false",
+            "depth_write": "true",
+            "depth_compare_op": "less"
+        },
+    ],
+
+    "color_blend_states":
+    [
+        {
+            "logic_op_enable": "false",
+            "logic_op": "copy",
+            "color_blend_attachments":
+            [
+                {
+                    "blend_enable": "true",
+
+                    "color_blend_op": "add",
+                    "src_color_blend_factor": "src-alpha",
+                    "dst_color_blend_factor": "one-minus-src-alpha",
+
+                    "alpha_blend_op": "add",
+                    "src_alpha_blend_factor": "one",
+                    "dst_alpha_blend_factor": "zero",
+                }
+            ],
+        }
+    ],
+
+    "vertex_layouts":
+    [
+        {
+            "attributes":
+            [
+                { "binding": 0, "location": 0, "format": "vec3", "input_rate": "vertex",   "name": "position" },
+                { "binding": 0, "location": 1, "format": "vec3", "input_rate": "vertex",   "name": "normal" },
+                { "binding": 0, "location": 2, "format": "vec2", "input_rate": "vertex",   "name": "texcoord"}
+                { "binding": 1, "location": 3, "format": "mat4", "input_rate": "instance", "name": "instanceModel" }
+            ],
+            "bindings":
+            [
+                { "binding": 0, "stride": 32, },
+                { "binding": 1, "stride": 64, }
+            ],
+        },
+    ],
+
+    "pipeline_layouts":
+    [
+        {
+            "name": "gui-pipeline",
             "layouts":
             [
                 {
-                    "name": "CameraBlock",
-                    "set": 0,
-                    "bindings":
-                    [
-                        {
-                            "count" : 1,
-                            "binding" : 0,
-                            "name": "CameraBlock",
-                            "type": "uniform-buffer",
-                            "stages": [ "vertex" ],
-                            "usage":
-                            {
-                                "target": "Camera",
-                                "source": "ViewProjection"
-                            }
-                        }
-                    ]
+                    "set":     0,
+                    "binding": 0,
+                    "count":   1,
+                    "uniform_ref": 0,
+                    "name":    "camera",
+                    "usage":   "uniform-buffer",
+                    "stages":  [ "vs" ]
                 },
                 {
-                    "name": "MaterialData",
-                    "set": 1,
-                    "bindings":
-                    [
-                        {
-                            "count" : 1,
-                            "binding" : 0,
-                            "name": "color",
-                            "type": "sampler2D",
-                            "stages": [ "fragment" ],
-                            "usage":
-                            {
-                                "target": "Material",
-                                "source": "color"
-                            }
-                        }
-                    ]
+                    "set":     1,
+                    "binding": 0,
+                    "count":   1,
+                    "uniform_ref": 4,
+                    "name":    "theme",
+                    "usage":   "combined-image-sampler",
+                    "stages":  [ "fs" ]
                 },
                 {
-                    "name": "LightingData",
-                    "set": 2,
-                    "bindings":
-                    [
-                        {
-                            "count" : 1,
-                            "binding" : 0,
-                            "name": "lamp",
-                            "type": "UniformBuffer",
-                            "stages": [ "fragment" ],
-                            "usage":
-                            {
-                                "target": "Light",
-                                "source": "lights"
-                            }
-                        }
-                    ]
+                    "set":     1,
+                    "binding": 1,
+                    "count":   1,
+                    "uniform_ref": 5,
+                    "name":    "font",
+                    "usage":   "combined-image-sampler",
+                    "stages":  [ "fs" ]
                 }
             ],
             "push_constants":
             [
                 {
-                    "name": "ObjectMatrices",
-                    "offset": 0,
-                    "size": 128,
-                    "stages": ["vertex"],
-                    "fields":
-                    [
-                        {
-                            "name": "transform",
-                            "type": "mat4",
-                            "offset": 0,
-                            "size": 64,
-                            "usage":
-                            {
-                                "target": "Object"
-                                "source": "matrix:TRS"
-                            }
-                        },
-                        {
-                            "name": "rotation",
-                            "type": "mat4",
-                            "offset": 64,
-                            "size": 64,
-                            "usage":
-                            {
-                                "target": "Object"
-                                "source": "matrix:R"
-                            }
-                        }
-                    ]
-                },
+                    "size":    256,
+                    "count":   1,
+                    "offset":  0,
+                    "uniform_ref": 3,
+                    "name":    "block",
+                    "stages":  [ "fs" ]
+                }
             ],
-            "vertex_input":
-            {
-                "attributes":
-                [
-                    { "binding": 0, "location": 0, "format": "vec3", "semantic": "POSITION", "name": "position" },
-                    { "binding": 0, "location": 1, "format": "vec3", "semantic": "NORMAL", "name": "normal" },
-                    { "binding": 0, "location": 2, "format": "vec2", "semantic": "TEXCOORD_0", "name": "texcoord"}
-                    { "binding": 1, "location": 3, "format": "mat4", "semantic": "INSTANCE_MODEL", "name": "instanceModel" }
-                ],
-                "bindings":
-                [
-                    { "binding": 0, "stride": 32, "inputRate": "vertex" },
-                    { "binding": 1, "stride": 64, "inputRate": "instance" }
-                ],
-            },
-
-            "outputs":
-            [
-                { "location": 0, "format": "bgra_u8_norm", "semantic": "COLOR", "name": "out_color" },
-                { "location": 0, "format": "bgra_u8_norm", "semantic": "DEPTH", "name": "out_color" },
-                { "location": 0, "format": "bgra_u8_norm", "semantic": "STENCIL", "name": "out_color" },
-            ],
-
-            "specialization_constants":
-            [
-                { "id": 0, "name": "USE_SHADOWS", "value": true },
-                { "id": 1, "name": "MAX_LIGHTS", "value": 4 }
-            ]
-
-            "globals": [
-                {
-                    "source": "OBJECT",
-                    "input": "push_constant"
-                },
-                {
-                    "source": "OBJECT",
-                    "resource": "material",
-                    "input": "uniform_layout"
-                },
-            ]
         },
-
         {
-            "name": "unlitPipeline",
-            "stages": [2, 3],
-            "states":
-            {
-                "rasterizer": { "cullMode": "none", "frontFace": "ccw", "polygonMode": "fill" },
-                "depthStencil": { "depthTest": true, "depthWrite": true, "depthCompareOp": "less" },
-                "colorBlend": { "enable": false }
-            },
+            "name": "object-pipeline",
             "layouts":
             [
                 {
-                    "name": "cameraData",
-                    "set": 0,
-                    "bindings":
-                    [
-                        { "binding": 0, "type": "uniformBuffer", "stage": "vertex" }
-                    ]
+                    "set":     0,
+                    "binding": 0,
+                    "count":   1,
+                    "uniform_ref": 0,
+                    "name":    "camera",
+                    "usage":   "uniform-buffer",
+                    "stages":  [ "vs" ]
                 },
                 {
-                    "name": "textureData",
-                    "set": 1,
-                    "bindings":
-                    [
-                        { "binding": 0, "type": "sampler2D", "stage": "fragment" }
-                    ]
-                }
+                    "set":     1,
+                    "binding": 0,
+                    "count":   1,
+                    "uniform_ref": 2,
+                    "name":    "lights",
+                    "usage":   "storage-buffer",
+                    "stages":  [ "fs" ]
+                },
             ],
-            "pushConstants":
+            "push_constants":
             [
                 {
-                    "name": "PerObject",
-                    "offset": 0,
-                    "size": 64,
-                    "stages": ["vertex"],
-                    "fields":
-                    [
-                        { "name": "model", "type": "mat4", "offset": 0, "size": 64 }
-                    ]
+                    "size":    256,
+                    "count":   1,
+                    "offset":  0,
+                    "uniform_ref": 3,
+                    "name":    "block",
+                    "stages":  [ "fs" ]
                 }
-            ],
-            "pushConstantRanges":
-            [
-                { "offset": 0, "size": 64, "stages": ["vertex"] }
-            ],
-            "vertexInput":
-            {
-                "attributes":
-                [
-                    { "location": 0, "format": "vec3", "semantic": "POSITION" },
-                    { "location": 1, "format": "vec2", "semantic": "TEXCOORD_0" }
-                ],
-                "bindings":
-                [
-                    { "binding": 0, "stride": 20, "inputRate": "vertex" },
-                ],
-            },
+            ]
+        }
+    ],
 
+    "pipelines":
+    [
+        {
+            "type": "Graphics",
+            "name": "gui-pipeline",
+            "topology": "triangle-strip",
+            "rasterizer_ref": 0,
+            "depth_stencil_ref": 0,
+            "color_blend_ref": 0,
+            "pipeline_layout_ref": 0,
             "outputs":
             [
                 {
                     "location": 0,
                     "format": "bgra_u8_norm",
                     "semantic": "COLOR",
-                    "name": "out_color"
+                    "name": "final_color"
                 }
             ],
-
-            "globals":
+            "stage_refs": [0, 1],
+        },
+        {
+            "type": "Graphics",
+            "name": "object-pipeline",
+            "topology": "triangle-strip",
+            "rasterizer_ref": 0,
+            "depth_stencil_ref": 0,
+            "color_blend_ref": 0,
+            "vertex_layout_ref": 0,
+            "pipeline_layout_ref": 1,
+            "outputs":
             [
                 {
-                    "name": "camera-buffer",
-                    "type": "SHADER_RESOURCE"
+                    "location": 0,
+                    "format": "bgra_u8_norm",
+                    "semantic": "COLOR",
+                    "name": "final_color"
                 }
-            ]
-        }
-    ]
+            ],
+            "stage_refs": [2, 3],
+        },
+    ],
+
+    "shaders":
+    [
+        { "name": "gui.vert", "entry-point": "main", "type": "vertex",   "uri": "gui-rounded-corner-sdf-text.vert" },
+        { "name": "gui.frag", "entry-point": "main", "type": "fragment", "uri": "gui-rounded-corner-sdf-text.frag" },
+        { "name": "object.vert", "entry-point": "main", "type": "vertex",   "uri": "object.vert" },
+        { "name": "object.frag", "entry-point": "main", "type": "fragment", "uri": "object.frag" },
+    ],
+
 }

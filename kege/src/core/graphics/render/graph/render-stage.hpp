@@ -27,19 +27,19 @@ namespace kege{
     {
     public:
 
-        const kege::ShaderResrc* getShaderResource( const RgResrcHandle& handle )const;
+        const kege::ShaderSet* getShaderResource( const RgResrcHandle& handle )const;
         const ref::Sampler getSampler( const RgResrcHandle& handle )const;
         const ref::Buffer getBuffer( const RgResrcHandle& handle )const;
         const ref::Image getImage( const RgResrcHandle& handle )const;
 
-        const kege::ShaderResrc* fetchShaderResource( const std::string& name )const;
+        const kege::ShaderSet* fetchShaderResource( const std::string& name )const;
         const ref::Sampler fetchSampler( const std::string& name )const;
         const ref::Buffer fetchBuffer( const std::string& name )const;
         const ref::Image fetchImage( const std::string& name )const;
 
 
         const std::vector< RgResrcHandle >& getShaderResources()const;
-        const std::vector< ShaderPipeline >& getShaderPipelines()const;
+        const std::vector< ref::ShaderPipeline >& getShaderPipelines()const;
 
         const std::vector< RgWriteResrcDesc >& getWrites()const;
         std::vector< RgWriteResrcDesc >& getWrites();
@@ -73,7 +73,7 @@ namespace kege{
         void applyBarriers( const BarrierDescriptions& barriers );
         void destroySemaphores();
 
-        std::vector< ShaderPipeline > _fixed_shader_pipelines;
+        std::vector< ref::ShaderPipeline > _fixed_shader_pipelines;
         std::vector< RgResrcHandle > _shader_resources;
 
         std::vector< SubmitInfo > _submit_info;

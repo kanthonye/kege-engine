@@ -1099,13 +1099,16 @@ namespace kege{
      */
     enum struct ShaderVarType : char
     {
-        Undefined, Sint, Uint, Float, Double,
-        Vec2, Vec3, Vec4,
+        Undefined, Bool, Sint, Uint, Float, Double,
+        Vec2,  Vec3,  Vec4,
         Vec2I, Vec3I, Vec4I,
         Vec2U, Vec3U, Vec4U,
-        Vec2D, Vec3D, Vec4D
+        Vec2D, Vec3D, Vec4D,
+        Mat2,  Mat3,  Mat4
     };
 
+    int sizeOf( ShaderVarType t );
+    std::string toString( ShaderVarType t );
 
     /**
      * @brief Describes how vertex data is organized in memory for a single binding.
@@ -2366,60 +2369,11 @@ namespace kege{
 
     struct SubmitInfo
     {
-        CommandBuffer* command_buffer = nullptr;
+        kege::ref::CommandBuffer command_buffer;
         kege::ref::Semaphore render_complete_semaphore;
         std::vector< kege::ref::Semaphore > wait_semaphores;
-        std::vector< PipelineStageFlag > wait_stages;
+        std::vector< kege::PipelineStageFlag > wait_stages;
     };
-
-    struct ShaderBinding
-    {
-        std::string name;
-        int set_index;
-        int resource;
-    };
-    typedef std::vector< ShaderBinding > ShaderBindings;
-}
-
-
-
-
-
-
-namespace std{
-
-    template <> struct hash< kege::ShaderHandle >
-    {
-        std::size_t operator()( const kege::ShaderHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::PipelineLayoutHandle >
-    {
-        std::size_t operator()( const kege::PipelineLayoutHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::PipelineHandle >
-    {
-        std::size_t operator()( const kege::PipelineHandle& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
-    template <> struct hash< kege::UniformSetLayout >
-    {
-        std::size_t operator()( const kege::UniformSetLayout& handle ) const
-        {
-            return handle.id;
-        }
-    };
-
 }
 
 #endif /* graphics_enums_and_types_hpp */

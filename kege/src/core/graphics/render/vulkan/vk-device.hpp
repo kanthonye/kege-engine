@@ -19,8 +19,11 @@
 #include "vk-command-buffer.hpp"
 #include "vk-swapchain.hpp"
 #include "vk-queue-manager.hpp"
-#include "vk-descriptor-manager.hpp"
-#include "vk-pipeline-layout-manager.hpp"
+#include "vk-shader-pipeline.hpp"
+#include "vk-shader-set.hpp"
+#include "vk-set-layout.hpp"
+#include "vk-set-allocator.hpp"
+#include "vk-shader-layout.hpp"
 
 namespace kege::vk{
 
@@ -35,6 +38,13 @@ namespace kege::vk{
     class Device final : public kege::GraphicsDevice {
     public:
 
+        /**
+         * @brief Submit command buffers and synchronization primitives to the GPU.
+         * @param submit_infos Vector of SubmitInfo structures describing command buffers and sync.
+         * @param image_available Semaphore signaled when an image is available for rendering.
+         * @param render_complete Semaphore signaled when rendering is complete.
+         * @return True if submission succeeded, false otherwise.
+         */
         bool submit
         (
             const std::vector< kege::SubmitInfo >& submit_infos,
@@ -43,67 +53,110 @@ namespace kege::vk{
         )
         override;
         
+        /**
+         * @brief Submit a single command buffer and synchronization primitives to the GPU.
+         * @param submit_info SubmitInfo structure describing command buffer and sync.
+         * @return True if submission succeeded, false otherwise.
+         */
         bool submit( const kege::SubmitInfo& submit_info )override;
+
+        /**
+         * @brief Present the rendered image to the swapchain.
+         * @param swapchain Pointer to the swapchain to present to.
+         * @param wait_sem Semaphore to wait on before presentation.
+         * @return True if presentation succeeded, false otherwise.
+         */
         bool present( kege::Swapchain* swapchain, const ref::Semaphore& wait_sem )override;
         int  getFrameIndex()const override;
         bool beginSubmit()override;
         void endSubmit()override;
 
-        ref::ShaderLayout createShaderLayout( const kege::ShaderLayoutDesc& desc );
+        //-------------------------------------------------------------------------
+        // SetAllocator Management
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Retrieves a descriptor allocator for the specified descriptor types.
+         * @param descriptor_types Vector of VkDescriptorType to allocate.
+         * @return Pointer to the SetAllocator managing these types.
+         */
+        vk::SetAllocator* getDescriptorAllocator( const std::vector< VkDescriptorType >& descriptor_types );
+
+        //-------------------------------------------------------------------------
+        // SetLayout Lifecycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a shader binding set layout based on a description.
+         * @param bindings Description of binding points for resources.
+         * @return Handle to the created shader binding set layout.
+         */
+        ref::SetLayout createSetLayout( const SetBindings& bindings ) override;
+
+        /**
+         * @brief Destroys a shader binding set layout.
+         * @param layout Is the object to destroy.
+         * @warning Ensure no descriptor sets or pipelines aren't using this layout.
+         */
+        void destroySetLayout( vk::SetLayout* layout );
+
+        //-------------------------------------------------------------------------
+        // ShaderLayout Lifecycle
+        //-------------------------------------------------------------------------
+
+        /**
+         * @brief Creates a shader layout based on a description.
+         * @param description Description of the shader layout.
+         * @return Handle to the created shader layout.
+         */
+        ref::ShaderLayout createShaderLayout( const ShaderLayoutDesc& description ) override;
+
+        /**
+         * @brief Destroys a shader layout.
+         * @param layout Is the object to destroy.
+         * @warning Ensure no pipelines are using this layout.
+         */
         void destroyShaderLayout( vk::ShaderLayout* layout );
 
-        
-        /**
-         * @brief Create a pipeline layout
-         *
-         * Creates a VkPipelineLayout based on the provided descriptor set layouts
-         * and push constant ranges.
-         *
-         * @param desc Description of the pipeline layout to create
-         * @return Handle to the newly created pipeline layout
-         */
-        kege::PipelineLayoutHandle createPipelineLayout( const kege::PipelineLayoutDesc& desc ) override;
+        //-------------------------------------------------------------------------
+        // ShaderPipeline Lifecycle
+        //-------------------------------------------------------------------------
 
         /**
-         * @brief Create a shader module
+         * @brief Create a shader pipeline
          *
-         * Creates a VkShaderModule from the provided shader code.
+         * Creates a VkPipeline based on the provided description.
          *
-         * @param desc Description of the shader to create, including compiled shader code
-         * @return Handle to the newly created shader
+         * @param desc Description of the shader pipeline to create
+         * @return Handle to the newly created shader pipeline
          */
-        kege::ShaderHandle createShader( const kege::ShaderDesc& desc ) override;
+        ref::ShaderPipeline createShaderPipeline( const PipelineCreateInfo& desc ) override;
 
         /**
-         * @brief Get the internal Vulkan pipeline layout object
-         * @param pipeline_layout_id Handle to the pipeline layout
-         * @return Pointer to the internal PipelineLayout object
+         * @brief Destroy a shader pipeline
+         *
+         * Releases the VkPipeline associated with the shader pipeline.
+         *
+         * @param pipeline Handle to the shader pipeline to destroy
          */
-        const vk::PipelineLayout* getPipelineLayout( int32_t pipeline_layout_id ) const;
+        void destroyShaderPipeline( vk::ShaderPipeline* pipeline );
+
+        //-------------------------------------------------------------------------
+        // Shader Lifecycle
+        //-------------------------------------------------------------------------
 
         /**
-         * @brief Create a graphics pipeline
-         *
-         * Creates a VkPipeline for graphics rendering based on the provided description.
-         * Uses pipeline caching for improved performance when creating similar pipelines.
-         *
-         * @param desc Description of the graphics pipeline to create
-         * @return Handle to the newly created graphics pipeline
+         * @fn createShader: Construct a shader object
+         * @param desc The description use to create the shader object
+         * @return The shader object
          */
-        std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc )override;
+        ref::Shader createShader( const kege::ShaderDesc& desc ) override;
 
         /**
-         * @brief Create a compute pipeline
-         *
-         * Creates a VkPipeline for compute operations based on the provided description.
-         * Uses pipeline caching for improved performance when creating similar pipelines.
-         *
-         * @param desc Description of the compute pipeline to create
-         * @return Handle to the newly created compute pipeline
+         * @fn destroyShader: Deconstruct a shader object
+         * @param shader The shader object to de-construct
          */
-        kege::PipelineHandle createComputePipeline( const kege::ComputePipelineDesc& desc ) override;
-
-
+        void destroyShader( vk::Shader* shader );
 
         //-------------------------------------------------------------------------
         // Command & Queue Management
@@ -114,7 +167,7 @@ namespace kege::vk{
          * @param type The type of queue the command buffer will be submitted to.
          * @return Pointer to the created command buffer, or nullptr on failure.
          */
-        kege::CommandBuffer* createCommandBuffer( kege::QueueType type )override;
+        ref::CommandBuffer createCommandBuffer( kege::QueueType type )override;
 
         /**
          * @brief Destroy a command buffer
@@ -123,49 +176,7 @@ namespace kege::vk{
          *
          * @param command_buffer The command buffer to destroy
          */
-        void destroyCommandBuffer( kege::CommandBuffer* command_buffer ) override;
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // Shader Resource Set Lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-        int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )override;
-        bool updateSet( int handle, const UniformResourceSet& resources )override;
-        int  allocateSet( const UniformDescriptorSet& descriptors )override;
-        void freeSet( int set )override;
-
-
-        /**
-         * @brief Get the internal Vulkan descriptor-set object
-         * @param descriptor_id Handle to the descriptor-set
-         * @return Pointer to the internal DescriptorSet object
-         */
-        const DescriptorSet* getSet( int32_t descriptor_id ) const;
-
-        //-------------------------------------------------------------------------
-        // Descriptor Set Layout Lifecycle
-        //-------------------------------------------------------------------------
-
-        /**
-         * @brief Creates a descriptor set layout.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the created descriptor set layout.
-         */
-        UniformSetLayout createUniformSetLayout( const UniformDescriptors& descriptors )override;
-
-        /**
-         * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the descriptor set layout.
-         */
-        UniformSetLayout getUniformSetLayout( const UniformDescriptors& descriptors )override;
-
-        /**
-         * @brief Destroys a descriptor set layout.
-         * @param layout Handle to the layout to destroy.
-         * @warning Ensure no descriptor sets or pipelines are using this layout.
-         */
-        void destroyUniformSetLayout( const UniformSetLayout& layout )override;
+        void destroyCommandBuffer( vk::CommandBuffer* command_buffer );
 
         //-------------------------------------------------------------------------
         // Buffer Management
@@ -260,86 +271,6 @@ namespace kege::vk{
         );
 
         //-------------------------------------------------------------------------
-        // Resource Destruction Methods
-        //-------------------------------------------------------------------------
-
-        /**
-         * @brief Destroy a shader module
-         *
-         * Releases the VkShaderModule.
-         *
-         * @param handle Handle to the shader to destroy
-         */
-        void destroyShader(kege::ShaderHandle handle) override;
-
-        /**
-         * @brief Destroy a pipeline layout
-         *
-         * Releases the VkPipelineLayout.
-         *
-         * @param handle Handle to the pipeline layout to destroy
-         */
-        void destroyPipelineLayout(kege::PipelineLayoutHandle handle) override;
-
-        /**
-         * @brief Destroy a graphics pipeline
-         *
-         * Releases the VkPipeline associated with a graphics pipeline.
-         *
-         * @param handle Handle to the graphics pipeline to destroy
-         */
-        void destroyGraphicsPipeline(kege::PipelineHandle handle) override;
-
-        /**
-         * @brief Destroy a compute pipeline
-         *
-         * Releases the VkPipeline associated with a compute pipeline.
-         *
-         * @param handle Handle to the compute pipeline to destroy
-         */
-        void destroyComputePipeline(kege::PipelineHandle handle) override;
-
-        //-------------------------------------------------------------------------
-        //
-        //-------------------------------------------------------------------------
-
-        const vk::DescriptorSetLayout* getDescriptorSetLayout(int32_t layout );
-
-        //-------------------------------------------------------------------------
-        // Descriptor Set Lifecycle
-        //-------------------------------------------------------------------------
-
-        /**
-         * @brief Update multiple descriptor sets with new resource bindings.
-         * @param handles Vector of descriptor set handles to update.
-         * @param resource_sets Vector of resource sets containing the new bindings.
-         * @return True if all updates succeeded, false otherwise.
-         */
-        bool updateUniformSets( const std::vector< int >& handles, const UniformSets& resource_sets )override;
-
-        /**
-         * @brief Update a single descriptor set with new resource bindings.
-         * @param handle Handle of the descriptor set to update.
-         * @param resource_set Resource set containing the new bindings.
-         * @return True if the update succeeded, false otherwise.
-         */
-        bool updateUniformSet( int handle, const UniformSet& resource_set )override;
-
-        /**
-         * @brief Allocate multiple descriptor sets from layouts.
-         * @param description Descriptions of the descriptor set layouts to allocate from.
-         * @return Vector of handles to the newly allocated descriptor sets.
-         */
-        std::vector< int > allocateUniformSets( const UniformSetsDesc& description )override;
-
-        /**
-         * @brief Allocate a single descriptor set from a layout.
-         * @param description Description of the descriptor set layout to allocate from.
-         * @return Handle to the newly allocated descriptor set.
-         */
-        int allocateUniformSet( const UniformSetDesc& description )override;
-
-        //-------------------------------------------------------------------------
         // Synchronization Primitives
         //-------------------------------------------------------------------------
 
@@ -359,7 +290,7 @@ namespace kege::vk{
          *
          * @param semaphore Handle to the semaphore to destroy
          */
-        void destroySemaphore( kege::Semaphore* semaphore ) override;
+        void destroySemaphore( vk::Semaphore* semaphore );
 
         /**
          * @brief Create a fence synchronization object
@@ -378,7 +309,7 @@ namespace kege::vk{
          *
          * @param fence Handle to the fence to destroy
          */
-        void destroyFence( kege::Fence* fence ) override;
+        void destroyFence( vk::Fence* fence );
 
         //-------------------------------------------------------------------------
         // Swapchain Management
@@ -392,7 +323,7 @@ namespace kege::vk{
          * @param desc Description of the swapchain to create
          * @return Handle to the newly created swapchain
          */
-        kege::Swapchain* createSwapchain( const kege::SwapchainDesc& desc ) override;
+        ref::Swapchain createSwapchain( const kege::SwapchainDesc& desc ) override;
 
         /**
          * @brief Destroy a swapchain
@@ -401,7 +332,7 @@ namespace kege::vk{
          *
          * @param swapchain Pointer to the swapchain to destroy
          */
-        void destroySwapchain( kege::Swapchain* swapchain ) override;
+        void destroySwapchain( vk::Swapchain* swapchain );
 
         //-------------------------------------------------------------------------
         // Utility Methods
@@ -448,28 +379,6 @@ namespace kege::vk{
         // These provide access to the internal Vulkan objects from handles
         //-------------------------------------------------------------------------
 
-        /**
-         * @brief Get the internal Vulkan shader object
-         * @param handle Handle to the shader
-         * @return Pointer to the internal Shader object
-         */
-        const Shader* getShader(ShaderHandle handle) const;
-
-        /**
-         * @brief Get the internal Vulkan graphics pipeline object
-         * @param handle Handle to the graphics pipeline
-         * @return Pointer to the internal GraphicsPipeline object
-         */
-        const GraphicsPipeline* getGraphicsPipeline(PipelineHandle handle) const;
-
-        /**
-         * @brief Get the internal Vulkan compute pipeline object
-         * @param handle Handle to the compute pipeline
-         * @return Pointer to the internal ComputePipeline object
-         */
-        const ComputePipeline* getComputePipeline(PipelineHandle handle) const;
-
-        //VkSurfaceKHR surface();
         VkDevice handle();
 
         //-------------------------------------------------------------------------
@@ -502,6 +411,7 @@ namespace kege::vk{
         Device(Device&&) = delete;
 
 
+        vk::Instance* instance();
         vk::Manager& core();
 
         /**
@@ -565,44 +475,48 @@ namespace kege::vk{
 
     private:
 
-        vk::DescriptorManager _shader_set_manager;
+        std::unordered_map
+        <
+            kege::SetBindings,
+            kege::Ref< vk::SetLayout >,
+            kege::SetBindingsHash,
+            kege::SetBindingsEqual
+        >
+        _set_layout_library;
+
+        std::unordered_map
+        <
+            std::vector< VkDescriptorSetLayout >,
+            kege::Ref< vk::ShaderLayout >,
+            vk::DescriptorSetLayoutVectorHash
+        >
+        _shader_layout_lookup;
+
+        std::unordered_map
+        <
+            std::vector< VkDescriptorType >,
+            Ref< SetAllocator >,
+            vk::DescriptorTypeVectorHash
+        >
+        _descriptor_allocators;
+
         vk::Manager _manager;
-
-        //-------------------------------------------------------------------------
-        // Member Variables
-        //-------------------------------------------------------------------------
-
         vk::QueueManager* _queue_manager;
         QueueFamilyIndices _queue_family_indices;
 
         int32_t _frame_index;
 
-        /** @brief Storage for image objects */
+        vk::List< vk::ShaderLayout > _shader_layouts;
+        vk::List< vk::SetLayout > _set_layouts;
         vk::List< vk::Image > _images;
-
-        /** @brief Storage for sampler objects */
         vk::List< vk::Sampler > _samplers;
-
         vk::List< vk::Buffer > _buffers;
-
         vk::List< vk::Fence > _fences;
         vk::List< vk::Semaphore > _semaphores;
         vk::List< vk::Swapchain > _swapchains;
-        vk::List< vk::ShaderLayout > _shader_layouts;
         vk::List< vk::CommandBuffer > _command_buffers;
-
-        PipelineLayoutManager _pipeline_layout_manager;
-
-
-
-        /** @brief Storage for shader objects */
-        ResourceRecycler< Shader > _shaders;
-
-        /** @brief Storage for graphics pipeline objects */
-        ResourceRecycler< GraphicsPipeline > _graphics_pipelines;
-
-        /** @brief Storage for compute pipeline objects */
-        ResourceRecycler< ComputePipeline > _compute_pipelines;
+        vk::List< vk::ShaderPipeline > _pipelines;
+        vk::List< vk::Shader > _shaders;
 
         PhysicalDevice* _physical_device = nullptr;
 
@@ -653,7 +567,7 @@ namespace kege::vk{
         uint32_t _api_version;
 
         enum{ MAX_FRAMES_IN_FLIGHT = 2};
-        friend vk::PipelineLayoutManager;
+        friend vk::ShaderPipeline;
         friend vk::CommandBuffer;
         friend vk::QueueManager;
         friend vk::FrameRenderer;

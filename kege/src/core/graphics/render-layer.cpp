@@ -43,10 +43,11 @@ namespace kege{
         graphics->present( swapchain, render_complete );
     }
     
-    RenderLayer::RenderLayer( ref::RenderGraph& rg, const ref::ProjectManager& pm )
+    RenderLayer::RenderLayer( ref::AssetManager am, ref::RenderGraph& rg, const ref::ProjectManager& pm )
     :   kege::AppLayer( "RenderLayer" )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
+    ,   _asset_manager( am )
     {}
 
     RenderLayer::~RenderLayer()

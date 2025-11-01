@@ -6,6 +6,7 @@
 //
 
 #include "movement-system.hpp"
+#include "../../physics/3d/bodies/rigidbody.hpp"
 
 namespace kege{
 

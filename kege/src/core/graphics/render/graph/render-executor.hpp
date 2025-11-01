@@ -72,7 +72,7 @@ namespace kege{
         (
             CommandEncoder* encoder,
             RenderStage* pass,
-            const ShaderPipeline& pipeline,
+            const ref::ShaderPipeline& pipeline,
             const std::vector< RenderObject >& objects
         );
 

@@ -174,5 +174,7 @@ namespace kege{
     };
 
 }
-
+namespace kege::ref{
+    typedef kege::Ref< kege::Swapchain > Swapchain;
+}
 #endif /* kege_swapchain_hpp */

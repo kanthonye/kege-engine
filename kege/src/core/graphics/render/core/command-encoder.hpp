@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "graphics-core.hpp"
-#include "shader-resource.hpp"
+#include "shader-set.hpp"
 
 namespace kege{
 
@@ -36,11 +36,65 @@ namespace kege{
 
     public:
 
-        virtual bool bind( const std::vector< ShaderBinding >& shader_bindings ) = 0;
-        virtual bool bind( const ShaderBinding& shader_binding ) = 0;
+        // --- Resource Binding ---
+
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        virtual bool bind( int32_t set_index, const ref::ShaderSet& set ) = 0;
+
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        virtual bool bind( const ref::ShaderSet& set ) = 0;
+
+        /**
+         * @brief Sets push constant data for the command buffer.
+         *
+         * @param stages Shader stages that will access the push constants.
+         * @param offset Offset (in bytes) into the push constant range.
+         * @param size Size (in bytes) of the push constant data.
+         * @param data Pointer to the push constant data.
+         */
+        virtual void setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data ) = 0;
+
+        /**
+         * @brief Binds an index buffer to the command buffer.
+         * @param buffer Opaque handle to the index buffer object.
+         * @param offset Offset (in bytes) into the index buffer.
+         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
+         * false if it contains 32-bit unsigned integers.
+         */
+        virtual void bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16) = 0;
+
+        /**
+         * @brief Binds one or more vertex buffers to the command buffer.
+         * @param first_binding The first vertex buffer binding slot to use.
+         * @param buffers Vector of opaque handles to the vertex buffer objects.
+         * @param offsets Vector of offsets (in bytes) into each vertex buffer. Must have the same size as `buffer_handles`.
+         */
+        virtual void bindVertexBuffers
+        (
+            uint32_t first_binding,
+            const std::vector< ref::Buffer >& buffers,
+            const std::vector<uint64_t>& offsets
+        ) = 0;
+
+        /**
+         * @brief Binds a graphics pipeline to the command buffer.
+         * @param pipeline Opaque handle to the graphics pipeline object.
+         */
+        virtual void bindShaderPipeline(const ref::ShaderPipeline& pipeline) = 0;
 
 
-        // --- Drawing ---
+        // --- Drawing / Dispatching ---
 
         virtual void drawIndexIndirect( const ref::Buffer& buffer, uint64_t offset, uint32_t draw_count, uint32_t stride ) = 0;
 
@@ -83,44 +137,6 @@ namespace kege{
          */
         virtual void dispatch(uint32_t group_count_x, uint32_t group_count_y, uint32_t group_count_z) = 0;
 
-        // --- State Binding ---
-
-        /**
-         * @brief Binds one or more vertex buffers to the command buffer.
-         * @param first_binding The first vertex buffer binding slot to use.
-         * @param buffers Vector of opaque handles to the vertex buffer objects.
-         * @param offsets Vector of offsets (in bytes) into each vertex buffer. Must have the same size as `buffer_handles`.
-         */
-        virtual void bindVertexBuffers
-        (
-            uint32_t first_binding,
-            const std::vector< ref::Buffer >& buffers,
-            const std::vector<uint64_t>& offsets
-        ) = 0;
-
-        /**
-         * @brief Binds an index buffer to the command buffer.
-         * @param buffer Opaque handle to the index buffer object.
-         * @param offset Offset (in bytes) into the index buffer.
-         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
-         * false if it contains 32-bit unsigned integers.
-         */
-        virtual void bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16) = 0;
-
-        virtual void setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data ) = 0;
-
-        /**
-         * @brief Binds a graphics pipeline to the command buffer.
-         * @param pipeline_handle Opaque handle to the graphics pipeline object.
-         */
-        virtual void bindGraphicsPipeline(PipelineHandle pipeline_handle) = 0;
-
-        /**
-         * @brief Binds a compute pipeline to the command buffer.
-         * @param pipeline_handle Opaque handle to the compute pipeline object.
-         */
-        virtual void bindComputePipeline(PipelineHandle pipeline_handle) = 0;
-        
         // --- Dynamic State ---
 
         /**

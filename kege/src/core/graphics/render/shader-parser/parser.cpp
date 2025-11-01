@@ -26,7 +26,7 @@ namespace kege::glsl{
                     break;
                 }
 
-                case TokenType::SetLayout:
+                case TokenType::IndexedSetLayouts:
                 {
                     parseSetLayout();
                     break;
@@ -189,10 +189,10 @@ namespace kege::glsl{
 
     void Parser::parseSetLayout()
     {
-        expect(TokenType::SetLayout, "set_layout");
+        expect(TokenType::IndexedSetLayouts, "set_layout");
         expect(TokenType::LParen, "(");
 
-        Ref< ShaderSetBindingPoint > set = new ShaderSetBindingPoint;
+        Ref< ShaderBindingPointSet > set = new ShaderBindingPointSet;
 
         while ( !match( TokenType::RParen ) )
         {
@@ -331,7 +331,7 @@ namespace kege::glsl{
     {
         expect(TokenType::PushBlockLayout, "push_block_layout");
 
-        Ref< ShaderConstantBindingPoint > constant = new ShaderConstantBindingPoint;
+        Ref< ShaderBindingPointConstant > constant = new ShaderBindingPointConstant;
         constant->name = consumeIdentifier( "identifier" );
         constant->struct_block = parseShaderBlock();
         reflection.push_constant_blocks.push_back( constant );

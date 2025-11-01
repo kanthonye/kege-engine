@@ -1,0 +1,505 @@
+{
+   "Asset": {
+      "version": "1.0",
+      "generator": "My ECS Editor v1.0",
+      "copyright": "Copyright 2025"
+   },
+
+   "Scene": 0,
+
+   "Scenes":
+   [
+      {
+         "name": "Space Scene",
+         "entities": [0, 1, 2]
+      }
+   ],
+
+   "Entities":
+   [
+      {
+         "name": "EarthLikePlanet",
+         "components": [0, 1, 2, 3]
+      },
+      {
+         "name": "ProceduralTerrain",
+         "components": [4, 5, 6]
+      },
+      {
+         "name": "GasGiant",
+         "components": [7, 8, 9]
+      }
+   ],
+
+   "ComponentTypes":
+   [
+      {
+         "name": "Transform",
+         "schema":
+         {
+            "position": "vec3",
+            "rotation": "quat",
+            "scale": "vec3"
+         }
+      },
+      {
+         "name": "Planet",
+         "schema":
+         {
+            "radius": "float",
+            "mass": "float",
+            "atmosphereHeight": "float",
+            "atmosphereColor": "vec4",
+            "rotationSpeed": "float",
+            "axialTilt": "float",
+            "oceanLevel": "float",
+            "hasAtmosphere": "bool",
+            "hasClouds": "bool",
+            "cloudHeight": "float"
+         }
+      },
+      {
+         "name": "SphericalTerrain",
+         "schema":
+         {
+            "lodLevels": "uint32",
+            "maxSubdivisions": "uint32",
+            "heightmapTexture": "uint32",
+            "normalMapTexture": "uint32",
+            "detailDistance": "float",
+            "chunkSize": "uint32"
+         }
+      },
+      {
+         "name": "TerrainGenerator",
+         "schema":
+         {
+            "algorithm": "string",
+            "seed": "uint32",
+            "octaves": "uint32",
+            "frequency": "float",
+            "amplitude": "float",
+            "lacunarity": "float",
+            "persistence": "float",
+            "noiseType": "string",
+            "domainWarp": "bool",
+            "warpStrength": "float",
+            "layers": "uint32"
+         }
+      },
+      {
+         "name": "PlanarTerrain",
+         "schema":
+         {
+            "width": "float",
+            "height": "float",
+            "resolution": "uint32",
+            "maxHeight": "float",
+            "lodLevels": "uint32",
+            "chunkSize": "uint32",
+            "useQuadtree": "bool"
+         }
+      },
+      {
+         "name": "BiomeMap",
+         "schema":
+         {
+            "biomes": "uint32",
+            "temperatureRange": "vec2",
+            "moistureRange": "vec2",
+            "elevationRange": "vec2",
+            "biomeBlendDistance": "float"
+         }
+      },
+      {
+         "name": "VoxelTerrain",
+         "schema":
+         {
+            "chunkSize": "uint32",
+            "voxelSize": "float",
+            "surfaceLevel": "float",
+            "useMarching": "bool",
+            "smoothingPasses": "uint32"
+         }
+      },
+      {
+         "name": "Renderable",
+         "schema":
+         {
+            "mesh": "uint32",
+            "material": "uint32",
+            "castShadows": "bool",
+            "receiveShadows": "bool"
+         }
+      },
+      {
+         "name": "GasGiantAtmosphere",
+         "schema":
+         {
+            "bandCount": "uint32",
+            "bandColors": "uint32",
+            "turbulence": "float",
+            "rotationSpeed": "float",
+            "stormCount": "uint32"
+         }
+      },
+      {
+         "name": "Rigidbody",
+         "schema":
+         {
+            "mass": "uint32",
+            "collider": "uint32",
+            "turbulence": "float",
+            "rotationSpeed": "float",
+            "stormCount": "uint32"
+         }
+      }
+   ],
+
+   "Components":
+   [
+      {
+         "type": 0,
+         "data":
+         {
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0, 1],
+            "scale": [1, 1, 1]
+         }
+      },
+      {
+         "type": 1,
+         "data":
+         {
+            "radius": 6371000.0,
+            "mass": 5.972e24,
+            "atmosphereHeight": 100000.0,
+            "atmosphereColor": [0.53, 0.81, 0.92, 0.3],
+            "rotationSpeed": 0.0000727,
+            "axialTilt": 23.5,
+            "oceanLevel": 0.5,
+            "hasAtmosphere": true,
+            "hasClouds": true,
+            "cloudHeight": 10000.0
+         }
+      },
+      {
+         "type": 2,
+         "data":
+         {
+            "lodLevels": 6,
+            "maxSubdivisions": 8,
+            "heightmapTexture": 0,
+            "normalMapTexture": 1,
+            "detailDistance": 50000.0,
+            "chunkSize": 256
+         }
+      },
+      {
+         "type": 3,
+         "data":
+         {
+            "algorithm": "ridged-multifractal",
+            "seed": 42,
+            "octaves": 8,
+            "frequency": 0.0001,
+            "amplitude": 8000.0,
+            "lacunarity": 2.5,
+            "persistence": 0.5,
+            "noiseType": "simplex",
+            "domainWarp": true,
+            "warpStrength": 0.15,
+            "layers": 2
+         }
+      },
+      {
+         "type": 4,
+         "data":
+         {
+            "width": 10000.0,
+            "height": 10000.0,
+            "resolution": 1024,
+            "maxHeight": 500.0,
+            "lodLevels": 5,
+            "chunkSize": 128,
+            "useQuadtree": true
+         }
+      },
+      {
+         "type": 3,
+         "data":
+         {
+            "algorithm": "fbm",
+            "seed": 12345,
+            "octaves": 6,
+            "frequency": 0.01,
+            "amplitude": 100.0,
+            "lacunarity": 2.0,
+            "persistence": 0.5,
+            "noiseType": "perlin",
+            "domainWarp": false,
+            "warpStrength": 0.0,
+            "layers": 1
+         }
+      },
+      {
+         "type": 0,
+         "data":
+         {
+            "position": [-200000, 0, 0],
+            "rotation": [0, 0, 0, 1],
+            "scale": [1, 1, 1]
+         }
+      },
+      {
+         "type": 1,
+         "data":
+         {
+            "radius": 69911000.0,
+            "mass": 1.898e27,
+            "atmosphereHeight": 5000000.0,
+            "atmosphereColor": [0.87, 0.72, 0.53, 0.8],
+            "rotationSpeed": 0.000176,
+            "axialTilt": 3.1,
+            "oceanLevel": 0.0,
+            "hasAtmosphere": true,
+            "hasClouds": false,
+            "cloudHeight": 0.0
+         }
+      },
+      {
+         "type": 8,
+         "data":
+         {
+            "bandCount": 12,
+            "bandColors": 2,
+            "turbulence": 0.7,
+            "rotationSpeed": 0.000176,
+            "stormCount": 3
+         }
+      }
+   ],
+
+   "noiseGenerators":
+   [
+      {
+         "name": "ContinentNoise",
+         "type": "ridged-multifractal",
+         "parameters": 
+         {
+            "octaves": 4,
+            "frequency": 0.0005,
+            "amplitude": 5000.0,
+            "lacunarity": 2.2,
+            "persistence": 0.5
+         }
+      },
+      {
+         "name": "MountainNoise",
+         "type": "fbm",
+         "parameters":
+         {
+            "octaves": 8,
+            "frequency": 0.002,
+            "amplitude": 3000.0,
+            "lacunarity": 2.5,
+            "persistence": 0.45
+         }
+      },
+      {
+         "name": "DetailNoise",
+         "type": "simplex",
+         "parameters":
+         {
+            "octaves": 3,
+            "frequency": 0.05,
+            "amplitude": 50.0
+         }
+      } 
+   ],
+
+   "TerrainLayers":
+   [
+      {
+         "name": "BaseContinent",
+         "generator": 0,
+         "weight": 1.0,
+         "operation": "add"
+      },
+      {
+         "name": "Mountains",
+         "generator": 1,
+         "weight": 0.8,
+         "operation": "add",
+         "mask": 
+         {
+            "type": "elevation",
+            "range": [0.3, 1.0]
+         }
+      },
+      {
+         "name": "Details",
+         "generator": 2,
+         "weight": 0.5,
+         "operation": "multiply"
+      }
+   ],
+
+   "Biomes":
+   [
+      {
+         "name": "Ocean",
+         "colorTexture": 0,
+         "conditions":
+         {
+            "elevation": [-1.0, 0.0],
+            "temperature": [0.0, 1.0],
+            "moisture": [0.0, 1.0]
+         }
+      },
+      {
+         "name": "Beach",
+         "colorTexture": 1,
+         "conditions":
+         {
+            "elevation": [0.0, 0.05],
+            "temperature": [0.2, 1.0],
+            "moisture": [0.0, 1.0]
+         }
+      },
+      {
+         "name": "Desert",
+         "colorTexture": 2,
+         "conditions":
+         {
+            "elevation": [0.05, 0.5],
+            "temperature": [0.6, 1.0],
+            "moisture": [0.0, 0.2]
+         }
+      },
+      {
+         "name": "Plains",
+         "colorTexture": 3,
+         "conditions":
+         {
+            "elevation": [0.05, 0.4],
+            "temperature": [0.3, 0.7],
+            "moisture": [0.2, 0.6]
+         }
+      },
+      {
+         "name": "Forest",
+         "colorTexture": 4,
+         "conditions":
+         {
+            "elevation": [0.1, 0.6],
+            "temperature": [0.3, 0.8],
+            "moisture": [0.4, 0.9]
+         }
+      },
+      {
+         "name": "Mountains",
+         "colorTexture": 5,
+         "conditions":
+         {
+            "elevation": [0.6, 0.9],
+            "temperature": [0.0, 0.5],
+            "moisture": [0.0, 1.0]
+         }
+      },
+      {
+         "name": "Snow",
+         "colorTexture": 6,
+         "conditions":
+         {
+            "elevation": [0.8, 1.0],
+            "temperature": [0.0, 0.2],
+            "moisture": [0.0, 1.0]
+         }
+      }
+   ],
+
+   "Textures":
+   [
+      {
+         "name": "EarthHeightmap",
+         "uri": "earth_heightmap.png"
+      },
+      {
+         "name": "EarthNormals",
+         "uri": "earth_normals.png"
+      },
+      {
+         "name": "JupiterBands",
+         "uri": "jupiter_bands.png"
+      }
+   ],
+
+   "Systems":
+   [
+      {
+         "name": "TerrainGenerationSystem",
+         "priority": 10,
+         "components": ["TerrainGenerator", "Transform"],
+         "description": "Generates terrain meshes procedurally based on noise functions"
+      },
+      {
+         "name": "SphericalLODSystem",
+         "priority": 20,
+         "components": ["SphericalTerrain", "Transform", "Planet"],
+         "description": "Manages LOD for spherical planetary terrain"
+      },
+      {
+         "name": "PlanarLODSystem",
+         "priority": 20,
+         "components": ["PlanarTerrain", "Transform"],
+         "description": "Manages quadtree LOD for flat terrain"
+      },
+      {
+         "name": "BiomeSystem",
+         "priority": 15,
+         "components": ["BiomeMap", "TerrainGenerator"],
+         "description": "Assigns biomes based on elevation, temperature, and moisture"
+      },
+      {
+         "name": "PlanetPhysicsSystem",
+         "priority": 100,
+         "components": ["Planet", "Transform"],
+         "description": "Handles orbital mechanics and planet rotation"
+      },
+      {
+         "name": "AtmosphereRenderSystem",
+         "priority": 200,
+         "components": ["Planet", "Transform"],
+         "description": "Renders atmospheric scattering effects"
+      }
+   ],
+
+   "Extensions":
+   {
+      "ECSF_terrain_splatmap":
+      {
+         "textures": [0, 1, 2, 3],
+         "blendSharpness": 0.8
+      },
+      "ECSF_erosion":
+      {
+         "hydraulicErosion":
+         {
+            "iterations": 100000,
+            "rainAmount": 0.01,
+            "evaporation": 0.5,
+            "sedimentCapacity": 4.0,
+            "minSlope": 0.01,
+            "gravity": 9.81
+         },
+         "thermalErosion":
+         {
+            "iterations": 10000,
+            "talusAngle": 0.7,
+            "strength": 0.5
+         }
+      }
+   },
+   "extensionsUsed": ["ECSF_terrain_splatmap", "ECSF_erosion"]
+}

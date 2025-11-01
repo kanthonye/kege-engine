@@ -35,13 +35,6 @@ namespace kege{
      */
     class CommandBuffer : public kege::RefCounter
     {
-    protected:
-        
-        /**
-         * @brief Virtual destructor to ensure proper cleanup of derived classes.
-         */
-        virtual ~CommandBuffer() = default;
-
     public:
 
         virtual void transitionImageLayout
@@ -50,9 +43,6 @@ namespace kege{
             kege::ImageLayout oldLayout,
             kege::ImageLayout newLayout
         ) = 0;
-
-        virtual const vk::CommandBuffer* vk()const{ return nullptr; }
-        virtual vk::CommandBuffer* vk(){ return nullptr; }
 
         virtual CommandEncoder* createCommandEncoder() = 0;
 
@@ -101,19 +91,43 @@ namespace kege{
          */
         virtual void endRendering() = 0;
 
-        // --- Regular Rendering with RenderStage ---
+        // --- Resource Binding ---
 
         /**
-         * @brief Binds a graphics pipeline to the command buffer.
-         * @param pipeline_handle Opaque handle to the graphics pipeline object.
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
          */
-        virtual void bindGraphicsPipeline(PipelineHandle pipeline_handle) = 0;
+        virtual bool bind( int32_t set_index, const ref::ShaderSet& set ) = 0;
 
         /**
-         * @brief Binds a compute pipeline to the command buffer.
-         * @param pipeline_handle Opaque handle to the compute pipeline object.
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
          */
-        virtual void bindComputePipeline(PipelineHandle pipeline_handle) = 0;
+        virtual bool bind( const ref::ShaderSet& set ) = 0;
+
+        /**
+         * @brief Sets push constant data for the command buffer.
+         *
+         * @param stages Shader stages that will access the push constants.
+         * @param offset Offset (in bytes) into the push constant range.
+         * @param size Size (in bytes) of the push constant data.
+         * @param data Pointer to the push constant data.
+         */
+        virtual void setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data ) = 0;
+
+        /**
+         * @brief Binds an index buffer to the command buffer.
+         * @param buffer Opaque handle to the index buffer object.
+         * @param offset Offset (in bytes) into the index buffer.
+         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
+         * false if it contains 32-bit unsigned integers.
+         */
+        virtual void bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16) = 0;
 
         /**
          * @brief Binds one or more vertex buffers to the command buffer.
@@ -125,20 +139,15 @@ namespace kege{
         (
             uint32_t first_binding,
             const std::vector< ref::Buffer >& buffers,
-            const std::vector< uint64_t >& offsets
-        )
-        = 0;
+            const std::vector<uint64_t>& offsets
+        ) = 0;
 
         /**
-         * @brief Binds an index buffer to the command buffer.
-         * @param buffer_handle Opaque handle to the index buffer object.
-         * @param offset Offset (in bytes) into the index buffer.
-         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
-         * false if it contains 32-bit unsigned integers.
+         * @brief Binds a graphics pipeline to the command buffer.
+         * @param pipeline Opaque handle to the graphics pipeline object.
          */
-        virtual void bindIndexBuffer(const ref::Buffer& buffer_handle, uint64_t offset, bool use_uint16) = 0; // Added index type bool
+        virtual void bindShaderPipeline(const ref::ShaderPipeline& pipeline) = 0;
 
-        virtual void setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data ) = 0;
 
         // --- Dynamic State ---
 
@@ -349,6 +358,10 @@ namespace kege{
         // Add other commands as needed: indirect draw/dispatch, queries, etc.
 
 
+
+        virtual const vk::CommandBuffer* vk()const{ return nullptr; }
+        virtual vk::CommandBuffer* vk(){ return nullptr; }
+        
         uint32_t id()const{ return _id; }
 
 
@@ -357,6 +370,15 @@ namespace kege{
             return _queue_type;
         }
 
+
+        /**
+         * @brief Virtual destructor to ensure proper cleanup of derived classes.
+         */
+        virtual ~CommandBuffer() = default;
+
+        /**
+         * @brief default constructor
+         */
         CommandBuffer()
         :   _queue_type( QueueType::Graphics )
         ,   _id( -1 )

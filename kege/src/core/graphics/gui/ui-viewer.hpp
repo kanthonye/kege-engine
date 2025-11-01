@@ -12,6 +12,8 @@
 #include "ui-layout.hpp"
 #include "../mesh/mesh.hpp"
 #include "../render/graph/render-queue.hpp"
+#include "../render/pipeline/shader-pipeline.hpp"
+#include "../../io/virtual-directory.hpp"
 
 namespace kege::ui{
 
@@ -67,9 +69,13 @@ namespace kege::ui{
          *
          * @return true if initialization is successful, false otherwise.
          */
-        bool initialize( Graphics* graphics, kege::ShaderPipeline pipeline, kege::Font font, ImageInfo& scene_image_info );
+        bool initialize( Graphics* graphics );
 
         ref::Image getDefaultTexture();
+
+//        void setViewportImage( const ImageInfo& info );
+//        void setThemeImage( const ImageInfo& info );
+//        void setFontImage( const ImageInfo& info );
 
         /**
          * Uninitializes the Core object, releasing any allocated resources.
@@ -83,10 +89,12 @@ namespace kege::ui{
 
     private:
 
-        ImageInfo _scene_image_info;
+        //ImageInfo _scene_image_info;
 
         kege::Ref< MaterialSource > createMaterial();
         kege::Ref< MeshSource > createMesh();
+
+        ref::ShaderData _shader_data;
 
         std::vector< kege::ui::DrawElem > _drawbuffer;
         kege::Font _font; // The current font used for rendering text.
@@ -98,7 +106,7 @@ namespace kege::ui{
         //ShaderResource _ui_texture_shader_resource;
         //ShaderResource _font_shader_resource;
         ref::Image _default_texture;
-        kege::ShaderPipeline _pipeline;
+        ref::ShaderPipeline _pipeline;
 
         kege::CommandEncoder* _encoder;
         Graphics* _graphics;

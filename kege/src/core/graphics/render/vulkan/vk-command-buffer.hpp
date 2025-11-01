@@ -9,7 +9,6 @@
 #define vulkan_command_recorder_hpp
 
 #include "vk-command-encoder.hpp"
-#include "vk-pipeline-layout-manager.hpp"
 
 namespace kege::vk{
 
@@ -37,6 +36,50 @@ namespace kege::vk{
         CommandBuffer(vk::Device* device, VkCommandPool command_pool, VkCommandBuffer command_buffer);
 
     public:
+
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( int32_t set_index, const ref::ShaderSet& set ) override;
+
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( const ref::ShaderSet& set ) override;
+
+        /**
+         * @brief Binds a Vulkan shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set Pointer to the vk::ShaderSet object.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( int32_t set_index, const vk::ShaderSet* set );
+
+        /**
+         * @brief Sets push constant data for the command buffer.
+         *
+         * @param stages Shader stages that will access the push constants.
+         * @param offset Offset (in bytes) into the push constant range.
+         * @param size Size (in bytes) of the push constant data.
+         * @param data Pointer to the push constant data.
+         */
+        void setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )override;
+
+        /**
+         * @brief Binds a Vulkan graphics pipeline to the command buffer.
+         *
+         * @param pipeline Opaque handle to the graphics pipeline object.
+         */
+        void bindShaderPipeline(const ref::ShaderPipeline& pipeline) override;
+
 
         void transitionImageLayout
         (
@@ -130,20 +173,6 @@ namespace kege::vk{
         void endRendering() override;
 
         /**
-         * @brief Binds a Vulkan graphics pipeline to the command buffer.
-         *
-         * @param pipeline_handle Opaque handle to the graphics pipeline object.
-         */
-        void bindGraphicsPipeline(PipelineHandle pipeline_handle) override;
-
-        /**
-         * @brief Binds a Vulkan compute pipeline to the command buffer.
-         *
-         * @param pipeline_handle Opaque handle to the compute pipeline object.
-         */
-        void bindComputePipeline(PipelineHandle pipeline_handle) override;
-
-        /**
          * @brief Binds one or more vertex buffers to the command buffer.
          *
          * @param first_binding The first vertex buffer binding slot to use.
@@ -161,8 +190,6 @@ namespace kege::vk{
          * false if it contains 32-bit unsigned integers.
          */
         void bindIndexBuffer( const ref::Buffer& buffer, uint64_t offset, bool use_uint16) override;
-
-        void setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )override;
 
         /**
          * @brief Sets the viewport for rendering.
@@ -286,7 +313,7 @@ namespace kege::vk{
          *
          * Assumes that the texture layout is suitable for clearing.
          *
-         * @param texture Handle to the texture to clear.
+         * @param image Handle to the texture to clear.
          * @param depth The depth value to clear to.
          * @param stencil The stencil value to clear to.
          * @param ranges Vector of texture subresource ranges to clear.
@@ -328,11 +355,10 @@ namespace kege::vk{
         ~CommandBuffer();
        CommandBuffer();
 
-
     private:
 
         /**
-         * The secondary command buffer object
+         * The secondary command buffer objects
          */
         std::vector< vk::CommandEncoder* > _command_encoders;
 
@@ -359,8 +385,11 @@ namespace kege::vk{
         VkCommandBuffer _handle;      ///< The actual Vulkan command buffer handle.
         bool _is_recording = false;          ///< Flag indicating whether the command buffer is currently recording commands.
 
-        const vk::PipelineLayout* _current_pipeline_layout;///< Currently bound graphics pipeline layout.
+        const vk::ShaderPipeline* _curr_bind_pipeline;
         VkPipelineBindPoint _current_pipeline_bindpoint;
+        VkPipelineLayout _pipeline_layout;
+
+    private:
 
         /**
          * @brief Helper function to resolve a PipelineHandle to a ComputePipeline object.
@@ -373,6 +402,8 @@ namespace kege::vk{
         static PFN_vkCmdEndRendering vkCmdEndRenderingPfn;
         friend vk::FrameRenderer;
         friend vk::Device;
+
+    private:
 
         friend vk::List< vk::CommandBuffer >;
         vk::CommandBuffer* prev;

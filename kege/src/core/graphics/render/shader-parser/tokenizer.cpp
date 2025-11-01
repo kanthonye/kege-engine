@@ -228,7 +228,7 @@ namespace kege::glsl{
             { "struct",                 TokenType::Type },
             { "push_block_layout",      TokenType::PushBlockLayout },
             { "vertex_layout",          TokenType::VertexLayout },
-            { "set_layout",             TokenType::SetLayout },
+            { "set_layout",             TokenType::IndexedSetLayouts },
             { "in_layout",              TokenType::InLayout },
             { "out_layout",             TokenType::OutLayout },
             { "layout",                 TokenType::Layout },
@@ -284,7 +284,7 @@ namespace kege::glsl{
 
             // Keywords
             case TokenType::VertexLayout:   return "VertexLayout";
-            case TokenType::SetLayout:      return "SetLayout";
+            case TokenType::IndexedSetLayouts:      return "IndexedSetLayouts";
             case TokenType::Qualifier:      return "Qualifier";
             case TokenType::InLayout:       return "InLayout";
             case TokenType::OutLayout:      return "OutLayout";

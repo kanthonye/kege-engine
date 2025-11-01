@@ -18,8 +18,8 @@ namespace kege{
         Transform* transform = entity.get< Transform >();
         Camera* camera = entity.get< Camera >();
 
-        float window_height = getGraphics()->windowHeight();
-        float window_width = getGraphics()->windowWidth();
+        float window_height = getGraphics()->getWindow()->getHeight();
+        float window_width = getGraphics()->getWindow()->getWidth();
 
         pointer.x = inputs.coordX();
         pointer.y = inputs.coordY();

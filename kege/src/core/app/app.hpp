@@ -35,6 +35,7 @@ namespace kege{
 
     protected:
 
+        ref::AssetManager _asset_manager;
         ref::AppLayerStack _app_layer_stack;
         ref::ProjectManager _project_manager;
         ref::RenderGraph _render_graph;

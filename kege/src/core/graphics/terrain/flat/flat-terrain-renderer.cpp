@@ -30,7 +30,7 @@ namespace kege{
 //        _encoder->bindGraphicsPipeline( _shader_pipeline );
 //        _encoder->bindVertexBuffers(0, { _vertex_buffer }, { 0 });
 //        _encoder->bindIndexBuffer( _index_buffer, 0, false );
-//        _encoder->setPushConstants( kege::ShaderStageFlag::Vertex, 0, sizeof(m), m );
+//        _encoder->setPushBlock( kege::ShaderStageFlag::Vertex, 0, sizeof(m), m );
 //        _encoder->bindShaderResource( resource );
 //
 //        for ( int i=0; i<_batch_count; ++i )

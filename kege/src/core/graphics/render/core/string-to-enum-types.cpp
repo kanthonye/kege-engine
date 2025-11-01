@@ -9,7 +9,7 @@
 
 namespace kege{
     
-    ShaderVarType stringToMemberType( const char* str )
+    ShaderVarType stringToShaderVarType( const char* str )
     {
         static std::map< std::string, kege::ShaderVarType > table;
         if( table.empty() )
@@ -483,24 +483,24 @@ namespace kege{
         return ImageUsage::Undefined;
     }
 
-    kege::DescriptorType stringToDescriptorType( const std::string& name )
+    kege::BindingUsage stringToBindingUsage( const std::string& name )
     {
-        static std::map< std::string, DescriptorType > types;
+        static std::map< std::string, kege::BindingUsage > types;
 
         if ( types.empty() )
         {
-            types[ "Invalid" ] = DescriptorType::Invalid;
-            types[ "Sampler" ] = DescriptorType::Sampler;
-            types[ "CombinedImageSampler" ] = DescriptorType::CombinedImageSampler;
-            types[ "SampledImage" ] = DescriptorType::SampledImage;
-            types[ "StorageImage" ] = DescriptorType::StorageImage;
-            types[ "UniformTexelBuffer" ] = DescriptorType::UniformTexelBuffer;
-            types[ "StorageTexelBuffer" ] = DescriptorType::StorageTexelBuffer;
-            types[ "UniformBuffer" ] = DescriptorType::UniformBuffer;
-            types[ "StorageBuffer" ] = DescriptorType::StorageBuffer;
-            types[ "UniformBufferDynamic" ] = DescriptorType::UniformBufferDynamic;
-            types[ "StorageBufferDynamic" ] = DescriptorType::StorageBufferDynamic;
-            types[ "InputAttachment" ] = DescriptorType::InputAttachment;
+            types[ "Invalid" ] = kege::BindingUsage::Invalid;
+            types[ "Sampler" ] = kege::BindingUsage::Sampler;
+            types[ "CombinedImageSampler" ] = kege::BindingUsage::CombinedImageSampler;
+            types[ "SampledImage" ] = kege::BindingUsage::SampledImage;
+            types[ "StorageImage" ] = kege::BindingUsage::StorageImage;
+            types[ "UniformTexelBuffer" ] = kege::BindingUsage::UniformTexelBuffer;
+            types[ "StorageTexelBuffer" ] = kege::BindingUsage::StorageTexelBuffer;
+            types[ "UniformBuffer" ] = kege::BindingUsage::UniformBuffer;
+            types[ "StorageBuffer" ] = kege::BindingUsage::StorageBuffer;
+            types[ "UniformBufferDynamic" ] = kege::BindingUsage::UniformBufferDynamic;
+            types[ "StorageBufferDynamic" ] = kege::BindingUsage::StorageBufferDynamic;
+            types[ "InputAttachment" ] = kege::BindingUsage::InputAttachment;
         }
         auto m = types.find( name );
         if ( m != types.end() )

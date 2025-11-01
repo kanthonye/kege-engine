@@ -11,7 +11,6 @@
 #include "vk-utils.hpp"
 #include "vk-swapchain.hpp"
 #include "vk-command-buffer.hpp"
-#include "vk-pipeline-layout-manager.hpp"
 
 namespace kege::vk{
 

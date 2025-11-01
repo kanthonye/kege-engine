@@ -1092,6 +1092,37 @@ namespace kege::vk{
                 return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         }
     }
+    VkDescriptorType toDescriptorType(kege::BindingUsage usage)
+    {
+        switch (usage) {
+            case kege::BindingUsage::Sampler:
+                return VK_DESCRIPTOR_TYPE_SAMPLER;
+            case kege::BindingUsage::CombinedImageSampler:
+                return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            case kege::BindingUsage::SampledImage:
+                return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+            case kege::BindingUsage::StorageImage:
+                return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+            case kege::BindingUsage::UniformTexelBuffer:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+            case kege::BindingUsage::StorageTexelBuffer:
+                return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+            case kege::BindingUsage::UniformBuffer:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            case kege::BindingUsage::StorageBuffer:
+                return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            case kege::BindingUsage::UniformBufferDynamic:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+            case kege::BindingUsage::StorageBufferDynamic:
+                return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+            case kege::BindingUsage::InputAttachment:
+                return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+            default:
+                // Default to combined image sampler for unknown values
+                //assert(false && "Unknown descriptor type");
+                return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        }
+    }
 
 
     VkImageLayout convertImageLayout( ImageLayout image_layout )
@@ -1513,6 +1544,5 @@ namespace kege::vk{
                 return "Unknown VkResult value: ";
         }
     }
-
-
+    
 }

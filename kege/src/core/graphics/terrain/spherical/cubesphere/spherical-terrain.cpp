@@ -61,19 +61,19 @@ namespace kege{
 
     bool SphericalTerrain::initialize( kege::Graphics* graphics )
     {
-        kege::string shader_file = kege::vfs( "graphics-shaders/terrain/spherical/shader.json" );
-        ShaderPipeline pipeline = graphics->getShaderPipelineManager()->load( shader_file.c_str() );
-        if( !pipeline )
-        {
-            kege::Log::error << "Failed to load pipeline -> " << shader_file << Log::nl;
-            return false;
-        }
-
-        _material = new MaterialSource
-        (
-            RenderPassType::Geometry,
-            pipeline, false, false
-        );
+//        kege::string shader_file = kege::vfs( "graphics-shaders/terrain/spherical/shader.json" );
+//        ShaderPipeline pipeline = graphics->getShaderPipelineManager()->load( shader_file.c_str() );
+//        if( !pipeline )
+//        {
+//            kege::Log::error << "Failed to load pipeline -> " << shader_file << Log::nl;
+//            return false;
+//        }
+//
+//        _material = new MaterialSource
+//        (
+//            RenderPassType::Geometry,
+//            pipeline, false, false
+//        );
 
         _renderer = new SphericalTerrainRenderer( graphics );
         _renderer->initialize();

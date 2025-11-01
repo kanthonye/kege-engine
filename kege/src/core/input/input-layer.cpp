@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 3/16/25.
 //
 
-#include "engine.hpp"
+#include "../io/virtual-directory.hpp"
 #include "input-layer.hpp"
 
 namespace kege{

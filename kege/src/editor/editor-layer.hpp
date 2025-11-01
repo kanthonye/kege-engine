@@ -26,10 +26,11 @@ namespace kege{
         void shutdown();
         void update();
 
-        EditorLayer( kege::Graphics* graphics, kege::ProjectManager* pm );
+        EditorLayer( kege::AssetManager* am, kege::Graphics* graphics, kege::ProjectManager* pm );
 
     public:
 
+        kege::AssetManager* _asset_manager;
         kege::ProjectManager* _project_manager;
         kege::Graphics* _graphics;
 

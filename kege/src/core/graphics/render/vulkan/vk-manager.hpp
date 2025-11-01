@@ -19,6 +19,8 @@ namespace kege::vk{
 
         VkDevice createDevice( vk::PhysicalDevice* physical_device, QueueFamilyIndices& queue_family_indices );
 
+        void destroyPipeline( VkPipeline& pipeline, const VkAllocationCallbacks* allocator );
+        
         /**
          * @brief Create a semaphore synchronization object
          *
@@ -125,8 +127,12 @@ namespace kege::vk{
 
         void destroyPipelineLayout( VkPipelineLayout& layout, const VkAllocationCallbacks *allocator );
 
-        VkResult createDescriptorPool( const VkDescriptorPoolCreateInfo* info, const VkAllocationCallbacks *allocator, VkDescriptorPool *pool );
 
+
+
+        void destroyDescriptorSetLayout( VkDescriptorSetLayout& layout, const VkAllocationCallbacks* allocator );
+
+        VkResult createDescriptorPool( const VkDescriptorPoolCreateInfo* info, const VkAllocationCallbacks *allocator, VkDescriptorPool *pool );
         void destroyDescriptorPool( VkDescriptorPool pool, const VkAllocationCallbacks* allocator );
 
         void updateDescriptorSets
@@ -160,6 +166,8 @@ namespace kege::vk{
             VkMemoryPropertyFlags memory_properties,
             VkDeviceMemory* memory
         );
+
+        void destroyShader( VkShaderModule& shader );
 
         void waitIdle()const;
         Manager();

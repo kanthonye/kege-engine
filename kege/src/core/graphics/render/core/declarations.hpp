@@ -23,13 +23,14 @@ namespace kege
     class GraphicsDevice;
     class CommandBuffer;
 
+    class Shader;
     class ShaderData;
     class ShaderLayout;
     class ShaderPipeline;
 
+
     class ShaderSet;
-    class ShaderBindingResrc;
-    class ShaderSetBindingPointLayout;
+    class SetLayout;
 
     class PhysicalDevice;
 
@@ -39,6 +40,7 @@ namespace kege
 
 namespace kege::ref
 {
+    typedef kege::Ref< kege::CommandBuffer > CommandBuffer;
     typedef kege::Ref< kege::PhysicalDevice > PhysicalDevice;
 
     typedef kege::Ref< kege::Image > Image;
@@ -48,11 +50,12 @@ namespace kege::ref
     typedef kege::Ref< kege::Fence > Fence;
     typedef kege::Ref< kege::Semaphore > Semaphore;
 
+    typedef kege::Ref< kege::Shader > Shader;
     typedef kege::Ref< kege::ShaderLayout > ShaderLayout;
     typedef kege::Ref< kege::ShaderPipeline > ShaderPipeline;
 
+    typedef kege::Ref< kege::SetLayout > SetLayout;
     typedef kege::Ref< kege::ShaderSet > ShaderSet;
-    typedef kege::Ref< kege::ShaderSetBindingPointLayout > ShaderSetBindingPointLayout;
 }
 
 namespace kege::cref
@@ -69,8 +72,6 @@ namespace kege::cref
     typedef kege::Ref< const kege::ShaderLayout > ShaderLayout;
     typedef kege::Ref< const kege::ShaderPipeline > ShaderPipeline;
 
-    typedef kege::Ref< const kege::ShaderSet > ShaderSet;
-    typedef kege::Ref< const kege::ShaderSetBindingPointLayout > ShaderSetBindingPointLayout;
 }
 
 namespace kege::vk{
@@ -88,11 +89,12 @@ namespace kege::vk{
     class Sampler;
     class Buffer;
 
+    class Shader;
     class ShaderLayout;
     class ShaderPipeline;
 
     class ShaderSet;
-    class ShaderSetBindingPointLayout;
+    class SetLayout;
 }
 
 #endif /* forward_declarations_hpp */

@@ -6,7 +6,6 @@
 //
 
 #include "entity-logic.hpp"
-#include "../engine/engine.hpp"
 
 namespace kege{
 

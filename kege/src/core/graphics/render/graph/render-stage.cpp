@@ -11,7 +11,7 @@
 
 namespace kege{
 
-    const kege::ShaderResrc* RenderStage::getShaderResource( const RgResrcHandle& handle )const
+    const kege::ShaderSet* RenderStage::getShaderResource( const RgResrcHandle& handle )const
     {
         return _graph->getShaderResource( handle );
     }
@@ -29,7 +29,7 @@ namespace kege{
         return _graph->getImage( handle );
     }
 
-    const kege::ShaderResrc* RenderStage::fetchShaderResource( const std::string& name )const
+    const kege::ShaderSet* RenderStage::fetchShaderResource( const std::string& name )const
     {
         return _graph->fetchShaderResource( name );
     }
@@ -52,7 +52,7 @@ namespace kege{
         return _shader_resources;
     }
     
-    const std::vector< ShaderPipeline >& RenderStage::getShaderPipelines()const
+    const std::vector< ref::ShaderPipeline >& RenderStage::getShaderPipelines()const
     {
         return _fixed_shader_pipelines;
     }
@@ -152,7 +152,6 @@ namespace kege{
         kege::RenderingInfo rendering_info;
         const ImageDefn* defn = nullptr;
 
-        ClearValue clear_value = {};
         for ( int i=0; i<_defn.writes.size(); ++i )
         {
             const RgWriteResrcDesc& write = _defn.writes[i];
@@ -172,7 +171,7 @@ namespace kege{
                         kege::RenderingAttachmentInfo
                         {
                             .image = defn->physical_handle[ img_idx ],
-                            .clear_value = (write.clear_value)?write.clear_value.value():clear_value,
+                            .clear_value = write.clear_value,
                             .store_op = kege::AttachmentStoreOp::Store,
                             .load_op = write.usage.load_op,
                             .image_layout = write.usage.layout,
@@ -184,7 +183,7 @@ namespace kege{
                     rendering_info.depth_attachment = kege::RenderingAttachmentInfo
                     {
                         .image = defn->physical_handle[ img_idx ],
-                        .clear_value = (write.clear_value)?write.clear_value.value():clear_value,
+                        .clear_value = write.clear_value,
                         .store_op = kege::AttachmentStoreOp::Store,
                         .load_op = write.usage.load_op,
                         .image_layout = write.usage.layout,
@@ -242,7 +241,7 @@ namespace kege{
     CommandBuffer* RenderStage::getCommandBuffer()
     {
         const int FRAME_INDEX = _graph->_graphics->getFrameIndex();
-        return _submit_info[ FRAME_INDEX ].command_buffer;
+        return _submit_info[ FRAME_INDEX ].command_buffer.ref();
     }
     bool RenderStage::hasFixedPipelines()const
     {
@@ -293,10 +292,6 @@ namespace kege{
     void RenderStage::destroy()
     {
         destroySemaphores();
-        for ( SubmitInfo& info : _submit_info )
-        {
-            _graph->_graphics->destroyCommandBuffer( info.command_buffer );
-        }
         _submit_info.clear();
     }
     

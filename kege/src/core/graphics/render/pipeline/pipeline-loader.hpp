@@ -9,70 +9,93 @@
 #define pipeline_loader_hpp
 
 #include "../../render/core/graphics.hpp"
+#include "../../render/core/string-to-enum-types.hpp"
 #include "../../../utils/json-parser.hpp"
+#include "shader-pipeline.hpp"
 
 namespace kege{
 
-    bool loadTextFile( std::vector< char >& source, const char* filename );
-    std::string getFilePath( const std::string& filename );
+//    struct ShaderPipelineCreateInfo
+//    {
+//        kege::PipelineCreateInfo pipeline_info;
+//        std::vector< int > stages;
+//    };
+//
+//    bool parseShaderPipelineInfo
+//    (
+//        kege::Graphics* graphics,
+//        std::vector< ref::Shader >* shaders,
+//        std::vector< kege::ShaderPipelineCreateInfo >* pipelines,
+//        kege::Json json,
+//        const std::string& path
+//    );
+//
+    struct PipelinInfo
+    {
+        struct Output
+        {
+            std::string name;
+            std::string semantic;
+            Format format;
+            int location;
+        };
 
-    /**
-     * @brief Convert a shader stage string to ShaderStageFlag enum.
-     * @param stage The shader stage as a string.
-     * @return Corresponding ShaderStageFlag enum value.
-     */
-    kege::ShaderStageFlag convertShaderStage( const std::string& stage );
+        struct Layout
+        {
+            int set;
+            int binding;
+            int count;
+            int uniform;
+            std::string name;
+            kege::BindingUsage usage;
+            kege::ShaderStageFlag stages;
+        };
 
-    /**
-     * @brief Convert a JSON array of shader stages to ShaderStageFlag enum flags.
-     * @param json JSON array containing shader stage strings.
-     * @return Combined ShaderStageFlag enum flags.
-     */
-    kege::ShaderStageFlag convertShaderStageFlages( kege::Json json );  
+        struct Push
+        {
+            int size;
+            int count;
+            int offset;
+            int uniform;
+            std::string name;
+            kege::ShaderStageFlag stages;
+        };
 
-    /**
-     * @brief Compile GLSL source code to SPIR-V bytecode.
-     * @param shader_name Name of the shader.
-     * @param shader_stage The shader stage.
-     * @param source GLSL source code as a vector of characters.
-     * @return Compiled SPIR-V bytecode as a vector of uint32_t.
-     */
-    std::vector< uint32_t > compileGlslToSpv
+        std::string name;
+        int rasterizer;
+        int depth_stencil;
+        int color_blend;
+        int vertex_layout;
+        std::vector< Output > outputs;
+        std::vector< int > stages;
+        kege::PrimitiveTopology topology;
+        kege::PipelineType type;
+
+        std::vector< Push > push_constants;
+        std::map< int, std::vector< Layout > > sets;
+    };
+
+    bool parseShaderPipeline
     (
-        const char* shader_name,
-        ShaderStageFlag shader_stage,
-        const std::vector< char >& source
+        kege::Graphics* graphics,
+        kege::Json json,
+        const std::string& path,
+        std::vector< ref::ShaderStructBlock >* uniforms,
+        std::vector< RasterizationStateDesc >* rasterizer_states,
+        std::vector< DepthStencilStateDesc >* depth_stencil_states,
+        std::vector< ColorBlendStateDesc >* color_blend_states,
+        std::vector< VertexBufferLayout >* vertex_layouts,
+        std::vector< PipelinInfo >* pipelines,
+        std::vector< ref::Shader >* shaders
     );
-    
-}
 
-namespace kege{
+
 
     class PipelineLoader {
     public:
 
-        static kege::PipelineHandle load
-        (
-            kege::Graphics* graphics,
-            const std::string& filename
-        );
-
-        static bool createPipelineFromFile
-        (
-            kege::Graphics* graphics,
-            kege::GraphicsPipelineDesc* info,
-            kege::Json json,
-            const std::string& path
-        );
-
+        static std::vector< ref::ShaderPipeline > load
+        ( kege::Graphics* graphics, const std::string& filename );
     };
-
-    bool parseShaderPipelineInfo
-    (
-        kege::Graphics* graphics,
-        kege::CreateShaderPipelineInfo* info,
-        kege::Json json,
-        const std::string& path
-    );
 }
 #endif /* pipeline_loader_hpp */

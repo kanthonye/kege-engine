@@ -32,7 +32,7 @@ namespace kege{
             /**
              * a collection of Patch to render
              */
-            kege::ShaderResrc resource_set;
+            ref::ShaderSet resource_set;
 
             /**
              * a collection of DrawParams for each patch.

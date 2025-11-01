@@ -38,4 +38,7 @@ namespace kege{
     };
     
 }
+namespace kege::ref{
+    typedef kege::Ref< kege::GraphicsInstance > GraphicsInstance;
+}
 #endif /* kege_graphics_instance_hpp */

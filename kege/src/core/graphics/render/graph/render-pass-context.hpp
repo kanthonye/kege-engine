@@ -151,7 +151,6 @@ namespace kege{
         std::vector< RgShaderResrcInfo > targets;
     };
 
-    typedef std::vector< kege::Ref< ShaderResrc > > ShaderResrcs;
     struct RgShaderResrcDefn
     {
         std::string name;
@@ -160,7 +159,7 @@ namespace kege{
         std::vector< RgShaderResrcDesc > bindings;
 
         RgResrcHandle handle = {};
-        ShaderResrcs physical_handles;
+        ref::ShaderSet physical_handle;
     };
 
 
@@ -294,7 +293,7 @@ namespace std{
     {
         std::size_t operator()( const kege::RgResrcHandle& handle ) const
         {
-            return std::hash<int>()(static_cast<int>( handle.type )) ^ (std::hash<int>()( handle.index ) << 1);
+            return std::hash<uint64_t>()(static_cast<uint64_t>( handle.type )) ^ (std::hash<uint64_t>()( handle.index ) << 1);
         }
     };
 }

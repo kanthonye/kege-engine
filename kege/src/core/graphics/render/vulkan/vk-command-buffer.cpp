@@ -14,6 +14,80 @@
 
 namespace kege::vk{
 
+    bool CommandBuffer::bind( int32_t set_index, const ref::ShaderSet& set )
+    {
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
+            return false;
+        }
+        return bind( set_index, set->vk() );
+    }
+
+    bool CommandBuffer::bind( const ref::ShaderSet& set )
+    {
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
+            return false;
+        }
+        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
+        int set_index = layout->getSetIndex( set->vk()->getSetLayout() );
+        return bind( set_index, set->vk() );
+    }
+
+    bool CommandBuffer::bind( int32_t set_index, const vk::ShaderSet* set )
+    {
+        if ( set == nullptr )
+        {
+            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
+            return false;
+        }
+        vkCmdBindDescriptorSets
+        (
+            _handle,
+            _current_pipeline_bindpoint,
+            _pipeline_layout,
+            set_index,
+            1, &set->handle(),
+            0, nullptr
+        );
+        return true;
+    }
+
+    void CommandBuffer::setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )
+    {
+        VkShaderStageFlags stage_flags = convertShaderStageMask( stages );
+        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
+        vkCmdPushConstants( _handle, layout->handle(), stage_flags, offset, size, data );
+    }
+
+    void CommandBuffer::bindShaderPipeline( const ref::ShaderPipeline& shader_pipeline )
+    {
+        _curr_bind_pipeline = shader_pipeline->vk();
+        if ( !_curr_bind_pipeline )
+        {
+            _curr_bind_pipeline = nullptr;
+            kege::Log::error << "Invalid pipeline handle in bindGraphicsPipeline." <<Log::nl;
+             return;
+        }
+
+        vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, _curr_bind_pipeline->handle() );
+
+        if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Graphics ) {
+            _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        }
+        else if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Compute ) {
+            _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+        }
+        _pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk()->handle();
+    }
+
+
+
+
+
+
     PFN_vkCmdBeginRendering vk::CommandBuffer::vkCmdBeginRenderingPfn = nullptr;
     PFN_vkCmdEndRendering vk::CommandBuffer::vkCmdEndRenderingPfn = nullptr;
 
@@ -285,7 +359,7 @@ namespace kege::vk{
         }
 
         _is_recording = true;
-        _current_pipeline_layout = nullptr;
+        _curr_bind_pipeline = nullptr;
         return true;
     }
 
@@ -457,41 +531,6 @@ namespace kege::vk{
         vkCmdEndRenderingPfn( _handle ); // Assuming core 1.3 or KHR loaded
     }
 
-    // --- State Binding ---
-    void vk::CommandBuffer::bindGraphicsPipeline( PipelineHandle pipeline_handle )
-    {
-        if (!_is_recording || !_handle) return;
-
-        const GraphicsPipeline* pipeline = _device->getGraphicsPipeline( pipeline_handle );
-        if ( !pipeline )
-        {
-            kege::Log::error << "Invalid pipeline handle in bindGraphicsPipeline." <<Log::nl;
-             return;
-        }
-
-        vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline );
-
-        // Store layout for subsequent binds/push constants
-        _current_pipeline_layout = _device->getPipelineLayout( pipeline->desc.pipeline_layout.id );
-        _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    }
-
-    void vk::CommandBuffer::bindComputePipeline(PipelineHandle pipeline_handle)
-    {
-         if (!_is_recording || !_handle) return;
-        const ComputePipeline* pipeline = _device->getComputePipeline(pipeline_handle);
-        if (!pipeline)
-        {
-            kege::Log::error << "Invalid pipeline handle in bindComputePipeline." <<Log::nl;
-             return;
-        }
-
-        vkCmdBindPipeline(_handle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->pipeline);
-
-        _current_pipeline_layout = _device->getPipelineLayout( pipeline->desc.pipeline_layout.id );
-        _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
-    }
-
     void vk::CommandBuffer::bindVertexBuffers
     (
         uint32_t first_binding,
@@ -536,13 +575,6 @@ namespace kege::vk{
         VkIndexType index_type = use_uint16 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32;
         vkCmdBindIndexBuffer( _handle, b->getSource( frame ).handle, static_cast<VkDeviceSize>(offset), index_type);
     }
-
-    void CommandBuffer::setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )
-    {
-        VkShaderStageFlags stage_flags = convertShaderStageMask( stages );
-        vkCmdPushConstants( _handle, _current_pipeline_layout->layout, stage_flags, offset, size, data );
-    }
-
 
     void vk::CommandBuffer::setViewport(const Viewport& viewport)
     {

@@ -9,7 +9,6 @@
 #define vulkan_command_encoder_hpp
 
 #include "vk-utils.hpp"
-#include "vk-pipeline-layout-manager.hpp"
 
 namespace kege::vk{
 
@@ -26,8 +25,75 @@ namespace kege::vk{
     class CommandEncoder final : public kege::CommandEncoder {
     public:
 
-        bool bind( const std::vector< kege::ShaderBinding >& shader_bindings )override;
-        bool bind( const kege::ShaderBinding& shader_binding )override;
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( int32_t set_index, const ref::ShaderSet& set ) override;
+
+        /**
+         * @brief Binds a shader set to the command buffer.
+         *
+         * @param set The shader set object to bind.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( const ref::ShaderSet& set ) override;
+
+        /**
+         * @brief Binds a Vulkan shader set to the command buffer.
+         *
+         * @param set_index The index location where the shader set will be bind.
+         * @param set Pointer to the vk::ShaderSet object.
+         * @return True if binding succeeded, false otherwise.
+         */
+        bool bind( int32_t set_index, const vk::ShaderSet* set );
+
+        /**
+         * @brief Sets push constant data for the command buffer.
+         *
+         * @param stages Shader stages that will access the push constants.
+         * @param offset Offset (in bytes) into the push constant range.
+         * @param size Size (in bytes) of the push constant data.
+         * @param data Pointer to the push constant data.
+         */
+        void setPushBlock( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )override;
+
+        /**
+         * @brief Binds a Vulkan index buffer to the command buffer.
+         *
+         * @param buffer Opaque handle to the index buffer object.
+         * @param offset Offset (in bytes) into the index buffer.
+         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
+         * false if it contains 32-bit unsigned integers.
+         */
+        void bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16) override;
+
+        /**
+         * @brief Binds one or more vertex buffers to the command buffer.
+         *
+         * @param first_binding The first vertex buffer binding slot to use.
+         * @param buffers Vector of opaque handles to the vertex buffer objects.
+         * @param offsets Vector of offsets (in bytes) into each vertex buffer. Must have the same size as `buffer_handles`.
+         */
+        void bindVertexBuffers
+        (
+            uint32_t first_binding,
+            const std::vector< ref::Buffer >& buffers,
+            const std::vector< uint64_t >& offsets
+        )
+        override;
+
+        /**
+         * @brief Binds a Vulkan graphics pipeline to the command buffer.
+         *
+         * @param pipeline Opaque handle to the graphics pipeline object.
+         */
+        void bindShaderPipeline(const ref::ShaderPipeline& pipeline) override;
+
+
 
         /**
          * @brief Issues a non-indexed draw command.
@@ -70,48 +136,6 @@ namespace kege::vk{
          */
         void dispatch(uint32_t group_count_x, uint32_t group_count_y, uint32_t group_count_z) override;
 
-        // --- IGraphicsCommandBuffer Interface Implementation ---
-
-        /**
-         * @brief Binds one or more vertex buffers to the command buffer.
-         *
-         * @param first_binding The first vertex buffer binding slot to use.
-         * @param buffers Vector of opaque handles to the vertex buffer objects.
-         * @param offsets Vector of offsets (in bytes) into each vertex buffer. Must have the same size as `buffer_handles`.
-         */
-        void bindVertexBuffers
-        (
-            uint32_t first_binding,
-            const std::vector< ref::Buffer >& buffers,
-            const std::vector< uint64_t >& offsets
-        )
-        override;
-
-        /**
-         * @brief Binds a Vulkan index buffer to the command buffer.
-         *
-         * @param buffer Opaque handle to the index buffer object.
-         * @param offset Offset (in bytes) into the index buffer.
-         * @param use_uint16 True if the index buffer contains 16-bit unsigned integers,
-         * false if it contains 32-bit unsigned integers.
-         */
-        void bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16) override;
-
-        void setPushConstants( ShaderStageFlag stages, uint32_t offset, uint32_t size, const void *data )override;
-
-        /**
-         * @brief Binds a Vulkan graphics pipeline to the command buffer.
-         *
-         * @param pipeline_handle Opaque handle to the graphics pipeline object.
-         */
-        void bindGraphicsPipeline(PipelineHandle pipeline_handle) override;
-
-        /**
-         * @brief Binds a Vulkan compute pipeline to the command buffer.
-         *
-         * @param pipeline_handle Opaque handle to the compute pipeline object.
-         */
-        void bindComputePipeline(PipelineHandle pipeline_handle) override;
 
         /**
          * @brief Sets the viewport for rendering.
@@ -220,7 +244,7 @@ namespace kege::vk{
          *
          * Assumes that the texture layout is suitable for clearing.
          *
-         * @param texture ref to the texture to clear.
+         * @param image ref to the texture to clear.
          * @param depth The depth value to clear to.
          * @param stencil The stencil value to clear to.
          * @param ranges Vector of texture subresource ranges to clear.
@@ -258,8 +282,10 @@ namespace kege::vk{
 
     private:
 
-        const vk::PipelineLayout* _current_pipeline_layout;
+
+        const vk::ShaderPipeline* _curr_bind_pipeline;
         VkPipelineBindPoint _current_pipeline_bindpoint;
+        VkPipelineLayout _pipeline_layout;
 
         vk::CommandBuffer* _command_buffer;
         VkCommandBuffer _handle;

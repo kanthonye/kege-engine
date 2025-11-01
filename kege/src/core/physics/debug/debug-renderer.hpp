@@ -10,7 +10,7 @@
 
 #include "../../graphics/render/graph/render-graph.hpp"
 #include "../../system/system.hpp"
-#include "../../engine/engine.hpp"
+#include "../../ecs/entity-system-manager.hpp"
 #include "draw-commands.hpp"
 
 namespace kege {

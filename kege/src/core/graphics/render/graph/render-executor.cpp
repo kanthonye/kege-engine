@@ -5,9 +5,9 @@
 //  Created by Kenneth Esdaile on 9/8/25.
 //
 
-#include "../../../engine/engine.hpp"
 #include "../../mesh/mesh-cuboid.hpp"
 #include "../../mesh/mesh-ellipsoid.hpp"
+#include "render-graph.hpp"
 #include "render-executor.hpp"
 
 namespace kege{
@@ -39,12 +39,12 @@ namespace kege{
         return _render_queue;
     }
 
-    void RenderExecutor::drawObjects( CommandEncoder* encoder, RenderStage* pass, const ShaderPipeline& pipeline, const std::vector< RenderObject >& objects )
+    void RenderExecutor::drawObjects( CommandEncoder* encoder, RenderStage* pass, const ref::ShaderPipeline& pipeline, const std::vector< RenderObject >& objects )
     {
-        encoder->bindGraphicsPipeline( pipeline.handle() );
-        
-        for ( const PipelineResourceBinding& binding : pipeline->global_resources )
-        {
+        encoder->bindShaderPipeline( pipeline );
+
+//        for ( const PipelineResourceBinding& binding : pipeline->global_resources )
+//        {
 //            //TODO: switch ( binding.type )
 //            {
 //                case BindingType::SHADER_RESOURCE:
@@ -75,8 +75,8 @@ namespace kege{
 //                case BindingType::PUSH_CONSTANTS:
 //                {
 //                    //const PushConstant* constant = pass->fetchPushConstant( binding.name );
-//                    //encoder->setPushConstants( constant.stages, constant.offset, constants.size, constants.data );
-//                    Log::error << "TODO: encoder->setPushConstants( ... )" << Log::nl;
+//                    //encoder->setPushBlock( constant.stages, constant.offset, constants.size, constants.data );
+//                    Log::error << "TODO: encoder->setPushBlock( ... )" << Log::nl;
 //                    return;
 //                    break;
 //                }
@@ -86,19 +86,19 @@ namespace kege{
 //                    return;
 //                    break;
 //            }
-        }
+//        }
         
         for ( const RenderObject& object : objects )
         {
             if ( object.material )
             {
-                if ( object.material->resource )
-                {
-                    encoder->bind( object.material->resource->getShaderBindings() );
-                }
+//                if ( object.material->resource )
+//                {
+//                    encoder->bind( object.material->resource->getShaderBindings() );
+//                }
             }
 
-            encoder->setPushConstants
+            encoder->setPushBlock
             (
                 object.constant.stages,
                 object.constant.offset,
@@ -259,12 +259,12 @@ namespace kege{
 
         if ( pass->hasFixedPipelines() )
         {
-            const std::vector< ShaderPipeline >& pipelines = pass->getShaderPipelines();
-            for ( const ShaderPipeline& pipeline : pipelines )
+            const std::vector< ref::ShaderPipeline >& pipelines = pass->getShaderPipelines();
+            for ( const ref::ShaderPipeline& pipeline : pipelines )
             {
                 for ( kege::RenderPassQueue::iterator i = queue.objects.begin(); i != queue.objects.end(); i++ )
                 {
-                    drawObjects( encoder, pass, pipeline, i->second.second );
+                    drawObjects( encoder, pass, pipeline, i->second );
                 }
             }
         }
@@ -273,7 +273,7 @@ namespace kege{
             for ( kege::RenderPassQueue::iterator i = queue.objects.begin(); i != queue.objects.end(); i++ )
             {
                 const RenderPassQueue::RenderObjects& objects = i->second;
-                drawObjects( encoder, pass, objects.first, objects.second );
+                drawObjects( encoder, pass, i->first, objects );
             }
         }
     }

@@ -1,0 +1,232 @@
+{
+   "asset": {
+      "version": "1.0",
+      "generator": "My ECS Editor v1.0",
+      "copyright": "Copyright 2025"
+   },
+
+   "scene": 0,
+   "scenes": [
+      {
+         "name": "Main Scene",
+         "entities": [0, 1, 2, 3]
+      }
+   ],
+
+   "entities": [
+      {
+         "name": "Player",
+         "components": [0, 1, 2]
+      },
+      {
+         "name": "Enemy",
+         "components": [3, 4, 5],
+         "children": [2]
+      },
+      {
+         "name": "Weapon",
+         "components": [6, 7]
+      },
+      {
+         "name": "Camera",
+         "components": [8, 9]
+      }
+   ],
+
+   "componentTypes": [
+      {
+         "name": "Transform",
+         "schema": {
+            "position": "vec3",
+            "rotation": "quat",
+            "scale": "vec3"
+         }
+      },
+      {
+         "name": "Renderable",
+         "schema": {
+            "mesh": "uint32",
+            "material": "uint32"
+         }
+      },
+      {
+         "name": "RigidBody",
+         "schema": {
+            "mass": "float",
+            "velocity": "vec3",
+            "angularVelocity": "vec3"
+         }
+      },
+      {
+         "name": "Health",
+         "schema": {
+            "current": "float",
+            "maximum": "float"
+         }
+      },
+      {
+         "name": "AIController",
+         "schema": {
+            "state": "string",
+            "target": "uint32",
+            "aggroRange": "float"
+         }
+      }
+   ],
+
+   "components": [
+      {
+         "type": 0,
+         "data": {
+            "position": [0, 0, 0],
+            "rotation": [0, 0, 0, 1],
+            "scale": [1, 1, 1]
+         }
+      },
+      {
+         "type": 1,
+         "data": {
+            "mesh": 0,
+            "material": 0
+         }
+      },
+      {
+         "type": 2,
+         "data": {
+            "mass": 70.0,
+            "velocity": [0, 0, 0],
+            "angularVelocity": [0, 0, 0]
+         }
+      },
+      {
+         "type": 0,
+         "data": {
+            "position": [10, 0, 5],
+            "rotation": [0, 0.707, 0, 0.707],
+            "scale": [1, 1, 1]
+         }
+      },
+      {
+         "type": 1,
+         "data": {
+            "mesh": 1,
+            "material": 1
+         }
+      },
+      {
+         "type": 4,
+         "data": {
+            "state": "patrol",
+            "target": 0,
+            "aggroRange": 15.0
+         }
+      },
+      {
+         "type": 0,
+         "data": {
+            "position": [0.5, 0, 0.2],
+            "rotation": [0, 0, 0, 1],
+            "scale": [0.5, 0.5, 0.5]
+         }
+      },
+      {
+         "type": 1,
+         "data": {
+            "mesh": 2,
+            "material": 2
+         }
+      },
+      {
+         "type": 0,
+         "data": {
+            "position": [0, 2, -10],
+            "rotation": [0, 1, 0, 0],
+            "scale": [1, 1, 1]
+         }
+      },
+      {
+         "type": 1,
+         "data": {
+            "mesh": 3,
+            "material": 3
+         }
+      }
+   ],
+
+   "meshes": [
+      {
+         "name": "PlayerMesh",
+         "primitives": [
+            {
+               "attributes": {
+                  "POSITION": 0,
+                  "NORMAL": 1,
+                  "TEXCOORD_0": 2
+               },
+               "indices": 3
+            }
+         ]
+      }
+   ],
+
+   "materials": [
+      {
+         "name": "PlayerMaterial",
+         "pbrMetallicRoughness": {
+            "baseColorFactor": [0.8, 0.2, 0.2, 1.0],
+            "metallicFactor": 0.0,
+            "roughnessFactor": 0.5
+         }
+      }
+   ],
+
+   "buffers": [
+      {
+         "uri": "scene_data.bin",
+         "byteLength": 1024000
+      }
+   ],
+
+   "bufferViews": [
+      {
+         "buffer": 0,
+         "byteOffset": 0,
+         "byteLength": 36000,
+         "target": 34962
+      }
+   ],
+
+   "accessors": [
+      {
+         "bufferView": 0,
+         "byteOffset": 0,
+         "componentType": 5126,
+         "count": 1000,
+         "type": "VEC3",
+         "min": [-1.0, -1.0, -1.0],
+         "max": [1.0, 1.0, 1.0]
+      }
+   ],
+
+   "systems": [
+      {
+         "name": "PhysicsSystem",
+         "priority": 100,
+         "components": ["Transform", "RigidBody"]
+      },
+      {
+         "name": "RenderSystem",
+         "priority": 200,
+         "components": ["Transform", "Renderable"]
+      },
+      {
+         "name": "AISystem",
+         "priority": 50,
+         "components": ["Transform", "AIController"]
+      }
+   ],
+
+   "extensions": {},
+   "extensionsUsed": [],
+   "extensionsRequired": []
+}

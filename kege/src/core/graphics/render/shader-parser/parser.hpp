@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include "tokenizer.hpp"
 #include "shader-data-types.hpp"
-#include "shader-set-binding-point.hpp"
+#include "shader-binding-point-set.hpp"
 #include "shader-constant-binding-point.hpp"
 
 #include "shader-reflect.hpp"

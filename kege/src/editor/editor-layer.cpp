@@ -21,25 +21,14 @@ namespace kege{
 
     bool EditorLayer::initialize()
     {
-//        kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
-//        ShaderPipeline pipeline = _graphics->getShaderPipelineManager()->load( shader_file.c_str() );
-//        if( !pipeline )
-//        {
-//            kege::Log::error << "Failed to load pipeline -> " << shader_file << Log::nl;
-//            return false;
-//        }
-//
-//        kege::Font font = ui::FontCreator::create
-//        (
-//            _graphics, 8, 16,
-//            vfs( "assets/fonts/monaco.tga" ).c_str()
-//        );
-//        if( !font )
-//        {
-//            kege::Log::error << "Failed to create font." << Log::nl;
-//            return false;
-//        }
+        kege::Font font = ui::FontCreator::create( _graphics, 8, 16, vfs( "assets/fonts/monaco.tga" ).c_str() );
+        if( !font )
+        {
+            kege::Log::error << "Failed to create font." << Log::nl;
+            return false;
+        }
 
+        uint64_t gui_pipeline_handle = _asset_manager->getId< ref::ShaderPipeline >( "gui" );
 //        ImageInfo scene_image_info = ImageInfo
 //        {
 //            .image = _engine.renderGraph()->fetchImage( "scene_color" ),
@@ -47,7 +36,7 @@ namespace kege{
 //            .sampler = _engine.renderGraph()->fetchSampler( "sampler-nearest-norep" )
 //        };
 
-//        if ( !_viewer.initialize( _engine.graphics().get(), pipeline, font, scene_image_info ) )
+//        if ( !_viewer.initialize( _graphics, pipeline, font, scene_image_info ) )
 //        {
 //            return false;
 //        }
@@ -179,8 +168,9 @@ namespace kege{
 //        _viewer.collectVisibleWidgets( _engine.renderManager().getModule(), _layout );
 //    }
 
-    EditorLayer::EditorLayer( kege::Graphics* g, kege::ProjectManager* pm )
+    EditorLayer::EditorLayer( kege::AssetManager* am, kege::Graphics* g, kege::ProjectManager* pm )
     :   kege::AppLayer( "EditorLayer" )
+    ,   _asset_manager( am )
     ,   _project_manager( pm )
     ,   _graphics( g )
     ,   _paused( false )

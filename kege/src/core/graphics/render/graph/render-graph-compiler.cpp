@@ -200,32 +200,32 @@ namespace kege {
 //        return ImageLayout::Undefined;
 //    }
 
-    void emitBarrier
-    (
-        BarrierDescriptions* barriers, RgResrcHandle handle,
-        PipelineStageFlag src_stage, AccessFlags src_access, ImageLayout old_layout,
-        PipelineStageFlag dst_stage, AccessFlags dst_access, ImageLayout new_layout
-    )
-    {
-        // Decide whether we actually need a barrier:
-        bool layout_changed = (old_layout != new_layout);
-        bool access_changed = (src_access != dst_access);
-        bool stage_changed  = (src_stage  != dst_stage );
-
-        if (layout_changed || access_changed || stage_changed)
-        {
-            RgResrcBarrierInfo barrier{};
-            barrier.src_stage_mask = src_stage;
-            barrier.dst_stage_mask = dst_stage;
-            barrier.src_access_mask = src_access;
-            barrier.dst_access_mask = dst_access;
-            barrier.old_layout = old_layout;
-            barrier.new_layout = new_layout;
-            barrier.resource_handle = handle;
-
-            barriers->push_back( barrier );
-        }
-    };
+//    void emitBarrier
+//    (
+//        BarrierDescriptions* barriers, RgResrcHandle handle,
+//        PipelineStageFlag src_stage, AccessFlags src_access, ImageLayout old_layout,
+//        PipelineStageFlag dst_stage, AccessFlags dst_access, ImageLayout new_layout
+//    )
+//    {
+//        // Decide whether we actually need a barrier:
+//        bool layout_changed = (old_layout != new_layout);
+//        bool access_changed = (src_access != dst_access);
+//        bool stage_changed  = (src_stage  != dst_stage );
+//
+//        if (layout_changed || access_changed || stage_changed)
+//        {
+//            RgResrcBarrierInfo barrier{};
+//            barrier.src_stage_mask = src_stage;
+//            barrier.dst_stage_mask = dst_stage;
+//            barrier.src_access_mask = src_access;
+//            barrier.dst_access_mask = dst_access;
+//            barrier.old_layout = old_layout;
+//            barrier.new_layout = new_layout;
+//            barrier.resource_handle = handle;
+//
+//            barriers->push_back( barrier );
+//        }
+//    };
 
     RgResrcUsage readImageUsage( const ImageUsage& usage )
     {
@@ -483,7 +483,7 @@ namespace kege {
         // when their first pass begins, especially those created during
         // setup (e.g., scene color, depth, swapchain attachments).
         //---------------------------------------------------------------------
-        kege::CommandBuffer* command = _graph->_graphics->createCommandBuffer( QueueType::Graphics );
+        ref::CommandBuffer command = _graph->_graphics->createCommandBuffer( QueueType::Graphics );
         command->beginCommands( CommandBufferUsage::OneTimeSubmit );
         for (auto& m : last_usage )
         {
@@ -502,7 +502,7 @@ namespace kege {
         }
         command->endCommands();
         _graph->_graphics->submit({ .command_buffer = command });
-        _graph->_graphics->destroyCommandBuffer( command );
+        command.clear();
     }
 
     bool RenderGraphCompiler::resolveResosurceLinks()
@@ -664,7 +664,7 @@ namespace kege {
                     case RgResrcType::ShaderResource:
                     {
                         RgShaderResrcDefn* def = _graph->_asset_manager.get< RgShaderResrcDefn >( read.handle );
-                        if ( def->physical_handles.empty() )
+                        if ( def->physical_handle )
                         {
                             _graph->createShaderResource( def );
                         }

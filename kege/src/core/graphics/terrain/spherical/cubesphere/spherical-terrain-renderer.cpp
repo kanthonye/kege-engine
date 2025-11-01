@@ -96,122 +96,124 @@ namespace kege{
 
     SphericalTerrainRenderer::Batch SphericalTerrainRenderer::mapBatch( int index )
     {
-        kege::Ref< ShaderResrc >& sr = this->sources[ index ]->instance_buffer_list->buffers[0].resource;
-        void* patchs = (*sr)[0][0].uniform.buffers[0].buffer->map();
-        void* draw_commands = this->sources[ index ]->indirect_draw_buffer_list->buffers[0].buffer->map();
-
-        return Batch
-        {
-            .draw_commands = reinterpret_cast< kege::IndexDrawCommand* >( draw_commands ),
-            .patchs = reinterpret_cast< kege::vec4* >( patchs ),
-            .capacity = _max_draw_count,
-            .index = index
-        };
+//        kege::Ref< ShaderResrc >& sr = this->sources[ index ]->instance_buffer_list->buffers[0].resource;
+//        void* patchs = (*sr)[0][0].uniform.buffers[0].buffer->map();
+//        void* draw_commands = this->sources[ index ]->indirect_draw_buffer_list->buffers[0].buffer->map();
+//
+//        return Batch
+//        {
+//            .draw_commands = reinterpret_cast< kege::IndexDrawCommand* >( draw_commands ),
+//            .patchs = reinterpret_cast< kege::vec4* >( patchs ),
+//            .capacity = _max_draw_count,
+//            .index = index
+//        };
+        return {};
     }
 
     void SphericalTerrainRenderer::endBatch()
     {
-        if ( _current_batch.draw_commands != nullptr )
-        {
-            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].offset = 0;
-            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].count = _patch_count;
-
-            kege::Ref< ShaderResrc >& sr =this->sources[ _current_batch.index ]->instance_buffer_list->buffers[0].resource;
-            (*sr)[0][0].uniform.buffers[0].buffer->unmap();
-
-            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].buffer->unmap();
-
-            _current_batch.draw_commands = nullptr;
-            _current_batch.patchs = nullptr;
-            _current_batch.capacity = 0;
-            _current_batch.index = 0;
-        }
+//        if ( _current_batch.draw_commands != nullptr )
+//        {
+//            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].offset = 0;
+//            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].count = _patch_count;
+//
+//            kege::Ref< ShaderResrc >& sr =this->sources[ _current_batch.index ]->instance_buffer_list->buffers[0].resource;
+//            (*sr)[0][0].uniform.buffers[0].buffer->unmap();
+//
+//            this->sources[ _current_batch.index ]->indirect_draw_buffer_list->buffers[0].buffer->unmap();
+//
+//            _current_batch.draw_commands = nullptr;
+//            _current_batch.patchs = nullptr;
+//            _current_batch.capacity = 0;
+//            _current_batch.index = 0;
+//        }
     }
 
     SphericalTerrainRenderer::Batch SphericalTerrainRenderer::newBatch()
     {
-        endBatch();
-
-        int index = static_cast< int >( this->sources.size() );
-        size_t patch_buffer_size = _max_draw_count * _patch_stride;
-
-        MeshSourceRef mesh_source = new MeshSource
-        (
-            _mesh_primitive,
-            new IndirectDrawBufferList
-            ({
-                IndirectDrawBuffer
-                {
-                    .count = 0,
-                    .offset = 0,
-                    .stride = _draw_command_stride,
-                    .buffer = _graphics->createBuffer
-                    ({
-                        .size = _max_draw_count * _draw_command_stride,
-                        .data = nullptr,
-                        .usage = BufferUsages::IndirectBuffer,
-                        .memory_usage = MemoryUsage::CpuToGpu,
-                        .name = "terrain_draw_buffer"
-                    })
-                }
-            }),
-            new InstanceBufferList
-            ({
-                InstanceBuffer
-                {
-                    .resource = new ShaderResrc(UniformResourceLayout{
-                        .descriptors = UniformDescriptorSets
-                        {
-                            UniformDescriptorSet
-                            {
-                                .set = 1,
-                                .descriptors =
-                                {
-                                    UniformDescriptor
-                                    {
-                                        .count = 1,
-                                        .binding = 0,
-                                        .name = "terrain_draw_buffer",
-                                        .descriptor_type = DescriptorType::StorageBuffer,
-                                    }
-                                }
-                            }
-                        },
-                        .resources = UniformResourceSets
-                        {
-                            UniformResourceSet
-                            {
-                                UniformResource
-                                {
-                                    .binding = 0,
-                                    .uniform = BufferBindings
-                                    {
-                                        BufferInfo
-                                        {
-                                            .offset = 0,
-                                            .range = patch_buffer_size,
-                                            .buffer = _graphics->createBuffer
-                                            ({
-                                                .size = patch_buffer_size,
-                                                .data = nullptr,
-                                                .usage = BufferUsages::StorageBuffer,
-                                                .memory_usage = MemoryUsage::CpuToGpu,
-                                                .name = "terrain_patch_buffer"
-                                            })
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        .graphics = _graphics
-                    })
-                }
-            })
-        );
-        mesh_source->material_index = 0;
-        this->sources.push_back( mesh_source );
-
-        return mapBatch( index );
+//        endBatch();
+//
+//        int index = static_cast< int >( this->sources.size() );
+//        size_t patch_buffer_size = _max_draw_count * _patch_stride;
+//
+//        MeshSourceRef mesh_source = new MeshSource
+//        (
+//            _mesh_primitive,
+//            new IndirectDrawBufferList
+//            ({
+//                IndirectDrawBuffer
+//                {
+//                    .count = 0,
+//                    .offset = 0,
+//                    .stride = _draw_command_stride,
+//                    .buffer = _graphics->createBuffer
+//                    ({
+//                        .size = _max_draw_count * _draw_command_stride,
+//                        .data = nullptr,
+//                        .usage = BufferUsages::IndirectBuffer,
+//                        .memory_usage = MemoryUsage::CpuToGpu,
+//                        .name = "terrain_draw_buffer"
+//                    })
+//                }
+//            }),
+//            new InstanceBufferList
+//            ({
+//                InstanceBuffer
+//                {
+//                    .resource = new ShaderResrc(UniformResourceLayout{
+//                        .descriptors = UniformDescriptorSets
+//                        {
+//                            UniformDescriptorSet
+//                            {
+//                                .set = 1,
+//                                .descriptors =
+//                                {
+//                                    UniformDescriptor
+//                                    {
+//                                        .count = 1,
+//                                        .binding = 0,
+//                                        .name = "terrain_draw_buffer",
+//                                        .descriptor_type = DescriptorType::StorageBuffer,
+//                                    }
+//                                }
+//                            }
+//                        },
+//                        .resources = UniformResourceSets
+//                        {
+//                            UniformResourceSet
+//                            {
+//                                UniformResource
+//                                {
+//                                    .binding = 0,
+//                                    .uniform = BufferBindings
+//                                    {
+//                                        BufferInfo
+//                                        {
+//                                            .offset = 0,
+//                                            .range = patch_buffer_size,
+//                                            .buffer = _graphics->createBuffer
+//                                            ({
+//                                                .size = patch_buffer_size,
+//                                                .data = nullptr,
+//                                                .usage = BufferUsages::StorageBuffer,
+//                                                .memory_usage = MemoryUsage::CpuToGpu,
+//                                                .name = "terrain_patch_buffer"
+//                                            })
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        },
+//                        .graphics = _graphics
+//                    })
+//                }
+//            })
+//        );
+//        mesh_source->material_index = 0;
+//        this->sources.push_back( mesh_source );
+//
+//        return mapBatch( index );
+        return {};
     }
 
     void SphericalTerrainRenderer::begin()

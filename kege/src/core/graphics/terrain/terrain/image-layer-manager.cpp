@@ -53,10 +53,10 @@ namespace kege{
 //        _resource_binding_sets[ _current_image_index ].resources[1].image->copyFrom(4 * size, data[1], layer.image_layer, 0 );
     }
 
-    const ShaderResrc& ImageLayerManager::getShaderResource()const
-    {
-        return _shader_resource;
-    }
+//    const ref::Shader& ImageLayerManager::getShaderResource()const
+//    {
+//        return _shader_resource;
+//    }
 
     void ImageLayerManager::freeHeightmap( ImageLayer& layer )
     {
@@ -68,44 +68,44 @@ namespace kege{
         }
     }
 
-    std::vector< ImageInfo > ImageLayerManager::createNewImageArray( int width, int height, int layers )
+    kege::ImageBindings ImageLayerManager::createNewImageArray( int width, int height, int layers )
     {
 //        size_t size = sq( _image_width ) * _image_layers;
 
-        std::vector< ImageInfo > bindings =
+        kege::ImageBindings bindings =
         {
-            ImageInfo
-            {
-                .image = _graphics->createImage
-                ({
-                    .type = ImageType::Type2D,
-                    .extent = {_image_width,_image_width, 1 },
-                    .array_layers = _image_layers,
-                    .mip_levels = 1,
-                    .format = Format::r_f32,
-                    .samples = SampleCount::Count1,
-                    .usage = ImageUsage::TransferDst,
-                    .memory_usage = MemoryUsage::GpuOnly,
-                    .data =  nullptr
-                }),
-                .sampler = _sampler,
-            },
-            ImageInfo
-            {
-                .image = _graphics->createImage
-                ({
-                    .type = ImageType::Type2D,
-                    .extent = {_image_width,_image_width, 1 },
-                    .array_layers = _image_layers,
-                    .mip_levels = 1,
-                    .format = Format::rgba_8_srgb,
-                    .samples = SampleCount::Count1,
-                    .usage = ImageUsage::TransferDst,
-                    .memory_usage = MemoryUsage::GpuOnly,
-                    .data =  nullptr
-                }),
-                .sampler = _sampler,
-            },
+//            ImageInfo
+//            {
+//                .image = _graphics->createImage
+//                ({
+//                    .type = ImageType::Type2D,
+//                    .extent = {_image_width,_image_width, 1 },
+//                    .array_layers = _image_layers,
+//                    .mip_levels = 1,
+//                    .format = Format::r_f32,
+//                    .samples = SampleCount::Count1,
+//                    .usage = ImageUsage::TransferDst,
+//                    .memory_usage = MemoryUsage::GpuOnly,
+//                    .data =  nullptr
+//                }),
+//                .sampler = _sampler,
+//            },
+//            ImageInfo
+//            {
+//                .image = _graphics->createImage
+//                ({
+//                    .type = ImageType::Type2D,
+//                    .extent = {_image_width,_image_width, 1 },
+//                    .array_layers = _image_layers,
+//                    .mip_levels = 1,
+//                    .format = Format::rgba_8_srgb,
+//                    .samples = SampleCount::Count1,
+//                    .usage = ImageUsage::TransferDst,
+//                    .memory_usage = MemoryUsage::GpuOnly,
+//                    .data =  nullptr
+//                }),
+//                .sampler = _sampler,
+//            },
 //            Graphics::createImage2DArray
 //            (
 //                IMAGE_ASPECT_COLOR,
@@ -154,7 +154,7 @@ namespace kege{
         _current_image_index = (uint32_t) _image_layer_counters.size();
         _image_layer_counters.push_back( 0 );
 
-        std::vector< ImageInfo > images = createNewImageArray( _image_width, _image_height, _image_layers );
+        kege::ImageBindings images = createNewImageArray( _image_width, _image_height, _image_layers );
         //_writes[ _current_image_index ].image_info = images;
         //_graphics->updateDescriptorSets( _writes );
         return true;
@@ -201,7 +201,7 @@ namespace kege{
         _image_height = image_height;
         _image_layers = image_layers;
 
-        std::vector< ImageInfo > images = createNewImageArray( _image_width, _image_height, _image_layers );
+        kege::ImageBindings images = createNewImageArray( _image_width, _image_height, _image_layers );
         //_writes.resize( _max_shader_resource_capacity );
 
 //        _shader_resource = _graphics->allocateDescriptorSet

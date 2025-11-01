@@ -1,0 +1,173 @@
+
+{
+  
+  "components": [
+    {
+      "type": 0,
+      "data": {
+        "position": [0, 0, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      }
+    },
+    {
+      "type": "Planet",
+      "data": 
+      {
+        "mass": 5.972e24,
+        "atmosphereHeight": 100000.0,
+        "atmosphereColor": [0.53, 0.81, 0.92, 0.3],
+        "rotationSpeed": 0.0000727,
+        "axialTilt": 23.5,
+        "oceanLevel": 0.5,
+        "hasAtmosphere": true,
+        "hasClouds": true,
+        "cloudHeight": 10000.0
+      }
+    },
+    {
+      "type": "SphericalTerrain",
+      "data": 
+      {
+        "radius": 6371000.0,
+        "lodLevels": 6,
+        "max_subdivisions": 8,
+        "heightmapTexture": 0,
+        "normalMapTexture": 1,
+        "detailDistance": 50000.0,
+        "chunkSize": 256
+      }
+    },
+    {
+      "type": "TerrainGenerator",
+      "data": 
+      {
+        "generator": 0,
+      }
+    },
+    {
+      "type": 0,
+      "data": {
+        "position": [-200000, 0, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      }
+    },
+    {
+      "type": 1,
+      "data": {
+        "radius": 69911000.0,
+        "mass": 1.898e27,
+        "atmosphereHeight": 5000000.0,
+        "atmosphereColor": [0.87, 0.72, 0.53, 0.8],
+        "rotationSpeed": 0.000176,
+        "axialTilt": 3.1,
+        "oceanLevel": 0.0,
+        "hasAtmosphere": true,
+        "hasClouds": false,
+        "cloudHeight": 0.0
+      }
+    },
+  ],
+
+	"terrain-generators":
+	[
+	   {
+	      "name": "topography",
+	      "layers":
+	      [
+	         {
+	            "name": "BaseContinent",
+	            "generator": 0,
+	            "weight": 1.0,
+	            "operation": "add",
+	         },
+	         {
+	            "name": "Mountains",
+	            "generator": 1,
+	            "weight": 0.8,
+	            "operation": "add",
+	            "mask":
+	            {
+	               "type": "elevation",
+	               "range": [0.3, 1.0]
+	            }
+	         },
+	         {
+	            "name": "Details",
+	            "generator": 2,
+	            "weight": 0.5,
+	            "operation": "multiply"
+	         }
+	      ],
+	      "generators":
+	      [
+	         {
+	            "name": "ContinentNoise",
+	            "type": "ridged-multifractal",
+	            "parameters":
+	            {
+	               "seed": 42,
+	               "octaves": 8,
+	               "frequency": 0.0001,
+	               "amplitude": 8000.0,
+	               "lacunarity": 2.5,
+	               "persistence": 0.5,
+	               "warp": true,
+	               "warp_strength": 0.15,
+	            }
+	         },
+	         {
+	            "name": "MountainNoise",
+	            "type": "fbm",
+	            "parameters":
+	            {
+	               "seed": 42,
+	               "octaves": 8,
+	               "frequency": 0.002,
+	               "amplitude": 3000.0,
+	               "lacunarity": 2.5,
+	               "persistence": 0.45,
+	               "domainWarp": true,
+	               "warpStrength": 0.15,
+	            }
+	         },
+	         {
+	            "name": "DetailNoise",
+	            "type": "simplex",
+	            "parameters":
+	            {
+	               "seed": 42,
+	               "octaves": 3,
+	               "frequency": 0.05,
+	               "amplitude": 50.0,
+	               "lacunarity": 2.5,
+	               "persistence": 0.45,
+	               "domainWarp": false,
+	               "warpStrength": 0.15,
+	            }
+	         }
+	      ],
+	   }
+	]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

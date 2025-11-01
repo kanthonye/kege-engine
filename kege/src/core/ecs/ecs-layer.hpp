@@ -23,7 +23,7 @@ namespace kege{
         void shutdown();
         void update();
 
-        ECSLayer( ref::InputContextManager icm, ref::RenderGraph rg, const ref::ProjectManager& pm );
+        ECSLayer( ref::InputContextManager icm, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm );
         ~ECSLayer();
 
     private:
@@ -33,6 +33,7 @@ namespace kege{
         ref::EntityManager _entity_manager;
         ref::ProjectManager _project_manager;
         ref::RenderGraph _render_graph;
+        ref::AssetManager _asset_manager;
     };
 
 }

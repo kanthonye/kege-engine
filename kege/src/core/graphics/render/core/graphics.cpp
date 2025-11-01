@@ -31,14 +31,9 @@ namespace kege{
         return _device->present( swapchain, wait_sem );
     }
 
-    CommandBuffer* Graphics::createCommandBuffer( QueueType type )
+    ref::CommandBuffer Graphics::createCommandBuffer( QueueType type )
     {
         return _device->createCommandBuffer( type );
-    }
-
-    void Graphics::destroyCommandBuffer(CommandBuffer* command_buffer)
-    {
-        _device->destroyCommandBuffer( command_buffer );
     }
 
     ref::Image Graphics::createImage(const Image::Desc& desc)
@@ -46,156 +41,34 @@ namespace kege{
         return _device->createImage( desc );
     }
 
-    void Graphics::destroyImage(ref::Image handle)
-    {
-        //TODO: _device->destroyImage( handle );
-    }
-
     ref::Buffer Graphics::createBuffer(const BufferDesc& desc)
     {
         return _device->createBuffer( desc );
     }
-
-//    void Graphics::destroyBuffer(BufferHandle handle)
-//    {
-//        _device->destroyBuffer( handle );
-//    }
-//    void Graphics::destroyBufferView( BufferViewHandle handle )
-//    {
-//        _device->destroyBufferView( handle );
-//    }
-//
-//    void Graphics::updateBuffer( const BufferHandle& handle, uint64_t offset, uint64_t size, const void* data )
-//    {
-//        _device->updateBuffer( handle, offset, size, data );
-//    }
-//    
-//    void Graphics::unmapBuffer( const BufferHandle& handle )
-//    {
-//        _device->unmapBuffer( handle );
-//    }
-//
-//    void* Graphics::mapBuffer( const BufferHandle& handle, size_t offset, size_t size )
-//    {
-//        return _device->mapBuffer( handle, offset, size );
-//    }
-//
-//    bool Graphics::resizeBuffer( const BufferHandle& handle, uint64_t size )
-//    {
-//        return _device->resizeBuffer( handle, size );
-//    }
-//
-//    size_t Graphics::bufferSize( const BufferHandle& handle )
-//    {
-//        return _device->bufferSize( handle );
-//    }
 
     ref::Sampler Graphics::createSampler(const SamplerDesc& desc)
     {
         return _device->createSampler( desc );
     }
 
-    void Graphics::destroySampler(ref::Sampler handle)
-    {
-        //TODO: _device->destroySampler( handle );
-    }
-
-    ShaderHandle Graphics::createShader(const ShaderDesc& desc)
+    ref::Shader Graphics::createShader(const ShaderDesc& desc)
     {
         return _device->createShader( desc );
     }
 
-    void Graphics::destroyShader(ShaderHandle handle)
+    ref::ShaderLayout Graphics::createShaderLayout(const ShaderLayoutDesc& desc)
     {
-        _device->destroyShader( handle );
+        return _device->createShaderLayout( desc );
     }
 
-    PipelineLayoutHandle Graphics::createPipelineLayout(const PipelineLayoutDesc& desc)
+    ref::ShaderPipeline Graphics::createShaderPipeline(const PipelineCreateInfo& desc)
     {
-        return _device->createPipelineLayout( desc );
+        return _device->createShaderPipeline( desc );
     }
-
-    void Graphics::destroyPipelineLayout(PipelineLayoutHandle handle)
-    {
-        _device->destroyPipelineLayout( handle );
-    }
-
-    std::vector< PipelineHandle > Graphics::createGraphicsPipeline( const CreateShaderPipelineInfo& desc )
-    {
-        return _device->createGraphicsPipeline( desc );
-    }
-
-    void Graphics::destroyGraphicsPipeline(PipelineHandle handle)
-    {
-        _device->destroyGraphicsPipeline( handle );
-    }
-
-    PipelineHandle Graphics::createComputePipeline(const ComputePipelineDesc& desc)
-    {
-        return _device->createComputePipeline( desc );
-    }
-
-    void Graphics::destroyComputePipeline(PipelineHandle handle)
-    {
-        _device->destroyComputePipeline( handle );
-    }
-
-
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    // UniformSetLayout
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-    UniformSetLayout Graphics::createUniformSetLayout( const UniformDescriptors& descriptors )
-    {
-        return _device->createUniformSetLayout( descriptors );
-    }
-
-    UniformSetLayout Graphics::getUniformSetLayout( const UniformDescriptors& descriptors )
-    {
-        return _device->getUniformSetLayout( descriptors );
-    }
-
-    void Graphics::destroyUniformSetLayout( const UniformSetLayout& layout )
-    {
-        _device->destroyUniformSetLayout( layout );
-    }
-
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-    // Shader Resource Set Lifecycle
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-    int  Graphics::makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources )
-    {
-        return _device->makeSet( descriptors, resources );
-    }
-
-    bool Graphics::updateSet( int handle, const UniformResourceSet& resources )
-    {
-        return _device->updateSet( handle, resources );
-    }
-
-    int  Graphics::allocateSet( const UniformDescriptorSet& descriptors )
-    {
-        return _device->allocateSet( descriptors );
-    }
-    
-    void Graphics::freeSet( int set )
-    {
-        return _device->freeSet( set );
-    }
-
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    //
-    // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
     ref::Fence Graphics::createFence( bool initially_signaled )
     {
         return _device->createFence( initially_signaled );
-    }
-
-    void Graphics::destroyFence( kege::Fence* fence )
-    {
-        _device->destroyFence( fence );
     }
 
     ref::Semaphore Graphics::createSemaphore()
@@ -203,44 +76,14 @@ namespace kege{
         return _device->createSemaphore();
     }
 
-    void Graphics::destroySemaphore( kege::Semaphore* semaphore )
-    {
-        _device->destroySemaphore( semaphore );
-    }
-
-    kege::ShaderPipelineManager* Graphics::getShaderPipelineManager()
-    {
-        return &_shader_pipeline_manager;
-    }
-
     kege::Swapchain* Graphics::getSwapchain()
     {
-        return _swapchain;
+        return _swapchain.ref();
     }
 
     kege::AppWindow* Graphics::getWindow()
     {
         return _window.ref();
-    }
-
-    int32_t Graphics::windowHeight()const
-    {
-        return _window->getHeight();
-    }
-    
-    int32_t Graphics::windowWidth()const
-    {
-        return _window->getWidth();
-    }
-
-    void Graphics::pollWindowEvents()
-    {
-        _window->pollEvents();
-    }
-
-    bool Graphics::windowIsOpen()const
-    {
-        return !_window->shouldClose();
     }
 
     bool Graphics::beginFrame()
@@ -315,20 +158,13 @@ namespace kege{
             return false;
         }
 
-        _shader_pipeline_manager.initalize( this );
         return true;
     }
 
     void Graphics::shutdown()
     {
-        _shader_pipeline_manager.shutdown();
-        _swapchain = nullptr;
-//        if ( _device != nullptr )
-//        {
-//            _device->shutdown();
-//            _device = nullptr;
-//        }
-
+        _swapchain.clear();
+        _device.clear();
         _instance.clear();
         _window.clear();
     }

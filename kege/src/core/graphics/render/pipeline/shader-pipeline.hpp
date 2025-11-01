@@ -2,75 +2,38 @@
 //  shader-pipeline.hpp
 //  physics
 //
-//  Created by Kenneth Esdaile on 9/10/25.
+//  Created by Kenneth Esdaile on 10/21/25.
 //
 
 #ifndef shader_pipeline_hpp
 #define shader_pipeline_hpp
 
-#include <map>
-#include "uniform-resource.hpp"
+#include "shader.hpp"
+#include "shader-data.hpp"
 
 namespace kege{
-
-//    enum BindingType
-//    {
-//        BUFFER, TEXTURE, PUSH_CONSTANTS, SHADER_RESOURCE
-//    };
-
-    /**
-     * @brief Describes a field within a push constant block.
-     */
-    struct MemberField
-    {
-        std::string name;
-        uint32_t offset;
-        uint32_t size;
-        ShaderVarType type;
-    };
-
-    /**
-     * @brief Describes a push constant range used in a pipeline.
-     */
-    struct PushConstantInfo
-    {
-        std::vector< MemberField > fields;
-        std::string name;
-        uint32_t offset;
-        uint32_t size;
-        ShaderStageFlag stages;
-    };
-
-    /**
-     * @brief Describes the fixed-function states of a graphics pipeline.
-     */
-    struct PipelineStates
-    {
-        // Fixed-function states
-        InputAssemblyStateDesc  input_assembly;
-        RasterizationStateDesc  rasterization;
-        DepthStencilStateDesc   depth_stencil;
-        ColorBlendStateDesc     color_blend;
-        MultisampleStateDesc    multisample;
-    };
 
     /**
      * @brief Describes the output configuration of a graphics pipeline.
      */
     struct PipelineOutputs
     {
-        // Render target information
-        std::vector< Format > color_attachment_formats;// color_attachment_formats; ///< Must match render pass
+        std::vector< Format > color_attachment_formats;
         Format depth_attachment_format = Format::depth_32;
         Format stencil_attachment_format = Format::undefined;
         SampleCount render_sample_count = SampleCount::Count1;
     };
 
-    struct PipelineResourceBinding
+    enum struct PipelineType
     {
-        std::string name;
-        //BindingType type;
+        Graphics = 1,
+        Compute,
+        RayTracing,
     };
+
+}
+
+namespace kege{
 
     struct PipelineSupport
     {
@@ -94,221 +57,95 @@ namespace kege{
         uint32_t state;
     };
 
+    struct PipelineLayoutInfo
+    {
+        std::string name;
+        kege::SetsConfigLayout layouts;
+        kege::PushBlockLayout push_constants;
+    };
+
     /**
      * @brief Describes a complete graphics or compute pipeline.
      */
-    struct PipelineInfo
+    struct PipelineCreateInfo
     {
-        /**
-         * @brief Debug name for graphics debugging tools.
-         */
         std::string name = "";
+        kege::PipelineType pipeline_type;
+        kege::ShaderLayoutDesc shader_layout;
+        kege::VertexBufferLayout vertex_input;
+        kege::InputAssemblyStateDesc input_assembly;
+        kege::RasterizationStateDesc rasterization;
+        kege::DepthStencilStateDesc depth_stencil;
+        kege::ColorBlendStateDesc color_blend;
+        kege::MultisampleStateDesc multisample;
+        kege::PipelineOutputs outputs;
+        kege::PipelineSupport support;
 
-        /**
-         * @brief Descriptor set layouts used by this pipeline.
-         */
-        UniformDescriptorSets layouts;
-
-        /**
-         * @brief Push constant ranges used by this pipeline.
-         */
-        std::vector< PushConstantInfo > push_constants;
-
-        VertexBufferLayout vertex_input;
-
-        PipelineStates states;
-
-        PipelineOutputs outputs;
-
-        std::vector< int > stages;
-
-
+        std::vector< std::string > global_resources;
         std::vector< std::pair<int,int> > specialization_constants;
-        std::vector< PipelineResourceBinding > global_resources;
-        PipelineSupport support;
-    };
 
-    /**
-     * @brief Information required to create a shader pipeline.
-     */
-    struct CreateShaderPipelineInfo
-    {
-        std::vector< kege::ShaderHandle > stages;
-        std::vector< kege::PipelineInfo > pipelines;
+        std::vector< ref::Shader > shaders;
     };
-
 
 }
 
 namespace kege{
 
-    class Graphics;
-    class ShaderPipelineManager;
-
-    struct PipelineContext
-    {
-        /**
-         * - name:
-         *   A human‑readable label used by debugging and profiling tools to identify
-         *   this pipeline configuration. This does not affect rendering behavior but
-         *   can greatly aid diagnostics.
-         */
-        std::string name = "";
-
-        /**
-         * - layouts:
-         *   The descriptor set layout descriptions required by the shaders bound to
-         *   this pipeline. These define the sets, bindings, resource types and
-         *   visibility (shader stages) for all uniform/storage resources the pipeline
-         *   expects.
-         */
-        UniformSetsDesc layouts;
-
-        /**
-         * - push_constants:
-         *   A collection of push constant ranges and their field metadata used by the
-         *   pipeline. Push constants provide a low‑latency path for passing small
-         *   amounts of data directly to shaders without creating buffers.
-         */
-        std::vector< PushConstantInfo > push_constants;
-
-        /**
-         * - vertex_input:
-         *   The vertex input state description detailing the format and rate of vertex
-         *   attributes and their buffer bindings. This must match the input interface
-         *   declared in the vertex shader stage.
-         */
-        VertexBufferLayout vertex_input;
-
-        /**
-         * - states:
-         *   The fixed‑function pipeline states (input assembly, rasterization,
-         *   depth/stencil, color blending, and multisampling). These govern how
-         *   primitives are assembled, rasterized, tested, and blended into the
-         *   framebuffer.
-         */
-        PipelineStates states;
-
-        /**
-         * - outputs:
-         *   The render target configuration, including color attachment formats,
-         *   depth/stencil formats, and the render sample count. These must be
-         *   compatible with the render pass or framebuffer to which the pipeline will
-         *   be bound.*
-         */
-        PipelineOutputs outputs;
-
-        /**
-         * - specialization_constants:
-         *   A list of key/value pairs used to specialize shader constants at pipeline
-         *   creation time. These allow toggling or configuring shader behavior without
-         *   recompiling shader source.
-         */
-        std::vector< std::pair<int,int> > specialization_constants;
-
-
-        std::vector< PipelineResourceBinding > global_resources;
-        PipelineSupport support;
-
-        kege::PipelineHandle pipeline;
-    };
-
-    class ShaderPipeline : public RefCounter
+    class ShaderPipeline : public kege::RefCounter
     {
     public:
-        /**
-         * @brief Enables access to this shader resource handles
-         * @return A collection of resource handle associated with this shader resource.
-         */
-        const PipelineContext* operator ->()const;
 
-        /**
-         * @brief Enables access to each uniform set associated with this shader resource
-         * @return A reference to the uniform set at the given index
-         */
-        const PipelineContext& operator[](int i) const;
+        //virtual bool bindSets( const std::vector< kege::ShaderResrcBindingSet >& sets ) = 0;
+        //virtual bool bindSet( const kege::ShaderResrcBindingSet& set ) = 0;
 
-        /**
-         * @brief Enables access to each uniform set associated with this shader resource
-         * @return A reference to the uniform set at the given index
-         */
-        PipelineContext& operator[](int i);
+        virtual const vk::ShaderPipeline* vk() const { return nullptr; }
+        virtual vk::ShaderPipeline* vk() { return nullptr; }
 
-        /**
-         * @brief Boolean conversion operator.
-         * @return True if the resource is valid, false otherwise.
-         */
-        operator bool() const;
+        const kege::InputAssemblyStateDesc& getInputAssemblyState()const;
+        const kege::RasterizationStateDesc& getRasterizationState()const;
+        const kege::DepthStencilStateDesc& getDepthStencilStateDesc()const;
+        const kege::ColorBlendStateDesc& getColorBlendStateDesc()const;;
+        const kege::MultisampleStateDesc& getMultisampleStateDesc()const;
+        const kege::VertexBufferLayout& getVertexBufferLayout()const;
+        const kege::PipelineOutputs& getPipelineOutputs()const;
+        const kege::ShaderLayout* getShaderLayout()const;
+        const std::vector< std::string > getGlobalBinds()const;
+        const std::string& getName()const;
 
-        PipelineHandle handle()const;
-        int32_t id()const;
+        kege::PipelineType getPipelineType()const;
+        bool checkSupport( uint32_t mask )const;
 
-        /**
-         * @brief Copy assignment operator
-         */
-        ShaderPipeline& operator =( const ShaderPipeline& other );
+        virtual ~ShaderPipeline(){}
+        
+    protected:
 
-        /**
-         * @brief Move assignment operator
-         */
-        ShaderPipeline& operator =( ShaderPipeline&& other) noexcept;
+        ShaderPipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout );
 
-        /**
-         * @brief Copy constructor
-         */
-        ShaderPipeline( const ShaderPipeline& other );
+    protected:
 
-        /**
-         * @brief Move constructor
-         */
-        ShaderPipeline( ShaderPipeline&& other )noexcept;
+        kege::ref::ShaderLayout _shader_layout;
+        kege::VertexBufferLayout _vertex_input;
+        kege::InputAssemblyStateDesc _input_assembly;
+        kege::RasterizationStateDesc _rasterization;
+        kege::DepthStencilStateDesc _depth_stencil;
+        kege::ColorBlendStateDesc _color_blend;
+        kege::MultisampleStateDesc _multisample;
+        kege::PipelineOutputs _outputs;
+        kege::PipelineSupport _support;
 
-        /**
-         * @brief Default constructor creates an invalid/null resource.
-         */
-        ShaderPipeline();
+        std::vector< std::string > _global_resources;
+        std::vector< std::pair<int,int> > _specialization_constants;
 
-        /**
-         * @brief deconstructor
-         */
-        ~ShaderPipeline();
+        kege::PipelineType _pipeline_type;
+        std::string _name;
 
-    private:
-
-        /**
-         * @brief Default constructor creates an invalid/null resource.
-         */
-        ShaderPipeline(ShaderPipelineManager* manager, int32_t index);
-
-    private:
-
-        friend ShaderPipelineManager;
-        ShaderPipelineManager* _manager;
-        int32_t _index;
+        friend ref::ShaderPipeline;
     };
-
-
-
-    // Define equality comparison for VkDescriptorSetLayoutBinding
-    bool operator==(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
-
-    // Define none equality comparison for VkDescriptorSetLayoutBinding
-    bool operator!=(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
-
-    // Define less-than comparison (needed to resolve the compiler error)
-    bool operator<(const kege::ShaderPipeline& a, const kege::ShaderPipeline& b);
-
+    
 }
 
-namespace std{
 
-    template <> struct hash< kege::ShaderPipeline >
-    {
-        std::size_t operator()( const kege::ShaderPipeline& pipeline ) const
-        {
-            return static_cast< std::size_t >( pipeline.id() + 1 );
-        }
-    };
-
+namespace kege::ref{
+    typedef kege::Ref< kege::ShaderPipeline > ShaderPipeline;
 }
 #endif /* shader_pipeline_hpp */

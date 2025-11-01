@@ -8,7 +8,6 @@
 #ifndef entity_system_hpp
 #define entity_system_hpp
 
-#include "../engine/engine.hpp"
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
 #include "../ecs/entity-logic.hpp"

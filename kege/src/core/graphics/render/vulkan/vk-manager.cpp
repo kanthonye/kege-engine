@@ -132,6 +132,15 @@ namespace kege::vk{
         return _device;
     }
 
+    void Manager::destroyPipeline( VkPipeline& pipeline, const VkAllocationCallbacks* allocator )
+    {
+        if ( pipeline != VK_NULL_HANDLE )
+        {
+            vkDestroyPipeline( _device, pipeline, allocator );
+            pipeline = VK_NULL_HANDLE;
+        }
+    }
+
     /**
      * @brief Create a semaphore synchronization object
      *
@@ -488,6 +497,17 @@ namespace kege::vk{
         }
     }
 
+
+    void Manager::destroyDescriptorSetLayout( VkDescriptorSetLayout& layout, const VkAllocationCallbacks* allocator )
+    {
+        if ( layout != VK_NULL_HANDLE )
+        {
+            waitIdle();
+            vkDestroyDescriptorSetLayout( _device, layout, allocator );
+            layout = VK_NULL_HANDLE;
+        }
+    }
+
     VkResult Manager::createDescriptorPool( const VkDescriptorPoolCreateInfo* info, const VkAllocationCallbacks *allocator, VkDescriptorPool *pool )
     {
         return vkCreateDescriptorPool( _device, info, allocator, pool );
@@ -577,6 +597,14 @@ namespace kege::vk{
         return vkAllocateMemory( _device, &memory_allocate_info, nullptr, memory );
     }
 
+    void Manager::destroyShader( VkShaderModule& shader )
+    {
+        if ( shader != VK_NULL_HANDLE )
+        {
+            vkDestroyShaderModule( _device, shader, nullptr );
+            shader = VK_NULL_HANDLE;
+        }
+    }
 
     void Manager::waitIdle()const
     {

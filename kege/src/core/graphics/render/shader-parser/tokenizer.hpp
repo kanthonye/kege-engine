@@ -46,7 +46,7 @@ namespace kege::glsl
 
         // Keywords
         VertexLayout,   // vertex_layout
-        SetLayout,      // set_layout
+        IndexedSetLayouts,      // set_layout
         InLayout,       // in
         OutLayout,      // out
         Layout,         // layout

@@ -12,11 +12,12 @@
 #include "glfw-window.hpp"
 #include "device.hpp"
 #include "swapchain.hpp"
-#include "shader-layout.hpp"
-#include "shader-resource-manager.hpp"
-#include "shader-pipeline-manager.hpp"
+#include "../pipeline/shader-layout.hpp"
 #include "command-encoder.hpp"
 #include "command-buffer.hpp"
+#include "instance.hpp"
+#include "device.hpp"
+#include "swapchain.hpp"
 
 
 namespace kege{
@@ -57,27 +58,41 @@ namespace kege{
         bool submit( const kege::SubmitInfo& submit_info );
 
         bool present( kege::Swapchain* swapchain, const ref::Semaphore& wait_sem );
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // CommandBuffer lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
         /**
          * @brief Creates a command buffer for recording commands.
          * @param type The type of queue the command buffer will be submitted to.
          * @return Pointer to the created command buffer, or nullptr on failure.
          */
-        CommandBuffer* createCommandBuffer( QueueType type );
+        ref::CommandBuffer createCommandBuffer( QueueType type );
 
         /**
-         * @brief Destroys a command buffer.
-         * @param command_buffer Pointer to the command buffer to destroy.
-         * @warning Ensure the command buffer is no longer in use.
+         * @brief Creates a shader binding set layout based on a description.
+         * @param config Description of binding points for resources.
+         * @return Handle to the created shader binding set layout.
          */
-        void destroyCommandBuffer(CommandBuffer* command_buffer);
+        ref::SetLayout createSetLayout( const SetBindings& config );
 
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Image lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        /**
+         * @brief Creates a shader binding set layout based on a description.
+         * @param desc Description of binding points for resources.
+         * @return Handle to the created shader binding set layout.
+         */
+        ref::ShaderLayout createShaderLayout( const ShaderLayoutDesc& desc );
+
+        /**
+         * @brief Creates a shader pipeline.
+         * @param create_info Compute pipeline description including shader and layout.
+         * @return Handle to the created compute pipeline.
+         */
+        ref::ShaderPipeline createShaderPipeline( const kege::PipelineCreateInfo& create_info );
+
+        /**
+         * @brief Creates a shader module from source or bytecode.
+         * @param desc Shader description including code and entry point.
+         * @return Handle to the created shader, or invalid handle on failure.
+         */
+        ref::Shader createShader(const ShaderDesc& desc);
 
         /**
          * @brief Creates a texture resource.
@@ -87,17 +102,6 @@ namespace kege{
         ref::Image createImage(const Image::Desc& desc);
 
         /**
-         * @brief Destroys a texture resource.
-         * @param handle Handle to the texture to destroy.
-         * @warning Ensure the texture is no longer in use by the GPU.
-         */
-        void destroyImage(ref::Image handle);
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Sampler lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
          * @brief Creates a texture sampler.
          * @param desc Sampler description including filtering and addressing modes.
          * @return Handle to the created sampler, or invalid handle on failure.
@@ -105,118 +109,11 @@ namespace kege{
         ref::Sampler createSampler(const SamplerDesc& desc);
 
         /**
-         * @brief Destroys a sampler resource.
-         * @param handle Handle to the sampler to destroy.
-         */
-        void destroySampler(ref::Sampler handle); //TODO: deprecated
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Buffer lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
          * @brief Creates a buffer resource (vertex, index, uniform, etc.).
          * @param desc Buffer description including size and usage flags.
          * @return Handle to the created buffer, or invalid handle on failure.
          */
         ref::Buffer createBuffer( const BufferDesc& desc );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Shader lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
-         * @brief Creates a shader module from source or bytecode.
-         * @param desc Shader description including code and entry point.
-         * @return Handle to the created shader, or invalid handle on failure.
-         */
-        ShaderHandle createShader(const ShaderDesc& desc);
-
-        /**
-         * @brief Destroys a shader module.
-         * @param handle Handle to the shader to destroy.
-         * @warning Ensure no pipelines are using this shader.
-         */
-        void destroyShader(ShaderHandle handle);
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Pipeline lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
-         * @brief Creates a pipeline layout defining resource bindings.
-         * @param desc Description of push constants and descriptor set layouts.
-         * @return Handle to the created pipeline layout.
-         */
-        PipelineLayoutHandle createPipelineLayout(const PipelineLayoutDesc& desc);
-
-        /**
-         * @brief Destroys a pipeline layout.
-         * @param handle Handle to the pipeline layout to destroy.
-         * @warning Ensure no pipelines are using this layout.
-         */
-        void destroyPipelineLayout(PipelineLayoutHandle handle);
-
-        std::vector< PipelineHandle > createGraphicsPipeline( const CreateShaderPipelineInfo& desc );
-
-        /**
-         * @brief Destroys a graphics pipeline.
-         * @param handle Handle to the pipeline to destroy.
-         * @warning Ensure the pipeline is not in use by any command buffers.
-         */
-        void destroyGraphicsPipeline(PipelineHandle handle);
-
-        /**
-         * @brief Creates a compute pipeline.
-         * @param desc Compute pipeline description including shader and layout.
-         * @return Handle to the created compute pipeline.
-         */
-        PipelineHandle createComputePipeline(const ComputePipelineDesc& desc);
-
-        /**
-         * @brief Destroys a compute pipeline.
-         * @param handle Handle to the pipeline to destroy.
-         * @warning Ensure the pipeline is not in use by any command buffers.
-         */
-        void destroyComputePipeline(PipelineHandle handle);
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // UniformSetLayout lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
-         * @brief Creates a descriptor set layout.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the created descriptor set layout.
-         */
-        UniformSetLayout createUniformSetLayout( const UniformDescriptors& descriptors );
-
-        /**
-         * @brief Retrieves or creates a descriptor set layout based on bindings.
-         * @param descriptors Description of binding points for resources.
-         * @return Handle to the descriptor set layout.
-         */
-        UniformSetLayout getUniformSetLayout( const UniformDescriptors& descriptors );
-
-        /**
-         * @brief Destroys a descriptor set layout.
-         * @param layout Handle to the layout to destroy.
-         * @warning Ensure no descriptor sets or pipelines are using this layout.
-         */
-        void destroyUniformSetLayout( const UniformSetLayout& layout );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // Shader Resource Set Lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-        int  makeSet( const UniformDescriptorSet& descriptors, const UniformResourceSet& resources );
-        bool updateSet( int handle, const UniformResourceSet& resources );
-        int  allocateSet( const UniformDescriptorSet& descriptors );
-        void freeSet( int set );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // kege::Fence Objects Lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         /**
          * @brief Creates a fence for CPU-GPU synchronization.
@@ -226,51 +123,14 @@ namespace kege{
         ref::Fence createFence( bool initially_signaled = false );
 
         /**
-         * @brief Destroys a fence.
-         * @param fence Handle to the fence to destroy.
-         * @warning Ensure the fence is no longer in use.
-         */
-        void destroyFence( kege::Fence* fence );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Semaphore lifecycle
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-        /**
          * @brief Creates a semaphore for GPU-GPU synchronization.
          * @return Pointer to the created semaphore.
          */
         ref::Semaphore createSemaphore();
 
-        /**
-         * @brief Destroys a semaphore.
-         * @param semaphore Handle to the semaphore to destroy.
-         * @warning Ensure the semaphore is no longer in use.
-         */
-        void destroySemaphore( kege::Semaphore* semaphore );
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        // Swapchain Access
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        //
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-        kege::ShaderPipelineManager* getShaderPipelineManager();
-        kege::AppWindow* getWindow();
         kege::Swapchain* getSwapchain();
+        kege::AppWindow* getWindow();
         int32_t getFrameIndex()const;
-        int32_t windowHeight()const;
-        int32_t windowWidth()const;
-        void pollWindowEvents();
-        bool windowIsOpen()const;
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-        //
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
         bool beginFrame();
         void endFrame();
@@ -288,17 +148,18 @@ namespace kege{
 
     private:
 
-        kege::Ref< kege::GraphicsInstance > _instance;
-        kege::Ref< kege::AppWindow > _window;
-        kege::GraphicsDevice* _device;
-
         kege::SwapchainDesc _swapchain_create_info;
-        kege::Swapchain* _swapchain;
+
+        ref::GraphicsInstance _instance;
+        ref::AppWindow _window;
+
+        ref::GraphicsDevice _device;
+        ref::Swapchain _swapchain;
 
         // Map of descriptor set layout bindings to their corresponding layout handles.
         std::unordered_map< size_t, UniformSetLayout > _uniform_set_layouts;
 
-        kege::ShaderPipelineManager _shader_pipeline_manager;
+        //kege::ShaderPipelineManager _shader_pipeline_manager;
 
         //GraphicsAPIInfo _info;
     };
