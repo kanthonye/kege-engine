@@ -98,13 +98,13 @@ namespace kege{
 
         template< typename Item > const Item* load( const std::string& filename )const
         {
-            std::string ext;
-            for(int i = 1; filename[ filename.length() - i ] != '.'; ++i )
-            {
-                ext += filename[ filename.length() - i ];
-            }
-            reverse(ext.begin(), ext.end());
+            std::filesystem::path p = filename;
+            std::string name = p.stem().string();
 
+            Item* item = this->fetch< Item >( name );
+            if( item != nullptr ) return item;
+
+            std::string ext  = p.extension().string();
             Ref< AssetLoaderT< Item > >* loader = this->fetch< Ref< AssetLoaderT< Item > > >( ext );
             if( loader == nullptr ) return nullptr;
 
