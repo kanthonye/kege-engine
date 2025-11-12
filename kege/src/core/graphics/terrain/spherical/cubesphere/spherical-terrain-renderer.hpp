@@ -71,7 +71,7 @@ namespace kege{
 
     private:
 
-        kege::MeshPrimitiveRef _mesh_primitive;
+        kege::ref::Mesh _mesh;
 
         std::array< IndexDrawCommand, 16 > _draw_commands;
         std::array< kege::mat33, MAX_CUBE_FACES > _face_axies;

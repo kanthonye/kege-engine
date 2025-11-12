@@ -19,7 +19,7 @@
 
 namespace kege{
 
-    ShaderVarType stringToShaderVarType( const char* str );
+    ShaderVarType stringToShaderVarType( const std::string& str );
 
     kege::CompareOp stringToCompareOp( const std::string& type );
 
@@ -59,7 +59,9 @@ namespace kege{
 
     kege::BindingUsage stringToBindingUsage( const std::string& name );
 
-    ShaderStageFlag stringToShaderStageFlag( const std::string& name );
+    kege::ShaderStageFlag stringToShaderStageFlag( const std::string& name );
+
+    kege::PipelineType stringToPipelineType( const std::string& s );
 
     kege::AddressMode stringToAddressMode( const std::string& name );
 

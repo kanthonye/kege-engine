@@ -18,6 +18,8 @@ namespace kege{
 
     Project::~Project()
     {
+        asset_manager->shutdown();
+        scene_manager->shutdown();
         asset_manager.clear();
         scene_manager.clear();
         if ( file != nullptr )

@@ -14,7 +14,7 @@
 #include "../../utils/kege-string.hpp"
 #include "../../math/algebra/vmath.hpp"
 #include "../../graphics/font/font.hpp"
-#include "../../graphics/font/font-loader.hpp"
+#include "../../resource/font-loader.hpp"
 #include "../../graphics/font/font-creator.hpp"
 
 namespace kege::ui{

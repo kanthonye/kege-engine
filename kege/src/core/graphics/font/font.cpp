@@ -7,7 +7,7 @@
 
 #include "font.hpp"
 
-namespace kege::ui{
+namespace kege{
 
     bool Font::save( const std::string& filename, const std::string& image_name )
     {
@@ -35,6 +35,11 @@ namespace kege::ui{
         return true;
     }
 
+    kege::ImageBindInfo Font::getImageBindInfo()const
+    {
+        return _image_binf_info;
+    }
+
     const std::vector< Glyph >& Font::glyphs()const
     {
         return _glyphs;
@@ -55,24 +60,13 @@ namespace kege::ui{
         return font_size * _glyphs[ c ].advance;
     }
 
-    ref::Sampler Font::getSampler()const
-    {
-        return _sampler;
-    }
-
-    ref::Image Font::getImage()const
-    {
-        return _image;
-    }
-
     Font::operator bool()const
     {
-        return !_glyphs.empty() && _image;
+        return !_glyphs.empty();
     }
 
-    Font::Font( const std::vector< ui::Glyph >& glyphs, ref::Image image, ref::Sampler sampler )
-    :   _sampler( sampler )
-    ,   _image( image )
+    Font::Font( const std::vector< kege::Glyph >& glyphs, const kege::ImageBindInfo& image_binf_info )
+    :   _image_binf_info( image_binf_info )
     ,   _glyphs( glyphs )
     {}
     

@@ -8,11 +8,35 @@
 #include "app.hpp"
 #include "glfw-window.hpp"
 
+#include "../resource/image-loader.hpp"
+#include "../resource/input-context-loader.hpp"
+#include "../resource/shader-pipeline-loader.hpp"
+
 namespace kege{
+
+    void Application::operator()( kege::CallbackRequest< kege::ProjectManager >& request )
+    {
+        request.callback( _project_manager.ref() );
+    }
+
+    void Application::operator()( kege::CallbackRequest< kege::Graphics >& request )
+    {
+        request.callback( _graphics.ref() );
+    }
+
+    void Application::operator()( const kege::Request< kege::ProjectManager >& )
+    {
+        Communication::broadcast< const kege::Response< kege::ProjectManager* > >({ _project_manager.ref() });
+    }
+
+    void Application::operator()( const kege::Request< kege::Graphics >& )
+    {
+        Communication::broadcast< const kege::Response< kege::Graphics* >& >({ _graphics.ref() });
+    }
 
     bool Application::initialize()
     {
-        _asset_manager = new kege::AssetManager();
+        bool success;
 
         /**
          * Here i am setting up the virtual directorys aliases and path.
@@ -23,10 +47,16 @@ namespace kege{
         kege::VirtualDirectory::instance().add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );
         kege::VirtualDirectory::instance().add( "compute-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/compute" );
 
+        //-----------------------------------------------------------------------//
+        // Create Asset Manager
+        //-----------------------------------------------------------------------//
 
-        /**
-         * Next, create the application window.
-         */
+        _asset_manager = new kege::AssetManager();
+
+        //-----------------------------------------------------------------------//
+        // Create Application Window
+        //-----------------------------------------------------------------------//
+
         kege::WindowCreateInfo create_window_info = {};
         create_window_info.title = "KEGE";
         create_window_info.width = 1536;
@@ -45,9 +75,10 @@ namespace kege{
             return false;
         }
 
-        /**
-         * Then, create and initialize the graphics renderer.
-         */
+        //-----------------------------------------------------------------------//
+        // Create Graphics
+        //-----------------------------------------------------------------------//
+
         kege::DeviceInitializationInfo device_init_info = {};
         device_init_info.window = _window.ref();
         device_init_info.preferred_API = kege::GraphicsAPI::Vulkan;
@@ -58,6 +89,8 @@ namespace kege{
         device_init_info.engine = "KEGE";
         device_init_info.name = "dev";
         device_init_info.enable_debug_validation = true;
+        device_init_info.enable_debug_general = true;
+        device_init_info.enable_debug_performance = true;
 
         kege::SwapchainDesc swapchain_create_info = {};
         swapchain_create_info.image_count = kege::MAX_FRAMES_IN_FLIGHT + 1;
@@ -77,41 +110,90 @@ namespace kege{
             return false;
         }
 
-        /**
-         * With that completed, create the render manager
-         */
-        _render_graph = new kege::RenderGraph( _graphics.ref() );
-        bool success = RenderGraphLoader::load( *_render_graph, vfs("config/render-graph.json").str() );
-        if( !success ) return false;
+        //-----------------------------------------------------------------------//
+        // Create RenderGraph
+        //-----------------------------------------------------------------------//
+
+        _render_graph = new kege::RenderGraph( _graphics.ref(), _asset_manager.ref() );
+        if( !_render_graph->load( vfs("config/render-graph.json").str() ) ) return false;
         if( !_render_graph->compile() ) return false;
 
-        /**
-         * After that, create and initialize our input handler.
-         */
-        ref::InputContextManager icm = new kege::InputContextManager;
-        if( !icm->initialize( _window.ref() ) )
+        //-----------------------------------------------------------------------//
+        // Create Input Context Manager
+        //-----------------------------------------------------------------------//
+
+        _input_context_manager = new kege::InputContextManager;
+        if( !_input_context_manager->initialize( _window.ref() ) )
         {
             kege::Log::error << "( INITIALIZATION_FAILED ) -> InputContextManager" << Log::nl;
             return false;
         }
+
+        //-----------------------------------------------------------------------//
+        // Create Default Resources add them to AssetManager so they can be accessed
+        //-----------------------------------------------------------------------//
+
+        uint32_t color[] = {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF};
+        ref::Image default_image = _graphics->createImage
+        ({
+            .debug_name = "default-image",
+            .extent  = {2,2,1},
+            .array_layers = 1,
+            .mip_levels = 1,
+            .memory_usage = MemoryUsage::GpuOnly,
+            .samples = SampleCount::Count1,
+            .format = Format::rgba_u8_norm,
+            .data = &color,
+            .usage = ImageUsage::Color | ImageUsage::Sampled
+        });
+        _asset_manager->add< ref::Image >( "default", default_image );
+
+        ref::Sampler default_sampler = _graphics->createSampler
+        ({
+            .name = "default-sampler",
+            .address_mode_u = AddressMode::ClampToEdge,
+            .address_mode_v = AddressMode::ClampToEdge,
+            .address_mode_w = AddressMode::ClampToEdge,
+            .min_filter = Filter::Linear,
+            .mag_filter = Filter::Linear,
+        });
+        _asset_manager->add< ref::Sampler >( "default", default_sampler );
+
+        //-----------------------------------------------------------------------//
+        // Create Project Manager
+        //-----------------------------------------------------------------------//
 
         /**
          * Next step, create our project manager
          */
         _project_manager = new ProjectManager( _graphics );
 
-        /**
-         * Finally, create the app stack and add it layers, then initalize then
-         */
+        //-----------------------------------------------------------------------//
+        // Add Asset Loaders
+        //-----------------------------------------------------------------------//
+
+        _asset_manager->addLoader< ref::ShaderPipeline, kege::ShaderPipelineLoader >( ".json" );
+        _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
+        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".jpg" );
+        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".png" );
+
+        //-----------------------------------------------------------------------//
+        // AppLayerStack
+        //-----------------------------------------------------------------------//
+
         _app_layer_stack = new kege::AppLayerStack();
 
-        success = _app_layer_stack->push( new kege::InputLayer( icm ) );
+        //-----------------------------------------------------------------------//
+        // Create and Add Application Layers
+        //-----------------------------------------------------------------------//
+
+        success = _app_layer_stack->push( new kege::InputLayer( _input_context_manager ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager.ref(), _render_graph, _project_manager.ref() ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::ECSLayer( icm, _asset_manager, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::ECSLayer( _input_context_manager, _asset_manager, _render_graph, _project_manager ) );
         if( !success ) return false;
 
         _running = success;
@@ -120,10 +202,11 @@ namespace kege{
 
     void Application::shutdown()
     {
-        _asset_manager.clear();
         _app_layer_stack.clear();
-        _project_manager.clear();
         _render_graph.clear();
+        _project_manager.clear();
+        _asset_manager.clear();
+        _input_context_manager.clear();
         _graphics.clear();
         _window.clear();
     }
@@ -140,7 +223,14 @@ namespace kege{
     }
 
     Application::Application()
-    {}
+    :   _running( false )
+    {
+        Communication::add< kege::Request< kege::ProjectManager >&, kege::Application >( this );
+        Communication::add< kege::Request< kege::Graphics >&, kege::Application >( this );
+
+        Communication::add< CallbackRequest< kege::ProjectManager >& >( this );
+        Communication::add< CallbackRequest< kege::Graphics >& >( this );
+    }
 
     Application:: ~Application()
     {

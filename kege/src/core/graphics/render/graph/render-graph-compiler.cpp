@@ -488,7 +488,7 @@ namespace kege {
         for (auto& m : last_usage )
         {
             if (m.first.type != RgResrcType::Image) continue;
-            ImageDefn* defn = _graph->_asset_manager.get< ImageDefn >( m.first.index );
+            ImageDefn* defn = _graph->_asset_manager->get< ImageDefn >( m.first.index );
             for ( int j=0; j<defn->physical_handle.size(); ++j)
             {                ///<
                 command->transitionImageLayout
@@ -515,7 +515,7 @@ namespace kege {
                 {
                     if ( write.type == RgResrcType::Image )
                     {
-                        ImageDefn* def = _graph->_asset_manager.fetch< ImageDefn >( write.name );
+                        ImageDefn* def = _graph->_asset_manager->fetch< ImageDefn >( write.name );
                         if ( def == nullptr )
                         {
                             kege::Log::error <<"undefinded image resource - " << write.name <<Log::nl;
@@ -525,7 +525,7 @@ namespace kege {
                     }
                     else if ( write.type == RgResrcType::Buffer )
                     {
-                        BufferDefn* def = _graph->_asset_manager.fetch< BufferDefn >( write.name );
+                        BufferDefn* def = _graph->_asset_manager->fetch< BufferDefn >( write.name );
                         if ( def == nullptr )
                         {
                             kege::Log::error <<"undefinded buffer resource - " << write.name <<Log::nl;
@@ -544,7 +544,7 @@ namespace kege {
                     {
                         case RgResrcType::Image:
                         {
-                            ImageDefn* def = _graph->_asset_manager.fetch< ImageDefn >( read.name );
+                            ImageDefn* def = _graph->_asset_manager->fetch< ImageDefn >( read.name );
                             if ( def == nullptr )
                             {
                                 kege::Log::error <<"undefinded image resource - " << read.name <<Log::nl;
@@ -556,7 +556,7 @@ namespace kege {
 
                         case RgResrcType::Buffer:
                         {
-                            BufferDefn* def = _graph->_asset_manager.fetch< BufferDefn >( read.name );
+                            BufferDefn* def = _graph->_asset_manager->fetch< BufferDefn >( read.name );
                             if ( def == nullptr )
                             {
                                 kege::Log::error <<"undefinded buffer resource - " << read.name <<Log::nl;
@@ -568,7 +568,7 @@ namespace kege {
 
                         case RgResrcType::Sampler:
                         {
-                            SamplerDefn* def = _graph->_asset_manager.fetch< SamplerDefn >( read.name );
+                            SamplerDefn* def = _graph->_asset_manager->fetch< SamplerDefn >( read.name );
                             if ( def == nullptr )
                             {
                                 kege::Log::error <<"undefinded sampler resource - " << read.name <<Log::nl;
@@ -580,7 +580,7 @@ namespace kege {
 
                         case RgResrcType::ShaderResource:
                         {
-                            RgShaderResrcDefn* def = _graph->_asset_manager.fetch< RgShaderResrcDefn >( read.name );
+                            RgShaderResrcDefn* def = _graph->_asset_manager->fetch< RgShaderResrcDefn >( read.name );
                             if ( def == nullptr )
                             {
                                 kege::Log::error <<"undefinded shader resource - " << read.name <<Log::nl;
@@ -612,7 +612,7 @@ namespace kege {
             {
                 if ( write.type == RgResrcType::Image )
                 {
-                    ImageDefn* def = _graph->_asset_manager.get< ImageDefn >( write.handle );
+                    ImageDefn* def = _graph->_asset_manager->get< ImageDefn >( write.handle );
                     if ( def->physical_handle.empty() )
                     {
                         _graph->createImage( *def );
@@ -620,7 +620,7 @@ namespace kege {
                 }
                 else if ( write.type == RgResrcType::Buffer )
                 {
-                    BufferDefn* def = _graph->_asset_manager.get< BufferDefn >( write.handle );
+                    BufferDefn* def = _graph->_asset_manager->get< BufferDefn >( write.handle );
                     if ( def->physical_handle.empty() )
                     {
                         _graph->createBuffer( *def );
@@ -633,7 +633,7 @@ namespace kege {
                 {
                     case RgResrcType::Image:
                     {
-                        ImageDefn* def = _graph->_asset_manager.get< ImageDefn >( read.handle );
+                        ImageDefn* def = _graph->_asset_manager->get< ImageDefn >( read.handle );
                         if ( def->physical_handle.empty() )
                         {
                             _graph->createImage( *def );
@@ -643,7 +643,7 @@ namespace kege {
 
                     case RgResrcType::Buffer:
                     {
-                        BufferDefn* def = _graph->_asset_manager.get< BufferDefn >( read.handle );
+                        BufferDefn* def = _graph->_asset_manager->get< BufferDefn >( read.handle );
                         if ( def->physical_handle.empty() )
                         {
                             _graph->createBuffer( *def );
@@ -653,7 +653,7 @@ namespace kege {
 
                     case RgResrcType::Sampler:
                     {
-                        SamplerDefn* def = _graph->_asset_manager.get< SamplerDefn >( read.handle );
+                        SamplerDefn* def = _graph->_asset_manager->get< SamplerDefn >( read.handle );
                         if ( !def->physical_handle )
                         {
                             _graph->createSampler( *def );
@@ -663,7 +663,7 @@ namespace kege {
 
                     case RgResrcType::ShaderResource:
                     {
-                        RgShaderResrcDefn* def = _graph->_asset_manager.get< RgShaderResrcDefn >( read.handle );
+                        RgShaderResrcDefn* def = _graph->_asset_manager->get< RgShaderResrcDefn >( read.handle );
                         if ( def->physical_handle )
                         {
                             _graph->createShaderResource( def );

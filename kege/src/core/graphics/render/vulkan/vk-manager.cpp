@@ -136,6 +136,7 @@ namespace kege::vk{
     {
         if ( pipeline != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroyPipeline( _device, pipeline, allocator );
             pipeline = VK_NULL_HANDLE;
         }
@@ -168,6 +169,7 @@ namespace kege::vk{
     {
         if ( semaphore != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroySemaphore( _device, semaphore, nullptr );
             semaphore = VK_NULL_HANDLE;
         }
@@ -201,6 +203,7 @@ namespace kege::vk{
     {
         if ( fence != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroyFence( _device, fence, nullptr );
             fence = VK_NULL_HANDLE;
         }
@@ -414,6 +417,7 @@ namespace kege::vk{
     {
         if ( image != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroyImage( _device, image, nullptr );
             image = VK_NULL_HANDLE;
         }
@@ -463,6 +467,7 @@ namespace kege::vk{
     {
         if ( image_view != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroyImageView( _device, image_view, nullptr );
             image_view = VK_NULL_HANDLE;
         }
@@ -472,6 +477,7 @@ namespace kege::vk{
     {
         if ( sampler != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroySampler( _device, sampler, nullptr );
             sampler = VK_NULL_HANDLE;
         }
@@ -515,6 +521,7 @@ namespace kege::vk{
 
     void Manager::destroyDescriptorPool( VkDescriptorPool pool, const VkAllocationCallbacks* allocator )
     {
+        waitIdle();
         vkDestroyDescriptorPool( _device, pool, allocator );
     }
 
@@ -601,6 +608,7 @@ namespace kege::vk{
     {
         if ( shader != VK_NULL_HANDLE )
         {
+            waitIdle();
             vkDestroyShaderModule( _device, shader, nullptr );
             shader = VK_NULL_HANDLE;
         }

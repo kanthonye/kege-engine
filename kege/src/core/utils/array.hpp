@@ -1,86 +1,44 @@
 //
-//  core.hpp
+//  array.hpp
 //  kege
 //
 //  Created by Kenneth Esdaile on 12/6/24.
 //
 
-#ifndef framework_hpp
-#define framework_hpp
+#ifndef kege_array_hpp
+#define kege_array_hpp
 
 #include <stddef.h>
-//#include "../device/core/types.hpp"
-//#include "../device/core/image.hpp"
-//#include "../device/core/buffer.hpp"
-//#include "../device/core/framebuffer.hpp"
-//#include "../device/core/command-buffer.hpp"
-//#include "../device/core/shader-resource.hpp"
-//#include "../device/core/shader-pipeline.hpp"
-//#include "../device/core/device.hpp"
-//#include "../device/core/render-window.hpp"
-
 #include <initializer_list>
 #include <algorithm>
 #include <stdexcept>
+#include "../memory/ref.hpp"
 
 namespace kege{
 
-    template <typename T> class array
+    template <typename T> class array : public kege::RefCounter
     {
     public:
 
-        // Constructor from initializer_list
-        array( std::initializer_list<T> init )
-        :   _size(init.size())
+        const T& operator[](size_t index) const
         {
-            _data = new T[_size];
-            std::copy(init.begin(), init.end(), _data);
+            if (index >= _size) throw std::out_of_range("Index out of bounds");
+            return _data[index];
         }
 
-        // Copy constructor
-        array( const array& other )
-        :   _size( other._size )
-        {
-            _data = new T[_size];
-            std::copy(other._data, other._data + _size, _data);
-        }
-
-        // Move constructor
-        array( array&& other ) noexcept
-        :   _data(other._data), _size(other._size)
-        {
-            other._data = nullptr;
-            other._size = 0;
-        }
-
-        // default constructor
-        array( size_t size )
-        :   _data( nullptr ), _size( 0 )
-        {
-            resize( size );
-        }
-
-        // default constructor
-        array()
-        :   _data( nullptr ), _size( 0 )
-        {
-            clear();
-        }
-
-        // Destructor
-        ~array()
-        {
-            clear();
-        }
-
-        // Access operators
         T& operator[](size_t index)
         {
             if (index >= _size) throw std::out_of_range("Index out of bounds");
             return _data[index];
         }
 
-        const T& operator[](size_t index) const
+        const T& at(size_t index) const
+        {
+            if (index >= _size) throw std::out_of_range("Index out of bounds");
+            return _data[index];
+        }
+
+        T& at(size_t index)
         {
             if (index >= _size) throw std::out_of_range("Index out of bounds");
             return _data[index];
@@ -99,10 +57,11 @@ namespace kege{
         size_t size() const { return _size; }
 
         // Iterators
-        T* begin() { return _data; }
-        T* end() { return _data + _size; }
         const T* begin() const { return _data; }
+        T* begin() { return _data; }
+
         const T* end() const { return _data + _size; }
+        T* end() { return _data + _size; }
 
         void resize( size_t size )
         {
@@ -149,6 +108,50 @@ namespace kege{
             return *this;
         }
 
+        // Constructor from initializer_list
+        array( const std::initializer_list<T>& init )
+        :   _size(init.size())
+        {
+            _data = new T[_size];
+            std::copy(init.begin(), init.end(), _data);
+        }
+
+        // Copy constructor
+        array( const array& other )
+        :   _size( other._size )
+        {
+            _data = new T[_size];
+            std::copy(other._data, other._data + _size, _data);
+        }
+
+        // Move constructor
+        array( array&& other ) noexcept
+        :   _data(other._data), _size(other._size)
+        {
+            other._data = nullptr;
+            other._size = 0;
+        }
+
+        // default constructor
+        array( size_t size )
+        :   _data( nullptr ), _size( 0 )
+        {
+            resize( size );
+        }
+
+        // default constructor
+        array()
+        :   _data( nullptr ), _size( 0 )
+        {
+            clear();
+        }
+
+        // Destructor
+        ~array()
+        {
+            clear();
+        }
+
     private:
 
         T* _data;
@@ -156,4 +159,4 @@ namespace kege{
     };
 
 }
-#endif /* framework_hpp */
+#endif /* kege_array_hpp */

@@ -32,7 +32,7 @@ namespace kege{
         std::vector< int > face_indices;
         generateCubeVertces( 1.0, _face_axies, _face_vertices );
         generateCubeIndices( face_indices, _draw_commands );
-
+/*
         _mesh_primitive = new MeshPrimitive;
         _mesh_primitive->vertex_buffer = _graphics->createBuffer
         ({
@@ -50,13 +50,14 @@ namespace kege{
             .memory_usage = MemoryUsage::GpuOnly,
             .name = "terrain_cube_mesh_indices"
         });
-
+*/
 
         return true;
     }
 
     void SphericalTerrainRenderer::submit( int face_id, int index_buffer_id, vec4& patch )
     {
+/*
         if( this->sources.empty() )
         {
             _current_batch = newBatch();
@@ -75,7 +76,7 @@ namespace kege{
             _patch_count = 0;
             _batch_count += 1;
         }
-
+*/
         //_current_batch.patches[ _patch_count ] = patch;
         _current_batch.patchs[ _patch_count ] = patch;
     
@@ -131,12 +132,40 @@ namespace kege{
 
     SphericalTerrainRenderer::Batch SphericalTerrainRenderer::newBatch()
     {
+        /*
+        kege::IndirectDrawCommandBuffer draw_commands =
+        {
+            .count  = 0,
+            .offset = 0,
+            .stride = _draw_command_stride,
+            .buffer = _graphics->createBuffer
+            ({
+                .size  = _max_draw_count * _draw_command_stride,
+                .data  = nullptr,
+                .usage = kege::BufferUsages::IndirectBuffer,
+                .memory_usage = kege::MemoryUsage::CpuToGpu,
+                .name  = "terrain_draw_buffer"
+            })
+        };
+        _mesh->setIndirectDrawCommandBuffer(0, draw_commands);
+
+
+        _mesh->setInstanceBufferBinding(0, kege::BufferBindings{});
+         */
+//        _mesh->instance_draw_object->resize(_mesh->instance_draw_object->size() + 1);
+//        _mesh->instance_draw_object->at(0) = InstanceDrawBuffer{};
+
+//        new IndirectDrawObject
+//        ({
+//        }),
+
+
 //        endBatch();
 //
 //        int index = static_cast< int >( this->sources.size() );
 //        size_t patch_buffer_size = _max_draw_count * _patch_stride;
 //
-//        MeshSourceRef mesh_source = new MeshSource
+//        MeshSourceRef mesh_source = new Mesh
 //        (
 //            _mesh_primitive,
 //            new IndirectDrawBufferList

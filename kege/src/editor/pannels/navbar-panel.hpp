@@ -11,11 +11,11 @@
 #include "../elements/ui-menu.hpp"
 #include "../elements/ui-options.hpp"
 #include "../elements/ui-button.hpp"
-#include "editor-panel.hpp"
+#include "../elements/ui-panel.hpp"
 
 namespace kege{
 
-    class NavbarPanel : public kege::EditorPanel
+    class NavbarPanel : public kege::ui::Panel
     {
     public:
 

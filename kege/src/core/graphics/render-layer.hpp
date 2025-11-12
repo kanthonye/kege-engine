@@ -23,13 +23,13 @@ namespace kege{
         void shutdown();
         void update();
 
-        RenderLayer( ref::AssetManager am, ref::RenderGraph& rg, const ref::ProjectManager& pm );
+        RenderLayer( kege::AssetManager* am, ref::RenderGraph& rg, kege::ProjectManager* pm );
         ~RenderLayer();
 
     private:
 
-        ref::AssetManager _asset_manager;
-        ref::ProjectManager _project_manager;
+        kege::ProjectManager* _project_manager;
+        kege::AssetManager* _asset_manager;
         ref::RenderGraph _render_graph;
     };
 

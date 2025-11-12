@@ -47,17 +47,17 @@ namespace kege{
     };
 
     /**
-     * @struct kege::BindingInfo
+     * @struct kege::LayoutBinding
      * @brief Describes a single shader binding entry within a descriptor set layout.
      *
-     * Each BindingInfo object represents one binding point in a descriptor set.
+     * Each LayoutBinding object represents one binding point in a descriptor set.
      * It defines how the resource is used, which shader stages access it, and
      * optionally includes reflected structure metadata for structured bindings.
      *
      * @see kege::ResrcUsage
      * @see kege::SetConfigInfo
      */
-    struct BindingInfo
+    struct LayoutBinding
     {
         /**
          * @var count
@@ -69,12 +69,12 @@ namespace kege{
         uint32_t count;
 
         /**
-         * @var binding
-         * @brief The binding index within the descriptor set.
+         * @var index
+         * @brief The binding index within the set.
          *
-         * This corresponds to the `binding` number declared in the shader.
+         * This corresponds to the `index` number declared in the shader.
          */
-        uint32_t binding;
+        uint32_t index;
 
         /**
          * @var name
@@ -112,6 +112,7 @@ namespace kege{
          * See @ref kege::BindingType for all possible binding type.
          */
         kege::BindingType type;
+        std::string instance_name;
     };
 
     /**
@@ -121,50 +122,49 @@ namespace kege{
      * It can be shared across multiple pipeline layouts, allowing reusability of common
      * descriptor configurations between different shaders or render passes.
      *
-     * @see kege::BindingInfo
+     * @see kege::LayoutBinding
      * @see kege::IndexedSetInfo
      */
-    using SetBindings = std::vector< kege::BindingInfo >;
+    using LayoutBindings = std::vector< kege::LayoutBinding >;
 
 
     /**
-     * @struct kege::IndexedSetConfig
-     * @brief Associates a set configuration with a specific descriptor set index.
+     * @struct kege::SetLayoutBindings
+     * @brief Associates a set index with a set of layout bindings.
      *
-     * Multiple shader pipelines may reuse the same set configuration at different indices.
-     * This structure allows the same configuration to be assigned to different set
-     * indices in various shader layouts.
+     * Multiple shader pipelines may reuse the same LayoutBindings configuration at
+     * different indices. This structure allows the same configuration to be assigned
+     * to different set indices in various shader layouts.
      *
      * @see kege::SetConfigInfo
      * @see kege::IndexedSetLayouts
      */
-    struct IndexedSetConfig
+    struct SetLayoutBindings
     {
         /**
          * @var index
          * @brief Descriptor set index within the pipeline layout.
          */
-        uint32_t index;
+        uint32_t set_index;
 
         /**
          * @var set
          * @brief Descriptor set configuration assigned to this index.
          */
-        SetBindings bindings;
+        LayoutBindings bindings;
     };
 
     /**
-     * @typedef kege::SetsConfigLayout
+     * @typedef kege::PipelineSetLayoutBindings
      * @brief Describes the descriptor set layout configuration for a shader layout.
      *
      * A IndexedSetLayouts defines the complete descriptor set layout for a shader or pipeline.
      * It consists of a list of indexed set configurations that specify how each set
      * is arranged and what bindings it contains.
      *
-     * @see kege::IndexedSetConfig
+     * @see kege::SetLayoutBindings PipelineSetLayoutBindings
      */
-    using SetsConfigLayout = std::vector< IndexedSetConfig >;
-
+    using PipelineSetLayoutBindings = std::vector< SetLayoutBindings >;
 }
 
 
@@ -185,6 +185,7 @@ namespace kege{
         uint32_t    count;          ///< Count for total array elements
         kege::ShaderStageFlag stages; ///< Shader stages that can access this push constant.
         kege::ref::ShaderStructBlock block; ///< Structured layout of the constant data.
+        std::string instance_name;
     };
 
     /**
@@ -201,7 +202,7 @@ namespace kege{
     struct ShaderLayoutDesc
     {
         std::string name;
-        SetsConfigLayout set_layout_config;
+        PipelineSetLayoutBindings set_layout_bindings;
         PushBlockLayout push_block_layout;
     };
     
@@ -214,7 +215,7 @@ namespace kege{
 
     struct BindingInfoHash
     {
-        std::size_t operator()(const BindingInfo& b) const noexcept
+        std::size_t operator()(const LayoutBinding& b) const noexcept
         {
             std::size_t h = 0;
 
@@ -223,7 +224,7 @@ namespace kege{
             };
 
             combine(std::hash<uint32_t>{}(b.count));
-            combine(std::hash<uint32_t>{}(b.binding));
+            combine(std::hash<uint32_t>{}(b.index));
             combine(std::hash<std::string>{}(b.name));
 
             // Enums -> cast to size_t is safe
@@ -240,7 +241,7 @@ namespace kege{
 
     struct SetBindingsHash
     {
-        std::size_t operator()(const SetBindings& bindings) const noexcept
+        std::size_t operator()(const LayoutBindings& bindings) const noexcept
         {
             std::size_t h = 0;
             BindingInfoHash bindingHasher;
@@ -249,7 +250,7 @@ namespace kege{
                 h ^= v + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
             };
 
-            for (const BindingInfo& b : bindings)
+            for (const LayoutBinding& b : bindings)
             {
                 combine(bindingHasher(b));
             }
@@ -260,10 +261,10 @@ namespace kege{
 
     struct BindingInfoEqual
     {
-        bool operator()(const BindingInfo& a, const BindingInfo& b) const noexcept
+        bool operator()(const LayoutBinding& a, const LayoutBinding& b) const noexcept
         {
             return a.count   == b.count &&
-                   a.binding == b.binding &&
+                   a.index   == b.index &&
                    a.name    == b.name &&
                    a.usage   == b.usage &&
                    a.stages  == b.stages &&
@@ -274,7 +275,7 @@ namespace kege{
 
     struct SetBindingsEqual
     {
-        bool operator()(const SetBindings& A, const SetBindings& B) const noexcept
+        bool operator()(const LayoutBindings& A, const LayoutBindings& B) const noexcept
         {
             if (A.size() != B.size()) return false;
             for (size_t i = 0; i < A.size(); i++)

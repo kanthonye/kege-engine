@@ -132,6 +132,7 @@
     [
         {
             "type": "GRAPHICS",
+            "pass": "Geometry",
             "name": "geometry",
             "reads":
             [
@@ -165,6 +166,7 @@
 
         {
             "type": "GRAPHICS",
+            "pass": "GUI",
             "name": "final",
             "reads":
             [
@@ -206,6 +208,7 @@
 
         {
             "type": "GRAPHICS",
+            "pass": "Present",
             "name": "present",
             "reads":
             [

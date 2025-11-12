@@ -14,6 +14,8 @@
 #include "render-graph-compiler.hpp"
 #include "render-graph-loader.hpp"
 
+#include "../../../utils/frames.hpp"
+
 namespace kege{
 
     /**
@@ -88,6 +90,8 @@ namespace kege{
          */
         void execute(const ref::Semaphore& image_available_sem, const ref::Semaphore& render_complete_sem);
 
+        bool load( const std::string& filename );
+
         /**
          * @brief Compiles the render graph for execution.
          * @return True if compilation succeeded, false otherwise.
@@ -109,7 +113,7 @@ namespace kege{
          * @brief Constructs a render graph.
          * @param graphics Associated graphics context.
          */
-        RenderGraph(kege::Graphics* graphics);
+        RenderGraph(kege::Graphics* graphics, kege::AssetManager* asset_manager);
 
         /**
          * @brief Destructor.
@@ -154,10 +158,10 @@ namespace kege{
          */
         std::vector< RenderStage > _passes;
 
+        kege::AssetManager* _asset_manager;
         kege::Graphics* _graphics;
 
         ref::RenderExecutor _executor;
-        AssetManager _asset_manager;
 
         friend RenderGraphCompiler;
         friend RenderExecutor;

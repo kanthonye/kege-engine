@@ -9,10 +9,10 @@
 
 namespace kege::glsl{
 
-    const ShaderReflect* Parser::getReflection()const
-    {
-        return &reflection;
-    }
+//    const ShaderReflect* Parser::getReflection()const
+//    {
+//        return &reflection;
+//    }
 
     void Parser::parse()
     {
@@ -117,7 +117,14 @@ namespace kege::glsl{
         // insert space after equal sign
         else if ( tok.type == TokenType::Number )
         {
-            if ( nex != TokenType::Semicolon && nex != TokenType::Dot && nex != TokenType::RParen && nex != TokenType::RBracket && nex != TokenType::Comma )
+            if
+            (
+             nex != TokenType::Semicolon &&
+             nex != TokenType::Dot &&
+             nex != TokenType::RParen &&
+             nex != TokenType::RBracket &&
+             nex != TokenType::Comma
+            )
             {
                 generated_glsl += " ";
             }
@@ -148,7 +155,7 @@ namespace kege::glsl{
     {
         expect( TokenType::VertexLayout, "vertex_layout" );
         expect( TokenType::LParen, "(" );
-        VertexAttributeDesc attr;
+        VertexInputAttributeDesc attr;
         while ( !match( TokenType::RParen ) )
         {
             switch ( peek().type )
@@ -177,11 +184,11 @@ namespace kege::glsl{
             }
         }
 
-        attr.type = consumeType("data type");
+        attr.type = stringToShaderVarType( consumeType("data type") );
         attr.name = consumeIdentifier("attribute name");
         expect( TokenType::Semicolon, ";" );
 
-        reflection.attributes.push_back( attr );
+        _attributes.push_back( attr );
 
         // Emit GLSL
         generated_glsl += "layout(location = \"" +std::to_string( attr.location )+ + "\") in " + toString( attr.type ) + " " + attr.name + ";\n";
@@ -192,21 +199,20 @@ namespace kege::glsl{
         expect(TokenType::IndexedSetLayouts, "set_layout");
         expect(TokenType::LParen, "(");
 
-        Ref< ShaderBindingPointSet > set = new ShaderBindingPointSet;
-
+        LayoutBinding binding;
+        int set_index = 0;
         while ( !match( TokenType::RParen ) )
         {
             switch ( tokens[ pos ].type )
             {
                 case TokenType::Binding:
                 {
-                    set->binding = std::stoi( consumeAssignNumber( "binding" ) );
+                    binding.index = std::stoi( consumeAssignNumber( "binding" ) );
                     break;
                 }
                 case TokenType::Set:
                 {
-                    set->set = std::stoi( consumeAssignNumber( "location" ) );
-                    reflection.shader_set_binding_points[ set->set ].push_back( set );
+                    set_index = std::stoi( consumeAssignNumber( "location" ) );
                     break;
                 }
                 case TokenType::Comma:
@@ -223,103 +229,113 @@ namespace kege::glsl{
         {
             case TokenType::Sampler:
             {
-                set->descriptor = DescriptorType::Sampler;
-                set->binding_type = BindingType::TEXTURE;
+                binding.usage = BindingUsage::Sampler;
+                binding.type = BindingType::Image;
                 descriptor_type = "sampler";
                 break;
             }
             case TokenType::SampledImage:
             {
-                set->descriptor = DescriptorType::SampledImage;
-                set->binding_type = BindingType::TEXTURE;
+                binding.usage = BindingUsage::SampledImage;
+                binding.type = BindingType::Image;
                 descriptor_type = "texture2D";
                 break;
             }
             case TokenType::StorageImage:
             {
-                set->descriptor = DescriptorType::StorageImage;
-                set->binding_type = BindingType::TEXTURE;
+                binding.usage = BindingUsage::StorageImage;
+                binding.type = BindingType::Image;
                 descriptor_type = "uniform image2D";
                 break;
             }
             case TokenType::CombinedImageSampler:
             {
-                set->descriptor = DescriptorType::CombinedImageSampler;
-                set->binding_type = BindingType::TEXTURE;
+                binding.usage = BindingUsage::CombinedImageSampler;
+                binding.type = BindingType::Image;
                 descriptor_type = "uniform sampler2D";
+                break;
+            }
+            case glsl::TokenType::InputAttachment:
+            {
+                binding.usage = BindingUsage::InputAttachment;
+                binding.type = BindingType::Image;
+                descriptor_type = "subpassInput";
                 break;
             }
             case TokenType::UniformBuffer:
             {
-                set->descriptor = DescriptorType::UniformBuffer;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::UniformBuffer;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "uniform";
                 break;
             }
             case TokenType::UniformTexelBuffer:
             {
-                set->descriptor = DescriptorType::UniformTexelBuffer;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::UniformTexelBuffer;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "uniform samplerBuffer";
                 break;
             }
             case TokenType::UniformBufferDynamic:
             {
-                set->descriptor = DescriptorType::UniformBufferDynamic;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::UniformBufferDynamic;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "uniform";
                 break;
             }
             case TokenType::StorageBuffer:
             {
-                set->descriptor = DescriptorType::StorageBuffer;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::StorageBuffer;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "buffer";
                 break;
             }
             case TokenType::StorageTexelBuffer:
             {
-                set->descriptor = DescriptorType::StorageTexelBuffer;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::StorageTexelBuffer;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "uniform imageBuffer";
                 break;
             }
             case TokenType::StorageBufferDynamic:
             {
-                set->descriptor = DescriptorType::StorageBufferDynamic;
-                set->binding_type = BindingType::BUFFER;
+                binding.usage = BindingUsage::StorageBufferDynamic;
+                binding.type = BindingType::Buffer;
                 descriptor_type = "buffer";
-                break;
-            }
-            case glsl::TokenType::InputAttachment:
-            {
-                set->descriptor = DescriptorType::InputAttachment;
-                set->binding_type = BindingType::TEXTURE;
-                descriptor_type = "subpassInput";
                 break;
             }
             default: break;
         }
 
         advance();
-        set->name = consumeIdentifier("set layout name");
+        binding.name = consumeIdentifier("set layout name");
 
-        if ( set->binding_type != BindingType::TEXTURE )
+        if ( binding.type != BindingType::Image )
         {
-            set->struct_block = parseShaderBlock();
+            std::vector< ShaderStructField > fields = parseShaderBlock();
+            std::string instance_name;
+            if ( check( TokenType::Identifier ) )
+            {
+                instance_name = consumeIdentifier( "instance name" );
+                binding.count = consumeIfArraySize();
+            }
+            expect(TokenType::Semicolon, ";");
+            binding.block = new ShaderStructBlock( ShaderStructType::Buffer, instance_name, fields );
         }
         else
         {
             expect(TokenType::Semicolon, ";");
         }
 
+        _set_layouts[ set_index ].push_back( binding );
+
         // Emit GLSL
-        generated_glsl += "layout(set = " + std::to_string(set->set) +
-                         ", binding = " + std::to_string(set->binding) +
-                         ") " + descriptor_type + " " + set->name;
-        if ( set->struct_block )
+        generated_glsl += "layout(set = " + std::to_string( set_index ) +
+                         ", binding = " + std::to_string( binding.index ) +
+                         ") " + descriptor_type + " " + binding.name;
+        if ( binding.block )
         {
-            emitGLSLBlock( set->struct_block );
+            emitGLSLBlock( binding.block );
         }
         else
         {
@@ -331,40 +347,51 @@ namespace kege::glsl{
     {
         expect(TokenType::PushBlockLayout, "push_block_layout");
 
-        Ref< ShaderBindingPointConstant > constant = new ShaderBindingPointConstant;
-        constant->name = consumeIdentifier( "identifier" );
-        constant->struct_block = parseShaderBlock();
-        reflection.push_constant_blocks.push_back( constant );
+        std::string instance_name;
 
-        // Emit GLSL
-        generated_glsl += "layout( push_constant ) uniform " + constant->name;
-        emitGLSLBlock( constant->struct_block );
-    }
-
-    void Parser::emitGLSLBlock( Ref< ShaderStructBlock >& struct_block )
-    {
-        // Emit GLSL
-        generated_glsl += "{\n";
-        for ( auto& m : struct_block->fields )
+        PushBlock block;
+        block.name = consumeIdentifier( "identifier" );
+        std::vector< ShaderStructField > fields = parseShaderBlock();
+        if ( check( TokenType::Identifier ) )
         {
-            generated_glsl += "    " + toString( m.type ) + " " + m.name + ";\n";
+            instance_name = consumeIdentifier( "member name" );
+            block.count = consumeIfArraySize();
         }
-        generated_glsl += "}\n";
-        if ( !struct_block->instance_name.empty() )
+        expect(TokenType::Semicolon, ";");
+
+        block.block = new ShaderStructBlock( ShaderStructType::DataBlock, instance_name, fields );
+        _push_blocks.push_back( block );
+
+        // Emit GLSL
+        generated_glsl += "layout( push_constant ) uniform " + block.name;
+        emitGLSLBlock( block.block );
+
+        if ( !block.name.empty() )
         {
-            if ( struct_block->count > 1 )
+            if ( block.count > 1 )
             {
-                generated_glsl += struct_block->instance_name + "[" + std::to_string( struct_block->count ) +"];\n";
+                generated_glsl += block.name + "[" + std::to_string( block.count ) +"];\n";
             }
             else
             {
-                generated_glsl += struct_block->instance_name + ";\n";
+                generated_glsl += block.name + ";\n";
             }
         }
         else
         {
             generated_glsl += ";\n";
         }
+    }
+
+    void Parser::emitGLSLBlock( ref::ShaderStructBlock& block )
+    {
+        // Emit GLSL
+        generated_glsl += "{\n";
+        for ( auto& m : block->fields() )
+        {
+            generated_glsl += "    " + m.type + " " + m.name + ";\n";
+        }
+        generated_glsl += "}\n";
     }
 
     void Parser::parseOutLayout()
@@ -375,7 +402,7 @@ namespace kege::glsl{
         int location = std::stoi( consumeAssignNumber( "location" ) );
         expect(TokenType::RParen, ")");
 
-        ShaderDataType type = consumeType("data type");
+        ShaderVarType type = stringToShaderVarType( consumeType("data type") );
         std::string name = consumeIdentifier("attribute name");
         expect( TokenType::Semicolon, ";" );
 
@@ -390,14 +417,14 @@ namespace kege::glsl{
         int location = std::stoi( consumeAssignNumber( "location" ) );
         expect(TokenType::RParen, ")");
 
-        ShaderDataType type = consumeType("data type");
+        ShaderVarType type = stringToShaderVarType( consumeType("data type") );
         std::string name = consumeIdentifier("attribute name");
         expect( TokenType::Semicolon, ";" );
 
         generated_glsl += "layout(location = \"" +std::to_string( location )+ + "\") in " + toString( type ) + " " + name + ";\n";
     }
 
-    Ref< ShaderStructBlock > Parser::parseShaderBlock()
+    std::vector< ShaderStructField > Parser::parseShaderBlock()
     {
         expect(TokenType::LBrace, "{");
 
@@ -410,7 +437,7 @@ namespace kege::glsl{
             field.type   = consumeType("member type");
             field.name   = consumeIdentifier( "member name" );
             field.count  = consumeIfArraySize();
-            field.size   = sizeOf( field.type );
+            field.size   = sizeOf( stringToShaderVarType( field.type ) );
             expect( TokenType::Semicolon, ";" );
             fields.push_back(field);
 
@@ -418,14 +445,7 @@ namespace kege::glsl{
         }
 
         expect(TokenType::RBrace, "}");
-        Ref< ShaderStructBlock > block = new ShaderStructBlock( fields );
-        if ( check( TokenType::Identifier ) )
-        {
-            block->instance_name = consumeIdentifier( "member name" );
-            block->count = consumeIfArraySize();
-        }
-        expect(TokenType::Semicolon, ";");
-        return block;
+        return fields;
     }
 
     // Utility functions
@@ -521,37 +541,37 @@ namespace kege::glsl{
         return advance().lexeme;
     }
 
-    kege::ShaderDataType Parser::consumeType(const std::string& what)
+    std::string Parser::consumeType(const std::string& what)
     {
         if ( !check( TokenType::Type ) )
             throw std::runtime_error("Expected " + what + " at line " + std::to_string(peek().line));
 
-        // Keyword mapping
-        static const std::unordered_map< std::string, kege::ShaderDataType > shader_types =
-        {
-            { "float",  kege::ShaderDataType::Float  },
-            { "int",    kege::ShaderDataType::Sint   },
-            { "uint",   kege::ShaderDataType::Uint   },
-            { "vec2",   kege::ShaderDataType::Vec2   },
-            { "vec3",   kege::ShaderDataType::Vec3   },
-            { "vec4",   kege::ShaderDataType::Vec4   },
-            { "mat2",   kege::ShaderDataType::Mat2   },
-            { "mat3",   kege::ShaderDataType::Mat3   },
-            { "mat4",   kege::ShaderDataType::Mat4   },
-            { "bool",   kege::ShaderDataType::Bool   },
-            { "double", kege::ShaderDataType::Double },
-            { "dvec2",  kege::ShaderDataType::DVec2  },
-            { "dvec3",  kege::ShaderDataType::DVec3  },
-            { "dvec4",  kege::ShaderDataType::DVec4  },
-        };
+//        // Keyword mapping
+//        static const std::unordered_map< std::string, kege::ShaderVarType > shader_types =
+//        {
+//            { "float",  kege::ShaderVarType::Float  },
+//            { "int",    kege::ShaderVarType::Sint   },
+//            { "uint",   kege::ShaderVarType::Uint   },
+//            { "vec2",   kege::ShaderVarType::Vec2   },
+//            { "vec3",   kege::ShaderVarType::Vec3   },
+//            { "vec4",   kege::ShaderVarType::Vec4   },
+//            { "mat2",   kege::ShaderVarType::Mat2   },
+//            { "mat3",   kege::ShaderVarType::Mat3   },
+//            { "mat4",   kege::ShaderVarType::Mat4   },
+//            { "bool",   kege::ShaderVarType::Bool   },
+//            { "double", kege::ShaderVarType::Double },
+//            { "dvec2",  kege::ShaderVarType::Vec2D  },
+//            { "dvec3",  kege::ShaderVarType::Vec3D  },
+//            { "dvec4",  kege::ShaderVarType::Vec4D  },
+//        };
+//
+//        auto itr = shader_types.find( advance().lexeme );
+//        if ( itr != shader_types.end() )
+//        {
+//            return itr->second;
+//        }
 
-        auto itr = shader_types.find( advance().lexeme );
-        if ( itr != shader_types.end() )
-        {
-            return itr->second;
-        }
-
-        return kege::ShaderDataType::Undefined;
+        return advance().lexeme;
     }
 
     const std::string& Parser::getGLSLOutput()

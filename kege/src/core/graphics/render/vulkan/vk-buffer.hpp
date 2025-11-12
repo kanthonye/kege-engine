@@ -80,6 +80,9 @@ namespace kege::vk{
         const Buffer::Source& getSource( int i ) const { return _sources[ i ]; }
         Buffer::Source& getSource( int i ) { return _sources[ i ]; }
 
+        const VkBuffer& getCurrHandle() const;
+
+
         Buffer( vk::Device* device, const kege::BufferDesc& desc );
         ~Buffer();
 

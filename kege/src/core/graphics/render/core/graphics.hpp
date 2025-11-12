@@ -48,6 +48,13 @@ namespace kege{
     {
     public:
 
+        static std::vector< uint32_t > compileGlslToSpv
+        (
+            const char* shader_name,
+            ShaderStageFlag shader_stage,
+            const std::vector< char >& source
+        );
+        
         bool submit
         (
             const std::vector< kege::SubmitInfo >& submit_infos,
@@ -71,7 +78,7 @@ namespace kege{
          * @param config Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        ref::SetLayout createSetLayout( const SetBindings& config );
+        ref::SetLayout createSetLayout( const LayoutBindings& config );
 
         /**
          * @brief Creates a shader binding set layout based on a description.

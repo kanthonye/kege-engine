@@ -33,4 +33,8 @@ namespace kege{
     };
 
 }
+
+namespace kege::ref{
+    using AppLayer = kege::Ref< kege::AppLayer >;
+}
 #endif /* app_layer_hpp */

@@ -38,9 +38,9 @@ namespace kege{
     {
         return _outputs;
     }
-    const kege::ShaderLayout* ShaderPipeline::getShaderLayout()const
+    const kege::ref::ShaderLayout& ShaderPipeline::getShaderLayout()const
     {
-        return _shader_layout.ref();
+        return _shader_layout;
     }
     const std::vector< std::string > ShaderPipeline::getGlobalBinds()const
     {
@@ -51,6 +51,11 @@ namespace kege{
         return _name;
     }
 
+    kege::ref::ShaderLayout ShaderPipeline::getShaderLayout()
+    {
+        return _shader_layout;
+    }
+    
     kege::PipelineType ShaderPipeline::getPipelineType()const
     {
         return _pipeline_type;

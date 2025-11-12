@@ -10,12 +10,12 @@
 
 #include "../elements/droplist.hpp"
 #include "../elements/ui-numeric3.hpp"
+#include "../elements/ui-panel.hpp"
 #include "hierarchy-panel.hpp"
-#include "editor-panel.hpp"
 
 namespace kege{
-
-    class InspectorPanel : public kege::EditorPanel
+  
+    class InspectorPanel : public kege::ui::Panel
     {
     public:
 

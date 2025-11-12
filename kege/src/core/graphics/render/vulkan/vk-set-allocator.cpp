@@ -151,12 +151,12 @@ namespace kege::vk{
 
     SetAllocator::~SetAllocator()
     {
-        _descriptor_types.clear();
         for ( kege::Ref< DescriptorPool >& pool : _descriptor_pools )
         {
             _device->core().destroyDescriptorPool( pool->handle, nullptr );
         }
         _descriptor_pools.clear();
+        _descriptor_types.clear();
     }
     
 }

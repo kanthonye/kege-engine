@@ -6,70 +6,73 @@
 //
 
 #include "editor-layer.hpp"
-//#include "entry-point.hpp"
+#include "render-graph.hpp"
 
 namespace kege{
 
+    void EditorLayer::addPanel( Ref< ui::Panel > panel )
+    {
+        _panel_name_index_map[ panel->getName() ] = _panels.size();
+        _panels.push_back( panel );
+    }
+
     void EditorLayer::update()
     {
-//        _layout.begin( &_input );
-//        _main_panel->update();
-//        _layout.end();
+        _input.processInputs( _input_context_manager->getCurrentInputs() );
+        _layout->begin( &_input );
+        _root->update( this );
+        _layout->end();
 
-        //_viewer.collectVisibleWidgets( _engine.renderManager().getModule(), _layout );
+        _viewer.collectVisibleWidgets( _render_graph->getRenderExecutor().ref(), *_layout );
     }
 
     bool EditorLayer::initialize()
     {
-        kege::Font font = ui::FontCreator::create( _graphics, 8, 16, vfs( "assets/fonts/monaco.tga" ).c_str() );
+        _project_manager->createProject("");
+        _project_manager->getSceneManager()->createScene("scene");
+        _project_manager->getSceneManager()->changeScene("scene");
+
+        kege::Graphics* graphics = _render_graph->getGraphics();
+        ref::Font font = kege::FontCreator::create( graphics, 8, 16, vfs( "assets/fonts/monaco.tga" ).c_str() );
         if( !font )
         {
             kege::Log::error << "Failed to create font." << Log::nl;
             return false;
         }
 
-        uint64_t gui_pipeline_handle = _asset_manager->getId< ref::ShaderPipeline >( "gui" );
-//        ImageInfo scene_image_info = ImageInfo
-//        {
-//            .image = _engine.renderGraph()->fetchImage( "scene_color" ),
-//            .layout = ImageLayout::ShaderRead,
-//            .sampler = _engine.renderGraph()->fetchSampler( "sampler-nearest-norep" )
-//        };
+        if ( !_viewer.initialize( graphics, _asset_manager, font ) )
+        {
+            return false;
+        }
 
-//        if ( !_viewer.initialize( _graphics, pipeline, font, scene_image_info ) )
-//        {
-//            return false;
-//        }
+        Extent2D window_fbo_size = graphics->getWindow()->getFramebufferSize();
+        _layout = new ui::Layout( window_fbo_size.width, window_fbo_size.height );
 
+        if( !_layout->loadStyles( kege::vfs( "config/style.json" ).c_str() ) )
+        {
+            kege::Log::error << "Failed to load ui style.json" << Log::nl;
+            return false;
+        }
+        _layout->setFont( font );
+        _layout->resize( 200 );
 
+        addPanel( new HierarchyPanel( _project_manager, _layout.ref() ) );
+        addPanel( new InspectorPanel( _project_manager, _layout.ref() ) );
+        addPanel( new ViewportPanel( _project_manager, _layout.ref() ) );
 
-//        if( !_layout.loadStyles( kege::vfs( "root/src/editor/ui-elements/style.json" ).c_str() ) )
-//        {
-//            kege::Log::error << "Failed to load ui style.json" << Log::nl;
-//            return false;
-//        }
-//        _layout.setFont( font );
-//        _layout.resize( 200 );
+        _root = new ui::DockNode( _layout.ref(), "dock" );
+        _root->_panels.push_back(_panels[0]);
+        _root->_panels.push_back(_panels[1]);
+        _root->_panels.push_back(_panels[2]);
+//        _main_panel = new kege::DockingPanel( _project_manager, &_layout );
 
-
-//        main_panel = _layout.make
-//        ({
-//            .mouseover = false,
-//            .style = _layout.getStyleByName( "main")
-//        });
+//            _panels.push_back( new NavbarPanel( pm, l ) );
+//            _panels.push_back( new NavbarPanel( pm, l ) );
 //
-//        _main_panel = new kege::DockingPanel( _project_manager );
-
-        
-
-//            _panels.push_back( new NavbarPanel( pm, l ) );
-//            _panels.push_back( new NavbarPanel( pm, l ) );
-
 //        _hierarchy_panel.init( &_engine, _layout );
 //        _inspector_panel.init( &_engine, _layout );
 //        _viewport_panel.init( &_engine, _layout );
 //        _navbar_panel.init( &_engine, _layout );
-//
 //
 //        Entity entity = Entity::create();
 //        entity.add< Transform >({});
@@ -98,81 +101,12 @@ namespace kege{
         _viewer.shutdown();
     }
 
-//    void EditorLayer::loop()
-//    {
-//        bool _running = true;
-//        while ( _running && _engine.graphics()->windowIsOpen() )
-//        {
-//            _engine.tick();
-//            _engine.input()->updateCurrentInputs();
-//            _input.processInputs( _engine.input()->getCurrentInputs() );
-//            //Communication::broadcast< const MappedInputs& >( _engine.input()->getMappedInputs() );
-//
-//            buildLayout();
-//
-//            _engine.scene().input( _engine.dms() );
-//            // 4. Step engine/game systems
-//            if ( !_paused )
-//            {
-//                _engine.scene().update( _engine.dms() );
-//            }
-//            _engine.scene().render(0);
-//
-//
-//            _engine.renderGraph()->execute( *_engine.renderManager().getModule() );
-//            _engine.renderManager()->clear();
-//            
-//            _engine.graphics()->getWindow()->pollEvents();
-//        }
-//    }
-
-//    bool EditorLayer::run()
-//    {
-//        if ( !initalize() )
-//        {
-//            kege::Log::error << "Failed to initialize EditorLayer." << Log::nl;
-//            shutdown();
-//            return 0;
-//        }
-//        loop();
-//        shutdown();
-//        return 0;
-//    }
-
-//    void EditorLayer::buildLayout()
-//    {
-//        _layout.push( main_panel );
-//        {
-//            _navbar_panel.put( _layout );
-//
-//            _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "content" ) }) );
-//            {
-//                _viewport_panel.put( _layout );
-//
-//                _layout.push( _layout.make({ .visible = true, .style = _layout.getStyleByName( "side-panel" ) }) );
-//                {
-//                    _hierarchy_panel.put( _layout );
-//
-//                    _layout.push( _layout.make({ .style = _layout.getStyleByName( "inspector-panel" ) }) );
-//                    {
-//                        _inspector_panel.put( _layout );
-//                    }
-//                }
-//                _layout.pop();
-//            }
-//            _layout.pop();
-//        }
-//        _layout.pop();
-//        _layout.end();
-//        
-//        _viewer.collectVisibleWidgets( _engine.renderManager().getModule(), _layout );
-//    }
-
-    EditorLayer::EditorLayer( kege::AssetManager* am, kege::Graphics* g, kege::ProjectManager* pm )
+    EditorLayer::EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm )
     :   kege::AppLayer( "EditorLayer" )
+    ,   _input_context_manager( icm )
     ,   _asset_manager( am )
     ,   _project_manager( pm )
-    ,   _graphics( g )
+    ,   _render_graph( rg )
     ,   _paused( false )
     {
     }

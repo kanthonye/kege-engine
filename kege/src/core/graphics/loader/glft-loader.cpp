@@ -148,14 +148,16 @@ namespace kege::gltf{
         return out;
     }
 
-    Ref< Mesh > parseMesh( tinygltf::Model& model, tinygltf::Mesh& mesh )
+    kege::ref::MeshSet parseMesh( tinygltf::Model& model, tinygltf::Mesh& mesh )
     {
         //int submesh_index = 0;
-        Ref< Mesh > refmesh = new Mesh;
-        refmesh->sources.reserve( mesh.primitives.size() );
+        kege::ref::MeshSet mesh_set = new kege::MeshSet;
+        mesh_set->resize( mesh.primitives.size() );
 
-        for (const auto &primitive : mesh.primitives)
+        for (int i=0; i<mesh.primitives.size(); ++i)
         {
+            const auto &primitive = mesh.primitives[i];
+
             // POSITION
             auto pos_acc_index = primitive.attributes.at( "POSITION" );
             std::vector< kege::vec3 > positions = loadAccessorVec3( model, pos_acc_index );
@@ -204,12 +206,13 @@ namespace kege::gltf{
                     mesh_primitive->vertices[i].bitangent = cross( normalize( tangents[i].xyz ), normalize( tangents[i].xyz )) * tangents[i].w;
                 }
             }
-            refmesh->sources.push_back( new MeshSource{
+            mesh_set->at(i) = new kege::Mesh
+            {
                 mesh_primitive, 1, 0, 0,
                 static_cast<uint32_t>(mesh_primitive->indices.size())
-            } );
+            };
         }
-        return refmesh;
+        return mesh_set;
     }
 
     Camera parseCamera( tinygltf::Model& model, tinygltf::Camera& camera )
@@ -319,18 +322,18 @@ namespace kege::gltf{
 
                 if ( 0 <= node.mesh )
                 {
-                    Ref< Mesh > mesh = parseMesh( model, model.meshes[ node.mesh ] );
-                    entity.add< Ref< Mesh > >( mesh );
+                    kege::ref::MeshSet mesh = parseMesh( model, model.meshes[ node.mesh ] );
+                    entity.add< kege::ref::MeshSet >( mesh );
                 }
 
                 if ( 0 <= node.skin )
                 {
-                    tinygltf::Skin& skin = model.skins[ node.skin ];
+                    //tinygltf::Skin& skin = model.skins[ node.skin ];
                 }
 
                 if ( 0 <= node.light )
                 {
-                    tinygltf::Light& light = model.lights[ node.light ];
+                    //tinygltf::Light& light = model.lights[ node.light ];
                 }
             }
 

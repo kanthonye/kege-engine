@@ -22,7 +22,7 @@ namespace kege{
      */
     enum struct ShaderStructType
     {
-        DataBlock, Buffer, Image, Sampler
+        DataBlock, Buffer, Struct
     };
 
     ShaderStructType stringToShaderStructType( const std::string& s );
@@ -34,7 +34,8 @@ namespace kege{
     {
         std::string name;
 
-        ShaderVarType type;
+        //ShaderVarType type;
+        std::string type;
 
         uint32_t offset;
         uint32_t size;
@@ -58,7 +59,9 @@ namespace kege{
         kege::ShaderStructField* operator[]( int field_index );
 
 
-        kege::ShaderStructType getType();
+        const std::vector< ShaderStructField >& fields()const;
+        kege::ShaderStructType getType()const;
+        const std::string& name()const;
 
         ShaderStructBlock
         (
@@ -72,11 +75,11 @@ namespace kege{
 
     private:
 
-        std::unordered_map< std::string, size_t > quick_lookup_map;
-        std::vector< ShaderStructField > fields;
-        std::string name;
+        std::unordered_map< std::string, size_t > _quick_lookup_map;
+        std::vector< ShaderStructField > _fields;
+        std::string _name;
 
-        kege::ShaderStructType type;
+        kege::ShaderStructType _type;
     };
 
 }

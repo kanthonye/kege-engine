@@ -12,7 +12,6 @@
 #include <unordered_map>
 #include "../../core/input/inputs.hpp"
 #include "../../core/input/input-context.hpp"
-#include "../../core/input/input-context-loader.hpp"
 #include "../../core/input/user-input-receiver.hpp"
 
 namespace kege{

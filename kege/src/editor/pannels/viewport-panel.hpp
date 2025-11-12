@@ -8,11 +8,11 @@
 #ifndef viewport_panel_hpp
 #define viewport_panel_hpp
 
-#include "editor-panel.hpp"
+#include "../elements/ui-panel.hpp"
 
 namespace kege{
 
-    class ViewportPanel : public EditorPanel
+    class ViewportPanel : public ui::Panel
     {
     public:
 

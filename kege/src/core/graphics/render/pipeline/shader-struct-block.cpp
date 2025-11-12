@@ -28,52 +28,61 @@ namespace kege {
 
     const ShaderStructField* ShaderStructBlock::get( const std::string& name )const
     {
-        auto itr = quick_lookup_map.find( name );
-        if ( itr == quick_lookup_map.end() )
+        auto itr = _quick_lookup_map.find( name );
+        if ( itr == _quick_lookup_map.end() )
         {
             return nullptr;
         }
-        return &fields[ itr->second ];
+        return &_fields[ itr->second ];
     }
 
     ShaderStructField* ShaderStructBlock::get( const std::string& name )
     {
-        auto itr = quick_lookup_map.find( name );
-        if ( itr == quick_lookup_map.end() )
+        auto itr = _quick_lookup_map.find( name );
+        if ( itr == _quick_lookup_map.end() )
         {
             return nullptr;
         }
-        return &fields[ itr->second ];
+        return &_fields[ itr->second ];
     }
 
     const ShaderStructField* ShaderStructBlock::operator[]( int field_index )const
     {
-        return &fields[ field_index ];
+        return &_fields[ field_index ];
     }
 
     ShaderStructField* ShaderStructBlock::operator[]( int field_index )
     {
-        return &fields[ field_index ];
+        return &_fields[ field_index ];
     }
 
-    kege::ShaderStructType ShaderStructBlock::getType()
+    const std::vector< ShaderStructField >& ShaderStructBlock::fields()const
     {
-        return type;
+        return _fields;
     }
 
+    kege::ShaderStructType ShaderStructBlock::getType()const
+    {
+        return _type;
+    }
+
+    const std::string& ShaderStructBlock::name()const
+    {
+        return _name;
+    }
     ShaderStructBlock::ShaderStructBlock
     (
         ShaderStructType t,
         const std::string& n,
         const std::vector< ShaderStructField >& f
     )
-    :   fields( f )
-    ,   name( n )
-    ,   type( t )
+    :   _fields( f )
+    ,   _name( n )
+    ,   _type( t )
     {
         for ( int i = 0 ; i < f.size() ; ++i )
         {
-            quick_lookup_map[ f[i].name ] = i;
+            _quick_lookup_map[ f[i].name ] = i;
         }
     }
 

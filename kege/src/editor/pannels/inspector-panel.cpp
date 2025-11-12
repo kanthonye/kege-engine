@@ -13,12 +13,12 @@
 namespace kege{
 
     InspectorPanel::InspectorPanel( kege::ProjectManager* pm, ui::Layout* l )
-    :   kege::EditorPanel( pm, l )
+    :   kege::ui::Panel( "Inspector", pm, l )
     {
         Communication::add< const SetSelectedEntity&, InspectorPanel >( this );
-        _main = _layout->make({ .style = _layout->getStyleByName( "Inspector" ), });
+        _main = _layout->make({ .style = _layout->getStyleByName( "inspector-panel" ), });
 
-        _ui_element_creator[ ComponentCacheT< kege::Camera >::getType() ] = ui::camera;
+        _ui_element_creator[ ComponentCacheT< kege::Camera >::getType()    ] = ui::camera;
         _ui_element_creator[ ComponentCacheT< kege::Rigidbody >::getType() ] = ui::rigidbody;
         _ui_element_creator[ ComponentCacheT< kege::Transform >::getType() ] = ui::transform;
     }

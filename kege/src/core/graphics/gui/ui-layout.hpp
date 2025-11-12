@@ -37,7 +37,7 @@ namespace kege::ui{
 
     public:
 
-        float getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const kege::Font& font );
+        float getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const ref::Font& font );
         kege::vec2 computeExtent( int font_size, const char* text );
 
         /**
@@ -222,14 +222,14 @@ namespace kege::ui{
          *
          * @param font The font to set.
          */
-        void setFont(const kege::Font& font);
+        void setFont(const ref::Font& font);
 
         /**
          * Retrieves the current font.
          *
          * @return The current font.
          */
-        const kege::Font& getFont() const;
+        const ref::Font& getFont() const;
 
         /**
          * Resize total number of layout elements.
@@ -247,8 +247,10 @@ namespace kege::ui{
          */
         ui::Input* input();
 
+        uint32_t getHeight()const;
+        uint32_t getWidth()const;
         uint32_t count()const;
-        
+
         /**
          * Check if index, index to a valid element.
          *
@@ -267,7 +269,8 @@ namespace kege::ui{
          */
         void end();
 
-        Layout();
+
+        Layout(uint32_t width, uint32_t height);
 
     private:
 
@@ -285,7 +288,7 @@ namespace kege::ui{
         std::vector< kege::ui::Node > _nodes;
         uint32_t _node_counter;
 
-        kege::Font _font;
+        ref::Font _font;
         ui::Input* _input;
 
         mutable State _curr_active;
@@ -298,6 +301,8 @@ namespace kege::ui{
 
         int32_t _root;
 
+        uint32_t _height;
+        uint32_t _width;
         bool _button_down;
 
         friend EID;

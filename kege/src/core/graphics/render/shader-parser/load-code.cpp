@@ -6,6 +6,7 @@
 //
 
 #include "load-code.hpp"
+#include <unordered_set>
 
 namespace kege{
 
@@ -34,7 +35,6 @@ namespace kege{
         }
     };
 
-    #include <unordered_set>
     bool recursiveLoadText( const int MAX_LINE_LENGTH, char* buffer, CharLinkList& list, std::unordered_set<std::string>& included_files, const char* filename )
     {
         // Check for circular dependency

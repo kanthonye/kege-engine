@@ -206,7 +206,7 @@ namespace kege::vk{
         switch (format)
         {
             default:
-            case kege::ShaderVarType::Undefined:         return VK_FORMAT_UNDEFINED;
+            case kege::ShaderVarType::Unknown:  return VK_FORMAT_UNDEFINED;
 
             // 32-bit unsigned
             case kege::ShaderVarType::Sint:     return VK_FORMAT_R32_SINT;
@@ -1149,7 +1149,7 @@ namespace kege::vk{
             case ImageLayout::HostWrite:            return VK_IMAGE_LAYOUT_GENERAL;
             default:                                return VK_IMAGE_LAYOUT_GENERAL;
         }
-        return {};
+        return VK_IMAGE_LAYOUT_UNDEFINED;
     }
 
 

@@ -24,13 +24,6 @@ namespace kege{
         SampleCount render_sample_count = SampleCount::Count1;
     };
 
-    enum struct PipelineType
-    {
-        Graphics = 1,
-        Compute,
-        RayTracing,
-    };
-
 }
 
 namespace kege{
@@ -60,7 +53,7 @@ namespace kege{
     struct PipelineLayoutInfo
     {
         std::string name;
-        kege::SetsConfigLayout layouts;
+        kege::PipelineSetLayoutBindings layouts;
         kege::PushBlockLayout push_constants;
     };
 
@@ -108,9 +101,11 @@ namespace kege{
         const kege::MultisampleStateDesc& getMultisampleStateDesc()const;
         const kege::VertexBufferLayout& getVertexBufferLayout()const;
         const kege::PipelineOutputs& getPipelineOutputs()const;
-        const kege::ShaderLayout* getShaderLayout()const;
+        const kege::ref::ShaderLayout& getShaderLayout()const;
         const std::vector< std::string > getGlobalBinds()const;
         const std::string& getName()const;
+
+        kege::ref::ShaderLayout getShaderLayout();
 
         kege::PipelineType getPipelineType()const;
         bool checkSupport( uint32_t mask )const;
@@ -123,7 +118,6 @@ namespace kege{
 
     protected:
 
-        kege::ref::ShaderLayout _shader_layout;
         kege::VertexBufferLayout _vertex_input;
         kege::InputAssemblyStateDesc _input_assembly;
         kege::RasterizationStateDesc _rasterization;
@@ -135,6 +129,8 @@ namespace kege{
 
         std::vector< std::string > _global_resources;
         std::vector< std::pair<int,int> > _specialization_constants;
+
+        kege::ref::ShaderLayout _shader_layout;
 
         kege::PipelineType _pipeline_type;
         std::string _name;

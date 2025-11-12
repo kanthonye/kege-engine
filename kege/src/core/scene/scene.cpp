@@ -110,7 +110,8 @@ namespace kege{
         if( _player ) _player.destroy();
         if( _root ) _root.destroy();
         _registry.clear();
-        _root.destroy();
+        _camera = 0;
+        _player = 0;
         _root = 0;
     }
 

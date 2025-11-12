@@ -69,13 +69,17 @@ namespace kege{
         _entity_systems.clear();
         _project_manager.clear();
         _render_graph.clear();
+        Entity::setManager( nullptr );
     }
 
     void ECSLayer::update()
     {
         if ( !_project_manager->empty() )
         {
-            _entity_systems->update(0);
+            if ( _project_manager->getSceneManager()->getScene() )
+            {
+                _entity_systems->update(0);
+            }
         }
     }
 

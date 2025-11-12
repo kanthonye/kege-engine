@@ -25,7 +25,7 @@ namespace kege {
         return _bindings[ i->second ].block->get( field );
     }
 
-    const kege::BindingInfo* SetLayout::getBinding( const std::string& name )const
+    const kege::LayoutBinding* SetLayout::getBinding( const std::string& name )const
     {
         auto i = _binding_set_lookup.find( name );
         if ( i == _binding_set_lookup.end() )
@@ -33,7 +33,7 @@ namespace kege {
         return getBinding(  i->second );
     }
 
-    kege::BindingInfo* SetLayout::getBinding( const std::string& name )
+    kege::LayoutBinding* SetLayout::getBinding( const std::string& name )
     {
         auto i = _binding_set_lookup.find( name );
         if ( i == _binding_set_lookup.end() )
@@ -41,12 +41,12 @@ namespace kege {
         return getBinding(  i->second );
     }
 
-    const kege::BindingInfo* SetLayout::getBinding( int binding_index )const
+    const kege::LayoutBinding* SetLayout::getBinding( int binding_index )const
     {
         return &_bindings[ binding_index ];
     }
 
-    kege::BindingInfo* SetLayout::getBinding( int binding_index )
+    kege::LayoutBinding* SetLayout::getBinding( int binding_index )
     {
         return &_bindings[ binding_index ];
     }
@@ -76,7 +76,7 @@ namespace kege {
         return _bindings.size();
     }
 
-    SetLayout::SetLayout( const kege::SetBindings& bindings )
+    SetLayout::SetLayout( const kege::LayoutBindings& bindings )
     :   _bindings( bindings )
     ,   _total_buffers( 0 )
     ,   _total_images( 0 )

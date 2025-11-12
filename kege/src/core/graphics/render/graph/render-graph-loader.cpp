@@ -10,6 +10,30 @@
 
 namespace kege{
 
+    RenderPassType stringToRenderPass( const std::string& name )
+    {
+        static std::map< std::string, RenderPassType > types;
+        if ( types.empty() )
+        {
+            types[ "GUI" ] = RenderPassType::UI;
+            types[ "ShadowMap" ] = RenderPassType::ShadowMap;
+            types[ "DepthPrePass" ] = RenderPassType::DepthPrePass;
+            types[ "Geometry" ] = RenderPassType::Geometry;
+            types[ "Lighting" ] = RenderPassType::Lighting;
+            types[ "ForwardOpaque" ] = RenderPassType::ForwardOpaque;
+            types[ "ForwardTransparent" ] = RenderPassType::ForwardTransparent;
+            types[ "PostProcess" ] = RenderPassType::PostProcess;
+            types[ "BarrierTransition" ] = RenderPassType::BarrierTransition;
+        }
+        auto m = types.find( name );
+        if ( m != types.end() )
+        {
+            return m->second;
+        }
+        kege::Log::error << "unsupported BarrierTransition -> " <<name <<kege::Log::nl;
+        return RenderPassType::BarrierTransition;
+    }
+
     struct RGParser
     {
         typedef std::function< void( kege::RenderGraph&, Json ) > Function;
@@ -208,6 +232,7 @@ namespace kege{
         ({
             .name = json[ "name" ].value(),
             .type = stringToQueueType( json[ "type" ].value() ),
+            .pass = stringToRenderPass( json[ "pass" ].value() ),
             .reads = parseReadResrcDescs( json[ "reads" ] ),
             .writes = parseWriteResrcDescs( json[ "writes" ] ),
             .pipelines = parseShaderPipelines( json[ "shaders" ] ),

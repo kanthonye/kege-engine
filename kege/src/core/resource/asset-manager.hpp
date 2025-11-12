@@ -29,6 +29,11 @@ namespace kege{
             return this->getAssetCacheTable< Item >()->add( name, res );
         }
 
+        template< typename Item > Item* create( const std::string& name )
+        {
+            return this->getAssetCacheTable< Item >()->create( name );
+        }
+
         template< typename Item > const Item* fetch( const std::string& name )const
         {
             return this->getAssetCacheTable< Item >()->fetch(name);
@@ -96,19 +101,21 @@ namespace kege{
             return loader;
         }
 
-        template< typename Item > const Item* load( const std::string& filename )const
+        template< typename Item > uint64_t load( const std::string& filename )
         {
             std::filesystem::path p = filename;
             std::string name = p.stem().string();
 
-            Item* item = this->fetch< Item >( name );
-            if( item != nullptr ) return item;
+            uint64_t handle = this->getId< Item >( name );
+            if( handle != 0 ) return handle;
 
             std::string ext  = p.extension().string();
             Ref< AssetLoaderT< Item > >* loader = this->fetch< Ref< AssetLoaderT< Item > > >( ext );
-            if( loader == nullptr ) return nullptr;
+            if( loader == nullptr ) return 0;
 
-            return loader->load( filename );
+            Item asset = (*loader)->load( filename );
+            if( asset == nullptr ) return 0;
+            return add< Item >( name, asset );
         }
 
         void shutdown();

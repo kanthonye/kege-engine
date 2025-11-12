@@ -157,7 +157,7 @@ namespace kege{
             const RgWriteResrcDesc& write = _defn.writes[i];
             if ( write.type == RgResrcType::Image )
             {
-                defn = _graph->_asset_manager.get< ImageDefn >( write.handle );
+                defn = _graph->_asset_manager->get< ImageDefn >( write.handle );
                 int img_idx = IMAGE_INDEX % int( defn->physical_handle.size() );
 
                 _render_area = { 0, 0, defn->info.width, defn->info.height };

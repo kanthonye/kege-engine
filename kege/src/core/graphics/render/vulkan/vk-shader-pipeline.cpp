@@ -209,7 +209,7 @@ namespace kege::vk{
     VkPipelineInputAssemblyStateCreateInfo getInputAssemblyStateCreateInfo( const InputAssemblyStateDesc& input_assembly )
     {
         VkPipelineInputAssemblyStateCreateInfo input_assembly_info = { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
-        input_assembly_info.primitiveRestartEnable = input_assembly.primitive_restart_enable;
+        input_assembly_info.primitiveRestartEnable = VK_TRUE;
         input_assembly_info.topology = convertPrimitiveTopology( input_assembly.topology );
         return input_assembly_info;
     }

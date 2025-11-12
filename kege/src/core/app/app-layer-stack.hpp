@@ -17,7 +17,7 @@ namespace kege{
     {
     public:
 
-        bool push( AppLayer* layer );
+        bool push( ref::AppLayer layer );
         bool initialize();
         void shutdown();
         void update();
@@ -27,7 +27,7 @@ namespace kege{
 
     protected:
 
-        std::vector< AppLayer* > _layers;
+        std::vector< ref::AppLayer > _layers;
     };
 
 }

@@ -37,7 +37,7 @@ namespace kege{
         const kege::PhysicalTerrain* getPhysicalTerrain()const;
 
         TerrainRenderer* getTerrainRenderer();
-        MaterialSource* getTerrainMaterial();
+        kege::Material* getTerrainMaterial();
 
         virtual ~Terrain();
         Terrain();

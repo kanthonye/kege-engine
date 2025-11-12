@@ -17,6 +17,7 @@
 #include "input-layer.hpp"
 #include "ecs-layer.hpp"
 #include "virtual-directory.hpp"
+#include "../resource/asset-manager.hpp"
 
 namespace kege{
 
@@ -24,6 +25,11 @@ namespace kege{
     {
     public:
 
+        void operator()( kege::CallbackRequest< kege::ProjectManager >& request );
+        void operator()( kege::CallbackRequest< kege::Graphics >& request );
+
+        void operator()( const kege::Request< kege::ProjectManager >& );
+        void operator()( const kege::Request< kege::Graphics >& );
         virtual ~Application();
         Application();
         void run();
@@ -35,6 +41,7 @@ namespace kege{
 
     protected:
 
+        ref::InputContextManager _input_context_manager;
         ref::AssetManager _asset_manager;
         ref::AppLayerStack _app_layer_stack;
         ref::ProjectManager _project_manager;

@@ -9,15 +9,32 @@
 
 namespace kege{
 
-
-    void PBRMaterialSource::operator()( kege::Graphics* graphics )
+    const ref::ShaderPipeline& Material::getShaderPipeline()const
     {
-        //TODO: PBRMaterialSource
-//        ShaderResourceManager mgr;
-//        ShaderResource handler = mgr.allocate(1, {});
-//        handler->layout[o]
-//        handler->resource = {{{BufferInfo{}}}};
-//        handler->resource = {{{ImageInfo{}}}};
-//        mgr.update(0, handler);
+        return _pipeline;
     }
+    
+    kege::RenderPassType Material::getPass()const
+    {
+        return _pass;
+    }
+
+    Material::Material
+    (
+        kege::RenderPassType pass,
+        const ref::ShaderPipeline& pipeline,
+        const SetNames& binding_names
+    )
+    :   kege::ShaderData( pipeline, binding_names )
+    ,   _parameters({})
+    ,   _textures({})
+    ,   _pass( pass )
+    {
+        setImages( "", ImageBindings{} );
+        setImages( "", ImageBindings{} );
+        setImages( "", ImageBindings{} );
+        setImages( "", ImageBindings{} );
+        setImages( "", ImageBindings{} );
+    }
+
 }

@@ -7,7 +7,7 @@
 
 #include "font-creator.hpp"
 
-namespace kege::ui{
+namespace kege{
 
     std::vector< Glyph > FontCreator::createGlyphs( const FontCreator::Info& info )
     {
@@ -106,10 +106,12 @@ namespace kege::ui{
         return glyphs;
     }
 
-    Ref< ui::Font > FontCreator::create( Graphics* graphics, int char_per_row, int char_per_col, const std::string& font_texture_path )
+    ref::Font FontCreator::create( Graphics* graphics, int char_per_row, int char_per_col, const std::string& font_texture_path )
     {
-        ImageLoader::Info info;
-        if ( !ImageLoader::load( info, font_texture_path ) )
+        int width, height, channels;
+        std::vector<uint8_t> data = ImageLoader::load( &width, &height, &channels, 4, font_texture_path );
+
+        if ( data.empty() )
         {
             kege::Log::error << "Failed to load font texture: " << font_texture_path;
             return {};
@@ -117,17 +119,17 @@ namespace kege::ui{
 
         std::vector< Glyph > glyphs = FontCreator::createGlyphs
         ({
-            info.width,
-            info.height,
+            width,
+            height,
             char_per_row,
             char_per_col,
-            info.data.data()
+            data.data()
         });
 
         ref::Image image = graphics->createImage
         ({
             .type = ImageType::Type2D,
-            .extent = {uint32_t( info.width ),uint32_t( info.height ),1},
+            .extent = {uint32_t( width ),uint32_t( height ),1},
             .array_layers = 1,
             .mip_levels = 1,
             .format = Format::rgba_u8_norm,
@@ -135,7 +137,7 @@ namespace kege::ui{
             .usage = ImageUsage::TransferDst | ImageUsage::Sampled | ImageUsage::Color,
             .memory_usage = MemoryUsage::GpuOnly,
             .debug_name = "font-image",
-            .data = info.data.data()
+            .data = data.data()
         });
 
         ref::Sampler sampler = graphics->createSampler
@@ -148,7 +150,7 @@ namespace kege::ui{
             .address_mode_w = AddressMode::ClampToEdge
         });
 
-        return new ui::Font( glyphs, image, sampler );
+        return new kege::Font( glyphs, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
     }
 
 }

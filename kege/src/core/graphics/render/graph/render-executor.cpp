@@ -12,6 +12,16 @@
 
 namespace kege{
 
+    void RenderExecutor::submit( kege::RenderPassType pass, const ref::Mesh& mesh, const ref::ShaderData& shader_data, const PushConstantBlock& constant )
+    {
+        _render_queue.submit({ pass, mesh, shader_data.ref(), constant });
+    }
+
+    void RenderExecutor::submit( const ref::Mesh& mesh, const ref::Material& material, const PushConstantBlock& constant )
+    {
+        _render_queue.submit({ material->getPass(), mesh, material.ref(), constant });
+    }
+
     void RenderExecutor::setSceneCamera( const kege::CameraData& data )
     {
         _scene_camera_data = data;
@@ -27,11 +37,6 @@ namespace kege{
     void RenderExecutor::updateLights( int size, void* data )
     {
         //_graphics->updateBuffer( _lights_shader_resource[0][0].uniform.buffers[0].buffer, 0, size, data );
-    }
-
-    void RenderExecutor::submit( const RenderObject& object )
-    {
-        _render_queue.submit( object );
     }
     
     RenderQueue& RenderExecutor::getRenderQueue()
@@ -90,12 +95,12 @@ namespace kege{
         
         for ( const RenderObject& object : objects )
         {
-            if ( object.material )
+            if ( object.shader_data )
             {
-//                if ( object.material->resource )
-//                {
-//                    encoder->bind( object.material->resource->getShaderBindings() );
-//                }
+                for(const auto& [set_index, set] : object.shader_data->getShaderSets())
+                {
+                    encoder->bind( set );
+                }
             }
 
             encoder->setPushBlock
@@ -110,7 +115,7 @@ namespace kege{
         }
     }
 
-    void RenderExecutor::drawMesh( CommandEncoder* encoder, const Ref< MeshSource >& mesh )
+    void RenderExecutor::drawMesh( CommandEncoder* encoder, const Ref< Mesh >& mesh )
     {
         if ( mesh->primative )
         {
@@ -134,17 +139,18 @@ namespace kege{
         }
     }
 
-    void RenderExecutor::drawIndices( CommandEncoder* encoder, const Ref< MeshSource >& mesh )
+    void RenderExecutor::drawIndices( CommandEncoder* encoder, const Ref< Mesh >& mesh )
     {
         encoder->bindIndexBuffer( mesh->primative->index_buffer, 0, false );
-        if ( mesh->indirect_draw_buffer_list && mesh->instance_buffer_list )
+        if ( mesh->indirect_draw_object && mesh->shader_data )
         {
-            for (int i=0; i<mesh->indirect_draw_buffer_list->buffers.size(); ++i )
+            for(const auto& [set_index, set] : mesh->shader_data->getShaderSets())
             {
-                const IndirectDrawBuffer& indirect_buffer = mesh->indirect_draw_buffer_list->buffers[i];
-                const InstanceBuffer& instance_buffer = mesh->instance_buffer_list->buffers[i];
-
-                encoder->bind( instance_buffer.getShaderBindings() );
+                encoder->bind( set );
+            }
+            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            {
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
                 encoder->drawIndexIndirect
                 (
                     indirect_buffer.buffer,
@@ -154,10 +160,11 @@ namespace kege{
                 );
             }
         }
-        else if ( mesh->indirect_draw_buffer_list )
+        else if ( mesh->indirect_draw_object )
         {
-            for (const IndirectDrawBuffer& indirect_buffer : mesh->indirect_draw_buffer_list->buffers )
+            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
             {
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
                 encoder->drawIndexIndirect
                 (
                     indirect_buffer.buffer,
@@ -167,20 +174,20 @@ namespace kege{
                 );
             }
         }
-        else if ( mesh->instance_buffer_list )
+        else if ( mesh->shader_data )
         {
-            for (const InstanceBuffer& instance : mesh->instance_buffer_list->buffers )
+            for(const auto& [set_index, set] : mesh->shader_data->getShaderSets())
             {
-                encoder->bind( instance.getShaderBindings() );
-                encoder->drawIndexed
-                (
-                    mesh->index_count,
-                    mesh->instance_count,
-                    mesh->first_index,
-                    0,
-                    mesh->first_instance
-                );
+                encoder->bind( set );
             }
+            encoder->drawIndexed
+            (
+                mesh->index_count,
+                mesh->instance_count,
+                mesh->first_index,
+                0,
+                mesh->first_instance
+            );
         }
         else
         {
@@ -195,15 +202,17 @@ namespace kege{
         }
     }
     
-    void RenderExecutor::drawArrays( CommandEncoder* encoder, const Ref< MeshSource >& mesh )
+    void RenderExecutor::drawArrays( CommandEncoder* encoder, const Ref< Mesh >& mesh )
     {
-        if ( mesh->indirect_draw_buffer_list && mesh->instance_buffer_list )
+        if ( mesh->indirect_draw_object && mesh->shader_data )
         {
-            for (int i=0; i<mesh->indirect_draw_buffer_list->buffers.size(); ++i )
+            for(const auto& [set_index, set] : mesh->shader_data->getShaderSets())
             {
-                const IndirectDrawBuffer& indirect_buffer = mesh->indirect_draw_buffer_list->buffers[i];
-                const InstanceBuffer& instance_buffer = mesh->instance_buffer_list->buffers[i];
-                encoder->bind( instance_buffer.getShaderBindings() );
+                encoder->bind( set );
+            }
+            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            {
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
                 encoder->drawIndirect
                 (
                     indirect_buffer.buffer,
@@ -213,10 +222,11 @@ namespace kege{
                 );
             }
         }
-        else if ( mesh->indirect_draw_buffer_list )
+        else if ( mesh->indirect_draw_object )
         {
-            for (const IndirectDrawBuffer& indirect_buffer : mesh->indirect_draw_buffer_list->buffers )
+            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
             {
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
                 encoder->drawIndirect
                 (
                     indirect_buffer.buffer,
@@ -226,19 +236,19 @@ namespace kege{
                 );
             }
         }
-        else if ( mesh->instance_buffer_list )
+        else if ( mesh->shader_data )
         {
-            for (const InstanceBuffer& instance : mesh->instance_buffer_list->buffers )
+            for(const auto& [set_index, set] : mesh->shader_data->getShaderSets())
             {
-                encoder->bind( instance.getShaderBindings() );
-                encoder->draw
-                (
-                    mesh->index_count,
-                    instance.instance_count,
-                    mesh->first_index,
-                    instance.first_instance
-                );
+                encoder->bind( set );
             }
+            encoder->draw
+            (
+                mesh->index_count,
+                mesh->instance_count,
+                mesh->first_index,
+                mesh->first_instance
+            );
         }
         else
         {
@@ -371,15 +381,15 @@ namespace kege{
 //        _lights_shader_resource.update({});
 
 
-        _sphere = new MeshSource;
+        _sphere = new Mesh;
         _sphere->primative = new EllipsoidMesh(1, 1, 16, 16);
         _sphere->upload( getGraphics() );
 
-        _cube = new MeshSource;
+        _cube = new Mesh;
         _cube->primative = new CuboidMesh(0, 1);
         _cube->upload( getGraphics() );
 
-        _cube = new MeshSource;
+        _cube = new Mesh;
         _cube->first_instance = 0;
         _cube->instance_count = 1;
         _cube->first_index = 0;

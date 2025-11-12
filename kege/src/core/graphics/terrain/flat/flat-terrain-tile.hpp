@@ -107,7 +107,7 @@ namespace kege{
         FlatTerrain* _terrain;
 
         Ref< TerrainTopography > _topography;
-        Ref< MeshSource > _mesh_source;
+        Ref< Mesh > _mesh_source;
         ImageLayer _image_layer;
 
         Status _status;

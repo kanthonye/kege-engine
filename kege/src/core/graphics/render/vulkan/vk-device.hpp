@@ -91,7 +91,7 @@ namespace kege::vk{
          * @param bindings Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        ref::SetLayout createSetLayout( const SetBindings& bindings ) override;
+        ref::SetLayout createSetLayout( const LayoutBindings& bindings ) override;
 
         /**
          * @brief Destroys a shader binding set layout.
@@ -477,7 +477,7 @@ namespace kege::vk{
 
         std::unordered_map
         <
-            kege::SetBindings,
+            kege::LayoutBindings,
             kege::Ref< vk::SetLayout >,
             kege::SetBindingsHash,
             kege::SetBindingsEqual

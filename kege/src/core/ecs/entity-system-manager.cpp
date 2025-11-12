@@ -100,7 +100,7 @@ namespace kege{
         Log::info << "[ EntitySystemManager ]: shutdown complete."<<Log::nl;
     }
 
-    void EntitySystemManager::operator () ( kege::Scene::Changed& msg )
+    void EntitySystemManager::operator () ( const kege::Scene::Changed& msg )
     {
         for (kege::Ref< kege::EntitySystem > system : _systems )
         {
@@ -135,6 +135,7 @@ namespace kege{
 
     EntitySystemManager:: ~EntitySystemManager()
     {
+        Communication::remove< const kege::Scene::Changed&, EntitySystemManager >( this );
         shutdown();
     }
 
@@ -148,6 +149,7 @@ namespace kege{
     ,   _project_manager( pm )
     ,   _render_executor( rm )
     {
+        Communication::add< const kege::Scene::Changed&, EntitySystemManager >( this );
     }
 
 }

@@ -58,68 +58,94 @@ namespace kege{
         }
     }
 
+}
 
 
 
-    const ref::ShaderSet& InstanceBuffer::getShaderBindings()const
+
+namespace kege{
+
+    void InstanceDrawBuffer::setBuffers( int binding_index, const kege::BufferBindings& bindings, int frame )
     {
-        return {};//resource->getShaderBindings();
+        _shader_set.set->bind( frame, binding_index, bindings );
     }
-    const ref::Buffer& InstanceBuffer::getBufferHandle()const
+
+    void InstanceDrawBuffer::setImages( int binding_index, const kege::ImageBindings& bindings, int frame )
     {
-        return {};//resource->operator[](0)[0].uniform.buffers[0].buffer;
+        _shader_set.set->bind( frame, binding_index, bindings );
     }
 
+    const kege::IndexedSet& InstanceDrawBuffer::getShaderSet() const
+    {
+        return _shader_set;
+    }
+
+    InstanceDrawBuffer::InstanceDrawBuffer( IndexedSetLayout layout )
+    {
+        _shader_set.set = layout.set->allocateSet();
+        _shader_set.index = layout.index;
+    }
+
+}
 
 
 
+namespace kege{
+//    void func()
+//    {
+//        InstanceDrawBuffer77* mesh = 0;
+//        mesh->setInstanceBufferBindings("", {});
+//        mesh->setInstanceBufferBinding(0, 0, kege::BufferBindings{});
+//
+//        mesh->setInstanceBuffer();
+//    }
 
     
-    const ref::ShaderSet& InstanceBufferList::getShaderBindings( int index )const
-    {
-        return buffers[ index ].getShaderBindings();
-    }
-
-    const ref::Buffer& InstanceBufferList::getBufferHandle( int index )const
-    {
-        return buffers[ index ].getBufferHandle();
-    }
-
-    InstanceBufferList::InstanceBufferList( const std::vector< InstanceBuffer >& buffers )
-    :   buffers( buffers )
-    {}
-
-    InstanceBufferList::~InstanceBufferList()
-    {
-        buffers.clear();
-    }
-
-    InstanceBufferList::InstanceBufferList()
-    {}
-
-
-
-    IndirectDrawBufferList::IndirectDrawBufferList
-    (
-        const std::vector< IndirectDrawBuffer >& buffers
-    )
-    :   buffers( buffers )
-    {}
-
-    IndirectDrawBufferList::~IndirectDrawBufferList()
-    {
-//        if ( graphics )
-//        {
-//            for ( IndirectDrawBuffer& buffer : buffers )
-//            {
-//                graphics->destroyBuffer( buffer.buffer );
-//            }
-//            buffers.clear();
-//            graphics = nullptr;
-//        }
-    }
-    IndirectDrawBufferList::IndirectDrawBufferList()
-    {}
+//    const ref::ShaderSet& InstanceBufferList::getShaderBindings( int index )const
+//    {
+//        return buffers[ index ].getShaderBindings();
+//    }
+//
+//    const ref::Buffer& InstanceBufferList::getBufferHandle( int index )const
+//    {
+//        return buffers[ index ].getBufferHandle();
+//    }
+//
+//    InstanceBufferList::InstanceBufferList( const std::vector< InstanceBuffer >& buffers )
+//    :   buffers( buffers )
+//    {}
+//
+//    InstanceBufferList::~InstanceBufferList()
+//    {
+//        buffers.clear();
+//    }
+//
+//    InstanceBufferList::InstanceBufferList()
+//    {}
+//
+//
+//
+//    IndirectDrawBufferList::IndirectDrawBufferList
+//    (
+//        const std::vector< IndirectDrawBuffer >& buffers
+//    )
+//    :   buffers( buffers )
+//    {}
+//
+//    IndirectDrawBufferList::~IndirectDrawBufferList()
+//    {
+////        if ( graphics )
+////        {
+////            for ( IndirectDrawBuffer& buffer : buffers )
+////            {
+////                graphics->destroyBuffer( buffer.buffer );
+////            }
+////            buffers.clear();
+////            graphics = nullptr;
+////        }
+//    }
+//    IndirectDrawBufferList::IndirectDrawBufferList()
+//    {}
 
 
 
@@ -184,21 +210,72 @@ namespace kege{
 
 
 
-    void MeshSource::upload( Graphics* graphics )
+
+
+//    void Mesh::setIndirectDrawCommandBuffer( int index, const IndirectDrawCommandBuffer& info )
+//    {
+//        if ( !indirect_draw_object )
+//        {
+//            indirect_draw_object = new kege::IndirectDrawObject({ info });
+//        }
+//        else
+//        {
+//            indirect_draw_object->at( index ) = info;
+//        }
+//    }
+//
+//    void Mesh::setIndirectDrawCommandBuffers( const kege::IndirectDrawObject& info )
+//    {
+//        indirect_draw_object = new kege::IndirectDrawObject( info );
+//    }
+//
+//    void Mesh::resizeIndirectDrawCommandBuffers( size_t size )
+//    {
+//        if ( !indirect_draw_object )
+//        {
+//            indirect_draw_object = new kege::IndirectDrawObject( size );
+//            return;
+//        }
+//        indirect_draw_object->resize( size );
+//    }
+
+    const ref::IndirectDrawObject& Mesh::getIndirectDrawObject()const
+    {
+        return indirect_draw_object;
+    }
+
+    const ref::ShaderData& Mesh::getInstanceShaderData()const
+    {
+        return shader_data;
+    }
+
+    ref::IndirectDrawObject Mesh::getIndirectDrawObject()
+    {
+        return indirect_draw_object;
+    }
+
+    ref::ShaderData Mesh::getInstanceShaderData()
+    {
+        return shader_data;
+    }
+
+    void Mesh::upload( Graphics* graphics )
     {
         if (primative)
         {
             primative->upload( graphics );
         }
     }
-    void MeshSource::unload( Graphics* graphics )
+
+    void Mesh::unload( Graphics* graphics )
     {
         if (primative)
         {
             primative->unload( graphics );
         }
     }
-    MeshSource::MeshSource
+
+    Mesh::Mesh
     (
         Ref< MeshPrimitive > primative,
         uint32_t instance_count,
@@ -215,15 +292,15 @@ namespace kege{
     ,   material_index( material_index )
     {}
 
-    MeshSource::MeshSource
+    Mesh::Mesh
     (
-        Ref< MeshPrimitive > primative,
-        Ref< IndirectDrawBufferList > indirect_draw_buffer_list,
-        Ref< InstanceBufferList > instance_buffer_list
+        ref::MeshPrimitive primative,
+        ref::IndirectDrawObject indirect_draw_object,
+        ref::ShaderData instance_draw_buffer
     )
     :   primative( primative )
-    ,   indirect_draw_buffer_list( indirect_draw_buffer_list )
-    ,   instance_buffer_list( instance_buffer_list )
+    ,   indirect_draw_object( indirect_draw_object )
+    ,   shader_data( instance_draw_buffer )
     ,   instance_count( 0 )
     ,   first_instance( 0 )
     ,   first_index( 0 )
@@ -231,21 +308,41 @@ namespace kege{
     ,   material_index( -1 )
     {}
 
-    MeshSource::MeshSource()
+    Mesh::Mesh
+    (
+        ref::MeshPrimitive primative,
+        ref::IndirectDrawObject indirect_draw_object
+    )
+    :   primative( primative )
+    ,   indirect_draw_object( indirect_draw_object )
+    ,   instance_count( 0 )
+    ,   first_instance( 0 )
+    ,   first_index( 0 )
+    ,   index_count( 0 )
+    ,   material_index( -1 )
+    {}
+
+    Mesh::Mesh
+    (
+        ref::MeshPrimitive primative,
+        ref::ShaderData instance_draw_buffer
+    )
+    :   primative( primative )
+    ,   shader_data( instance_draw_buffer )
+    ,   instance_count( 0 )
+    ,   first_instance( 0 )
+    ,   first_index( 0 )
+    ,   index_count( 0 )
+    ,   material_index( -1 )
+    {}
+
+    Mesh::Mesh()
     :   primative()
     ,   instance_count( 0 )
     ,   first_instance( 0 )
     ,   first_index( 0 )
     ,   index_count( 0 )
     ,   material_index( -1 )
-    {}
-
-
-
-    Mesh::Mesh( const std::vector< Ref< MeshSource > >& sources )
-    :   sources( sources )
-    {}
-    Mesh::Mesh()
     {}
 
 }

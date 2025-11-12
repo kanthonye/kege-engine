@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 
-    float Layout::getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const kege::Font& font )
+    float Layout::getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const ref::Font& font )
     {
         float length = 0;
 
@@ -174,6 +174,10 @@ namespace kege::ui{
             _nodes[ node_index ].depth = 1 + _nodes[ _parent ].depth;
         }
 
+        if ( _root == 0 )
+        {
+            _root = node_index;
+        }
         return node_index;
     }
 
@@ -247,12 +251,12 @@ namespace kege::ui{
         return _style_manager.load( filename );
     }
 
-    void Layout::setFont( const kege::Font& font )
+    void Layout::setFont( const ref::Font& font )
     {
         _font = font;
     }
 
-    const kege::Font& Layout::getFont()const
+    const ref::Font& Layout::getFont()const
     {
         return _font;
     }
@@ -275,6 +279,16 @@ namespace kege::ui{
     NodeIndex Layout::next( NodeIndex index )const
     {
         return _nodes[ index ].next;
+    }
+
+    uint32_t Layout::getHeight()const
+    {
+        return _height;
+    }
+
+    uint32_t Layout::getWidth()const
+    {
+        return _width;
     }
 
     uint32_t Layout::count( NodeIndex index )const
@@ -461,15 +475,14 @@ namespace kege::ui{
         /**
          * If the nodes are not empty, we align the layout.
          */
-        if ( !_nodes.empty() )
+        if ( 0 < _node_counter )
         {
-            align( *this, _root );
+            if ( 0 < _root ) align( *this, _root );
+            _button_down = _input->buttonDown();
+            handleMouseOverEvents();
+            handleButtonDownEvents();
+            handleButtonUpEvents();
         }
-
-        _button_down = _input->buttonDown();
-        handleMouseOverEvents();
-        handleButtonDownEvents();
-        handleButtonUpEvents();
     }
 
     bool Layout::buttonDown()const
@@ -482,7 +495,7 @@ namespace kege::ui{
         return _input;
     }
 
-    Layout::Layout()
+    Layout::Layout(uint32_t width, uint32_t height)
     :   _parent( 0 )
     ,   _curr_hot{}
     ,   _prev_active{}
@@ -490,6 +503,8 @@ namespace kege::ui{
     ,   _node_counter( 0 )
     ,   _root( 0 )
     ,   _button_down( false )
+    ,   _height( height )
+    ,   _width( width )
     {
     }
 

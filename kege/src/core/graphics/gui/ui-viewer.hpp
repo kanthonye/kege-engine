@@ -14,6 +14,8 @@
 #include "../render/graph/render-queue.hpp"
 #include "../render/pipeline/shader-pipeline.hpp"
 #include "../../io/virtual-directory.hpp"
+#include "../../resource/asset-manager.hpp"
+#include "../../utils/frames.hpp"
 
 namespace kege::ui{
 
@@ -55,27 +57,27 @@ namespace kege::ui{
          *
          * @param font The font to set.
          */
-        void setFont(const kege::Font& font);
+        void setFont(const ref::Font& font);
 
         /**
          * Retrieves the current font.
          *
          * @return The current font.
          */
-        const kege::Font& getFont() const;
+        const ref::Font& getFont() const;
 
         /**
          * Initializes the Core object.
          *
          * @return true if initialization is successful, false otherwise.
          */
-        bool initialize( Graphics* graphics );
+        bool initialize( kege::Graphics* graphics, kege::AssetManager* asset_manager, ref::Font font );
 
         ref::Image getDefaultTexture();
 
-//        void setViewportImage( const ImageInfo& info );
-//        void setThemeImage( const ImageInfo& info );
-//        void setFontImage( const ImageInfo& info );
+        void setViewportImage( const kege::ImageBindInfo& info, int frame );
+        void setThemeImage( const kege::ImageBindInfo& info, int frame );
+        void setFontImage( const kege::ImageBindInfo& info, int frame );
 
         /**
          * Uninitializes the Core object, releasing any allocated resources.
@@ -89,34 +91,28 @@ namespace kege::ui{
 
     private:
 
-        //ImageInfo _scene_image_info;
-
-        kege::Ref< MaterialSource > createMaterial();
-        kege::Ref< MeshSource > createMesh();
-
-        ref::ShaderData _shader_data;
+        kege::BufferBindInfo createBuffer();
 
         std::vector< kege::ui::DrawElem > _drawbuffer;
-        kege::Font _font; // The current font used for rendering text.
+        ref::Font _font; // The current font used for rendering text.
 
-        const int _max_render_instances;
+        ref::ShaderPipeline _shader_pipeline;
 
-        //BufferHandle   _indirect_draw_buffer[ kege::MAX_FRAMES_IN_FLIGHT ];
-        //ShaderResource _storage_buffer_resource[ kege::MAX_FRAMES_IN_FLIGHT ];
-        //ShaderResource _ui_texture_shader_resource;
-        //ShaderResource _font_shader_resource;
-        ref::Image _default_texture;
-        ref::ShaderPipeline _pipeline;
-
-        kege::CommandEncoder* _encoder;
-        Graphics* _graphics;
+        kege::AssetManager* _asset_manager;
+        kege::Graphics* _graphics;
 
         PushConstantBlock _push_constant;
         Extent2D _fbo_size;
 
-        std::vector< kege::Ref< MeshSource > > _meshes[2];
-        Ref< kege::MaterialSource > _material;
-        uint32_t _curr_mesh_index;
+        kege::ref::ShaderData _shader_data;
+        kege::ref::Mesh _meshs[2];
+
+        kege::BufferBindings _buffer_bindings[2];
+
+        const int _max_render_instances;
+        uint64_t _pipeline;
+
+        uint32_t _curr_buffer_index;
         uint32_t _draw_count;
     };
 

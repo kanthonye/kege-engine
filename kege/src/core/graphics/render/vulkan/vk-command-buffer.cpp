@@ -14,26 +14,9 @@
 
 namespace kege::vk{
 
-    bool CommandBuffer::bind( int32_t set_index, const ref::ShaderSet& set )
+    bool CommandBuffer::bind( const kege::IndexedSet& indexed_set )
     {
-        if ( set == nullptr )
-        {
-            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
-            return false;
-        }
-        return bind( set_index, set->vk() );
-    }
-
-    bool CommandBuffer::bind( const ref::ShaderSet& set )
-    {
-        if ( set == nullptr )
-        {
-            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
-            return false;
-        }
-        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
-        int set_index = layout->getSetIndex( set->vk()->getSetLayout() );
-        return bind( set_index, set->vk() );
+        return bind( indexed_set.index, indexed_set.set->vk() );
     }
 
     bool CommandBuffer::bind( int32_t set_index, const vk::ShaderSet* set )
@@ -43,15 +26,25 @@ namespace kege::vk{
             Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
             return false;
         }
+        if ( set_index < 0 )
+        {
+            Log::error << "INVALID_SET_INDEX -> " << Log::nl;
+            return false;
+        }
+
+        const vk::DescriptorSet& descriptor = set->descriptor();
+        int frame_index = _device->getFrameIndex();
+
         vkCmdBindDescriptorSets
         (
             _handle,
             _current_pipeline_bindpoint,
-            _pipeline_layout,
+            _curr_pipeline_layout->handle(),
             set_index,
-            1, &set->handle(),
+            1, &descriptor.set[ frame_index % descriptor.frames ],
             0, nullptr
         );
+        _sets_bind_state |= (1ULL << set_index);
         return true;
     }
 
@@ -80,47 +73,8 @@ namespace kege::vk{
         else if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Compute ) {
             _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
         }
-        _pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk()->handle();
+        _curr_pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk();
     }
-
-
-
-
-
-
-    PFN_vkCmdBeginRendering vk::CommandBuffer::vkCmdBeginRenderingPfn = nullptr;
-    PFN_vkCmdEndRendering vk::CommandBuffer::vkCmdEndRenderingPfn = nullptr;
-
-    vk::CommandBuffer::CommandBuffer(Device* device, VkCommandPool command_pool, VkCommandBuffer command_buffer)
-    :   _device( device )
-    ,   _command_pool( command_pool )
-    ,   _handle( command_buffer )
-    ,   _is_recording( false )
-    ,   _encoder_count( 0 )
-    {
-        if (!_device || _command_pool == VK_NULL_HANDLE || _handle == VK_NULL_HANDLE)
-        {
-            // Or use exceptions for fatal errors
-            kege::Log::error << "Invalid arguments passed to vk::CommandBuffer constructor!"<<Log::nl;
-        }
-    }
-
-    vk::CommandBuffer::~CommandBuffer()
-    {
-        for (int i=0; i<_command_encoders.size(); i++)
-        {
-            delete _command_encoders[i];
-            _command_encoders[i] = nullptr;
-        }
-        _command_encoders.clear();
-    }
-
-    vk::CommandBuffer::CommandBuffer()
-    :   _device( nullptr )
-    ,   _command_pool( VK_NULL_HANDLE )
-    ,   _handle( VK_NULL_HANDLE )
-    ,   _is_recording( false )
-    {}
 
     void vk::CommandBuffer::transitionImageLayout
     (
@@ -1065,5 +1019,41 @@ namespace kege::vk{
         const std::vector<BufferTextureCopyRegion>& regions
     )
     {}
+
+    vk::CommandBuffer::CommandBuffer(Device* device, VkCommandPool command_pool, VkCommandBuffer command_buffer)
+    :   _device( device )
+    ,   _command_pool( command_pool )
+    ,   _handle( command_buffer )
+    ,   _is_recording( false )
+    ,   _encoder_count( 0 )
+    ,   _sets_bind_state( 0 )
+    {
+        if (!_device || _command_pool == VK_NULL_HANDLE || _handle == VK_NULL_HANDLE)
+        {
+            // Or use exceptions for fatal errors
+            kege::Log::error << "Invalid arguments passed to vk::CommandBuffer constructor!"<<Log::nl;
+        }
+    }
+
+    vk::CommandBuffer::~CommandBuffer()
+    {
+        for (int i=0; i<_command_encoders.size(); i++)
+        {
+            delete _command_encoders[i];
+            _command_encoders[i] = nullptr;
+        }
+        _command_encoders.clear();
+    }
+
+    vk::CommandBuffer::CommandBuffer()
+    :   _device( nullptr )
+    ,   _command_pool( VK_NULL_HANDLE )
+    ,   _handle( VK_NULL_HANDLE )
+    ,   _is_recording( false )
+    ,   _sets_bind_state( 0 )
+    {}
+
+    PFN_vkCmdBeginRendering vk::CommandBuffer::vkCmdBeginRenderingPfn = nullptr;
+    PFN_vkCmdEndRendering vk::CommandBuffer::vkCmdEndRenderingPfn = nullptr;
 
 }

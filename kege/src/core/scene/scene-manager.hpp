@@ -18,7 +18,9 @@ namespace kege{
     public:
 
         ref::Scene createScene( const std::string& name );
+        ref::Scene changeScene( const std::string& name );
         ref::Scene findScene( const std::string& name );
+        ref::Scene getScene( uint32_t index );
         ref::Scene getScene();
 
         bool loadScenes( const std::string& name );

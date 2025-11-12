@@ -6,10 +6,11 @@
 //
 
 #include "font-loader.hpp"
+#include "image-loader.hpp"
 
-namespace kege::ui{
+namespace kege{
 
-    Ref< ui::Font > FontLoader::load( Graphics* graphics, const std::string& filename )
+    ref::Font FontLoader::load( const std::string& filename )
     {
         FILE* file = fopen( filename.c_str(), "w+" );
         if ( file == nullptr )
@@ -20,7 +21,7 @@ namespace kege::ui{
 
         char name[64];
         fscanf(file, "image %s\n", name );
-        std::vector< ui::Glyph > glyphs( 128 );
+        std::vector< kege::Glyph > glyphs( 128 );
         for (int i=0; i<glyphs.size(); ++i)
         {
             fscanf(file, "x %f\n", &glyphs[i].x );
@@ -36,23 +37,12 @@ namespace kege::ui{
 
         fclose( file );
 
+        std::filesystem::path path = filename;
+        std::string imagefile = path.parent_path().string() + "/" + name;
 
-        std::string filepath = filename;
-        int64_t i;
-        char* s = &filepath[0];
-        for ( i= filename.size() - 1; 0 < i; --i)
-        {
-            if ( filename[ i ] == '/' || filename[ i ] == '\\' )
-            {
-                break;
-            }
-            s[i] = 0;
-        }
-        std::string path = s;
+        ref::Image image = kege::ImageLoader::load( _graphics, imagefile );
 
-        ref::Image image = ImageLoader::load( graphics, path + name );;
-
-        ref::Sampler sampler = graphics->createSampler
+        ref::Sampler sampler = _graphics->createSampler
         ({
             .mag_filter = Filter::Linear,
             .min_filter = Filter::Linear,
@@ -62,9 +52,19 @@ namespace kege::ui{
             .address_mode_w = AddressMode::Repeat
         });
 
-        return new ui::Font( glyphs, image, sampler );
+        return new kege::Font( glyphs, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
     };
 
+    void FontLoader::operator()( kege::Graphics* graphics )
+    {
+        _graphics = graphics;
+    }
 
+    FontLoader::FontLoader( AssetManager* am )
+    : kege::AssetLoaderT< ref::Font >( am )
+    {
+        CallbackRequest< kege::Graphics > request(this, &FontLoader::operator() );
+        Communication::broadcast< CallbackRequest< kege::Graphics >& >( request );
+    }
 
 }

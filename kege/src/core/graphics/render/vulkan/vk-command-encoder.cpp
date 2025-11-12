@@ -11,26 +11,9 @@
 
 namespace kege::vk{
 
-    bool CommandEncoder::bind( int32_t set_index, const ref::ShaderSet& set )
+    bool CommandEncoder::bind( const kege::IndexedSet& indexed_set )
     {
-        if ( set == nullptr )
-        {
-            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
-            return false;
-        }
-        return bind( set_index, set->vk() );
-    }
-
-    bool CommandEncoder::bind( const ref::ShaderSet& set )
-    {
-        if ( set == nullptr )
-        {
-            Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
-            return false;
-        }
-        const vk::ShaderLayout* layout = _curr_bind_pipeline->getShaderLayout()->vk();
-        int set_index = layout->getSetIndex( set->vk()->getSetLayout() );
-        return bind( set_index, set->vk() );
+        return bind( indexed_set.index, indexed_set.set->vk() );
     }
 
     bool CommandEncoder::bind( int32_t set_index, const vk::ShaderSet* set )
@@ -40,15 +23,25 @@ namespace kege::vk{
             Log::error << "INVALID_SHADER_BINDING -> " << Log::nl;
             return false;
         }
+        if ( set_index < 0 )
+        {
+            Log::error << "INVALID_SET_INDEX -> " << Log::nl;
+            return false;
+        }
+        
+        const vk::DescriptorSet& descriptor = set->descriptor();
+        int frame_index = _command_buffer->_device->getFrameIndex();
+
         vkCmdBindDescriptorSets
         (
             _handle,
             _current_pipeline_bindpoint,
-            _pipeline_layout,
+            _curr_pipeline_layout->handle(),
             set_index,
-            1, &set->handle(),
+            1, &descriptor.set[ frame_index % descriptor.frames ],
             0, nullptr
         );
+        _sets_bind_state |= (1ULL << set_index);
         return true;
     }
 
@@ -77,7 +70,7 @@ namespace kege::vk{
         else if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Compute ) {
             _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
         }
-        _pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk()->handle();
+        _curr_pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk();
     }
 
     void CommandEncoder::bindIndexBuffer(const ref::Buffer& buffer, uint64_t offset, bool use_uint16)
@@ -148,6 +141,17 @@ namespace kege::vk{
 
     void CommandEncoder::draw(uint32_t vertex_count, uint32_t instance_count, uint32_t first_vertex, uint32_t first_instance)
     {
+        if ( _sets_bind_state != _curr_pipeline_layout->getSetLayoutBindSignature() )
+        {
+            kege::Log::error
+                << "[DRAW ERROR] Descriptor set bind mismatch: "
+                << "Pipeline layout expects signature 0x" << std::bitset<8>(_curr_pipeline_layout->getSetLayoutBindSignature()).to_string()
+                << " but current state is 0x" << std::bitset<8>(_sets_bind_state).to_string()
+                << ". Make sure all descriptor sets required by the bound pipeline are bound before draw()."
+                << Log::nl;
+            return;
+        }
+        _sets_bind_state = 0;
         vkCmdDraw( _handle, vertex_count, instance_count, first_vertex, first_instance );
     }
 
@@ -160,6 +164,17 @@ namespace kege::vk{
         uint32_t first_instance
     )
     {
+        if ( _sets_bind_state != _curr_pipeline_layout->getSetLayoutBindSignature() )
+        {
+            kege::Log::error
+                << "[DRAW ERROR] Descriptor set bind mismatch: "
+                << "Pipeline layout expects signature 0x" << std::bitset<8>(_curr_pipeline_layout->getSetLayoutBindSignature()).to_string()
+                << " but current state is 0x" << std::bitset<8>(_sets_bind_state).to_string()
+                << ". Make sure all descriptor sets required by the bound pipeline are bound before draw()."
+                << Log::nl;
+            return;
+        }
+        _sets_bind_state = 0;
         vkCmdDrawIndexed( _handle, index_count, instance_count, first_index, vertex_offset, first_instance );
     }
 
@@ -167,6 +182,17 @@ namespace kege::vk{
     {
         const vk::Buffer* b = buffer->vk();
         int frame = _command_buffer->_device->getFrameIndex() & b->frames();
+        if ( _sets_bind_state != _curr_pipeline_layout->getSetLayoutBindSignature() )
+        {
+            kege::Log::error
+                << "[DRAW ERROR] Descriptor set bind mismatch: "
+                << "Pipeline layout expects signature 0x" << std::bitset<8>(_curr_pipeline_layout->getSetLayoutBindSignature()).to_string()
+                << " but current state is 0x" << std::bitset<8>(_sets_bind_state).to_string()
+                << ". Make sure all descriptor sets required by the bound pipeline are bound before draw()."
+                << Log::nl;
+            return;
+        }
+        _sets_bind_state = 0;
         vkCmdDrawIndexedIndirect( _handle, b->getSource( frame ).handle, offset, draw_count, stride );
     }
 
@@ -174,11 +200,33 @@ namespace kege::vk{
     {
         const vk::Buffer* b = buffer->vk();
         int frame = _command_buffer->_device->getFrameIndex() & b->frames();
+        if ( _sets_bind_state != _curr_pipeline_layout->getSetLayoutBindSignature() )
+        {
+            kege::Log::error
+                << "[DRAW ERROR] Descriptor set bind mismatch: "
+                << "Pipeline layout expects signature 0x" << std::bitset<8>(_curr_pipeline_layout->getSetLayoutBindSignature()).to_string()
+                << " but current state is 0x" << std::bitset<8>(_sets_bind_state).to_string()
+                << ". Make sure all descriptor sets required by the bound pipeline are bound before draw()."
+                << Log::nl;
+            return;
+        }
+        _sets_bind_state = 0;
         vkCmdDrawIndirect( _handle, b->getSource( frame ).handle, offset, draw_count, stride );
     }
 
     void CommandEncoder::dispatch(uint32_t group_count_x, uint32_t group_count_y, uint32_t group_count_z)
     {
+        if ( _sets_bind_state != _curr_pipeline_layout->getSetLayoutBindSignature() )
+        {
+            kege::Log::error
+                << "[DISPATCH ERROR] Descriptor set bind mismatch: "
+                << "Pipeline layout expects signature 0x" << std::bitset<8>(_curr_pipeline_layout->getSetLayoutBindSignature()).to_string()
+                << " but current state is 0x" << std::bitset<8>(_sets_bind_state).to_string()
+                << ". Make sure all descriptor sets required by the bound pipeline are bound before draw()."
+                << Log::nl;
+            return;
+        }
+        _sets_bind_state = 0;
         vkCmdDispatch( _handle, group_count_x, group_count_y, group_count_z );
     }
 
@@ -639,5 +687,6 @@ namespace kege::vk{
     CommandEncoder::CommandEncoder()
     :   _command_buffer( nullptr )
     ,   _handle( VK_NULL_HANDLE )
+    ,   _sets_bind_state( 0 )
     {}
 }

@@ -12,7 +12,7 @@
 
 namespace kege{
 
-    class TerrainMaterial : public kege::MaterialSource
+    class TerrainMaterial : public kege::Material
     {
     public:
         

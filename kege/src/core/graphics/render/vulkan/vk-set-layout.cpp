@@ -13,10 +13,11 @@
 
 namespace kege::vk{
 
-    SetLayout::SetLayout( vk::Device* device, const SetBindings& bindings )
+    SetLayout::SetLayout( vk::Device* device, const LayoutBindings& bindings )
     :   kege::SetLayout( bindings )
     ,   _handle( VK_NULL_HANDLE )
     ,   _allocator( nullptr )
+    ,   _device( device )
     {
         /**
          * @brief Create a vector of VkDescriptorSetLayoutBinding from the bindings.
@@ -24,10 +25,10 @@ namespace kege::vk{
          * Each binding corresponds to a resource in the shader and its properties.
          */
         std::vector< VkDescriptorSetLayoutBinding > descriptor_bindings;
-        for ( const kege::BindingInfo& desc : bindings )
+        for ( const kege::LayoutBinding& desc : bindings )
         {
             VkDescriptorSetLayoutBinding dslb = {};
-            dslb.binding = desc.binding;
+            dslb.binding = desc.index;
             dslb.descriptorCount = desc.count;
             dslb.descriptorType = vk::toDescriptorType( desc.usage );
             dslb.stageFlags = vk::convertShaderStageMask( desc.stages );

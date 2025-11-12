@@ -37,5 +37,7 @@ namespace kege{
         kege::Ref< kege::InputContext > context;
     };
 }
-
+namespace kege::ref{
+    typedef kege::Ref< kege::InputContext > InputContext;
+}
 #endif /* kege_input_context_hpp */

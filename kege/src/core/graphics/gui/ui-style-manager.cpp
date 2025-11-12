@@ -50,6 +50,7 @@ namespace kege::ui{
         auto itr = _style_index_map.find( name_id );
         if ( itr == _style_index_map.end() )
         {
+            kege::Log::warning << "Style -> `" + name_id + "` does not exist." << kege::Log::nl;
             return &_styles[ 0 ];
         }
         return &_styles[ itr->second ];

@@ -72,7 +72,7 @@ namespace kege{
     {
         return _physical_terrain->getRenderer();
     }
-    MaterialSource* Terrain::getTerrainMaterial()
+    kege::Material* Terrain::getTerrainMaterial()
     {
         return _physical_terrain->getMaterial();
     }

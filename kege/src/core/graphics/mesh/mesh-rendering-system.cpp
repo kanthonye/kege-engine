@@ -17,8 +17,9 @@ namespace kege{
             kege::Geometry* geometry = entity.get< kege::Geometry >();
             kege::Transform* transform = entity.get< kege::Transform >();
 
-            for ( Ref< MeshSource >& source : geometry->mesh->sources )
+            //for ( Ref< Mesh >& source : geometry->mesh->sources )
             {
+                ref::Mesh& mesh = geometry->mesh;
                 if ( geometry->object_transform.input_type == ShaderInput::PUSH_CONSTANT )
                 {
                     if ( geometry->object_transform.transform == (Matrix::SCALE | Matrix::ROTATION | Matrix::TRANSLATION))
@@ -56,30 +57,32 @@ namespace kege{
                     object.constant.stages = ShaderStageFlag::Vertex;
                 }
 
-                if ( source->primative )
+                if ( mesh->primative )
                 {
-                    if ( !source->primative->vertex_buffer )
+                    if ( !mesh->primative->vertex_buffer )
                     {
-                        source->primative->upload( getGraphics() );
+                        mesh->primative->upload( getGraphics() );
                     }
                 }
 
-                if ( 0 <= source->material_index && geometry->material )
+                ref::Material material;
+                if ( geometry->material_set )
                 {
-                    object.material = geometry->material->sources[ source->material_index ];
-                }
-                else if ( 0 > source->material_index && geometry->material )
-                {
-                    object.material = geometry->material->sources[ 0 ];
+                    if ( 0 <= mesh->material_index )
+                    {
+                        material = geometry->material_set->materials[ mesh->material_index ];
+                    }
+                    else
+                    {
+                        material = geometry->material_set->materials[ 0 ];
+                    }
                 }
                 else
                 {
-                    object.material = _default_material->sources[0];
+                    material = _default_material;
                 }
 
-                object.mesh = source;
-
-                getRenderExecutor()->submit( object );
+                getRenderExecutor()->submit( material->getPass(), mesh, material.ref(), object.constant );
             }
         }
     }

@@ -16,8 +16,9 @@ namespace kege{
 
     void RenderLayer::shutdown()
     {
+        _project_manager = nullptr;
+        _asset_manager = nullptr;
         _render_graph.clear();
-        _project_manager.clear();
     }
 
     void RenderLayer::update()
@@ -43,7 +44,7 @@ namespace kege{
         graphics->present( swapchain, render_complete );
     }
     
-    RenderLayer::RenderLayer( ref::AssetManager am, ref::RenderGraph& rg, const ref::ProjectManager& pm )
+    RenderLayer::RenderLayer( kege::AssetManager* am, ref::RenderGraph& rg, kege::ProjectManager* pm )
     :   kege::AppLayer( "RenderLayer" )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
@@ -52,7 +53,7 @@ namespace kege{
 
     RenderLayer::~RenderLayer()
     {
-        _project_manager.clear();
+        shutdown();
     }
     
 }

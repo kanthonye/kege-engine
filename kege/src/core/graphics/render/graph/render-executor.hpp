@@ -21,15 +21,16 @@ namespace kege{
     {
     public:
 
-        void setSceneCamera( const kege::CameraData& data );
-        void setGuiCamera( const kege::CameraData& data );
-        void updateLights( int size, void* data );
+        void submit( kege::RenderPassType pass, const ref::Mesh& mesh, const ref::ShaderData& shader_data, const PushConstantBlock& constant );
 
         /**
          * @brief Submits a renderable object for rendering.
-         * @param object The renderable object to submit.
          */
-        void submit( const RenderObject& object );
+        void submit( const ref::Mesh& mesh, const ref::Material& material, const PushConstantBlock& constant );
+
+        void setSceneCamera( const kege::CameraData& data );
+        void setGuiCamera( const kege::CameraData& data );
+        void updateLights( int size, void* data );
 
         kege::Graphics* getGraphics();
 
@@ -76,10 +77,10 @@ namespace kege{
             const std::vector< RenderObject >& objects
         );
 
-        void drawMesh( CommandEncoder* encoder, const Ref< MeshSource >& mesh );
+        void drawMesh( CommandEncoder* encoder, const Ref< Mesh >& mesh );
 
-        void drawIndices( CommandEncoder* encoder, const Ref< MeshSource >& mesh );
-        void drawArrays( CommandEncoder* encoder, const Ref< MeshSource >& mesh );
+        void drawIndices( CommandEncoder* encoder, const Ref< Mesh >& mesh );
+        void drawArrays( CommandEncoder* encoder, const Ref< Mesh >& mesh );
 
         /**
          * @brief Executes the rendering process for the current frame.
@@ -97,9 +98,9 @@ namespace kege{
         kege::CameraData _scene_camera_data;
         kege::CameraData _gui_camera_data;
 
-        Ref< MeshSource > _fullscreen_quad;
-        Ref< MeshSource > _sphere;
-        Ref< MeshSource > _cube;
+        Ref< Mesh > _fullscreen_quad;
+        Ref< Mesh > _sphere;
+        Ref< Mesh > _cube;
 
         kege::Graphics* _graphics;
         friend kege::RenderGraph;

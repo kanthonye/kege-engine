@@ -16,6 +16,16 @@ namespace kege{
         return _scenes[ _scenes.size() - 1 ];
     }
 
+    ref::Scene SceneManager::changeScene( const std::string& name )
+    {
+        ref::Scene scene = findScene( name );
+        if ( scene )
+        {
+            setScene( scene );
+        }
+        return scene;
+    }
+
     ref::Scene SceneManager::findScene( const std::string& name )
     {
         auto i = _scene_fast_index_lookup.find( name );
@@ -23,6 +33,10 @@ namespace kege{
         return _scenes[ i->second ];
     }
 
+    ref::Scene SceneManager::getScene( uint32_t index )
+    {
+        return _scenes[ index ];
+    }
     ref::Scene SceneManager::getScene()
     {
         return _curr_scene;
@@ -46,6 +60,11 @@ namespace kege{
             _scenes.push_back( scene );
         }
 
+        if ( !scene->ready() )
+        {
+            scene->initialize();
+        }
+        
         if ( _curr_scene )
         {
             _curr_scene->shutdown();
@@ -54,13 +73,24 @@ namespace kege{
 
         // alert systems of the scene change
         kege::Scene::Changed event = { _curr_scene };
-        _communication.broadcast< kege::Scene::Changed >( event );
+        _communication.broadcast< const kege::Scene::Changed& >( event );
         //_entity_systems->onSceneChange();
     }
 
     bool SceneManager::initialize()
     {
         return true;
+    }
+    void SceneManager::shutdown()
+    {
+        _scene_fast_index_lookup.clear();
+        _curr_scene.clear();
+        
+        for (ref::Scene& scene : _scenes)
+        {
+            scene->shutdown();
+        }
+        _scenes.clear();
     }
 
 }

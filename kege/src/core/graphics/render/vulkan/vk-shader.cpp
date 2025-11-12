@@ -12,8 +12,9 @@
 namespace kege::vk{
 
     Shader::Shader( vk::Device* device, const ShaderDesc& desc )
+    :   _device( device )
     {
-         if ( _device == VK_NULL_HANDLE || desc.byte_code.empty() ) return;
+         if ( device == VK_NULL_HANDLE || desc.byte_code.empty() ) return;
 
         VkShaderModuleCreateInfo create_info = {};
         create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

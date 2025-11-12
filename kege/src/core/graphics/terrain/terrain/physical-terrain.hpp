@@ -99,7 +99,7 @@ namespace kege{
         float getRadius() const { return _radius; }
 
         virtual TerrainRenderer* getRenderer() = 0;
-        virtual MaterialSource* getMaterial() = 0;
+        virtual kege::Material* getMaterial() = 0;
 
         const kege::TerrainSettings& settings()const;
         

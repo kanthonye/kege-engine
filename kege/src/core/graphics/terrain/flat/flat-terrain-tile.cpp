@@ -107,7 +107,7 @@ namespace kege{
         _topography.clear();
         _topography = topography;
         
-        _mesh_source = new MeshSource;
+        _mesh_source = new Mesh;
         _mesh_source->primative = _terrain->_primative;
         _mesh_source->primitive_type = PrimitiveType::Mesh;
 

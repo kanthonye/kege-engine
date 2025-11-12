@@ -10,39 +10,45 @@
 
 namespace kege{
 
-    void ShaderPipelineLoader::operator()( const kege::Response< kege::Graphics* >& response )
-    {
-        _graphics = response.response;
-    }
-
     ref::ShaderPipeline ShaderPipelineLoader::load( const std::string& filename )
     {
+        if (_graphics == nullptr)
+        {
+            CallbackRequest< kege::Graphics > request(this, &ShaderPipelineLoader::operator() );
+            Communication::broadcast< CallbackRequest< kege::Graphics >& >( request );
+            if (_graphics == nullptr)
+            {
+                kege::Log::error << "FAILED: CallbackRequest -> Graphics. Null graphics pointer." << kege::Log::nl;
+                return {};
+            }
+        }
+        
         Json shader_pipeline_library = JsonParser::load( filename.data() );
-        if ( shader_pipeline_library )
+        if ( !shader_pipeline_library )
         {
             kege::Log::error << "FILE_LOAD_FAILED -> " << filename << Log::nl;
             return {};
         }
 
-        std::string path;
-        ShaderPipelineLibContext context;
-        std::vector< PipelinInfo > pipelines;
-        parseShaderPipelineLib( path, _graphics, shader_pipeline_library, &context, &pipelines );
-
-        ref::ShaderPipeline physical_pipeline = createShaderPipeline( _graphics, context, pipelines[0] );
-        if ( physical_pipeline )
+        std::filesystem::path path = filename;
+        
+        glsl::LibraryContext context;
+        if( parseShaderPipelineLib( shader_pipeline_library, path.parent_path(), _graphics, &context ) )
         {
-            _manager->add< ref::ShaderPipeline >( physical_pipeline->getName(), physical_pipeline );
+            return createShaderPipeline( _graphics, context, 0 );
         }
-        return physical_pipeline;
+        return {};
+    }
+
+    void ShaderPipelineLoader::operator()( kege::Graphics* graphics )
+    {
+        _graphics = graphics;
     }
 
     ShaderPipelineLoader::ShaderPipelineLoader( AssetManager* am )
     : kege::AssetLoaderT< ref::ShaderPipeline >( am )
     {
-        Communication::broadcast< const Request< kege::Graphics* >& >({});
     }
-
 }
 
 
@@ -50,6 +56,17 @@ namespace kege{
 
     std::vector< ref::ShaderPipeline > ShaderPipelineLibraryLoader::load( const std::string& filename )
     {
+        if (_graphics == nullptr)
+        {
+            CallbackRequest< kege::Graphics > request(this, &ShaderPipelineLibraryLoader::operator() );
+            Communication::broadcast< const Request< kege::Graphics >& >({});
+            if (_graphics == nullptr)
+            {
+                kege::Log::error << "FAILED: CallbackRequest -> Graphics. Null graphics pointer." << kege::Log::nl;
+                return {};
+            }
+        }
+
         Json shader_pipeline_library = JsonParser::load( filename.data() );
         if ( shader_pipeline_library )
         {
@@ -58,33 +75,33 @@ namespace kege{
         }
 
         std::string path;
-        ShaderPipelineLibContext context;
-        std::vector< PipelinInfo > pipelines;
-        parseShaderPipelineLib( path, _graphics, shader_pipeline_library, &context, &pipelines );
+        glsl::LibraryContext context;
+        parseShaderPipelineLib( shader_pipeline_library, path, _graphics, &context );
 
         std::vector< ref::ShaderPipeline > shader_pipelines;
-        for (const PipelinInfo& pipeline : pipelines )
+        for ( int pipeline = 0 ; pipeline < context.pipelines.size(); ++pipeline )
         {
             ref::ShaderPipeline physical_pipeline = createShaderPipeline( _graphics, context, pipeline );
-            if ( !physical_pipeline )
+            if ( !physical_pipeline ) continue;
+
+            if ( _manager )
             {
-                continue;
+                _manager->add< ref::ShaderPipeline >( physical_pipeline->getName(), physical_pipeline );
             }
-            _manager->add< ref::ShaderPipeline >( physical_pipeline->getName(), physical_pipeline );
+            
             shader_pipelines.push_back( physical_pipeline );
         }
         return shader_pipelines;
     }
 
-    void ShaderPipelineLibraryLoader::operator()( const kege::Response< kege::Graphics* >& response )
+    void ShaderPipelineLibraryLoader::operator()( kege::Graphics* graphics )
     {
-        _graphics = response.response;
+        _graphics = graphics;
     }
 
     ShaderPipelineLibraryLoader::ShaderPipelineLibraryLoader( AssetManager* am )
     : kege::AssetLoaderT< std::vector< ref::ShaderPipeline > >( am )
     {
-        Communication::broadcast< const Request< kege::Graphics* >& >({});
     }
 
 }

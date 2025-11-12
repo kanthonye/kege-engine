@@ -33,13 +33,13 @@ namespace kege{
             object.constant.size = 2 * sizeof( kege::mat44 );
             object.constant.stages = ShaderStageFlag::Vertex;
 
-            for ( Ref< MeshSource >& source : terrain->getTerrainRenderer()->sources )
-            {
-                object.mesh = source;
-                object.material = terrain->getTerrainMaterial();
-
-                getRenderExecutor()->submit( object );
-            }
+//            for ( Ref< Mesh >& source : terrain->getTerrainRenderer()->sources )
+//            {
+//                object.mesh = source;
+//                object.material = terrain->getTerrainMaterial();
+//
+//                getRenderExecutor()->submit( object );
+//            }
         }
     }
     

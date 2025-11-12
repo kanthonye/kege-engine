@@ -14,7 +14,7 @@ namespace kege::vk{
 
     struct BindingSlot
     {
-        const kege::BindingInfo* info = nullptr;
+        const kege::LayoutBinding* info = nullptr;
         uint32_t offset = 0;   // offset into flat arrays
         bool modifled = true;
     };
@@ -23,13 +23,13 @@ namespace kege::vk{
     {
     public:
 
-        bool bind(int binding_index, const kege::BufferBindings& buffers);
-        bool bind(int binding_index, const kege::ImageBindings& images);
+        bool bind(int frame_index, int binding_index, const kege::BufferBindings& buffers);
+        bool bind(int frame_index, int binding_index, const kege::ImageBindings& images);
 
         const vk::ShaderSet* vk()const { return this; }
         vk::ShaderSet* vk() { return this; }
 
-        const VkDescriptorSet& handle()const;
+        const vk::DescriptorSet& descriptor()const;
 
         void update();
 
@@ -39,12 +39,13 @@ namespace kege::vk{
     private:
 
         // Preallocated flat arrays for all buffers/images
-        std::vector<VkDescriptorBufferInfo> _flat_buffers;
-        std::vector<VkDescriptorImageInfo> _flat_images;
-        std::vector<BindingSlot> _binding_slots;
+        std::vector< VkDescriptorBufferInfo > _flat_buffers[ MAX_FRAMES_IN_FLIGHT ];
+        std::vector< VkDescriptorImageInfo > _flat_images[ MAX_FRAMES_IN_FLIGHT ];
+        kege::array< BindingSlot > _binding_slots[ MAX_FRAMES_IN_FLIGHT ];
 
         vk::DescriptorSet _descritor;
 
+        bool _modified;
         bool _freed;
 
     private:

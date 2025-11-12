@@ -8,8 +8,24 @@
 #ifndef hierarchy_panel_hpp
 #define hierarchy_panel_hpp
 
-#include "editor-panel.hpp"
-#include "../elements/hierarchy-droplist.hpp"
+#include "../elements/ui-panel.hpp"
+
+namespace kege::ui{
+
+    struct HierarchyDroplist
+    {
+        ui::Style spacer_style;
+
+        ui::EID container;
+        ui::EID content;
+        ui::EID field;
+        ui::EID label;
+        ui::EID icon;
+        ui::EID spacer;
+
+        bool open[2] = {false, false};
+    };
+}
 
 namespace kege{
 
@@ -18,24 +34,29 @@ namespace kege{
         Entity entity;
     };
 
-    class HierarchyPanel : public kege::EditorPanel
+    class HierarchyPanel : public kege::ui::Panel
     {
     public:
-        
-        HierarchyPanel& init( ui::Layout& layout );
-        void build( const Entity& root, ui::Layout& layout, int spacer = 0 );
-        void put( const Entity& entity, ui::Layout& layout );
 
+        void update();
         Entity getSelectedEntity();
         HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l );
 
     public:
 
-        std::map< uint32_t, ui::HierarchyDroplist > _open_states;
+        ui::HierarchyDroplist* makeEntityUI( const Entity& entity, int space );
+        void buildHierarchy( const Entity& root, int spacer = 0 );
+        bool clicked( ui::HierarchyDroplist* list );
 
-        Entity _selected_entity;
-        ui::EID _main;
-        ui::EID _highlight;
+    public:
+
+        std::map< uint32_t, ui::HierarchyDroplist > _hierarchy;
+
+        ref::Scene _scene;
+
+        kege::Entity _selected_entity;
+        ui::EID _create_entity;
+        ui::EID _panel;
     };
 }
 

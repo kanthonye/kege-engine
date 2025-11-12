@@ -32,7 +32,7 @@ namespace kege{
             Channel< MessageT >::instance().remove( handler );
         }
 
-        template< typename MessageT > static void broadcast( MessageT& message )
+        template< typename MessageT > static void broadcast( MessageT message )
         {
             // usually no need to be explicit, the message type can be derived at compiletime
             Channel< MessageT >::instance().broadcast( message );
@@ -72,7 +72,7 @@ namespace kege{
                 _original_ptrs.erase(it);
             }
 
-            void broadcast( MessageT& msg )
+            void broadcast( MessageT msg )
             {
                 std::vector<Handler> localQueue( _handlers.size() );
 
@@ -94,4 +94,38 @@ namespace kege{
     };
 
 }
+
+#include <functional>
+
+namespace kege{
+
+    template< typename T > struct Request
+    {
+        T request;
+    };
+    
+    template< typename T > struct Response
+    {
+        T response;
+    };
+
+
+    template< typename Response > struct CallbackRequest
+    {
+        using CallbackFunct = void(*)( Response* response );
+        std::function< void( Response* ) > callback;
+
+        template<typename Class> CallbackRequest( Class* instance, void (Class::*memberFunc)( Response* ) )
+        {
+            callback = [instance, memberFunc](Response* response)
+            {
+                (instance->*memberFunc)( response );
+            };
+        }
+
+        CallbackRequest( CallbackFunct funct ) : callback( funct )
+        {}
+    };
+}
+
 #endif /* communication_hpp */

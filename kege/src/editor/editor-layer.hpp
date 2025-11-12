@@ -14,7 +14,9 @@
 #include "inspector-panel.hpp"
 #include "viewport-panel.hpp"
 #include "navbar-panel.hpp"
-#include "docking-panel.hpp"
+#include "elements/ui-dock-node.hpp"
+#include "elements/ui-panel.hpp"
+#include "elements/ui-dock-node.hpp"
 
 namespace kege{
 
@@ -26,17 +28,25 @@ namespace kege{
         void shutdown();
         void update();
 
-        EditorLayer( kege::AssetManager* am, kege::Graphics* graphics, kege::ProjectManager* pm );
+        EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm );
 
     public:
 
-        kege::AssetManager* _asset_manager;
+        void addPanel( Ref< ui::Panel > panel );
+
+    public:
+
+        std::map< std::string, size_t > _panel_name_index_map;
+        std::vector< Ref< ui::Panel > > _panels;
+
+        kege::InputContextManager* _input_context_manager;
         kege::ProjectManager* _project_manager;
-        kege::Graphics* _graphics;
+        kege::AssetManager* _asset_manager;
+        kege::RenderGraph* _render_graph;
 
-        ref::DockingPanel _main_panel;
+        Ref< ui::DockNode > _root;
 
-        ui::Layout _layout;
+        Ref< ui::Layout > _layout;
         ui::Viewer _viewer;
         ui::Input _input;
 

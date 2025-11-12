@@ -304,6 +304,12 @@ namespace kege::vk{
         return true;
     }
 
+    const VkBuffer& Buffer::getCurrHandle() const
+    {
+        int frame = getFrameIndex();
+        return _sources[ frame ].handle;
+    }
+
     int Buffer::getFrameIndex()const
     {
         return _device->getFrameIndex() % _frames;

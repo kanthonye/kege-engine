@@ -25,8 +25,9 @@ namespace kege{
 
     struct RenderObject
     {
-        Ref< MaterialSource > material;
-        Ref< MeshSource > mesh;
+        kege::RenderPassType pass;
+        ref::Mesh mesh;
+        cref::ShaderData shader_data;
         PushConstantBlock constant;
     };
 

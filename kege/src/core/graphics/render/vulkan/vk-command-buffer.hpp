@@ -40,19 +40,10 @@ namespace kege::vk{
         /**
          * @brief Binds a shader set to the command buffer.
          *
-         * @param set_index The index location where the shader set will be bind.
-         * @param set The shader set object to bind.
+         * @param indexed_set Hold the set object and the set index where the set object should bo bind.
          * @return True if binding succeeded, false otherwise.
          */
-        bool bind( int32_t set_index, const ref::ShaderSet& set ) override;
-
-        /**
-         * @brief Binds a shader set to the command buffer.
-         *
-         * @param set The shader set object to bind.
-         * @return True if binding succeeded, false otherwise.
-         */
-        bool bind( const ref::ShaderSet& set ) override;
+        bool bind( const kege::IndexedSet& indexed_set ) override;
 
         /**
          * @brief Binds a Vulkan shader set to the command buffer.
@@ -386,8 +377,9 @@ namespace kege::vk{
         bool _is_recording = false;          ///< Flag indicating whether the command buffer is currently recording commands.
 
         const vk::ShaderPipeline* _curr_bind_pipeline;
+        const vk::ShaderLayout* _curr_pipeline_layout;
+        int _sets_bind_state;
         VkPipelineBindPoint _current_pipeline_bindpoint;
-        VkPipelineLayout _pipeline_layout;
 
     private:
 

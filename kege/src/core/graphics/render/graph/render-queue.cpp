@@ -22,12 +22,12 @@ namespace kege{
 
     void RenderQueue::submit( const RenderObject& object )
     {
-        RenderPassQueue& queue = _queues[ object.material->pass ];
+        RenderPassQueue& queue = _queues[ object.pass ];
 
-        auto a = queue.objects.find( object.material->pipeline );
+        auto a = queue.objects.find( object.shader_data->getShaderPipeline() );
         if ( a == queue.objects.end() )
         {
-            RenderPassQueue::RenderObjects& objects = queue.objects[ object.material->pipeline ];
+            RenderPassQueue::RenderObjects& objects = queue.objects[ object.shader_data->getShaderPipeline() ];
             objects.push_back( object );
         }
         else

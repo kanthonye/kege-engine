@@ -570,6 +570,15 @@ namespace kege::ui{
 
     void align( Layout& layout, NodeIndex pid )
     {
+        const Style* style = layout[ pid ]->style;
+        if( style->width.type == ui::SizingType::SIZE_EXTEND )
+        {
+            layout[ pid ]->rect.width = layout.getWidth();
+        }
+        if( style->height.type == ui::SizingType::SIZE_EXTEND )
+        {
+            layout[ pid ]->rect.height = layout.getHeight();
+        }
         computeChildrenExtent( layout, pid );
         alignChildrenNodes( layout, pid );
     }

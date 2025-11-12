@@ -159,7 +159,7 @@ namespace kege
 
     const char* Json::toStr( const char* str )const
     {
-        return ( _json == nullptr ) ? "str" : _json->value().data();
+        return ( _json == nullptr ) ? str : _json->value().data();
     }
 
     int32_t Json::toInt( int32_t val )const

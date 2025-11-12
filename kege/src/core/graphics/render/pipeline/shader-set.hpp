@@ -23,8 +23,8 @@ namespace kege{
     {
     public:
 
-        virtual bool bind(int binding_index, const kege::BufferBindings& buffers) = 0;
-        virtual bool bind(int binding_index, const kege::ImageBindings& images) = 0;
+        virtual bool bind(int frame_index, int binding_index, const kege::BufferBindings& buffers) = 0;
+        virtual bool bind(int frame_index, int binding_index, const kege::ImageBindings& images) = 0;
 
         virtual const vk::ShaderSet* vk() const { return nullptr; }
         virtual vk::ShaderSet* vk() { return nullptr; }
@@ -43,5 +43,24 @@ namespace kege{
 
 namespace kege::ref{
     typedef kege::Ref< kege::ShaderSet > ShaderSet;
+}
+
+namespace kege{
+
+    struct IndexedSet
+    {
+        /**
+         * @var index
+         * @brief Descriptor set index within the pipeline layout.
+         */
+        uint32_t index;
+
+        /**
+         * @var set
+         * @brief Descriptor set configuration assigned to this index.
+         */
+        ref::ShaderSet set;
+    };
+
 }
 #endif /* shader_set_hpp */

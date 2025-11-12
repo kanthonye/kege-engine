@@ -9,7 +9,7 @@
 
 namespace kege{
 
-    bool AppLayerStack::push( AppLayer* layer )
+    bool AppLayerStack::push( ref::AppLayer layer )
     {
         _layers.push_back( layer );
         kege::Log::info << "[ "<< layer->name() <<" ]: initializing...\n";
@@ -46,7 +46,7 @@ namespace kege{
 
     void AppLayerStack::update()
     {
-        for (size_t i = _layers.size() - 1; i > 0; i -= 1 )
+        for (size_t i = 0; i < _layers.size(); ++i )
         {
             _layers[ i ]->update();
         }

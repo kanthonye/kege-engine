@@ -32,15 +32,15 @@ namespace kege{
         const TerrainRenderer* getRenderer() const { return _renderer.ref(); }
         TerrainRenderer* getRenderer() { return _renderer.ref(); }
 
-        const MaterialSource* getMaterial() const { return _material.ref(); }
-        MaterialSource* getMaterial() { return _material.ref(); }
+        const kege::Material* getMaterial() const { return _material.ref(); }
+        kege::Material* getMaterial() { return _material.ref(); }
 
         const TerrainPlane& getPlanes( int i ) const { return _planes[i]; }
         TerrainPlane& getPlanes( int i ) { return _planes[i]; }
 
         // Setters
         void setRenderer( const kege::Ref< SphericalTerrainRenderer >& r ) { _renderer = r; }
-        void setMaterial( const kege::Ref< MaterialSource >& m ) { _material = m; }
+        void setMaterial( const ref::Material& m ) { _material = m; }
         void setPlanes( const std::vector< TerrainPlane >& p ) { _planes = p; }
 
         void update( const kege::fvec3& position );
@@ -62,7 +62,7 @@ namespace kege{
     private:
 
         kege::Ref< SphericalTerrainRenderer > _renderer;
-        kege::Ref< MaterialSource > _material;
+        ref::Material _material;
 
         std::vector< TerrainPlane > _planes;
 

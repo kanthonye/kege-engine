@@ -145,6 +145,13 @@ namespace kege{
        QUEUE_TYPE_TRANSFER,
    };
 
+    enum struct PipelineType
+    {
+        Graphics = 1,
+        Compute,
+        RayTracing,
+    };
+
     enum struct FenceStatus
     {
         Success,
@@ -1099,7 +1106,14 @@ namespace kege{
      */
     enum struct ShaderVarType : char
     {
-        Undefined, Bool, Sint, Uint, Float, Double,
+        Unknown,
+
+        Bool,
+        Sint,
+        Uint,
+        Float,
+        Double,
+
         Vec2,  Vec3,  Vec4,
         Vec2I, Vec3I, Vec4I,
         Vec2U, Vec3U, Vec4U,
@@ -1164,7 +1178,7 @@ namespace kege{
          * - Format::RGBA8_UNORM for normalized uchar4
          * - Format::RG32_UINT for uvec2
          */
-        ShaderVarType type = ShaderVarType::Undefined;
+        ShaderVarType type = ShaderVarType::Unknown;
 
         /**
          * @brief Byte offset from start of vertex data.
@@ -1239,15 +1253,6 @@ namespace kege{
          * - PatchList for tessellation
          */
         PrimitiveTopology topology = PrimitiveTopology::TriangleList;
-
-        /**
-         * @brief Enables primitive restart functionality.
-         *
-         * When true:
-         * - For list topologies: special index value (0xFFFF/0xFFFFFFFF) starts new primitive
-         * - For strip topologies: special index value restarts the strip
-         */
-        bool primitive_restart_enable = false;
 
         /**
          * @brief Gets the number of vertices per primitive.

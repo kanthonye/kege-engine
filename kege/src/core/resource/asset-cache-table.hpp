@@ -72,6 +72,8 @@ namespace kege{
         const Item* get( uint64_t handle )const;
         Item* get( uint64_t handle );
 
+        Item* create( const std::string& name );
+
         void remove( const std::string& name );
         void erase( uint64_t handle );
         void clear();
@@ -145,6 +147,18 @@ namespace kege{
     {
         Asset* asset = _items[ handle ];
         return (asset) ? &asset->item : nullptr;
+    }
+
+    template< typename Item > Item* AssetCacheTable< Item >::create( const std::string& name )
+    {
+        auto m = _lookup_table.find( name );
+        if ( m ==  _lookup_table.end() )
+        {
+            uint64_t handle = _items.push( Asset{ name } );
+            _lookup_table[ name ] = handle;
+            return &_items.get( handle )->item;
+        }
+        return &_items.get( m->second )->item;
     }
 
     template< typename Item > void AssetCacheTable< Item >::remove( const std::string& name )

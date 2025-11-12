@@ -78,7 +78,7 @@ namespace kege::vk{
     // SetLayout
     //-------------------------------------------------------------------------
 
-    ref::SetLayout Device::createSetLayout( const SetBindings& bindings )
+    ref::SetLayout Device::createSetLayout( const LayoutBindings& bindings )
     {
         auto i = _set_layout_library.find( bindings );
         if( i != _set_layout_library.end() ) return i->second.ref();
@@ -113,15 +113,15 @@ namespace kege::vk{
         if ( _device == VK_NULL_HANDLE ) return {};
 
         std::vector< VkDescriptorSetLayout > descriptor_set_layouts;
-        descriptor_set_layouts.reserve( description.set_layout_config.size() );
+        descriptor_set_layouts.reserve( description.set_layout_bindings.size() );
 
         kege::IndexedSetLayouts indexed_set_layouts;
-        indexed_set_layouts.reserve( description.set_layout_config.size() );
-        for (const IndexedSetConfig& config : description.set_layout_config )
+        indexed_set_layouts.reserve( description.set_layout_bindings.size() );
+        for (const SetLayoutBindings& layout : description.set_layout_bindings )
         {
-            ref::SetLayout set_layout = createSetLayout( config.bindings );
+            ref::SetLayout set_layout = createSetLayout( layout.bindings );
             descriptor_set_layouts.push_back( set_layout->vk()->handle() );
-            indexed_set_layouts.push_back({ .index = config.index, .set = set_layout });
+            indexed_set_layouts.push_back({ .index = layout.set_index, .set = set_layout });
         }
 
         auto i = _shader_layout_lookup.find( descriptor_set_layouts );
@@ -204,6 +204,7 @@ namespace kege::vk{
         kege::Ref< vk::Shader > shader = _shaders.insert( new vk::Shader( this, desc ) );
         if ( shader->handle() == VK_NULL_HANDLE )
         {
+            kege::Log::error << "CREATE_FAILED -> vk::Shader" << kege::Log::nl;
             _shaders.remove( shader.ref() );
             shader.clear();
         }
@@ -214,12 +215,12 @@ namespace kege::vk{
     {
         if ( shader != nullptr )
         {
-            if ( shader->_handle == VK_NULL_HANDLE )
+            if ( shader->_handle != VK_NULL_HANDLE )
             {
                 _manager.destroyShader( shader->_handle );
                 shader->_handle = VK_NULL_HANDLE;
-                shader->_device = nullptr;
             }
+            shader->_device = nullptr;
         }
     }
 
@@ -580,9 +581,15 @@ namespace kege::vk{
             destroySampler( s );
         _samplers.clear();
 
+        for (vk::SetLayout* s = _set_layouts.head; s != nullptr; s = s->next )
+            destroySetLayout( s );
+        _set_layouts.clear();
+
         for (vk::ShaderLayout* s = _shader_layouts.head; s != nullptr; s = s->next )
             destroyShaderLayout( s );
         _shader_layouts.clear();
+
+        _descriptor_allocators.clear();
 
         for (vk::Semaphore* s = _semaphores.head; s != nullptr; s = s->next )
             destroySemaphore( s );
@@ -617,9 +624,9 @@ namespace kege::vk{
             vkDestroyDevice(_device, nullptr);
             _device = VK_NULL_HANDLE;
         }
-        
-        _device = VK_NULL_HANDLE;
+
         _physical_device = nullptr;
+        _device = VK_NULL_HANDLE;
         _instance = nullptr;
         KEGE_LOG_INFO << "Device Shutdown Complete."<<Log::nl;
     }

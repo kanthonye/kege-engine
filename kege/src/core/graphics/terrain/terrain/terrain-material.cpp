@@ -8,7 +8,7 @@
 #include "terrain-material.hpp"
 namespace kege{
 
-    TerrainMaterial::TerrainMaterial()
+    TerrainMaterial::TerrainMaterial(): kege::Material({}, {}, {})
     {
     }
 

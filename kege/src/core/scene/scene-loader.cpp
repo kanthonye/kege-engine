@@ -416,7 +416,7 @@ namespace kege{
 //            ({
 //                .mesh = new Mesh
 //                {{
-//                    new MeshSource
+//                    new Mesh
 //                    (
 //                        primative, // .primative =
 //                        1, // .instance_count
@@ -432,7 +432,7 @@ namespace kege{
 //            params->assets->add< kege::Geometry >( params->id, {
 //                .mesh = new Mesh
 //                {{
-//                    new MeshSource
+//                    new Mesh
 //                    {
 //                        primative,  // .primative =
 //                        1, // .instance_count

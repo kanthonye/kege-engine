@@ -9,6 +9,56 @@
 
 namespace kege::ui{
 
+    bool isNumeric(const std::string& str)
+    {
+        if (str.empty()) return false;
+
+        size_t start = 0;
+        size_t n = str.size();
+
+        // Handle optional leading sign
+        if (str[0] == '+' || str[0] == '-')
+        {
+            if (n == 1) return false;  // Just "+" or "-" is invalid
+            start = 1;
+        }
+
+        bool hasDigit = false;
+        bool hasDecimal = false;
+        bool hasExponent = false;
+
+        for (size_t i = start; i < n; ++i) {
+            char c = str[i];
+
+            if (std::isdigit(c)) {
+                hasDigit = true;
+                continue;
+            }
+
+            if (c == '.') {
+                if (hasDecimal || hasExponent) return false;  // Multiple decimals or after 'e'
+                hasDecimal = true;
+                continue;
+            }
+
+            if (c == 'e' || c == 'E') {
+                if (hasExponent || !hasDigit) return false;  // Multiple 'e' or no digit before
+                hasExponent = true;
+                hasDigit = false;  // Need digit after exponent
+
+                // Handle optional sign after 'e'
+                if (i + 1 < n && (str[i + 1] == '+' || str[i + 1] == '-')) {
+                    ++i;
+                    if (i + 1 >= n) return false;  // Must have digit after sign
+                }
+                continue;
+            }
+
+            return false;  // Invalid character
+        }
+
+        return hasDigit;  // Must have at least one digit
+    }
     Sizing parseSizing( kege::Json json )
     {
         if ( json )
@@ -41,7 +91,14 @@ namespace kege::ui{
             }
             else
             {
-                return ui::fixed( atof( length ) );
+                if( isNumeric( length ) )
+                {
+                    return ui::fixed( atof( length ) );
+                }
+                else
+                {
+                    kege::Log::warning <<"unsupported ui-sizing term -> " <<length <<kege::Log::nl;
+                }
             }
         }
         return {};
@@ -252,7 +309,7 @@ namespace kege::ui{
         }
 
         std::vector< std::pair< std::string, Style > > style_sheet;
-        json.foreach([ &style_sheet ](const std::string& name, const Json& json)
+        json[ "styles" ].foreach([ &style_sheet ](const std::string& name, const Json& json)
         {
             Style style = {};
 

@@ -142,11 +142,6 @@ namespace kege{
         return _create_info.height;
     }
 
-//    ivec2 GlfwWindow::getPosition() const
-//    {
-//        return {_create_info.pos_x,_create_info.pos_y};
-//    }
-
     bool GlfwWindow::isVisible() const
     {
         return _create_info.visible;

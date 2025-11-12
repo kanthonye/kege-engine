@@ -21,8 +21,8 @@ namespace kege::vk{
     {
     public:
 
-        const vk::Shader* vk()const{ return this; };
-        vk::Shader* vk(){ return this; };
+        const vk::Shader* vk() const override { return this; };
+        vk::Shader* vk() override { return this; };
 
         const VkShaderStageFlagBits stage()const;
         const VkShaderModule handle()const;

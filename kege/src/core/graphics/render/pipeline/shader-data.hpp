@@ -12,15 +12,22 @@
 
 namespace kege{
 
+    using SetIndices = std::initializer_list< int >;
+    using SetNames = std::initializer_list< std::string >;
+    struct Binds{ int set, binding, type; };
+
     /**
-     * @brief Represents the data associated with a shader, including buffer and image bindings.
+     * @brief Encapsulates shader resource bindings for a shader pipeline.
+     *
+     * Manages buffer and image bindings for shader resource sets.
+     * Provides methods to set resources by set/binding index or by name.
      */
     class ShaderData : public kege::RefCounter
     {
     public:
 
-//        template <typename T> bool setField( const std::string& block_name, const std::string& field_name, const T& value )
-//        {
+        template <typename T> bool setPushBlock( const std::string& block_name, const std::string& field_name, const T& value )
+        {
 //            const ShaderBindingPoint* block = getBlock( block_name );
 //            if ( block == nullptr )
 //            {
@@ -43,87 +50,91 @@ namespace kege{
 //            {
 //                memcpy( _constants.data() + field->offset, &value, sizeof(T) );
 //            }
-//            return true;
-//        }
-//
-//        bool set( const std::string& block_name, int index, size_t size, const void* data );
-//
-//        void setPushBlock( size_t offset, size_t size, const void* data );
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Buffer binding using shader block name to access set-index and binding-index
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        bool setBufferBlock( const std::string& block_name, const BufferBindings& bindings );
-//
-//        bool setBufferBlock( const std::string& block_name, const BufferInfo& binding );
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Image binding using shader block name to access set-index and binding-index
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        bool setImageSampler( const std::string& block_name, const std::vector< ImageInfo >& images );
-//
-//        bool setImageSampler( const std::string& block_name, const ImageInfo& images );
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Direct Buffer binding using raw set-index and binding-index
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        bool setBufferBlock( int set_index, int binding_index, const BufferBindings& bindings );
-//
-//        bool setBufferBlock( int set_index, int binding_index, const BufferInfo& binding );
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Direct Image binding using raw set-index and binding-index
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        bool setImageSampler( int set_index, int binding_index, const ImageBindings& binding );
-//
-//        bool setImageSampler( int set_index, int binding_index, const ImageInfo& binding );
-//
-//        const uint8_t* cpuBlob() const;
-//        size_t blobSize() const;
-//
-//        bool integrate();
-//
-//
-//        const std::vector< ShaderResrcBindingSet >& getSets()const;
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Constructor
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        explicit ShaderData( ref::ShaderLayout layout );
-//
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//        // Destructor
-//        // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- //
-//
-//        ~ShaderData();
-//
-//    private:
-//
-//        ShaderBindingResrc* getShaderBindingPoint( const std::string& block_name );
-//
-//        const ShaderStructField* getField( const ShaderBindingPoint* block, const std::string& field_name )const;
-//
-//        const ShaderBindingPoint* getBlock( const std::string& block_name )const;
-//
-//        int8_t* getBufferBlockDataPointer( int index, const ShaderBindingPoint* block );
-//
-//    private:
-//
-//        std::map< int, int > _set_remap_table;
-//        std::vector< ShaderResrcBindingSet > _sets;
-//
-//        kege::Ref< const ShaderLayout > _layout;
-//        std::vector< uint8_t > _constants;
-//        kege::Graphics* _graphics;
+            return true;
+        }
+        
+        void setPushBlock( size_t offset, size_t size, const void* data );
+
+        /**
+         * @brief Sets buffer bindings for a specific set and binding index.
+         *
+         * @param set_index Index of the shader resource set.
+         * @param binding_index Index of the binding within the set.
+         * @param bindings Vector of buffer bindings to set.
+         * @return True if the bindings were set successfully, false otherwise.
+         */
+        bool setBuffers( int set_index, int binding_index, const BufferBindings& bindings, int frame = 0 );
+
+        /**
+         * @brief Sets buffer bindings for a specific push block by name.
+         *
+         * @param block_name Name of the push block.
+         * @param bindings Vector of buffer bindings to set.
+         * @return True if the bindings were set successfully, false otherwise.
+         */
+        bool setBuffers( const std::string& block_name, const BufferBindings& bindings, int frame = 0 );
+
+        /**
+         * @brief Sets image bindings for a specific set and binding index.
+         *
+         * @param set_index Index of the shader resource set.
+         * @param binding_index Index of the binding within the set.
+         * @param bindings Vector of image bindings to set.
+         * @return True if the bindings were set successfully, false otherwise.
+         */
+        bool setImages( int set_index, int binding_index, const ImageBindings& bindings, int frame = 0 );
+
+        /**
+         * @brief Sets image bindings for a specific push block by name.
+         *
+         * @param block_name Name of the push block.
+         * @param bindings Vector of image bindings to set.
+         * @return True if the bindings were set successfully, false otherwise.
+         */
+        bool setImages( const std::string& block_name, const ImageBindings& bindings, int frame = 0 );
+
+        const std::map< int, kege::IndexedSet >& getShaderSets()const;
+        
+        /**
+         * @brief Retrieves the associated shader layout.
+         * @return Reference to the shader layout.
+         */
+        const ref::ShaderPipeline& getShaderPipeline()const;
+
+        void update();
+
+        /**
+         * @brief Constructor for ShaderData.
+         * @param p The shaderPipeline object.
+         * @param s A list of SetLayout names to allocate ShaderSets from.
+         */
+        explicit ShaderData( const ref::ShaderPipeline& p, const kege::SetNames& s );
+
+        /**
+         * @brief Constructor for ShaderData.
+         * @param p The shaderPipeline object.
+         * @param s A list of SetLayout indices to allocate ShaderSets from. 
+         */
+        explicit ShaderData( const ref::ShaderPipeline& p, const kege::SetIndices& s );
+
+        /**
+         * @brief Destructor for ShaderData.
+         */
+        virtual ~ShaderData();
+
+    private:
+
+        std::map< int, kege::IndexedSet > _sets;
+        ref::ShaderPipeline _pipeline;
+
+        std::vector< uint8_t > _push_block_data;
     };
 }
 
 namespace kege::ref{
     typedef kege::Ref< kege::ShaderData > ShaderData;
+}
+namespace kege::cref{
+    typedef kege::Ref< const kege::ShaderData > ShaderData;
 }
 #endif /* shader_data_hpp */

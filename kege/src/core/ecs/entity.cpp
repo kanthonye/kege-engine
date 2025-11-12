@@ -83,6 +83,7 @@ namespace kege{
 
     Entity::operator bool()const
     {
+        if( _mgr == nullptr ) return false;
         return _mgr->isvalid( _id );
     }
 

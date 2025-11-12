@@ -6,6 +6,7 @@
 //
 
 #include "../io/virtual-directory.hpp"
+#include "../resource/input-context-loader.hpp"
 #include "input-layer.hpp"
 
 namespace kege{
@@ -30,8 +31,8 @@ namespace kege{
 //            return false;
 //        }
 
-        string input_file = kege::vfs( "assets/config/keybinds.json" );
-        kege::Ref< kege::InputContext > context = kege::InputContextLoader::load( input_file );
+        std::string input_file = kege::vfs( "assets/config/keybinds.json" ).c_str();
+        kege::Ref< kege::InputContext > context = kege::InputContextLoader().load( input_file );
         if ( !context )
         {
             kege::Log::error << "( LOADING_FAILED ) -> assets/config/keybinds.json" << Log::nl;

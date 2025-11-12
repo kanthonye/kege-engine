@@ -37,7 +37,7 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        void operator () ( kege::Scene::Changed& msg );
+        void operator () ( const kege::Scene::Changed& msg );
 
         kege::RenderExecutor* getRenderExecutor();
         kege::AssetManager* getAssetManager();

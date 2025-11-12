@@ -8,6 +8,7 @@
 #ifndef mesh_hpp
 #define mesh_hpp
 
+#include "../../utils/array.hpp"
 #include "../../math/algebra/vectors.hpp"
 #include "../../math/algebra/quaternion.hpp"
 #include "../../math/algebra/transform.hpp"
@@ -58,36 +59,7 @@ namespace kege{
         uint32_t first_instance;
     };
 
-
-
-
-
-    struct InstanceBuffer
-    {
-        const ref::ShaderSet& getShaderBindings()const;
-        const ref::Buffer& getBufferHandle()const;
-
-        ref::ShaderSet resource;
-        uint32_t instance_count;
-        uint32_t first_instance;
-    };
-    
-    class InstanceBufferList : public kege::RefCounter
-    {
-    public:
-
-        InstanceBufferList( const std::vector< InstanceBuffer >& buffers );
-
-        const ref::ShaderSet& getShaderBindings( int index )const;
-        const ref::Buffer& getBufferHandle( int index )const;
-
-        ~InstanceBufferList();
-        InstanceBufferList();
-
-        std::vector< InstanceBuffer > buffers;
-    };
-
-    struct IndirectDrawBuffer
+    struct IndirectDrawCommandBuffer
     {
         ref::Buffer buffer;
         uint64_t offset;
@@ -95,20 +67,78 @@ namespace kege{
         uint32_t stride;
     };
 
-    class IndirectDrawBufferList : public kege::RefCounter
+    struct IndirectDrawObject : public kege::array< kege::IndirectDrawCommandBuffer >
+    {
+        IndirectDrawObject( const std::initializer_list< kege::IndirectDrawCommandBuffer >& init )
+        :   kege::array< kege::IndirectDrawCommandBuffer >( init )
+        {}
+    };
+}
+namespace kege::ref{
+    using IndirectDrawObject = kege::Ref< kege::IndirectDrawObject >;
+}
+namespace kege::cref{
+    using IndirectDrawObject = kege::Ref< const kege::IndirectDrawObject >;
+}
+
+
+
+
+
+namespace kege{
+
+    struct InstanceDrawBuffer : public kege::RefCounter
     {
     public:
 
-        IndirectDrawBufferList
-        (
-            const std::vector< IndirectDrawBuffer >& buffers
-        );
+        /** 
+         * @brief Sets buffer bindings for a specific binding index.
+         *
+         * @param binding_index Index of the binding within the set.
+         * @param bindings Vector of buffer bindings to set.
+         * @param frame Frame index for double/triple buffering scenarios.
+         */
+        void setBuffers( int binding_index, const kege::BufferBindings& bindings, int frame = 0 );
 
-        ~IndirectDrawBufferList();
-        IndirectDrawBufferList();
+        /** 
+         * @brief Sets image bindings for a specific binding index.
+         *
+         * @param binding_index Index of the binding within the set.
+         * @param bindings Vector of image bindings to set.
+         * @param frame Frame index for double/triple buffering scenarios.
+         */
+        void setImages( int binding_index, const kege::ImageBindings& bindings, int frame = 0 );
 
-        std::vector< IndirectDrawBuffer > buffers;
+        /** 
+         * @brief Retrieves the associated shader set.
+         * @return Handle to the shader set.
+         */
+        const kege::IndexedSet& getShaderSet() const;
+
+        /** 
+         * @brief Constructor for InstanceDrawBuffer.
+         * @param layout Indexed set layout defining the bindings.
+         */
+        InstanceDrawBuffer( IndexedSetLayout layout );
+
+    private:
+
+        kege::IndexedSet _shader_set;
     };
+
+}
+namespace kege::ref{
+    using InstanceDrawBuffer = kege::Ref< kege::InstanceDrawBuffer >;
+}
+namespace kege::cref{
+    using InstanceDrawBuffer = kege::Ref< const kege::InstanceDrawBuffer >;
+}
+
+
+
+
+
+namespace kege{
 
     class MeshPrimitive : public kege::RefCounter
     {
@@ -127,7 +157,10 @@ namespace kege{
         void unload( kege::Graphics* graphics );
         void upload( kege::Graphics* graphics );
 
+        // CPU vertex buffer data
         std::vector< Vertex > vertices;
+
+        // CPU index buffer data
         std::vector< uint32_t > indices;
 
         // GPU vertex buffer handle
@@ -141,38 +174,68 @@ namespace kege{
         
         uint32_t drawcount;
     };
-    typedef kege::Ref< kege::MeshPrimitive > MeshPrimitiveRef;
+}
+
+namespace kege::ref{
+    typedef kege::Ref< kege::MeshPrimitive > MeshPrimitive;
+}
+namespace kege::sref{
+    typedef kege::Ref< const kege::MeshPrimitive > MeshPrimitive;
+}
+
+
+namespace kege{
 
     enum class PrimitiveType { Mesh, ScreenSpaceQuad, PointList };
 
-    struct MeshSource : public kege::RefCounter
+    class Mesh : public kege::RefCounter
     {
+    public:
+
+        const ref::IndirectDrawObject& getIndirectDrawObject()const;
+        const ref::ShaderData& getInstanceShaderData()const;
+
+        ref::IndirectDrawObject getIndirectDrawObject();
+        ref::ShaderData getInstanceShaderData();
+
         void upload( Graphics* graphics );
         void unload( Graphics* graphics );
 
-        MeshSource
+        Mesh
         (
-            Ref< MeshPrimitive > primative,
+            ref::MeshPrimitive primative,
             uint32_t instance_count,
             uint32_t first_instance,
             uint32_t first_index,
             uint32_t index_count,
-            int32_t material_index = 1
+            int32_t  material_index = 1
         );
 
-        MeshSource
+        Mesh
         (
-            Ref< MeshPrimitive > primative,
-            Ref< IndirectDrawBufferList > indirect_draw_buffer_list,
-            Ref< InstanceBufferList > instance_buffer_list
+            ref::MeshPrimitive primative,
+            ref::IndirectDrawObject indirect_draw_object,
+            ref::ShaderData instance_draw_object
         );
 
-        MeshSource
+        Mesh
+        (
+            ref::MeshPrimitive primative,
+            ref::IndirectDrawObject indirect_draw_object
+        );
+
+        Mesh
+        (
+            ref::MeshPrimitive primative,
+            ref::ShaderData instance_draw_object
+        );
+
+        Mesh
         ();
 
-        Ref< IndirectDrawBufferList > indirect_draw_buffer_list;
-        Ref< InstanceBufferList > instance_buffer_list;
-        Ref< MeshPrimitive > primative;
+        ref::IndirectDrawObject indirect_draw_object;
+        ref::ShaderData shader_data;
+        ref::MeshPrimitive primative;
 
         PrimitiveType primitive_type;
         uint32_t instance_count = 0;
@@ -182,21 +245,30 @@ namespace kege{
 
         int material_index = -1;
     };
-    typedef kege::Ref< kege::MeshSource > MeshSourceRef;
+    typedef kege::Ref< kege::Mesh > MeshSourceRef;
 
-    struct Mesh : public kege::RefCounter
-    {
-        Mesh( const std::vector< kege::MeshSourceRef >& sources );
-        Mesh();
-        
-        std::vector< kege::MeshSourceRef > sources;
-        kege::vec3 aabb_min;
-        kege::vec3 aabb_max;
-    };
-    typedef kege::Ref< kege::Mesh > MeshRef;
+}
+namespace kege::ref{
+    typedef kege::Ref< kege::Mesh > Mesh;
+}
+namespace kege::sref{
+    typedef kege::Ref< const kege::Mesh > Mesh;
+}
 
 
+namespace kege{
+    using MeshSet = kege::array< ref::Mesh >;
+}
+namespace kege::ref{
+    using MeshSet = kege::Ref< kege::MeshSet >;
+}
+namespace kege::sref{
+    using MeshSet = kege::Ref< const kege::MeshSet >;
+}
 
+
+
+namespace kege{
 
     enum struct Matrix : char
     {
@@ -243,7 +315,7 @@ namespace kege{
     struct Geometry
     {
         Ref< Mesh > mesh;
-        Ref< Material > material;
+        Ref< MaterialSet > material_set;
         Procedure object_transform;
     };
 

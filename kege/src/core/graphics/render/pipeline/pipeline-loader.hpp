@@ -13,76 +13,92 @@
 #include "../../../utils/json-parser.hpp"
 #include "shader-pipeline.hpp"
 
-namespace kege{
+namespace kege::glsl{
 
-    struct PipelinInfo
+    struct Output
     {
-        struct Output
-        {
-            std::string name;
-            std::string semantic;
-            Format format;
-            int location;
-        };
-
-        struct Layout
-        {
-            int set;
-            int binding;
-            int count;
-            int uniform;
-            std::string name;
-            kege::BindingUsage usage;
-            kege::ShaderStageFlag stages;
-        };
-
-        struct Push
-        {
-            int size;
-            int count;
-            int offset;
-            int uniform;
-            std::string name;
-            kege::ShaderStageFlag stages;
-        };
-
         std::string name;
-        int rasterizer;
-        int depth_stencil;
-        int color_blend;
-        int vertex_layout;
+        std::string semantic;
+        Format format;
+        int location;
+    };
+
+    struct Binding
+    {
+        int binding;
+        int count;
+        int block_ref;
+        std::string name;
+        kege::BindingUsage usage;
+        kege::ShaderStageFlag stages;
+    };
+
+    struct SetLayout
+    {
+        int set;
+        std::vector< Binding > bindings;
+    };
+
+    struct PushLayout
+    {
+        int size;
+        int count;
+        int offset;
+        int block_ref;
+        std::string name;
+        kege::ShaderStageFlag stages;
+    };
+
+    struct PipelineLayout
+    {
+        std::string name;
+        std::vector< SetLayout > set_layouts;
+        std::vector< PushLayout > push_layouts;
+    };
+
+    struct Pipeline
+    {
+        std::string name;
+        int rasterizer = -1;
+        int depth_stencil = -1;
+        int color_blend = -1;
+        int vertex_layout = -1;
+        int pipeline_layout_ref = -1;
         std::vector< Output > outputs;
         std::vector< int > stages;
         kege::PrimitiveTopology topology;
         kege::PipelineType type;
-
-        std::vector< Push > push_constants;
-        std::map< int, std::vector< Layout > > sets;
     };
 
-    struct ShaderPipelineLibContext
+    struct LibraryContext
     {
-        std::vector< ref::ShaderStructBlock > uniforms;
+        std::vector< glsl::PipelineLayout > pipeline_layouts;
+        std::vector< glsl::Pipeline > pipelines;
+
         std::vector< RasterizationStateDesc > rasterizer_states;
         std::vector< DepthStencilStateDesc > depth_stencil_states;
         std::vector< ColorBlendStateDesc > color_blend_states;
         std::vector< VertexBufferLayout > vertex_layouts;
+        std::vector< ref::ShaderStructBlock > data_blocks;
         std::vector< ref::Shader > shaders;
-
     };
+}
+
+namespace kege{
 
     bool parseShaderPipelineLib
     (
+        kege::Json& json,
         const std::string& path,
         kege::Graphics* graphics,
-        kege::Json& shader_pipeline_library,
-        ShaderPipelineLibContext* context,
-        std::vector< PipelinInfo >* pipelines
+        glsl::LibraryContext* context
     );
 
     ref::ShaderPipeline createShaderPipeline
     (
-        kege::Graphics* graphics, ShaderPipelineLibContext& context, const PipelinInfo& info
+        kege::Graphics* graphics,
+        glsl::LibraryContext& context,
+        int pipeline_index
     );
 }
 #endif /* pipeline_loader_hpp */

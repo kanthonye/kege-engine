@@ -32,6 +32,11 @@ namespace kege{
         return m->second;
     }
 
+    const std::vector< EntityGroup >& EntityRegistry::entities()const
+    {
+        return _entities;
+    }
+
     void EntityRegistry::updateViews( EntityGroup& new_group )
     {
         for ( auto& [signature, view] : _entity_views )

@@ -10,7 +10,7 @@
 namespace kege{
 
     NavbarPanel::NavbarPanel( kege::ProjectManager* pm, ui::Layout* l )
-    :   kege::EditorPanel( pm, l )
+    :   kege::ui::Panel( "Navbar", pm, l )
     {
         _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }

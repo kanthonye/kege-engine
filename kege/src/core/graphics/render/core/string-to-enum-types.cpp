@@ -9,7 +9,7 @@
 
 namespace kege{
     
-    ShaderVarType stringToShaderVarType( const char* str )
+    ShaderVarType stringToShaderVarType( const std::string& str )
     {
         static std::map< std::string, kege::ShaderVarType > table;
         if( table.empty() )
@@ -36,8 +36,7 @@ namespace kege{
         {
             return m->second;
         }
-        Log::error << "invalid ShaderVarType -> " << str <<Log::nl;
-        return kege::ShaderVarType::Sint;
+        return kege::ShaderVarType::Unknown;
     }
 
 //    UsageTarget stringToUsageTarget( const char* str )
@@ -98,10 +97,10 @@ namespace kege{
             table[ "never" ] = kege::CompareOp::Never;
             table[ "less" ] = kege::CompareOp::Less;
             table[ "equal" ] = kege::CompareOp::Equal;
-            table[ "less-equal" ] = kege::CompareOp::LessEqual;
+            table[ "less_equal" ] = kege::CompareOp::LessEqual;
             table[ "greater" ] = kege::CompareOp::Greater;
-            table[ "not-equal" ] = kege::CompareOp::NotEqual;
-            table[ "greater-equal" ] = kege::CompareOp::GreaterEqual;
+            table[ "not_equal" ] = kege::CompareOp::NotEqual;
+            table[ "greater_equal" ] = kege::CompareOp::GreaterEqual;
             table[ "always" ] = kege::CompareOp::Always;
         }
         auto m = table.find( type );
@@ -121,11 +120,11 @@ namespace kege{
             table[ "keep" ] = kege::StencilOp::Keep;
             table[ "zero" ] = kege::StencilOp::Zero;
             table[ "replace" ] = kege::StencilOp::Replace;
-            table[ "increment-and-clamp" ] = kege::StencilOp::IncrementAndClamp;
-            table[ "decrement-and-clamp" ] = kege::StencilOp::DecrementAndClamp;
+            table[ "increment_and_clamp" ] = kege::StencilOp::IncrementAndClamp;
+            table[ "decrement_and_clamp" ] = kege::StencilOp::DecrementAndClamp;
             table[ "invert" ] = kege::StencilOp::Invert;
-            table[ "increment-and-wrap" ] = kege::StencilOp::IncrementAndWrap;
-            table[ "decrement-and-wrap" ] = kege::StencilOp::DecrementAndWrap;
+            table[ "increment_and_wrap" ] = kege::StencilOp::IncrementAndWrap;
+            table[ "decrement_and_wrap" ] = kege::StencilOp::DecrementAndWrap;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -143,18 +142,18 @@ namespace kege{
         {
             table[ "clear" ] = kege::ColorBlendLogicOp::Clear;
             table[ "and" ] = kege::ColorBlendLogicOp::And;
-            table[ "and-reverse" ] = kege::ColorBlendLogicOp::AndReverse;
+            table[ "and_reverse" ] = kege::ColorBlendLogicOp::AndReverse;
             table[ "copy" ] = kege::ColorBlendLogicOp::Copy;
-            table[ "and-inverted" ] = kege::ColorBlendLogicOp::AndInverted;
-            table[ "no-op" ] = kege::ColorBlendLogicOp::NoOp;
+            table[ "and_inverted" ] = kege::ColorBlendLogicOp::AndInverted;
+            table[ "no_op" ] = kege::ColorBlendLogicOp::NoOp;
             table[ "xor" ] = kege::ColorBlendLogicOp::Xor;
             table[ "or" ] = kege::ColorBlendLogicOp::Or;
             table[ "Nor" ] = kege::ColorBlendLogicOp::Nor;
             table[ "equiv" ] = kege::ColorBlendLogicOp::Equiv;
             table[ "invert" ] = kege::ColorBlendLogicOp::Invert;
-            table[ "or-reverse" ] = kege::ColorBlendLogicOp::OrReverse;
-            table[ "copy-inverted" ] = kege::ColorBlendLogicOp::CopyInverted;
-            table[ "or-inverted" ] = kege::ColorBlendLogicOp::OrInverted;
+            table[ "or_reverse" ] = kege::ColorBlendLogicOp::OrReverse;
+            table[ "copy_inverted" ] = kege::ColorBlendLogicOp::CopyInverted;
+            table[ "or_inverted" ] = kege::ColorBlendLogicOp::OrInverted;
             table[ "nand" ] = kege::ColorBlendLogicOp::Nand;
             table[ "set" ] = kege::ColorBlendLogicOp::Set;
         }
@@ -174,21 +173,21 @@ namespace kege{
         {
             table[ "zero" ] = kege::BlendFactor::Zero;
             table[ "one" ] = kege::BlendFactor::One;
-            table[ "src-color" ] = kege::BlendFactor::SrcColor;
-            table[ "src-alpha" ] = kege::BlendFactor::SrcAlpha;
-            table[ "dst-color" ] = kege::BlendFactor::DstColor;
-            table[ "dst-alpha" ] = kege::BlendFactor::DstAlpha;
-            table[ "src1-color" ] = kege::BlendFactor::Src1Color;
-            table[ "src1-alpha" ] = kege::BlendFactor::Src1Alpha;
-            table[ "constant-color" ] = kege::BlendFactor::ConstantColor;
-            table[ "constant-alpha" ] = kege::BlendFactor::ConstantAlpha;
-            table[ "one-minus-src-color" ] = kege::BlendFactor::OneMinusSrcColor;
-            table[ "one-minus-dst-color" ] = kege::BlendFactor::OneMinusDstColor;
-            table[ "one-minus-src-alpha" ] = kege::BlendFactor::OneMinusSrcAlpha;
-            table[ "one-minus-constant-color" ] = kege::BlendFactor::OneMinusConstantColor;
-            table[ "one-minus-constant-alpha" ] = kege::BlendFactor::OneMinusConstantAlpha;
-            table[ "one-minus-src1-alpha" ] = kege::BlendFactor::OneMinusSrc1Alpha;
-            table[ "src-alpha-saturate" ] = kege::BlendFactor::SrcAlphaSaturate;
+            table[ "src_color" ] = kege::BlendFactor::SrcColor;
+            table[ "src_alpha" ] = kege::BlendFactor::SrcAlpha;
+            table[ "dst_color" ] = kege::BlendFactor::DstColor;
+            table[ "dst_alpha" ] = kege::BlendFactor::DstAlpha;
+            table[ "src1_color" ] = kege::BlendFactor::Src1Color;
+            table[ "src1_alpha" ] = kege::BlendFactor::Src1Alpha;
+            table[ "constant_color" ] = kege::BlendFactor::ConstantColor;
+            table[ "constant_alpha" ] = kege::BlendFactor::ConstantAlpha;
+            table[ "one_minus_src_color" ] = kege::BlendFactor::OneMinusSrcColor;
+            table[ "one_minus_dst_color" ] = kege::BlendFactor::OneMinusDstColor;
+            table[ "one_minus_src_alpha" ] = kege::BlendFactor::OneMinusSrcAlpha;
+            table[ "one_minus_constant_color" ] = kege::BlendFactor::OneMinusConstantColor;
+            table[ "one_minus_constant_alpha" ] = kege::BlendFactor::OneMinusConstantAlpha;
+            table[ "one_minus_src1_alpha" ] = kege::BlendFactor::OneMinusSrc1Alpha;
+            table[ "src_alpha_saturate" ] = kege::BlendFactor::SrcAlphaSaturate;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -206,7 +205,7 @@ namespace kege{
         {
             table[ "add" ] = kege::BlendOp::Add;
             table[ "subtract" ] = kege::BlendOp::Subtract;
-            table[ "reverse-subtract" ] = kege::BlendOp::ReverseSubtract;
+            table[ "reverse_subtract" ] = kege::BlendOp::ReverseSubtract;
             table[ "min" ] = kege::BlendOp::Min;
             table[ "max" ] = kege::BlendOp::Max;
         }
@@ -501,13 +500,25 @@ namespace kege{
             types[ "UniformBufferDynamic" ] = kege::BindingUsage::UniformBufferDynamic;
             types[ "StorageBufferDynamic" ] = kege::BindingUsage::StorageBufferDynamic;
             types[ "InputAttachment" ] = kege::BindingUsage::InputAttachment;
+
+            types[ "sampler" ] = kege::BindingUsage::Sampler;
+            types[ "combined_image_sampler" ] = kege::BindingUsage::CombinedImageSampler;
+            types[ "sampled_image" ] = kege::BindingUsage::SampledImage;
+            types[ "storage_image" ] = kege::BindingUsage::StorageImage;
+            types[ "uniform_texel_buffer" ] = kege::BindingUsage::UniformTexelBuffer;
+            types[ "storage_texel_buffer" ] = kege::BindingUsage::StorageTexelBuffer;
+            types[ "uniform_buffer" ] = kege::BindingUsage::UniformBuffer;
+            types[ "storage_buffer" ] = kege::BindingUsage::StorageBuffer;
+            types[ "uniform_buffer_dynamic" ] = kege::BindingUsage::UniformBufferDynamic;
+            types[ "storage_buffer_dynamic" ] = kege::BindingUsage::StorageBufferDynamic;
+            types[ "input_attachment" ] = kege::BindingUsage::InputAttachment;
         }
         auto m = types.find( name );
         if ( m != types.end() )
         {
             return m->second;
         }
-        kege::Log::error << "unsupported DescriptorType -> " <<name <<kege::Log::nl;
+        kege::Log::error << "unsupported BindingUsage -> " <<name <<kege::Log::nl;
         return {};
     }
 
@@ -526,6 +537,12 @@ namespace kege{
             types[ "tessellation-evaluation" ] = ShaderStageFlag::TessellationEvaluation;
             types[ "all-graphics" ] = ShaderStageFlag::AllGraphics;
             types[ "all" ] = ShaderStageFlag::All;
+            types[ "vs" ] = ShaderStageFlag::Vertex;
+            types[ "fs" ] = ShaderStageFlag::Fragment;
+            types[ "cs" ] = ShaderStageFlag::Compute;
+            types[ "gs" ] = ShaderStageFlag::Geometry;
+            types[ "tcs" ] = ShaderStageFlag::TessellationControl;
+            types[ "tes" ] = ShaderStageFlag::TessellationEvaluation;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -534,6 +551,25 @@ namespace kege{
         }
         kege::Log::error << "unsupported ShaderStageFlag -> " <<name <<kege::Log::nl;
         return {};
+    }
+
+    kege::PipelineType stringToPipelineType( const std::string& name )
+    {
+        static std::map< std::string, kege::PipelineType > types;
+
+        if ( types.empty() )
+        {
+            types[ "Graphics" ] = kege::PipelineType::Graphics;
+            types[ "Compute" ] = kege::PipelineType::Graphics;
+            types[ "RayTracing" ] = kege::PipelineType::Graphics;
+        }
+        auto m = types.find( name );
+        if ( m != types.end() )
+        {
+            return m->second;
+        }
+        kege::Log::error << "unsupported PipelineType -> " <<name <<kege::Log::nl;
+        return kege::PipelineType::Graphics;
     }
 
     kege::AddressMode stringToAddressMode( const std::string& name )

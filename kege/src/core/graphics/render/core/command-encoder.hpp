@@ -41,19 +41,10 @@ namespace kege{
         /**
          * @brief Binds a shader set to the command buffer.
          *
-         * @param set_index The index location where the shader set will be bind.
-         * @param set The shader set object to bind.
+         * @param indexed_set Hold the set object and the set index where the set object should bo bind.
          * @return True if binding succeeded, false otherwise.
          */
-        virtual bool bind( int32_t set_index, const ref::ShaderSet& set ) = 0;
-
-        /**
-         * @brief Binds a shader set to the command buffer.
-         *
-         * @param set The shader set object to bind.
-         * @return True if binding succeeded, false otherwise.
-         */
-        virtual bool bind( const ref::ShaderSet& set ) = 0;
+        virtual bool bind( const kege::IndexedSet& indexed_set ) = 0;
 
         /**
          * @brief Sets push constant data for the command buffer.

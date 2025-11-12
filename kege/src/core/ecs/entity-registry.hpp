@@ -34,6 +34,7 @@ namespace kege{
         }
 
         EntityView* getEntityView( const kege::EntitySignature& signature );
+        const std::vector< EntityGroup >& entities()const;
         void updateViews( EntityGroup& new_group );
         const EntityGroup* getEntities( int index )const;
         EntityGroup* getEntities( int index );

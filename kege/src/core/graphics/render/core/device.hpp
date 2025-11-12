@@ -15,6 +15,7 @@
 #include "swapchain.hpp"
 #include "physical-device.hpp"
 #include "../pipeline/shader-pipeline.hpp"
+#include "../../../utils/array.hpp"
 
 
 namespace kege{
@@ -209,7 +210,7 @@ namespace kege{
          * @param bindings Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        virtual ref::SetLayout createSetLayout( const SetBindings& bindings ) = 0;
+        virtual ref::SetLayout createSetLayout( const LayoutBindings& bindings ) = 0;
 
         /**
          * @brief Creates a shader layout based on a description.
