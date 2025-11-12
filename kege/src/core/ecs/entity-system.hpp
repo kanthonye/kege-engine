@@ -11,7 +11,7 @@
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
 #include "../ecs/entity-logic.hpp"
-#include "../system/system.hpp"
+#include "../ecs/system.hpp"
 
 namespace kege{
 

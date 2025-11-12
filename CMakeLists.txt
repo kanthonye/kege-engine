@@ -28,59 +28,57 @@ endif()
 
 
 # --- Kege Engine Libraries ---
-file(GLOB_RECURSE UTILS_SOURCES CONFIGURE_DEPENDS kege/src/core/utils/*.cpp)
-add_library(utils   ${UTILS_SOURCES})
+file(GLOB_RECURSE APP_SOURCE CONFIGURE_DEPENDS kege/src/core/app/*.cpp)
+add_library(app ${APP_SOURCE})
 
-file(GLOB_RECURSE IO_SOURCES CONFIGURE_DEPENDS kege/src/core/io/*.cpp)
-add_library(io   ${IO_SOURCES})
+# file(GLOB_RECURSE AUDIO_SOURCE CONFIGURE_DEPENDS kege/src/core/audio/*.cpp)
+# add_library(audio ${AUDIO_SOURCE})
 
-file(GLOB_RECURSE MATH_SOURCES CONFIGURE_DEPENDS kege/src/core/math/*.cpp)
-add_library(vector_math   ${MATH_SOURCES})
-
-file(GLOB_RECURSE CORE_ENGINE_SOURCES CONFIGURE_DEPENDS kege/src/core/engine/*.cpp)
-add_library(engine   ${CORE_ENGINE_SOURCES})
+file(GLOB_RECURSE ECS_SOURCES CONFIGURE_DEPENDS kege/src/core/ecs/*.cpp)
+add_library(ecs ${ECS_SOURCES})
 
 file(GLOB_RECURSE GRAPHICS_SOURCES CONFIGURE_DEPENDS kege/src/core/graphics/*.cpp)
-add_library(graphics   ${GRAPHICS_SOURCES})
+add_library(graphics ${GRAPHICS_SOURCES})
 
 file(GLOB_RECURSE INPUT_SOURCES CONFIGURE_DEPENDS kege/src/core/input/*.cpp)
 add_library(input   ${INPUT_SOURCES})
 
-file(GLOB_RECURSE ECS_SOURCES CONFIGURE_DEPENDS kege/src/core/ecs/*.cpp)
-add_library(ecs   ${ECS_SOURCES})
+file(GLOB_RECURSE IO_SOURCES CONFIGURE_DEPENDS kege/src/core/io/*.cpp)
+add_library(io ${IO_SOURCES})
 
-file(GLOB_RECURSE SYSTEM_SOURCES CONFIGURE_DEPENDS kege/src/core/system/*.cpp)
-add_library(system   ${SYSTEM_SOURCES})
+file(GLOB_RECURSE MATH_SOURCES CONFIGURE_DEPENDS kege/src/core/math/*.cpp)
+add_library(vector_math ${MATH_SOURCES})
 
-file(GLOB_RECURSE ESM_SOURCES CONFIGURE_DEPENDS kege/src/core/esm/*.cpp)
-add_library(esm   ${ESM_SOURCES})
+file(GLOB_RECURSE MEMORY_SOURCES CONFIGURE_DEPENDS kege/src/core/memory/*.cpp)
+add_library(memory   ${MEMORY_SOURCES})
+
+# file(GLOB_RECURSE NETWORKING_SOURCES CONFIGURE_DEPENDS kege/src/core/networking/*.cpp)
+# add_library(networking ${NETWORKING_SOURCES})
+
+file(GLOB_RECURSE PHYSICS_SOURCES CONFIGURE_DEPENDS kege/src/core/physics/*.cpp)
+add_library(physics ${PHYSICS_SOURCES})
+
+file(GLOB_RECURSE RESOURCE_SOURCES CONFIGURE_DEPENDS kege/src/core/resource/*.cpp)
+add_library(resource ${RESOURCE_SOURCES})
 
 file(GLOB_RECURSE SCENE_SOURCES CONFIGURE_DEPENDS kege/src/core/scene/*.cpp)
-add_library(scene   ${SCENE_SOURCES})
+add_library(scene ${SCENE_SOURCES})
 
-file(GLOB_RECURSE GUI_SOURCES CONFIGURE_DEPENDS kege/src/core/gui/*.cpp)
-add_library(gui   ${GUI_SOURCES})
+# file(GLOB_RECURSE SCRIPTING_SOURCES CONFIGURE_DEPENDS kege/src/core/scripting/*.cpp)
+# add_library(scripting ${SCRIPTING_SOURCES})
+
+file(GLOB_RECURSE UTILS_SOURCES CONFIGURE_DEPENDS kege/src/core/utils/*.cpp)
+add_library(utils ${UTILS_SOURCES})
 
 file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS kege/src/editor/*.cpp)
-add_library(editor   ${EDITOR_SOURCES})
+add_library(editor ${EDITOR_SOURCES})
 
 
+# --- Kege Engine Executable ---
+file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS kege/src/editor/main.cpp)
+add_executable(kege-engine ${ENGINE_SOURCES})
 
-
-# file(GLOB_RECURSE CAMERA_SOURCES CONFIGURE_DEPENDS kege/src/graphics/camera/*.cpp)
-# add_library(camera   ${CAMERA_SOURCES})
-
-# file(GLOB_RECURSE PHYSICS_SOURCES CONFIGURE_DEPENDS kege/src/physics/*.cpp)
-# add_library(physics   ${PHYSICS_SOURCES})
-
-# file(GLOB_RECURSE PARTICLE_SOURCES CONFIGURE_DEPENDS kege/src/particle/*.cpp)
-# add_library(particle   ${PARTICLE_SOURCES})
-
-# file(GLOB_RECURSE PICKING_SOURCES CONFIGURE_DEPENDS kege/src/systems/picking/*.cpp)
-# add_library(picking_systems   ${PICKING_SOURCES})
-
-
-add_executable(kege-engine kege/src/main.cpp)
+# add_executable(kege-engine kege/src/editor/editor.cpp)
 
 
 # 1. Tell the project where to find the GLFW header files.
@@ -88,22 +86,21 @@ add_executable(kege-engine kege/src/main.cpp)
 target_include_directories(kege-engine 
     PRIVATE 
         "/usr/local/glfw/3.3.8/lib-x86_64/include"
-        ${CMAKE_SOURCE_DIR}/kege/src/editor
-        ${CMAKE_SOURCE_DIR}/kege/src/core/utils
-        ${CMAKE_SOURCE_DIR}/kege/src/core/io
-        ${CMAKE_SOURCE_DIR}/kege/src/core/gui
+        ${CMAKE_SOURCE_DIR}/kege/src/core/app
+        # ${CMAKE_SOURCE_DIR}/kege/src/core/audio
         ${CMAKE_SOURCE_DIR}/kege/src/core/ecs
-        ${CMAKE_SOURCE_DIR}/kege/src/core/esm
-        ${CMAKE_SOURCE_DIR}/kege/src/core/system
-        ${CMAKE_SOURCE_DIR}/kege/src/core/input
-        ${CMAKE_SOURCE_DIR}/kege/src/core/scene
         ${CMAKE_SOURCE_DIR}/kege/src/core/graphics
-        ${CMAKE_SOURCE_DIR}/kege/src/core/engine
+        ${CMAKE_SOURCE_DIR}/kege/src/core/input
+        ${CMAKE_SOURCE_DIR}/kege/src/core/io
         ${CMAKE_SOURCE_DIR}/kege/src/core/math
-        ${CMAKE_SOURCE_DIR}/kege/src/core/esm
-        ${CMAKE_SOURCE_DIR}/kege/src/camera
-        ${CMAKE_SOURCE_DIR}/kege/src/physics/3d
-        ${CMAKE_SOURCE_DIR}/kege/src/particle
+        ${CMAKE_SOURCE_DIR}/kege/src/core/memory
+        # ${CMAKE_SOURCE_DIR}/kege/src/core/networking
+        ${CMAKE_SOURCE_DIR}/kege/src/core/physics/3d
+        ${CMAKE_SOURCE_DIR}/kege/src/core/resource
+        ${CMAKE_SOURCE_DIR}/kege/src/core/scene
+        # ${CMAKE_SOURCE_DIR}/kege/src/core/scripting
+        ${CMAKE_SOURCE_DIR}/kege/src/core/utils
+        ${CMAKE_SOURCE_DIR}/kege/src/editor
 
         ${SHADERC_INCLUDE_DIR}
 )
@@ -111,23 +108,20 @@ target_include_directories(kege-engine
 # 2. Link the project against the Vulkan libraries and the specific GLFW .dylib file.
 #    Replace this path with the full path to your .dylib file.
 target_link_libraries(kege-engine PRIVATE 
-    utils
-    io
+    app
+    # audio
+    ecs
     graphics
     input
-    engine
-    vector_math
-    system
-    ecs
-    esm
-    scene
-    gui
-    editor
-
-    particle
-    camera
+    io
+    memory
+    # networking
     physics
-    picking_systems
+    resource
+    scene
+    # scripting
+    utils
+    editor
 
     ${Vulkan_LIBRARIES}
     ${SHADERC_LIBRARY}

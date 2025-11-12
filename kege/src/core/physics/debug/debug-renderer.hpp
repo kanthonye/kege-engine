@@ -9,7 +9,7 @@
 #define debug_renderer_hpp
 
 #include "../../graphics/render/graph/render-graph.hpp"
-#include "../../system/system.hpp"
+#include "../../ecs/system.hpp"
 #include "../../ecs/entity-system-manager.hpp"
 #include "draw-commands.hpp"
 
