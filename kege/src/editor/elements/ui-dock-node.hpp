@@ -18,12 +18,16 @@ namespace kege::ui{
 
     struct DockNode : public kege::RefCounter
     {
+        void updateDock(EditorLayer* mgr);
         void update(EditorLayer* mgr);
-        DockNode(ui::Layout* layout, const std::string& split);
+        void split();
+        DockNode(ui::Layout* layout, const std::string& style);
+        DockNode(ui::Layout* layout);
 
-        ui::EID _main_container;
+        ui::Elem _dock;
+        ui::Elem _container;
         ui::Tabs _tabs;
-        uint32_t _index[2];
+        //uint32_t _index[2];
 
         ui::Layout* _layout;
         std::vector< std::string > _tab_names;

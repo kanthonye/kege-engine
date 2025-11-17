@@ -12,6 +12,7 @@
 #include "../../input/inputs.hpp"
 #include "../../utils/log.hpp"
 #include "../../utils/kege-string.hpp"
+#include "../../utils/handle.hpp"
 #include "../../math/algebra/vmath.hpp"
 #include "../../graphics/font/font.hpp"
 #include "../../resource/font-loader.hpp"
@@ -19,8 +20,11 @@
 
 namespace kege::ui{
 
+    class Elem;
     class Input;
     class Layout;
+    class Viewer;
+    class Cursor;
     typedef uint32_t NodeIndex;
 
     typedef const char* chrstr;
@@ -100,20 +104,6 @@ namespace kege::ui{
         float min, max;
     };
 
-    typedef enum : uint8_t
-    {
-        BACKGROUND_COLOR,
-        BACKGROUND_IMAGE
-    }
-    BackgroundType;
-
-    struct Background
-    {
-        Color color;
-        BackgroundType type;
-    };
-
-
     enum struct HoverTrigger: uint8_t
     {
         Disable,
@@ -124,38 +114,13 @@ namespace kege::ui{
     enum struct ClickTrigger: uint8_t
     {
         Disable,
-        OnClick,
-        OnRelease,
+        Continuous, // Action executes every frame while held
+        Immediate, // Action triggers immediately when button goes down
+        OnRelease, // Action triggers when mouse is released over button
+                   // - Mouse was pressed DOWN over button
+                   // - Mouse is released UP over button
+                   // - Mouse cursor still inside button bounds
     };
-
-    //    enum struct InteractionFlags: uint8_t
-    //    {
-    //        CLICKABLE  = 1,
-    //        HOVERABLE  = 2,
-    //        SCROLLABLE = 4,
-    //        DRAGGAABLE = 8,
-    //    };
-    //
-    //    inline constexpr InteractionFlags operator |( InteractionFlags a, InteractionFlags b )
-    //    {
-    //        return static_cast< InteractionFlags >( static_cast< uint32_t >( a ) | static_cast< uint32_t >( b ) );
-    //    }
-    //
-    //    inline constexpr InteractionFlags& operator |=( InteractionFlags& a, InteractionFlags b )
-    //    {
-    //        return a = a | b;
-    //    }
-    //
-    //    inline constexpr InteractionFlags operator&( InteractionFlags a, InteractionFlags b )
-    //    {
-    //        return static_cast< InteractionFlags >( static_cast< uint32_t >( a ) & static_cast< uint32_t >( b ) );
-    //    }
-    //
-    //    inline constexpr InteractionFlags& operator &=( InteractionFlags& a, InteractionFlags b )
-    //    {
-    //        return a = a & b;
-    //    }
-
 
     typedef std::function< void( kege::ui::Layout&, uint32_t ) > Callback;
 
@@ -190,18 +155,41 @@ namespace kege::ui{
         float bottom_right = 0;
     };
 
+    struct Background
+    {
+        Background(uint32_t img_index, const ui::Rect& texel);
+        Background(const ui::Color& color);
+        Background(uint32_t color);
+        Background(){}
+        union
+        {
+            Rect  texel;
+            Color color;
+        };
+        uint32_t id;
+    };
+
+    struct TextFieldState
+    {
+        size_t cursor_pos = 0;
+        size_t selection_start = 0;
+        size_t selection_end = 0;
+        bool has_focus = false;
+        bool is_selected = false;
+    };
 
     // shareable style that can be shared across many ui-content
     struct Style
     {
         Background  background;
         Color       color;
-        Padding     padding;
         Sizing      width;
         Sizing      height;
+        Corners     border_radius;
+
+        Padding     padding;
         Alignment   align;
         Extent2D    gap;
-        Corners     border_radius;
         Positioning position = Positioning::Relative;
         AlignText   align_text = AlignText::Left;
         int         font_size = 20;
@@ -221,7 +209,8 @@ namespace kege::ui{
         bool mouseover = true;
         bool visible = true;
 
-        ClickTrigger trigger = ui::ClickTrigger::Disable;
+        ClickTrigger single_click = ui::ClickTrigger::Disable;
+        ClickTrigger double_click = ui::ClickTrigger::Disable;
 
         Callback on_release;
         Callback on_scroll;
@@ -279,7 +268,7 @@ namespace kege::ui{
     ui::Color rgb(uint32_t hex_color);
     ui::Color rgba(uint32_t hex_color);
 
-    ui::Background bgImage(const ui::Rect& texel);
+    ui::Background bgImage(int img_index, const ui::Rect& texel);
     ui::Background bgColor(const ui::Color& color);
     ui::Background bgColor(uint32_t color);
 }

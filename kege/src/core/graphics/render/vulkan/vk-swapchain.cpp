@@ -161,49 +161,95 @@ namespace kege::vk{
     {
         return _frame_syncs [ _image_index ];
     }
-    
+
     int32_t Swapchain::acquireNextImage()
     {
+        if (_frame_syncs.empty())
+        {
+            kege::Log::error << "No frame syncs available in acquireNextImage()." << Log::nl;
+            return -1;
+        }
+
+        // rotate CPU-frame index (frames-in-flight)
         _curr_frame_index = (_curr_frame_index + 1) % _frame_syncs.size();
-        VkSemaphore image_available_semaphore = _frame_syncs[ _curr_frame_index ].image_available_semaphore->vk()->handle;
+        VkSemaphore image_available_semaphore = _frame_syncs[_curr_frame_index].image_available_semaphore->vk()->handle;
 
         VkResult result = vkAcquireNextImageKHR
         (
             _device->_device,
             _swapchain,
-            UINT64_MAX, // Timeout (no timeout)
-            image_available_semaphore, // The Semaphore to signal when the image is ready for use
-            VK_NULL_HANDLE, // kege::Fence (not using fence here)
+            UINT64_MAX,
+            image_available_semaphore,
+            VK_NULL_HANDLE,
             &_image_index
         );
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            kege::Log::debug << "Swapchain out of date during acquire. Needs recreation." <<Log::nl;
+            kege::Log::debug << "Swapchain out of date during acquire. Needs recreation." << Log::nl;
             _needs_recreation = true;
-        }
-        else if (result == VK_SUBOPTIMAL_KHR)
-        {
-            kege::Log::debug << "Warning: Swapchain suboptimal during acquire. Needs recreation soon." <<Log::nl;
-            _needs_recreation = true;
-        }
-        else if (result != VK_SUCCESS)
-        {
-            kege::Log::error << "Failed to acquire swap chain image!" << Log::nl;
             return -1;
         }
 
-        if( _needs_recreation )
+        if (result == VK_SUBOPTIMAL_KHR)
         {
-            if ( recreate() != VK_SUCCESS )
-            {
-                kege::Log::error << "Failed to recreate Swapchain!" << Log::nl;
-                return -1;
-            };
-            _needs_recreation = false;// Reset flag on successful acquire (if not suboptimal)
+            kege::Log::debug << "Swapchain suboptimal during acquire. Needs recreation soon." << Log::nl;
+            // Option A (conservative): treat as failure so caller will recreate now
+            _needs_recreation = true;
+            return -1;
+
+            // Option B (less disruptive): accept the image and recreate next frame
+            // _needs_recreation = true;
+            // return _image_index;
         }
+
+        if (result != VK_SUCCESS)
+        {
+            kege::Log::error << "Failed to acquire swap chain image! vkResult=" << vkResultToString(result) << Log::nl;
+            return -1;
+        }
+
+        // success: valid _image_index in [0, _image_count-1]
         return _image_index;
     }
+
+//    int32_t Swapchain::acquireNextImage()
+//    {
+//        _curr_frame_index = (_curr_frame_index + 1) % _frame_syncs.size();
+//        VkSemaphore image_available_semaphore = _frame_syncs[ _curr_frame_index ].image_available_semaphore->vk()->handle;
+//
+//        VkResult result = vkAcquireNextImageKHR
+//        (
+//            _device->_device,
+//            _swapchain,
+//            UINT64_MAX, // Timeout (no timeout)
+//            image_available_semaphore, // The Semaphore to signal when the image is ready for use
+//            VK_NULL_HANDLE, // kege::Fence (not using fence here)
+//            &_image_index
+//        );
+//
+//        if (result == VK_ERROR_OUT_OF_DATE_KHR)
+//        {
+//            kege::Log::debug << "Swapchain out of date during acquire. Needs recreation." <<Log::nl;
+//            _needs_recreation = true;
+//            return -1;
+//        }
+//
+//        else if (result == VK_SUBOPTIMAL_KHR)
+//        {
+//            kege::Log::debug << "Warning: Swapchain suboptimal during acquire. Needs recreation soon." <<Log::nl;
+//            _needs_recreation = true;
+//            return -1;
+//        }
+//        
+//        else if (result != VK_SUCCESS)
+//        {
+//            kege::Log::error << "Failed to acquire swap chain image!" << Log::nl;
+//            return -1;
+//        }
+//
+//        return _image_index;
+//    }
 
     vk::FrameData& Swapchain::getFrame( uint32_t curr_frame )
     {
@@ -244,10 +290,12 @@ namespace kege::vk{
         _depth_format = vk::convertFormat( desc.depth_format );
         _image_count = desc.image_count;
 
-        return recreate();
+        recreate();
+
+        return VK_SUCCESS;
     }
 
-    VkResult Swapchain::recreate()
+    kege::Result Swapchain::recreate()
     {
         _device->waitIdle();
 
@@ -257,7 +305,7 @@ namespace kege::vk{
         if ( result != VK_SUCCESS )
         {
             kege::Log::error << vkResultToString( result );
-            return result; // ERROR_SWAPCHAIN_CREATEION_FAILED
+            return kege::Result::FAILED_CREATING_OBJECT;
         }
 
         destroy();
@@ -267,7 +315,7 @@ namespace kege::vk{
         if ( _frames.empty() )
         {
             destroy();
-            return VK_ERROR_INITIALIZATION_FAILED; // ERROR_SWAPCHAIN_FRAMEBUFFER_CREATEION_FAILED
+            return kege::Result::FAILED_CREATING_OBJECT;
         }
 
         _frame_syncs.resize( _image_count );
@@ -277,17 +325,19 @@ namespace kege::vk{
             if( _frame_syncs[i].image_available_semaphore == VK_NULL_HANDLE )
             {
                 destroy();
-                return VK_ERROR_INITIALIZATION_FAILED;
+                return kege::Result::FAILED_CREATING_OBJECT;
             }
 
             _frame_syncs[i].render_complete_semaphore = _device->createSemaphore();
             if( _frame_syncs[i].render_complete_semaphore == VK_NULL_HANDLE )
             {
                 destroy();
-                return VK_ERROR_INITIALIZATION_FAILED;
+                return kege::Result::FAILED_CREATING_OBJECT;
             }
         }
-        return result;
+
+        _device->_frame_index = 0;
+        return kege::Result::SUCCESS;
     }
 
     VkResult Swapchain::createSwapchain( VkSwapchainKHR* swapchain )
@@ -450,7 +500,7 @@ namespace kege::vk{
     {
         _needs_recreation = state;
     }
-
+    
     bool Swapchain::shouldRecreate()const
     {
         return _needs_recreation;

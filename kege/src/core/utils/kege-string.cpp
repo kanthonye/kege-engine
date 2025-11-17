@@ -352,15 +352,15 @@ namespace kege{
         }
 
         size_t new_capacity = _length + count;
-        char* new_data = new char[new_capacity + 1];
+        char* new_str = new char[new_capacity + 1];
         if (_str)
         {
-            std::memcpy(new_data, _str, _length + 1);
+            std::memcpy(new_str, _str, _length + 1);
             delete[] _str;
         }
-        new_data[ new_capacity ] = 0;
-        _str = new_data;
+        new_str[ new_capacity ] = 0;
         _length = new_capacity;
+        _str = new_str;
 
         // Move existing tail to make room (including null terminator)
         std::memmove(_str + pos + count, _str + pos, _length - pos + 1);
@@ -371,7 +371,7 @@ namespace kege{
             _str[pos + i] = ch;
         }
 
-        _length += count;
+        _length = new_capacity;
     }
 
     void string::insert(size_t pos, const char* str)
@@ -398,23 +398,29 @@ namespace kege{
         _length = new_capacity;
     }
 
-    void string::erase(size_t pos, size_t count)
+    void string::erase(size_t begin, size_t end)
     {
-        if (pos >= _length) {
-            // nothing to erase (pos beyond end)
+        if (begin >= _length) return;
+
+        // Clamp end
+        if (end > _length)
+            end = _length;
+
+        // Nothing to remove
+        if (begin >= end)
             return;
+
+        const size_t removeCount = end - begin;
+        const size_t tailCount   = _length - end;
+
+        // Shift the tail left
+        if (tailCount > 0)
+        {
+            memmove(_str + begin, _str + end, tailCount);
         }
 
-        if (pos + count > _length) {
-            count = _length - pos; // clamp to available length
-        }
-
-        // Move the tail part of the string left
-        size_t tail_len = _length - (pos + count);
-        memmove(_str + pos, _str + pos + count, tail_len + 1);
-        // +1 to also copy the null terminator
-
-        _length -= count;
+        _length -= removeCount;
+        _str[_length] = '\0';
     }
 
     bool string::find( char c )const

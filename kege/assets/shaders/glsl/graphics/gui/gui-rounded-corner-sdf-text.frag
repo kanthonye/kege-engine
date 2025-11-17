@@ -71,7 +71,7 @@ void main()
     vec2 half_size = size * 0.5;
     vec2 center = position + half_size;
     vec2 rect_space = frag_coord * resolution.xy - center;
-    float sdf = roundedBoxSDF(rect_space, half_size, border_radius);
+    float sdf = roundedBoxSDF(rect_space, abs(half_size), border_radius);
     float alpha = smoothstep(0.0, 1.0, -sdf);
 
 

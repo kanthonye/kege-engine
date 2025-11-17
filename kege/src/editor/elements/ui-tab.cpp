@@ -17,8 +17,8 @@ namespace kege::ui{
             this->tab_elements[i] = layout->make
             ({
                 .mouseover = true,
-                .trigger = ClickTrigger::OnClick,
-                .style = layout->getStyleByName( "label" ),
+                .single_click = ClickTrigger::Immediate,
+                .style = layout->getStyleByName( "tab" ),
                 .text = {tabs[i].c_str(), 0, 0, 0, 0},
             });
         }
@@ -27,13 +27,14 @@ namespace kege::ui{
             this->container = layout->make
             ({
                 .mouseover = false,
-                .style = layout->getStyleByName( "h-bar" )
+                .style = layout->getStyleByName( "bar" )
             });
         }
     }
 
     bool Tabs::update( ui::Layout* layout, const std::vector< std::string >& tabs )
     {
+        ui::Elem elem;
         /**
          if the tabs and tab elements are of different size then recreate the tabs elements
          */

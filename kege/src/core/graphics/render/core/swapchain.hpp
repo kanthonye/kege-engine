@@ -148,8 +148,10 @@ namespace kege{
         virtual kege::Viewport getViewport()const = 0;
         virtual kege::Scissor getScissor()const = 0;
 
+        virtual bool shouldRecreate()const = 0;
         virtual int32_t acquireNextImage() = 0;
-        
+        virtual kege::Result recreate() = 0;
+
         virtual const std::string& name()const{ return _name; }
 
         virtual const vk::Swapchain* vk()const{ return nullptr; }

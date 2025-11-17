@@ -25,7 +25,7 @@ namespace kege{
     public:
 
         ui::Options file;
-        ui::EID _main;
+        ui::Elem _main;
     };
 }
 

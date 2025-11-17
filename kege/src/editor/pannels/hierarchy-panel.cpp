@@ -21,6 +21,7 @@ namespace kege{
                     _scene = scene;
                     _hierarchy.clear();
                 }
+
                 _layout->put( _create_entity );
 
                 const kege::Entity& root = scene->root();
@@ -31,19 +32,31 @@ namespace kege{
             }
         }
         _layout->pop();
+
+        if ( _scene && _layout->click( _create_entity ) )
+        {
+            Entity entity = Entity::create();
+            entity.add< EntityTag >({ "entity" });
+            _scene->insert( entity );
+            _butn_down = true;
+        }
     }
 
-    ui::HierarchyDroplist* HierarchyPanel::makeEntityUI( const Entity& entity, int space )
+    ui::HierarchyDroplist* HierarchyPanel::makeEntityUI( Entity& entity, int space )
     {
-        const EntityTag* tag = entity.get< EntityTag >();
         const bool entity_has_children = entity.isParent();
-        const char* entity_name = ( tag ) ? tag->c_str() : "un-named";
 
         ui::HierarchyDroplist* list = 0;
         auto i = _hierarchy.find( entity.getID() );
         if ( i == _hierarchy.end() )
         {
+            const EntityTag* tag = entity.get< EntityTag >();
+            const char* entity_name = ( tag ) ? tag->c_str() : "un-named";
+
             list = &_hierarchy[ entity.getID() ];
+
+            list->text_field.init( _layout, entity_name );
+
             list->spacer_style = ui::Style
             {
                 .width = ui::fixed( space ),
@@ -64,21 +77,21 @@ namespace kege{
             list->field = _layout->make
             ({
                 .style = _layout->getStyleByName( "droplist-field" ),
-                .trigger = ui::ClickTrigger::OnClick,
+                .single_click = ui::ClickTrigger::Immediate,
             });
 
-            list->icon = _layout->make
+            list->expand_toggle = _layout->make
             ({
                 .style = _layout->getStyleByName( "droplist-icon" ),
-                .trigger = ui::ClickTrigger::OnRelease,
+                .single_click = ui::ClickTrigger::OnRelease,
                 .text = {"-",0,0,0,0},
             });
 
-            list->label = _layout->make
+            list->delete_button = _layout->make
             ({
-                .mouseover = false,
                 .style = _layout->getStyleByName( "droplist-label" ),
-                .text = {entity_name, 0, 0, 0, 0},
+                .single_click = ui::ClickTrigger::OnRelease,
+                .text = {"x", 0, 0, 0, 0},
             });
 
             list->content = _layout->make
@@ -90,30 +103,44 @@ namespace kege{
         else
         {
             list = &i->second;
-            list->label->text = {entity_name, 0, 0, 0, 0};
+            //list->label->text = {entity_name, 0, 0, 0, 0};
         }
 
-        list->icon->text.text = ( entity_has_children )
+        if(_scene && _layout->click( list->delete_button ))
+        {
+            _hierarchy.erase( _hierarchy.find( entity.getID() ) );
+            _scene->remove( entity );
+            return nullptr;
+        }
+
+        list->expand_toggle->text.text = ( entity_has_children )
         ? (( list->open[1] ) ? "-" : "+") : "-";
 
         // droplist hierarchy
         _layout->push( list->container );
         {
+            _layout->put( list->spacer );
             _layout->push( list->field );
             {
-                _layout->put( list->spacer );
-                _layout->put( list->icon );
-                _layout->put( list->label );
+                _layout->put( list->expand_toggle );
+                if ( list->text_field.update( _layout ) )
+                {
+                    Communication::broadcast< const SetSelectedEntity& >({ entity });
+                }
+                _layout->put( list->delete_button );
             }
             _layout->pop();
         }
         _layout->pop();
+
         return list;
     }
 
-    void HierarchyPanel::buildHierarchy( const Entity& entity, int spacer )
+    void HierarchyPanel::buildHierarchy( Entity& entity, int spacer )
     {
         ui::HierarchyDroplist* list = makeEntityUI( entity, spacer );
+        if ( list == nullptr ) return;
+        
         if ( clicked( list ) )
         {
             _layout->push( list->content );
@@ -123,11 +150,18 @@ namespace kege{
             }
             _layout->end();
         }
+
+        if ( list->text_field.modified )
+        {
+            list->text_field.modified = false;
+            EntityTag* tag = entity.get< EntityTag >();
+            *tag = list->text_field.text->text.text.c_str();
+        }
     }
 
     bool HierarchyPanel::clicked( ui::HierarchyDroplist* list )
     {
-        if ( _layout->click( list->icon ) )
+        if ( _layout->click( list->expand_toggle ) )
         {
             if ( !list->open[0] )
             {
@@ -152,12 +186,12 @@ namespace kege{
     {
         _panel = _layout->make
         ({
-            .style = _layout->getStyleByName( "hierarchy" )
+            .style = _layout->getStyleByName( "panel" )
         });
         _create_entity = _layout->make
         ({
-            .trigger = ui::ClickTrigger::OnRelease,
-            .style = _layout->getStyleByName( "label" ),
+            .single_click = ui::ClickTrigger::OnRelease,
+            .style = _layout->getStyleByName( "button" ),
             .text = {"Create Entity", 0, 0, 0, 0},
         });
     }

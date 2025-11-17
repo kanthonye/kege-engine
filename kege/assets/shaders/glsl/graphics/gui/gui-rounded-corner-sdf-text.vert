@@ -28,7 +28,6 @@ const vec2 vertex_position[ 4 ] = vec2[]
     vec2( 1.f,-1.f)
 );
 
-
 layout(location = 0) out vec4  color;
 layout(location = 1) out vec2  position;   // Position of the rectangle center
 layout(location = 2) out vec2  size;       // Size of the rectangle

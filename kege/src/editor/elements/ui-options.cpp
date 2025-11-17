@@ -16,7 +16,7 @@ namespace kege::ui{
             field = layout.make
             ({
                 .text = text,
-                .trigger = ClickTrigger::OnClick,
+                .single_click = ClickTrigger::Immediate,
                 .style = layout.getStyleByName( "option-field" )
             });
 
@@ -39,7 +39,7 @@ namespace kege::ui{
                     options[i] = layout.make
                     ({
                         .text = list[i],
-                        .trigger = ClickTrigger::OnClick,
+                        .single_click = ClickTrigger::Immediate,
                         .style = layout.getStyleByName( "option-item" )
                     });
                 }

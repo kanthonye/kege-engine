@@ -113,12 +113,22 @@ namespace kege{
         return _asset_manager->fetch< kege::BufferDefn >( name );
     }
 
-    RgResrcHandle RenderGraph::importImage( std::string name, const std::vector< ref::Image >& handles )
+    RgResrcHandle RenderGraph::setImagePhysicalHandles( std::string name, const std::vector< ref::Image >& physical_handles )
     {
-        ImageDefn defn;
-        defn.name = name;
-        defn.physical_handle = handles;
-        return defnImage( defn );
+        kege::ImageDefn* def = _asset_manager->fetch< kege::ImageDefn >( name );
+        if ( def == nullptr )
+        {
+            def = _asset_manager->create< kege::ImageDefn >( name );
+            uint64_t index = _asset_manager->getId< kege::ImageDefn >( name );
+            def->handle = {kege::RgResrcType::Image, index};
+        }
+        def->info.width = physical_handles[0]->getExtent().width;
+        def->info.height = physical_handles[0]->getExtent().height;
+        def->info.format = physical_handles[0]->getFormat();
+        def->info.type = physical_handles[0]->getType();
+        def->physical_handle = physical_handles;
+        def->name = name;
+        return def->handle;
     }
 
     kege::RgResrcHandle RenderGraph::defnImage( const kege::ImageDefn& defn )
@@ -133,6 +143,7 @@ namespace kege{
         }
         else
         {
+            def->physical_handle = defn.physical_handle;
             return def->handle;
         }
     }

@@ -61,12 +61,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-logic.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-logic.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-logic.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-logic.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
   "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o"
@@ -100,6 +94,12 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
   "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp",
+  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -163,12 +163,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/glfw-window.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/glfw-window.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/glfw-window.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/glfw-window.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o"
@@ -184,6 +178,18 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-core.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-core.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-core.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-core.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-cursor.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-cursor.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-cursor.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-cursor.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-elem.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-elem.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -805,6 +811,12 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/window/glfw-window.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/window/glfw-window.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/window/glfw-window.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/window/glfw-window.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o"
@@ -862,6 +874,12 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -1663,12 +1681,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric3.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-numeric3.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-numeric3.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric3.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-options.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-options.cpp",
   "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o"
@@ -1690,6 +1702,12 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tab.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tab.cpp",
   "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-text-field.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-text-field.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",

@@ -25,7 +25,7 @@ namespace kege{
             });
             field = layout.make
             ({
-                .trigger = ui::ClickTrigger::OnRelease,
+                .single_click = ui::ClickTrigger::OnRelease,
                 .style = layout.getStyleByName( "properties-field" ),
             });
             icon = layout.make

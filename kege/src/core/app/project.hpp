@@ -10,7 +10,7 @@
 
 #include <filesystem>
 #include "../resource/asset-manager.hpp"
-#include "scene-manager.hpp"
+#include "../scene/scene-manager.hpp"
 
 namespace kege{
 

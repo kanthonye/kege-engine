@@ -8,8 +8,7 @@
 #ifndef graphics_window_hpp
 #define graphics_window_hpp
 
-#include "graphics-core.hpp"
-
+#include "../graphics/render/core/graphics-core.hpp"
 
 typedef struct GLFWwindow GLFWwindow;
 

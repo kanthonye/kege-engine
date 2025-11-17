@@ -8,7 +8,6 @@
 #ifndef application_hpp
 #define application_hpp
 
-#include "ref.hpp"
 #include "app-layer-stack.hpp"
 #include "app-window.hpp"
 #include "project-manager.hpp"
@@ -17,7 +16,6 @@
 #include "input-layer.hpp"
 #include "ecs-layer.hpp"
 #include "virtual-directory.hpp"
-#include "../resource/asset-manager.hpp"
 
 namespace kege{
 

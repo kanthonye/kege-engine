@@ -18,8 +18,8 @@ namespace kege{
 
     void EditorLayer::update()
     {
-        _input.processInputs( _input_context_manager->getCurrentInputs() );
-        _layout->begin( &_input );
+        _input.update( _input_context_manager->getCurrentInputs() );
+        _layout->begin( 0.016, &_input );
         _root->update( this );
         _layout->end();
 
@@ -60,39 +60,18 @@ namespace kege{
         addPanel( new InspectorPanel( _project_manager, _layout.ref() ) );
         addPanel( new ViewportPanel( _project_manager, _layout.ref() ) );
 
-        _root = new ui::DockNode( _layout.ref(), "dock" );
-        _root->_panels.push_back(_panels[0]);
-        _root->_panels.push_back(_panels[1]);
-        _root->_panels.push_back(_panels[2]);
-//        _main_panel = new kege::DockingPanel( _project_manager, &_layout );
+        _root = new ui::DockNode( _layout.ref(), "main" );
 
-//            _panels.push_back( new NavbarPanel( pm, l ) );
-//            _panels.push_back( new NavbarPanel( pm, l ) );
-//
-//        _hierarchy_panel.init( &_engine, _layout );
-//        _inspector_panel.init( &_engine, _layout );
-//        _viewport_panel.init( &_engine, _layout );
-//        _navbar_panel.init( &_engine, _layout );
-//
-//        Entity entity = Entity::create();
-//        entity.add< Transform >({});
-//        entity.add< Terrain >()->initialize
-//        ({
-//            .type = TerrainType::SPHERICAL,
-//            .radius = 512,
-//            .maximum_depth = 5,
-//            .minimum_depth = 0,
-//            .maximum_height = 0,
-//            .minimum_height = 0,
-//            .maximum_resolution = 8,
-//            .graphics = _engine.graphics().get()
-//        });
-//        entity.add< Geometry >
-//        ({
-//            .mesh = entity.add< Terrain >()->getTerrainRenderer(),
-//            .material = new Material({ entity.add< Terrain >()->getTerrainMaterial() })
-//        });
-//        _engine.scene().getScene()->insert( entity );
+        _root->split();
+        _root->_children[0]->_container->style = _layout->getStyleByName( "dock" );
+        
+        _root->_children[0]->split();
+        _root->_children[0]->_children[0]->_panels.push_back(_panels[0]);
+        _root->_children[0]->_children[1]->_panels.push_back(_panels[1]);
+        _root->_children[1]->_panels.push_back(_panels[2]);
+
+
+        std::cout << sizeof(ui::Callback)<<" style:"<< sizeof(ui::Style) <<" widgit:"<< sizeof(ui::Widget) <<" sum:" << sizeof(ui::Style) + sizeof(ui::Widget) <<"\n";
         return true;
     }
 

@@ -14,43 +14,36 @@
 
 namespace kege{
 
-    struct EntityRegistry;
-//    typedef std::vector< kege::ComponentType > ComponentTypes;
+//    struct EntityRegistry;
+////    typedef std::vector< kege::ComponentType > ComponentTypes;
+//
+//    struct EntityRegistryKey
+//    {
+//        int32_t index;
+//    };
 
-    struct EntityRegistryKey
-    {
-        int32_t index;
-    };
+    using EntityList = std::vector< kege::Entity >;
 
-    struct EntityRegistry
+    class EntityRegistry : public kege::RefCounter
     {
     public:
 
-        template< typename... T > kege::EntityView* getEntityView()
-        {
-            kege::EntitySignature signature;
-            ( signature.set( kege::ComponentCacheT< T >::getType() ), ... );
-            return getEntityView( signature );
-        }
+        using Signature = kege::EntitySignature;
 
-        EntityView* getEntityView( const kege::EntitySignature& signature );
-        const std::vector< EntityGroup >& entities()const;
-        void updateViews( EntityGroup& new_group );
-        const EntityGroup* getEntities( int index )const;
-        EntityGroup* getEntities( int index );
-        void insert( Entity& entity );
-        void remove( Entity& entity );
+        void insert( const kege::Entity& e );
+        void remove( const kege::Entity& e );
+        const EntityList& get( const Signature& query_sig );
 
-        int getCount()const;
         void clear();
-        ~EntityRegistry();
 
-    private:
+    public:
 
-        std::unordered_map< kege::EntitySignature, EntityView* > _entity_views;
-        std::unordered_map< kege::EntitySignature, uint32_t > _entity_group_index_table;
-        std::vector< EntityGroup > _entities;
-        friend EntityView;
+        // Exact archetype groups
+        std::unordered_map< Signature, EntityList > _groups;
+
+        // Cached system queries: query_sig → all entities with archetype ⊇ query_sig
+        std::unordered_map< Signature, EntityList > _system_entities;
+
     };
 
 }

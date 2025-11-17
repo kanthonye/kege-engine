@@ -9,28 +9,41 @@
 #define inspector_panel_hpp
 
 #include "../elements/droplist.hpp"
-#include "../elements/ui-numeric3.hpp"
+#include "../elements/ui-numeric.hpp"
 #include "../elements/ui-panel.hpp"
 #include "hierarchy-panel.hpp"
 
 namespace kege{
-  
+
+    typedef std::map< int, void(*)( Entity& ) > EntityComponentFactory;
+
     class InspectorPanel : public kege::ui::Panel
     {
     public:
 
+        int select( ui::Layout* layout, const std::vector< std::string >& options );
         InspectorPanel( kege::ProjectManager* pm, ui::Layout* l );
         void operator()( const SetSelectedEntity& msg );
         void update();
 
     public:
 
-        ui::UIElementCreator _ui_element_creator;
-        ui::Tree _tree;
-        ui::EID _main;
+        void add(const std::string& stype, int component_type, void(*funct)( Entity& ));
 
+        std::map< std::string, int > _string_to_component_type;
+        std::vector< std::string > _component_string_types;
+
+        EntityComponentFactory _entity_component_factory;
+        ui::UIElementCreator _ui_element_creator;
+        ui::Elem _add_component;
+        ui::Tree _tree;
+        ui::Elem _main;
+
+        std::vector< ui::Elem > _selection_elements;
+        ui::Elem _selection_container;
 
         Entity _selected_entity;
+        bool _show_component_selections;
     };
 }
 

@@ -8,18 +8,17 @@
 #ifndef ui_layout_hpp
 #define ui_layout_hpp
 
-#include "font.hpp"
+#include "../font/font.hpp"
 #include "ui-input.hpp"
 #include "ui-aligner.hpp"
 #include "ui-core.hpp"
+#include "ui-cursor.hpp"
 #include "ui-style-manager.hpp"
 #include "ui-widget-manager.hpp"
 
 namespace kege::ui{
 
-    class EID;
     class Input;
-
 
     class Layout : public kege::RefCounter
     {
@@ -37,8 +36,11 @@ namespace kege::ui{
 
     public:
 
-        float getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const ref::Font& font );
         kege::vec2 computeExtent( int font_size, const char* text );
+
+        bool onNumericInput(const ui::Elem& elem, kege::string* text);
+        bool onTextInput(const ui::Elem& elem, kege::string* text);
+
 
         /**
          * Checks if geven point and rectangular shape intersects.
@@ -51,47 +53,75 @@ namespace kege::ui{
         bool testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const;
 
         /**
+         * Retrieves the current position of the mouse pointer.
+         *
+         * @return The current position as a 2D vector.
+         */
+        const kege::dvec2& pointerPosition() const;
+
+        /**
+         * Retrieves the delta (change) in the mouse pointer's position.
+         *
+         * @return The delta position as a 2D vector.
+         */
+        const kege::dvec2& deltaPosition() const;
+
+        /**
+         * Retrieves the mouse scroll offset.
+         *
+         * @return The scroll offset as a 2D vector.
+         */
+        const kege::dvec2& scrollOffset() const;
+
+        /**
+         * Checks if the mouse pointer is being dragged.
+         *
+         * @return true if the pointer is being dragged, false otherwise.
+         */
+        const bool pointerDragging() const;
+
+        /**
          * Checks if mouse pointer is over ui element.
          *
-         * @param eid The ui element layout.
+         * @param elem The ui element layout.
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool mouseover( const ui::EID& eid ) const;
+        bool mouseover( const ui::Elem& elem ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was double clicked on.
          *
-         * @param eid The given id.
+         * @param elem The given id.
          *
          * @return true if the element was double clicked on, false otherwise.
          */
-        bool doubleClick( const ui::EID& eid ) const;
+        bool doubleClick( const ui::Elem& elem ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was single clicked on.
          *
-         * @param eid The given id.
+         * @param elem The given id.
          *
          * @return true if the ui-element was single clicked on, false otherwise.
          */
-        bool click( const ui::EID& eid ) const;
+        bool click( const ui::Elem& elem ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id has focus.
          *
-         * @param eid The given id.
+         * @param elem The given id.
          *
          * @return true if the ui-element has focus, false otherwise.
          */
-        bool hasFocus( const ui::EID& eid )const;
+        bool hasFocus( const ui::Elem& elem )const;
 
         /**
          * Set the id of the ui-element to focus on.
          *
-         * @param eid The given id.
+         * @param elem The given id.
          */
-        void setFocus( const ui::EID& eid );
+        void setFocus( const ui::Elem& elem );
 
         /**
          * Creates a UI element with the give info.
@@ -100,25 +130,25 @@ namespace kege::ui{
          *
          * @return The element id.
          */
-        EID make( const Widget& info );
+        Elem make( const Widget& info );
 
         /**
          * Creates a parent UI element with the give info.
          *
-         * @param eid This refers to the ui element id
+         * @param elem This refers to the ui element id
          *
          * @return reference to the ui element.
          */
-        uint32_t push( const EID& eid );
+        uint32_t push( const Elem& elem );
 
         /**
          * Creates a UI element with the give info.
          *
-         * @param eid This refers to the ui element id
+         * @param elem This refers to the ui element id
          *
          * @return reference to the ui element.
          */
-        uint32_t put( const EID& eid );
+        uint32_t put( const Elem& elem );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -130,63 +160,63 @@ namespace kege::ui{
         /**
          * Retrieves a UI element by its index (const version).
          *
-         * @param eid The ui element index.
+         * @param elem The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* operator[]( const EID& eid ) const;
+        const kege::ui::Widget* operator[]( const Elem& elem ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
          *
-         * @param eid The ui element index.
+         * @param elem The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* operator[]( const EID& eid );
+        kege::ui::Widget* operator[]( const Elem& elem );
 
         /**
          * Retrieves a UI element by its index (const version).
          *
-         * @param eid The ui element index.
+         * @param elem The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* operator[](NodeIndex eid) const;
+        const kege::ui::Widget* operator[](NodeIndex elem) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
          *
-         * @param eid The ui element index.
+         * @param elem The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* operator[](NodeIndex eid);
+        kege::ui::Widget* operator[](NodeIndex elem);
 
         /**
          * Retrieves the parent index of a UI element.
          */
-        NodeIndex parent( NodeIndex eid )const;
+        NodeIndex parent( NodeIndex elem )const;
 
         /**
          * Retrieves the head index of a UI element.
          */
-        NodeIndex head( NodeIndex eid )const;
+        NodeIndex head( NodeIndex elem )const;
 
         /**
          * Retrieves the tail index of a UI element.
          */
-        NodeIndex tail( NodeIndex eid )const;
+        NodeIndex tail( NodeIndex elem )const;
 
         /**
          * Retrieves the next sibling index of a UI element.
          */
-        NodeIndex next( NodeIndex eid )const;
+        NodeIndex next( NodeIndex elem )const;
 
         /**
          * Retrieves the number of children of a UI element.
          */
-        uint32_t count( NodeIndex eid )const;
+        uint32_t count( NodeIndex elem )const;
 
         /**
          * Adds a new style to the layout system.
@@ -262,7 +292,7 @@ namespace kege::ui{
         /**
          * Begins the UI layout construction. Must be called before creating any UI elements.
          */
-        void begin( ui::Input* input );
+        void begin( double dms, ui::Input* input );
 
         /**
          * Ends the UI layout construction. Must be called after all UI elements are created.
@@ -288,13 +318,14 @@ namespace kege::ui{
         std::vector< kege::ui::Node > _nodes;
         uint32_t _node_counter;
 
+        ui::Cursor _cursor;
+
         ref::Font _font;
         ui::Input* _input;
 
-        mutable State _curr_active;
-        mutable State _prev_active;
-        mutable State _curr_hot;
-        mutable State _prev_hot;
+        mutable State _active[2];
+        mutable State _hot[2];
+        mutable State _clicked;
         mutable State _focus;
 
         uint32_t _parent; // Tracks the current parent element in the UI hierarchy.
@@ -305,204 +336,9 @@ namespace kege::ui{
         uint32_t _width;
         bool _button_down;
 
-        friend EID;
-    };
-
-
-
-    class EID
-    {
-    public:
-
-        friend bool operator ==( const EID& a, const EID& b )
-        {
-            return a.index == b.index;
-        }
-
-        friend bool operator !=( const EID& a, const EID& b )
-        {
-            return a.index != b.index;
-        }
-
-        /**
-         * Retrieves a UI element by its index (const version).
-         *
-         * @return The UI element at the specified index.
-         */
-        const kege::ui::Widget* operator->() const
-        {
-            return &layout->_widget_manager[ index ];
-        }
-
-        /**
-         * Retrieves a UI element by its index (non-const version).
-         *
-         * @return The UI element at the specified index.
-         */
-        kege::ui::Widget* operator->()
-        {
-            return &layout->_widget_manager[ index ];
-        }
-
-        /**
-         * Checks if mouse pointer is over ui element.
-         *
-         * @return true if mouse is over ui element, false otherwise.
-         */
-        //bool mouseover() const;
-
-        /**
-         * Checks if a ui-element that is associated with geven id was double clicked on.
-         *
-         * @return true if the element was double clicked on, false otherwise.
-         */
-        //bool doubleClick() const;
-
-        /**
-         * Checks if a ui-element that is associated with geven id was single clicked on.
-         *
-         * @return true if the ui-element was single clicked on, false otherwise.
-         */
-        //bool click() const;
-
-        /**
-         * Checks if a ui-element that is associated with geven id has focus.
-         *
-         * @return true if the ui-element has focus, false otherwise.
-         */
-        //bool hasFocus()const;
-
-        /**
-         * Set the id of the ui-element to focus on.
-         */
-        //void setFocus();
-
-        /**
-         * Retrieves the parent index of a UI element.
-         */
-        //NodeIndex parent()const;
-
-        /**
-         * Retrieves the head index of a UI element.
-         */
-        //NodeIndex head()const;
-
-        /**
-         * Retrieves the tail index of a UI element.
-         */
-        //NodeIndex tail()const;
-
-        /**
-         * Retrieves the next sibling index of a UI element.
-         */
-        ///NodeIndex next()const;
-
-        /**
-         * Retrieves the number of children of a UI element.
-         */
-        //uint32_t count()const;
-
-        //void push();
-
-        /**
-         * Creates a UI element with the give info.
-         */
-        //void put();
-
-        /**
-         * Pops the current parent UI element from the parent stack.
-         */
-        //void pop();
-
-        operator bool()const{ return 0 <= index; }
-
-
-        // Move assignment operator
-        EID& operator =(EID&& other) noexcept
-        {
-            index = other.index;
-            layout = other.layout;
-            //node_index = other.node_index;
-
-            other.index = -1;
-            //other.node_index = 0;
-            other.layout = nullptr;
-
-            return *this;
-        }
-
-        EID& operator =( const EID& other )
-        {
-            index = other.index;
-            layout = other.layout;
-            //node_index = other.node_index;
-            layout->_widget_manager.duplicate( other.index, &index );
-            return *this;
-        }
-
-        operator size_t()const
-        {
-            return index;
-        }
-
-        operator uint32_t()const
-        {
-            return index;
-        }
-
-        operator int32_t()const
-        {
-            return index;
-        }
-
-        // Move constructor
-        EID( EID&& other ) noexcept
-        :   index( other.index )
-        ,   layout( other.layout )
-        //,   node_index( other.node_index )
-        {
-            other.index = -1;
-            //other.node_index = 0;
-            other.layout = nullptr;
-        }
-
-        EID( int32_t index, Layout* layout )
-        :   index( index )
-        ,   layout( layout )
-        //,   node_index( 0 )
-        {}
-
-        EID( const EID& other )
-        :   index( other.index )
-        ,   layout( other.layout )
-        //,   node_index( other.node_index )
-        {
-            layout->_widget_manager.duplicate( other.index, &index );
-        }
-
-        EID()
-        :   layout( nullptr )
-        ,   index( -1 )
-        //,   node_index( 0 )
-        {}
-
-        ~EID()
-        {
-            if( layout )
-            {
-                layout->_widget_manager.recycle( index );
-                layout = nullptr;
-            }
-        }
-
-    private:
-
-        Layout* layout;
-        int32_t index;
-
-        //mutable NodeIndex node_index;
-
-        friend Layout;
+        friend Cursor;
+        friend Viewer;
+        friend Elem;
     };
 
 }

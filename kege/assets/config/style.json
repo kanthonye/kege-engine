@@ -11,15 +11,41 @@
             "align":
             {
                 "origin": "top center",
-                "direction": "top to bottom",
+                "direction": "left to right",
             },
         },
 
         "dock":
         {
-            "background": "0x000000FF",
+            "background": "0x00000000",
             "width": "extend",
             "height": "extend",
+            "align":
+            {
+                "origin": "top center",
+                "direction": "top to bottom",
+            },
+        },
+
+        "dock-inner":
+        {
+            "background": "0x00000000",
+            "width": "extend",
+            "height": "extend",
+            "align":
+            {
+                "origin": "top center",
+                "direction": "top to bottom",
+            },
+        },
+
+        "panel":
+        {
+            "background": "0x222222FF",
+            "width": "extend",
+            "height": "extend",
+            "padding": [4,4,4,4],
+            "gap": [2,2],
             "align":
             {
                 "origin": "top center",
@@ -38,7 +64,18 @@
             "align_text": "left",
         },
 
-        "h-bar":
+        "button":
+        {
+            "background": "0x333333FF",
+            "width": "extend",
+            "height": 24,
+            "color": "0xFFFFFF",
+            "padding": [10,2,8,2],
+            "font_size": 21,
+            "align_text": "left",
+        },
+
+        "bar":
         {
             "background": "0xFFFFFF00",
             "width": "extend",
@@ -51,49 +88,29 @@
             },
         },
 
-        "v-bar":
+        "tab":
         {
-            "background": "0xFFFFFF22",
-            "width": 30,
-            "height": "extend",
-            "gap": [2,2],
-            "align":
-            {
-                "origin": "top center",
-                "direction": "top to bottom",
-            },
+            "background": "0x333333FF",
+            "border_radius": [8,8,0,0],
+            "width": "flexible",
+            "height": 24,
+            "color": "0xFFFFFF",
+            "padding": [10,2,8,2],
+            "font_size": 21,
+            "align_text": "left",
         },
 
-        "h-container":
+        "text":
         {
-            "background": "0xFFFFFF22",
-            "width": "extend",
-            "height": "extend",
-            "padding": [4,4,4,4],
-            "gap": [2,2],
-            "align":
-            {
-                "origin": "left center",
-                "direction": "left to right",
-            },
+            "background": "0x333333FF",
+            "width": "flexible",
+            "height": "flexible",
+            "color": "0xFFFFFF",
+            "font_size": 21,
         },
 
         "v-container":
         {
-            "background": "0x0000FF60",
-            "width": "extend",
-            "height": "extend",
-            "padding": [4,4,4,4],
-            "gap": [2,2],
-            "align":
-            {
-                "origin": "top center",
-                "direction": "top to bottom",
-            },
-        },
-
-        "vertical":
-        {
             "background": "0xFFFFFF22",
             "width": "extend",
             "height": "extend",
@@ -103,20 +120,6 @@
             {
                 "origin": "top center",
                 "direction": "top to bottom",
-            },
-        },
-        
-        "horizontal":
-        {
-            "background": "0xFFFFFF22",
-            "width": "extend",
-            "height": "extend",
-            "padding": [4,4,4,4],
-            "gap": [2,2],
-            "align":
-            {
-                "origin": "left center",
-                "direction": "left to right",
             },
         },
 
@@ -150,7 +153,7 @@
 
         "viewport":
         {
-            "background": "0xFFFFFFFF",
+            "background": "0x222222FF",
             "width": "extend",
             "height": "extend",
         },
@@ -170,7 +173,7 @@
 
         "inspector-panel":
         {
-            "background": "0xFFFFFF20",
+            "background": "0x444455FF",
             "width": "extend",
             "height": "extend",
             "align":

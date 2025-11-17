@@ -9,11 +9,11 @@
 #define render_graph_hpp
 
 #include "render-stage.hpp"
-#include "asset-manager.hpp"
 #include "render-executor.hpp"
 #include "render-graph-compiler.hpp"
 #include "render-graph-loader.hpp"
 
+#include "../../../resource/asset-manager.hpp"
 #include "../../../utils/frames.hpp"
 
 namespace kege{
@@ -55,7 +55,7 @@ namespace kege{
         const ImageDefn* getImageDefn( const kege::RgResrcHandle& handle );
         const ImageDefn* getImageDefn( const std::string& name );
 
-        RgResrcHandle importImage( std::string name, const std::vector<ref::Image>& handles );
+        RgResrcHandle setImagePhysicalHandles( std::string name, const std::vector<ref::Image>& handles );
         const ref::Image getImage( const kege::RgResrcHandle& handle )const;
         const ref::Image fetchImage( const std::string& name )const;
         void removeImage( const kege::RgResrcHandle& handle );

@@ -8,8 +8,8 @@
 #ifndef asset_cache_hpp
 #define asset_cache_hpp
 
-#include "ref.hpp"
-#include "log.hpp"
+#include "../memory/ref.hpp"
+#include "../utils/log.hpp"
 
 namespace kege{
 

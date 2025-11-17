@@ -50,6 +50,21 @@ namespace kege{
         FAILED_TO_SHUTDOWN,
     };
 
+    enum struct Result
+    {
+        UNKNOWN_ERROR,
+        ERROR_DEVICE_LOST,
+        SUCCESS,
+        INVALID_ID,
+        INVALID_OPERATION,
+        FAILED_CREATING_OBJECT,
+        FAILED_TO_SHUTDOWN,
+        OUT_OF_BOUND_INDEX,
+        OUTDATED_SWAPCHAIN,
+    };
+
+
+
     struct BufferViewHandle
     {
         inline operator bool()const{ return id >= 0; }

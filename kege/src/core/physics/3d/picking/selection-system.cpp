@@ -36,7 +36,7 @@ namespace kege{
 
         // test ray against entities. store the entities hit by the ray, also store the distance from origin
 
-        for ( kege::Entity& entity : *_entities )
+        for ( kege::Entity entity : *_entities )
         {
             kege::Rigidbody* body = entity.get< kege::Rigidbody >();
             if( body->collider )

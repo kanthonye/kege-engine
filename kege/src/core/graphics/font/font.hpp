@@ -35,6 +35,7 @@ namespace kege{
     public:
 
         bool save( const std::string& filename, const std::string& image_name );
+        kege::vec2 computeExtent( int font_size, const char* text )const;
 
         float getTextWidth( int font_size, const char* str )const;
         float getCharWidth( int font_size, int c )const;

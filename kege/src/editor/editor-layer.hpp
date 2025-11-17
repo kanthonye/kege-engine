@@ -52,7 +52,7 @@ namespace kege{
 
         bool _paused;
 
-        ui::EID main_panel;
+        ui::Elem main_panel;
     };
 }
 

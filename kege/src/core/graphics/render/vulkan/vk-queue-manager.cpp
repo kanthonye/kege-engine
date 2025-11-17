@@ -260,8 +260,6 @@ namespace kege::vk{
             return false;
         }
 
-//        vk::FrameSync& sync = swapchain->getFrameSync( swapchain->getImageIndex() );
-
         VkSemaphore wait_semaphores[] = { wait_semaphore->vk()->handle };
         VkSwapchainKHR swapchains[] = { swapchain->getHandle() };
         uint32_t image_indices[] = { swapchain->getImageIndex() };

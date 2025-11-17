@@ -24,7 +24,7 @@ namespace kege{
                 .width  = 1.f,
                 .height = 1.f,
             },
-            .style      = _layout->getStyleByName( "viewport" )
+            .style      = _layout->getStyleByName( "panel" )
         });
     }
 

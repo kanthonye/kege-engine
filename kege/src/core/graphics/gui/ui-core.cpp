@@ -45,30 +45,20 @@ namespace kege::ui{
         };
     }
 
-    ui::Background bgImage(const ui::Rect& texel)
+    Background::Background(uint32_t img_index, const ui::Rect& texel)
     {
-        return ui::Background
-        {
-            .type = ui::BACKGROUND_IMAGE,
-            //.texel = texel
-        };
+        this->id = 0;
+        this->texel = texel;
     }
-    ui::Background bgColor(const ui::Color& color)
+    ui::Background::Background(const ui::Color& color)
     {
-        return ui::Background
-        {
-            .type = ui::BACKGROUND_COLOR,
-            .color = color
-        };
+        this->id = 0;
+        this->color = color;
     }
-
-    ui::Background bgColor(uint32_t color)
+    ui::Background::Background(uint32_t color)
     {
-        return ui::Background
-        {
-            .type = ui::BACKGROUND_COLOR,
-            .color = rgba(color)
-        };
+        this->id = 0;
+        this->color = rgba(color);
     }
 
     ui::Color rgb(uint32_t hex_color)

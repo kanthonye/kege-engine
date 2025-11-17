@@ -12,7 +12,7 @@ namespace kege{
     void UpdateDecayOverTime::update( double dms )
     {
         std::vector< kege::Entity > dead_entities;
-        for ( kege::Entity& entity : *_entities )
+        for ( kege::Entity entity : *_entities )
         {
             DecayOverTime* decay = entity.get< DecayOverTime >();
             decay->lifespand -= dms;

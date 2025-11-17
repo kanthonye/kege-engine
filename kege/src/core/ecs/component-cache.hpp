@@ -12,6 +12,7 @@
 #include <bitset>
 #include <vector>
 #include <unordered_map>
+#include "../utils/handle.hpp"
 
 namespace kege{
 

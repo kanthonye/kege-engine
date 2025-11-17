@@ -19,9 +19,9 @@ namespace kege::ui{
         void beginContent( ui::Layout& layout );
         void endContent( ui::Layout& layout );
 
-        ui::EID container;
-        ui::EID content;
-        ui::EID field;
+        ui::Elem container;
+        ui::Elem content;
+        ui::Elem field;
 
         bool state;
     };

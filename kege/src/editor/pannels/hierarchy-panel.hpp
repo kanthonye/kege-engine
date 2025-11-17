@@ -9,6 +9,7 @@
 #define hierarchy_panel_hpp
 
 #include "../elements/ui-panel.hpp"
+#include "../elements/ui-text-field.hpp"
 
 namespace kege::ui{
 
@@ -16,15 +17,21 @@ namespace kege::ui{
     {
         ui::Style spacer_style;
 
-        ui::EID container;
-        ui::EID content;
-        ui::EID field;
-        ui::EID label;
-        ui::EID icon;
-        ui::EID spacer;
+        //ui::Elem text_field;
+        //ui::Elem text_field;
+
+        ui::TextField text_field;
+
+        ui::Elem expand_toggle;
+        ui::Elem delete_button;
+        ui::Elem container;
+        ui::Elem content;
+        ui::Elem field;
+        ui::Elem spacer;
 
         bool open[2] = {false, false};
     };
+
 }
 
 namespace kege{
@@ -44,8 +51,8 @@ namespace kege{
 
     public:
 
-        ui::HierarchyDroplist* makeEntityUI( const Entity& entity, int space );
-        void buildHierarchy( const Entity& root, int spacer = 0 );
+        ui::HierarchyDroplist* makeEntityUI( Entity& entity, int space );
+        void buildHierarchy( Entity& root, int spacer = 0 );
         bool clicked( ui::HierarchyDroplist* list );
 
     public:
@@ -55,8 +62,9 @@ namespace kege{
         ref::Scene _scene;
 
         kege::Entity _selected_entity;
-        ui::EID _create_entity;
-        ui::EID _panel;
+        ui::Elem _create_entity;
+        ui::Elem _panel;
+        bool _butn_down;
     };
 }
 

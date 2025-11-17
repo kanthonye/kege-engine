@@ -9,85 +9,16 @@
 
 namespace kege::ui{
 
-    void WidgetManager::duplicate( int32_t src_index, int32_t* dst_index )
+    void WidgetManager::duplicate( const Handle& handle )
     {
-        if ( 1 <= src_index )
+        if ( handle.value != 0 )
         {
-            *dst_index = src_index;
-            _contents[ src_index ].duplicates++;
+            _contents[ handle.index ].duplicates++;
             //std::cout << "duplicated: " << src->index <<"\n";
         }
     }
 
-    int32_t WidgetManager::make( const Widget& widget )
-    {
-        uint32_t id = generate();
-        if( id < 0 || id >= _contents.size() )
-        {
-            kege::Log::error << "Reached maximum amount of UI Widget -> " << _contents.size() + 1 << Log::nl;
-            return {};
-        }
-        _contents[ id ].widget = widget;
-        return id;
-    }
-
-    void WidgetManager::recycle( int32_t index )
-    {
-        if ( index < 0 || index >= _contents.size())
-        {
-            return; // Invalid ID
-        }
-
-        /**
-         * Recycle the ID by decrementing its reference count.
-         */
-        if ( _contents[ index ].duplicates > 0 )
-        {
-            _contents[ index ].duplicates--;
-
-            /**
-             * If the reference count reaches zero, add the ID to the recycled list.
-             */
-            if ( _contents[ index ].duplicates == 0 )
-            {
-                _contents[ index ].node_index = 0;
-
-                if ( _recycled.head < 0 )
-                {
-                    _recycled.head = _recycled.tail = index;
-                }
-                else
-                {
-                    _contents[ _recycled.tail ].next = index;
-                    _contents[ index ].prev = _recycled.tail;
-                    _recycled.tail = index;
-                }
-
-                _recycled.count += 1;
-            }
-        }
-    }
-    void WidgetManager::resize( int32_t max_quantity )
-    {
-        _contents.resize( max_quantity );
-
-        _available.head = 0;
-        _available.tail = max_quantity - 1;
-        _available.count = max_quantity;
-
-        // Initialize the free list: each node points to the next.
-        for (int32_t i = 0; i < max_quantity; ++i)
-        {
-            _contents[i].prev  = i - 1;
-            _contents[i].next  = i + 1;
-            _contents[i].node_index = 0;
-            _contents[i].duplicates  = 0;
-        }
-
-        _contents[ _available.tail ].next = -1;
-    }
-
-    int32_t WidgetManager::generate()
+    Handle WidgetManager::make( const Widget& widget )
     {
         /**
          * Generate a new ID from the pool.
@@ -98,10 +29,10 @@ namespace kege::ui{
         if ( _available.head >= _contents.size() || _available.head == -1)
         {
             kege::Log::error << "max available ids exhausted." << Log::nl;
-            return 0;
+            return {};
         }
 
-        int index = _available.head;
+        uint32_t index = _available.head;
         _available.head = _contents[ _available.head ].next;
 
         if ( _available.head < 0 )
@@ -123,28 +54,89 @@ namespace kege::ui{
         _contents[ index ].prev = -1;
         _contents[ index ].node_index = 0;
         _contents[ index ].duplicates = 1;
+        _contents[ index ].version = (_contents[ index ].version == 0) ? 1 : _contents[ index ].version + 1;
 
-        return index;
+        _widgets[ index ] = widget;
+
+        return {index, _contents[ index ].version, 0};
     }
 
-    const Widget& WidgetManager::operator[]( int32_t index )const
+    void WidgetManager::recycle( const Handle& handle )
     {
-        return _contents[ index ].widget;
+        if ( handle.index < 0 || handle.index >= _contents.size())
+        {
+            return; // Invalid ID
+        }
+
+        /**
+         * Recycle the ID by decrementing its reference count.
+         */
+        if ( _contents[ handle.index ].duplicates > 0 )
+        {
+            _contents[ handle.index ].duplicates--;
+
+            /**
+             * If the reference count reaches zero, add the ID to the recycled list.
+             */
+            if ( _contents[ handle.index ].duplicates == 0 )
+            {
+                _contents[ handle.index ].node_index = 0;
+
+                if ( _recycled.head < 0 )
+                {
+                    _recycled.head = _recycled.tail = handle.index;
+                }
+                else
+                {
+                    _contents[ _recycled.tail ].next = handle.index;
+                    _contents[ handle.index ].prev = _recycled.tail;
+                    _recycled.tail = handle.index;
+                }
+
+                _recycled.count += 1;
+            }
+        }
+    }
+    
+    void WidgetManager::resize( int32_t max_quantity )
+    {
+        _widgets.resize( max_quantity );
+        _contents.resize( max_quantity );
+
+        _available.head = 0;
+        _available.tail = max_quantity - 1;
+        _available.count = max_quantity;
+
+        // Initialize the free list: each node points to the next.
+        for (int32_t i = 0; i < max_quantity; ++i)
+        {
+            _contents[i].prev  = i - 1;
+            _contents[i].next  = i + 1;
+            _contents[i].node_index = 0;
+            _contents[i].duplicates  = 0;
+        }
+
+        _contents[ _available.tail ].next = -1;
     }
 
-    Widget& WidgetManager::operator[]( int32_t index )
+    const Widget& WidgetManager::operator[]( const Handle& handle )const
     {
-        return _contents[ index ].widget;
+        return _widgets[ handle.index ];
     }
 
-    void WidgetManager::setNodeIndex( int32_t index, int32_t nodex_index )
+    Widget& WidgetManager::operator[]( const Handle& handle )
     {
-        _contents[ index ].node_index = nodex_index;
+        return _widgets[ handle.index ];
     }
 
-    uint32_t WidgetManager::getNodeIndex( int32_t index )const
+    void WidgetManager::setNodeIndex( const Handle& handle, int32_t nodex_index )
     {
-        return _contents[ index ].node_index;
+        _contents[ handle.index ].node_index = nodex_index;
+    }
+
+    uint32_t WidgetManager::getNodeIndex( const Handle& handle )const
+    {
+        return _contents[ handle.index ].node_index;
     }
 
     void WidgetManager::refresh()

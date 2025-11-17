@@ -9,7 +9,7 @@
 #define graphics_hpp
 
 
-#include "glfw-window.hpp"
+#include "../window/glfw-window.hpp"
 #include "device.hpp"
 #include "swapchain.hpp"
 #include "../pipeline/shader-layout.hpp"

@@ -67,7 +67,7 @@ namespace kege::vk{
         Scissor getScissor()const;
 
         VkResult create( const SwapchainDesc& desc );
-        VkResult recreate();
+        kege::Result recreate();
         void destroy();
 
         const VkSwapchainKHR& getHandle()const;

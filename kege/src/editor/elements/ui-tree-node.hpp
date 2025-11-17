@@ -18,11 +18,11 @@ namespace kege::ui{
 
     struct TreeNode
     {
-        int cursor;
         bool state[2];
         std::string name;
-        std::vector< ui::EID > elements;
+        std::vector< ui::Elem > elements;
         std::vector< TreeNode > children;
+        ui::TextFieldState text_state;
     };
 
     typedef std::map< void*, ui::TreeNode > Tree;

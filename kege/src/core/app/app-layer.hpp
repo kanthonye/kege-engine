@@ -9,8 +9,10 @@
 #define app_layer_hpp
 
 #include <string>
-#include "ref.hpp"
-#include "log.hpp"
+#include "../memory/ref.hpp"
+#include "../utils/log.hpp"
+#include "../input/input-context-manager.hpp"
+#include "../resource/asset-manager.hpp"
 
 namespace kege{
 

@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 
-    ui::EID makeRow( ui::Layout& layout )
+    ui::Elem makeRow( ui::Layout& layout )
     {
         return layout.make
         ({
@@ -18,7 +18,7 @@ namespace kege::ui{
         });
     }
 
-    ui::EID makeCol( ui::Layout& layout )
+    ui::Elem makeCol( ui::Layout& layout )
     {
         return layout.make
         ({
@@ -27,7 +27,7 @@ namespace kege::ui{
         });
     }
 
-    ui::EID makeLabel( ui::Layout& layout )
+    ui::Elem makeLabel( ui::Layout& layout )
     {
         return layout.make
         ({
@@ -52,7 +52,7 @@ namespace kege::ui{
         ({
             layout.make
             ({
-                .trigger = ui::ClickTrigger::OnRelease,
+                .single_click = ui::ClickTrigger::OnRelease,
                 .style = layout.getStyleByName( "properties-field" ),
             })
         });
@@ -97,7 +97,7 @@ namespace kege::ui{
         if ( tree.elements.empty() )
         {
             tree.state[0] = false;
-            tree.cursor = 0;
+            tree.text_state = {};
 
             char snum[16];
             snprintf(snum, 16, "%.3f", num );
@@ -107,7 +107,7 @@ namespace kege::ui{
             ({
                 layout.make
                 ({
-                    .trigger = ui::ClickTrigger::OnClick,
+                    .single_click = ui::ClickTrigger::Continuous,
                     .style = layout.getStyleByName( "numeric" ),
                 })
             });
@@ -143,7 +143,7 @@ namespace kege::ui{
         {
             if ( layout.click( tree.elements[0] ) )
             {
-                num += (layout.input()->deltaPosition().x - layout.input()->deltaPosition().y) * 0.0125;
+                num += (layout.input()->getLastState().delta_position.x - layout.input()->getLastState().delta_position.y) * 0.0125;
                 char snum[16];
                 snprintf(snum, 16, "%.3f", num );
                 tree.elements[2]->text.text = snum;
@@ -162,13 +162,7 @@ namespace kege::ui{
 
         if ( tree.state[0] )
         {
-            layout.input()->onTextInput
-            (
-                ui::Input::INPUT_NUMERIC,
-                &tree.elements[2]->text.text,
-                &tree.cursor,
-                &tree.state[0]
-            );
+            layout.onNumericInput( tree.elements[2], &tree.elements[2]->text.text );
             tree.elements[0]->style = layout.getStyleByName( "numeric-focus" );
 
             if ( !tree.state[0] )
@@ -303,7 +297,7 @@ namespace kege::ui{
         if ( tree.elements.empty() )
         {
             tree.state[0] = false;
-            tree.cursor = 0;
+            tree.text_state = {};
 
             char snum[16];
             snprintf(snum, 16, "%.3f", num );
@@ -313,7 +307,7 @@ namespace kege::ui{
             ({
                 layout.make
                 ({
-                    .trigger = ui::ClickTrigger::OnClick,
+                    .single_click = ui::ClickTrigger::Continuous,
                     .style = layout.getStyleByName( "numeric" ),
                 })
             });
@@ -349,7 +343,7 @@ namespace kege::ui{
         {
             if ( layout.click( tree.elements[0] ) )
             {
-                num += (layout.input()->deltaPosition().x - layout.input()->deltaPosition().y) * 0.0125;
+                num += (layout.input()->getLastState().delta_position.x - layout.input()->getLastState().delta_position.y) * 0.0125;
                 char snum[16];
                 snprintf(snum, 16, "%.3f", num );
                 tree.elements[2]->text.text = snum;
@@ -368,13 +362,7 @@ namespace kege::ui{
 
         if ( tree.state[0] )
         {
-            layout.input()->onTextInput
-            (
-                ui::Input::INPUT_NUMERIC,
-                &tree.elements[2]->text.text,
-                &tree.cursor,
-                &tree.state[0]
-            );
+            layout.onNumericInput( tree.elements[2], &tree.elements[2]->text.text );
             tree.elements[0]->style = layout.getStyleByName( "numeric-focus" );
 
             if ( !tree.state[0] )

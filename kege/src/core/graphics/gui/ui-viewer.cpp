@@ -164,6 +164,36 @@ namespace kege::ui{
     void Viewer::draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect )
     {
         drawsort( layout, pid );
+        
+        const Cursor& cursor = layout._cursor;
+        if ( cursor._visible && cursor._editing )
+        {
+            float width = cursor._width;
+            Color color = ui::Color(1,1,1,1);
+            if( cursor._selection )
+            {
+                width = cursor._selection_end - cursor._offset;
+                color = ui::Color(1,1,1,0.3);
+            }
+            _drawbuffer[ _draw_count ].border_radius = 4;
+            _drawbuffer[ _draw_count ].texture_id    = 0;
+            _drawbuffer[ _draw_count ].color         = color;
+            _drawbuffer[ _draw_count ].rect.height   = cursor._height;
+            _drawbuffer[ _draw_count ].rect.width    = width;
+            _drawbuffer[ _draw_count ].rect.x        = cursor._x + cursor._offset;
+            _drawbuffer[ _draw_count ].rect.y        = cursor._y;
+            _drawbuffer[ _draw_count ].texel.x       = 0;
+            _drawbuffer[ _draw_count ].texel.y       = 0;
+            _drawbuffer[ _draw_count ].texel.width   = 0;
+            _drawbuffer[ _draw_count ].texel.height  = 0;
+            _drawbuffer[ _draw_count ].clip_rect     = clip_rect;
+            _draw_count++;
+        }
+        if ( _drawbuffer.size() <= _draw_count )
+        {
+            flush();
+        }
+
 //        draw( *layout[ pid ], clip_rect );
 //        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
 //        {

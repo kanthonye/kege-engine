@@ -5,30 +5,10 @@
 //  Created by Kenneth Esdaile on 8/5/25.
 //
 
+#include "ui-input.hpp"
 #include "ui-layout.hpp"
 
 namespace kege::ui{
-
-    float Layout::getClickToCursorOffset( ui::EID& id, const std::string& text, int font_size, int32_t* cursor, const ref::Font& font )
-    {
-        float length = 0;
-
-        *cursor = 0;
-        float char_width;
-        float max_length = _input->clickPosition().x - _nodes[ id ].content->x;
-        for ( const char* s = text.data(); *s != 0; ++s )
-        {
-            char_width = font->getCharWidth( font_size, *s );
-            if ( ((length + char_width) - max_length) > 0.5 )
-            {
-                break;
-            }
-            length += char_width;
-            *cursor += 1;
-        }
-
-        return length;
-    }
 
     kege::vec2 Layout::computeExtent( int font_size, const char* text )
     {
@@ -45,6 +25,15 @@ namespace kege::ui{
         return cursor;
     }
 
+    bool Layout::onNumericInput(const ui::Elem& elem, kege::string* text)
+    {
+        return _cursor.onInput(Input::INPUT_NUMERIC, elem, _font, text);
+    }
+
+    bool Layout::onTextInput(const ui::Elem& elem, kege::string* text)
+    {
+        return _cursor.onInput(Input::INPUT_TEXT, elem, _font, text);
+    }
 
     bool Layout::testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const
     {
@@ -57,36 +46,55 @@ namespace kege::ui{
         );
     }
 
-    bool Layout::mouseover( const ui::EID& id )const
+    const kege::dvec2& Layout::pointerPosition() const
     {
-        return _prev_hot.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _input->_last_frame.position;
     }
 
-    bool Layout::doubleClick( const ui::EID& id )const
+    const kege::dvec2& Layout::deltaPosition() const
     {
-        return _curr_active.clicks == 2 && _curr_active.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _input->_last_frame.delta_position;
     }
 
-    bool Layout::click( const ui::EID& id )const
+    const kege::dvec2& Layout::scrollOffset() const
     {
-        return _curr_active.clicks == 1 && _curr_active.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _input->_last_frame.scroll_offset;
     }
 
-    bool Layout::hasFocus( const ui::EID& id )const
+    const bool Layout::pointerDragging() const
     {
-        return _focus.id == _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _input->_last_frame.pointer_dragging;
     }
 
-    void Layout::setFocus( const ui::EID& id )
+    bool Layout::mouseover( const ui::Elem& elem )const
     {
-        _focus.id = _nodes[ _widget_manager.getNodeIndex( id.index ) ].id;
+        return _hot[1].id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
     }
 
-    EID Layout::make( const Widget& widget )
+    bool Layout::doubleClick( const ui::Elem& elem )const
     {
-        int id = _widget_manager.make( widget );
+        return _clicked.clicks == 2 && _clicked.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
+    }
 
-        if ( !_widget_manager[ id ].text.text.empty() )
+    bool Layout::click( const ui::Elem& elem )const
+    {
+        return _clicked.clicks == 1 && _clicked.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
+    }
+
+    bool Layout::hasFocus( const ui::Elem& elem )const
+    {
+        return _focus.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
+    }
+
+    void Layout::setFocus( const ui::Elem& elem )
+    {
+        _focus.id = _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
+    }
+
+    Elem Layout::make( const Widget& widget )
+    {
+        Handle handle = _widget_manager.make( widget );
+        if ( !_widget_manager[ handle ].text.text.empty() )
         {
 //            if
 //            (
@@ -97,24 +105,20 @@ namespace kege::ui{
             {
                 vec2 extent = computeExtent
                 (
-                 _widget_manager[ id ].style->font_size,
-                 _widget_manager[ id ].text.text.c_str()
+                 _widget_manager[ handle ].style->font_size,
+                 _widget_manager[ handle ].text.text.c_str()
                 );
 
-                _widget_manager[ id ].text.height = extent.y;
-                _widget_manager[ id ].text.width = extent.x;
+                _widget_manager[ handle ].text.height = extent.y;
+                _widget_manager[ handle ].text.width = extent.x;
             }
         }
-        return EID
-        {
-            id,
-            this
-        };
+        return Elem{ handle, this };
     }
 
-    uint32_t Layout::put( const EID& id )
+    uint32_t Layout::put( const Elem& elem )
     {
-        if ( id.index < 0 )
+        if ( !elem )
         {
             kege::Log::error << "Invalid Widget Index"<<Log::nl;
             return 0;
@@ -126,17 +130,16 @@ namespace kege::ui{
             return 0;
         }
 
-        if ( 0 != _parent && _widget_manager.getNodeIndex( id.index ) == _parent )
+        int node_index = ( _node_counter += 1 );
+        _widget_manager.setNodeIndex( elem._handle, node_index );
+
+        if ( 0 != _parent && node_index == _parent )
         {
             kege::Log::error << "Death cycle detected. Attaching child node to its self will cause the program to looping infinetly and become stuck"<<Log::nl;
             return 0;
         }
 
-        int node_index = ( _node_counter += 1 );
-
-        _widget_manager.setNodeIndex( id.index, node_index );
-
-        _nodes[ node_index ].content = &_widget_manager[ id.index ];
+        _nodes[ node_index ].content = &_widget_manager[ elem._handle ];
         _nodes[ node_index ].parent = _parent;
         _nodes[ node_index ].count = 0;
         _nodes[ node_index ].head = 0;
@@ -181,13 +184,9 @@ namespace kege::ui{
         return node_index;
     }
 
-    uint32_t Layout::push( const EID& id )
+    uint32_t Layout::push( const Elem& elem )
     {
-        _parent = put( id );
-        if ( _root == 0 )
-        {
-            _root = _parent;
-        }
+        _parent = put( elem );
         return _parent;
     }
 
@@ -211,14 +210,14 @@ namespace kege::ui{
         return pid;
     }
 
-    const kege::ui::Widget* Layout::operator[]( const EID& eid ) const
+    const kege::ui::Widget* Layout::operator[]( const Elem& elem ) const
     {
-        return &_widget_manager[ eid.index ];
+        return &_widget_manager[ elem._handle ];
     }
 
-    kege::ui::Widget* Layout::operator[]( const EID& eid )
+    kege::ui::Widget* Layout::operator[]( const Elem& elem )
     {
-        return &_widget_manager[ eid.index ];
+        return &_widget_manager[ elem._handle ];
     }
 
     const Widget* Layout::operator[]( NodeIndex node_id )const
@@ -315,46 +314,46 @@ namespace kege::ui{
     void Layout::handleMouseOverEvents()
     {
         // Reset current hot element at start of frame
-        _curr_hot = {0, 0, 0};
+        _hot[0] = {};
 
         // First, check if previous hot element is still valid and under mouse
-        if (_prev_hot.id != 0)
+        if (_hot[1].id != 0)
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ _prev_hot.id ].content->rect ) )
+            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ _hot[1].id ].content->rect ) )
             {
                 // If previous hot element has children, there is a possibility that the mouse
                 // is over its child element. So, we need to account for those child elements.
-                if ( _nodes[ _prev_hot.id ].count )
+                if ( _nodes[ _hot[1].id ].count )
                 {
-                    findNewHotElement( _prev_hot.id );
+                    findNewHotElement( _hot[1].id );
                 }
 
                 // If the previous hot element has no children then it is still under mouse - keep it hot
-                if (_curr_hot.id == 0)
+                if (_hot[0].id == 0)
                 {
-                    _curr_hot = _prev_hot;
+                    _hot[0] = _hot[1];
                 }
 
             }
         }
 
         // If we didn't find a persistent hot element, search for a new one
-        if (_curr_hot.id == 0)
+        if (_hot[0].id == 0)
         {
             findNewHotElement(1);
         }
 
         // Handle mouse enter/leave events
-        if (_curr_hot.id != _prev_hot.id)
+        if (_hot[0].id != _hot[1].id)
         {
-            if (_prev_hot.id != 0)
+            if (_hot[1].id != 0)
             {
-                std::cout  <<"mouse exit: " << _prev_hot.id <<"\n";
+                std::cout  <<"mouse exit: " << _hot[1].id <<"\n";
             }
 
-            if (_curr_hot.id != 0)
+            if (_hot[0].id != 0)
             {
-                std::cout  <<"mouse enter: " << _curr_hot.id <<"\n";
+                std::cout  <<"mouse enter: " << _hot[0].id <<"\n";
             }
         }
 
@@ -362,16 +361,12 @@ namespace kege::ui{
         //handleFocusLogic(root);
 
         // Store current hot for next frame
-        _prev_hot = _curr_hot;
+        _hot[1] = _hot[0];
     }
 
 
     void Layout::findNewHotElement( uint32_t root )
     {
-//        if ( _curr_hot.id != 0) {
-//            return;
-//        }
-
         for (uint32_t ui_index = _nodes[ root ].head; ui_index != 0 ; ui_index = _nodes[ ui_index ].next )
         {
             findNewHotElement( ui_index );
@@ -379,19 +374,19 @@ namespace kege::ui{
 
         if ( _nodes[ root ].content->mouseover && _nodes[ root ].content->visible )
         {
-            if ( testPointVsRect( _input->currentPosition(), _nodes[ root ].content->rect ) )
+            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ root ].content->rect ) )
             {
-                if ( _curr_hot.depth < _nodes[ root ].depth  )
+                if ( _hot[0].depth < _nodes[ root ].depth  )
                 {
-                    if ( _curr_hot.id == 0 )
+                    if ( _hot[0].id == 0 )
                     {
-                        _curr_hot.id    = _nodes[ root ].id;
-                        _curr_hot.depth = _nodes[ root ].depth;
+                        _hot[0].id    = _nodes[ root ].id;
+                        _hot[0].depth = _nodes[ root ].depth;
                     }
-                    else if ( _nodes[ _curr_hot.id ].content->style->zindex <= _nodes[ root ].content->style->zindex )
+                    else if ( _nodes[ _hot[0].id ].content->style->zindex <= _nodes[ root ].content->style->zindex )
                     {
-                        _curr_hot.id    = _nodes[ root ].id;
-                        _curr_hot.depth = _nodes[ root ].depth;
+                        _hot[0].id    = _nodes[ root ].id;
+                        _hot[0].depth = _nodes[ root ].depth;
                     }
                 }
             }
@@ -400,67 +395,93 @@ namespace kege::ui{
 
     void Layout::handleButtonUpEvents()
     {
-        if ( _input->buttonDown() ) return;
-
-        if ( _prev_active.id != 0 && _prev_active.id < _nodes.size() )
+        if ( _active[1].id != 0 && _active[1].id < _nodes.size() )
         {
-            if ( _nodes[ _prev_active.id ].content->trigger == ui::ClickTrigger::OnRelease )
+            if
+            (
+                _nodes[ _active[1].id ].content->single_click == ui::ClickTrigger::OnRelease ||
+                _nodes[ _active[1].id ].content->double_click == ui::ClickTrigger::OnRelease
+            )
             {
-                std::cout  <<"release: " << _prev_active.id <<"| " << _prev_hot.id <<"\n";
-                if ( _prev_hot.id == _prev_active.id )
+                std::cout  <<"release: " << _active[1].id <<"| " << _hot[1].id <<"\n";
+                if ( _hot[1].id == _active[1].id )
                 {
-                    std::cout  <<"FIRE ON RELEASE\n";
-                    _curr_active = _prev_active;
-                    _focus = _prev_active;
+                    std::cout <<"FIRE ON RELEASE\n";
+                    _clicked = _active[1];
                 }
             }
-            _prev_active = {};
+            _active[1] = {};
         }
     }
-
 
     void Layout::handleButtonDownEvents()
     {
-        _curr_active = {};
-        if ( _input->buttonDown() )
+        _active[0] = {};
+
+        // Persist active state while holding
+        if (_active[1].id != 0)
         {
-            if ( _prev_active.id != 0 )
+            _active[0] = _active[1];
+
+            // OnClick fires continuous
+            if
+            (
+                _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Continuous ||
+                _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Continuous
+            )
             {
-                _curr_active = _prev_active;
-            }
-
-            if ( _curr_active.id == 0 && _curr_hot.id != 0  )
-            {
-                if ( _input->doubleClick() )
-                {
-                    _curr_active = _curr_hot;
-                    _curr_active.clicks = 2;
-                    std::cout  <<"double-click : " << _curr_active.id <<"\n";
-
-                    if ( _nodes[ _curr_active.id ].content->trigger == ui::ClickTrigger::OnClick )
-                    {
-                        _curr_active.active = true;
-                        _focus = _curr_active;
-                    }
-                }
-                else if ( _input->primaryClick() && _curr_hot.id != 0 )
-                {
-                    _curr_active = _curr_hot;
-                    _curr_active.clicks = 1;
-                    std::cout  <<"single-click : " << _curr_active.id <<"\n";
-
-                    if ( _nodes[ _curr_active.id ].content->trigger == ui::ClickTrigger::OnClick )
-                    {
-                        _curr_active.active = true;
-                        _focus = _curr_active;
-                    }
-                }
-                _prev_active = _curr_active;
+                std::cout <<"DOUBLE CLICK: FIRE CONTINUOUSLY\n";
+                _clicked = _active[0];
+                // Fire callback here
             }
         }
+        // Initiate new click
+        else if (_hot[0].id != 0)
+        {
+            if (_input->_curr_frame.double_click )
+            {
+                _active[0] = _hot[0];
+                _active[0].clicks = 2;
+                _focus = _active[0];
+
+                // OnClick fires immediately
+                if
+                (
+                    _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Immediate ||
+                    _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Continuous
+                )
+                {
+                    std::cout <<"DOUBLE CLICK: FIRE IMMEDIATELY\n";
+                    _clicked = _active[0];
+                    // Fire callback here
+                }
+            }
+            else if ( _input->_curr_frame.single_click )
+            {
+                _active[0] = _hot[0];
+                _active[0].clicks = 1;
+                _focus = _active[0];
+
+                // OnClick fires immediately
+                if
+                (
+                    _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Immediate ||
+                    _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Continuous
+                )
+                {
+                    std::cout <<"SINGLE CLICK: FIRE IMMEDIATELY\n";
+                    _clicked = _active[0];
+                    // Fire callback here
+                }
+            }
+        }
+        _active[1] = _active[0];  // Store for next frame
+
+        // If button not down, _active[0] stays empty
+        // but _active[1] retains value for release detection
     }
 
-    void Layout::begin( ui::Input* input )
+    void Layout::begin( double dms, ui::Input* input )
     {
         _root = 0;
         _parent = 0;
@@ -468,6 +489,8 @@ namespace kege::ui{
         _node_counter = 0;
 
         _widget_manager.refresh();
+
+        _cursor.update( dms, input );
     }
 
     void Layout::end()
@@ -477,17 +500,34 @@ namespace kege::ui{
          */
         if ( 0 < _node_counter )
         {
-            if ( 0 < _root ) align( *this, _root );
-            _button_down = _input->buttonDown();
+            if ( 0 < _root )
+            {
+                align( *this, _root );
+            }
+
             handleMouseOverEvents();
-            handleButtonDownEvents();
-            handleButtonUpEvents();
+
+            _clicked = {};
+            _button_down = _input->buttonDown();
+            if ( _button_down )
+            {
+                handleButtonDownEvents();
+            }
+            else
+            {
+                handleButtonUpEvents();
+            }
         }
+//        if ( _active[0].id )
+//        {
+//            _cursor = _nodes[ _active[0].id ].content->rect;
+//            _cursor.width = 4;
+//        }
     }
 
     bool Layout::buttonDown()const
     {
-        return _button_down;
+        return _input->_last_frame.button_down;
     }
 
     ui::Input* Layout::input()
@@ -497,14 +537,14 @@ namespace kege::ui{
 
     Layout::Layout(uint32_t width, uint32_t height)
     :   _parent( 0 )
-    ,   _curr_hot{}
-    ,   _prev_active{}
-    ,   _curr_active{}
+    ,   _hot{}
+    ,   _active{}
     ,   _node_counter( 0 )
     ,   _root( 0 )
     ,   _button_down( false )
     ,   _height( height )
     ,   _width( width )
+    ,   _cursor( this )
     {
     }
 

@@ -28,6 +28,9 @@ namespace kege{
 
     private:
 
+        int render(kege::Swapchain* swapchain);
+        bool recreate( kege::Swapchain* swapchain );
+
         kege::ProjectManager* _project_manager;
         kege::AssetManager* _asset_manager;
         ref::RenderGraph _render_graph;

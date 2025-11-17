@@ -9,7 +9,7 @@
 #define forward_declarations_hpp
 
 #include <assert.h>
-#include "ref.hpp"
+#include "../../../memory/ref.hpp"
 
 namespace kege
 {

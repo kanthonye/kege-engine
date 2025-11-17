@@ -21,7 +21,7 @@ namespace kege{
 
     public:
 
-        ui::EID _main;
+        ui::Elem _main;
     };
 }
 

@@ -10,8 +10,9 @@
 
 #include "../ecs/entity.hpp"
 #include "../ecs/entity-registry.hpp"
-#include "../ecs/entity-logic.hpp"
+#include "../ecs/entity-system.hpp"
 #include "../ecs/system.hpp"
+#include "../scene/scene.hpp"
 
 namespace kege{
 
@@ -47,7 +48,7 @@ namespace kege{
         kege::AssetManager* getAssetManager();
         kege::MappedInputs& getMappedInputs();
         kege::Graphics* getGraphics();
-        kege::EntityView* getEntities();
+        const kege::EntityList* getEntities();
 
         bool checkFlag( StateBitFlag flag );
 
@@ -57,7 +58,7 @@ namespace kege{
 
         kege::EntitySystemManager* _manager;
         kege::EntitySignature _signature;
-        kege::EntityView* _entities;
+        const kege::EntityList* _entities;
     
         uint32_t _requirements;
         std::string _name;

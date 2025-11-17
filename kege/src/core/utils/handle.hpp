@@ -42,5 +42,20 @@ namespace kege
         };
         uint64_t value;
     };
+
+
+    enum ObjtType
+    {
+        TYPE_DEFINED,
+        TYPE_ENTITY,
+        TYPE_COMPONENT,
+
+        TYPE_MESH,
+        TYPE_MATERIAL,
+        TYPE_LIGHT,
+
+        TYPE_BUFFER,
+        TYPE_TEXTURE,
+    };
 }
 #endif /* kege_handle_hpp */

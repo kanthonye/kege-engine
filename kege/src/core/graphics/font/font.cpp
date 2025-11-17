@@ -35,6 +35,21 @@ namespace kege{
         return true;
     }
 
+    kege::vec2 Font::computeExtent( int font_size, const char* text )const
+    {
+        //const int text_index = node.text_id;
+        kege::vec2 cursor = {0.f, 0.f};
+        for (const char* c = text; 0 < *c; ++c )
+        {
+            const Glyph& g = _glyphs[ *c ];
+            float h = font_size * g.scaled_height;
+
+            cursor.y = kege::max<float>( cursor.y, h );
+            cursor.x += g.advance * font_size;
+        }
+        return cursor;
+    }
+
     kege::ImageBindInfo Font::getImageBindInfo()const
     {
         return _image_binf_info;

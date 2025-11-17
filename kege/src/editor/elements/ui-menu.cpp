@@ -16,7 +16,7 @@ namespace kege::ui{
             field = layout.make
             ({
                 .style = layout.getStyleByName( "menu-field" ),
-                .trigger = ui::ClickTrigger::OnRelease,
+                .single_click = ui::ClickTrigger::OnRelease,
                 .text = text,
             });
             content = layout.make

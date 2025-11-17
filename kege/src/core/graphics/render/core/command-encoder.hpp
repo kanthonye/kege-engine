@@ -14,7 +14,8 @@
 #include <vector>
 
 #include "graphics-core.hpp"
-#include "shader-set.hpp"
+#include "../pipeline/shader-set.hpp"
+#include "../pipeline/shader-pipeline.hpp"
 
 namespace kege{
 

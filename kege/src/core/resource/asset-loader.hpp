@@ -8,8 +8,8 @@
 #ifndef asset_loader_hpp
 #define asset_loader_hpp
 
-#include "ref.hpp"
-#include "log.hpp"
+#include "../memory/ref.hpp"
+#include "../utils/log.hpp"
 #include <filesystem>
 
 namespace kege{

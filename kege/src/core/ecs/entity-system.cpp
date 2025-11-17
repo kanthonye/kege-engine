@@ -36,11 +36,11 @@ namespace kege{
     {
         if ( _signature.any() && _manager->getScene() )
         {
-            _entities = _manager->getScene()->getEntityRegistry().getEntityView( _signature );
+            _entities = &_manager->getScene()->getEntityRegistry().get( _signature );
         }
     }
 
-    EntityView* EntitySystem::getEntities()
+    const EntityList* EntitySystem::getEntities()
     {
         return _entities;
     }

@@ -16,15 +16,16 @@ namespace kege::ui{
     {
     private:
 
-        struct Content
+        struct EntryInfo
         {
-            kege::ui::Widget widget;
-
             // the node index
             uint32_t node_index;
 
             // the number of duplicates, reference counter
             int16_t duplicates;
+            
+            // the node index
+            uint16_t version;
 
             // next free id
             int16_t next;
@@ -42,28 +43,29 @@ namespace kege::ui{
 
     public:
 
-        void duplicate( int32_t src_index, int32_t* dst_index );
-
-        void setNodeIndex( int32_t index, int32_t nodex_index );
-        uint32_t getNodeIndex( int32_t index )const;
+        void setNodeIndex( const Handle& handle, int32_t nodex_index );
+        uint32_t getNodeIndex( const Handle& handle )const;
 
         /**
          * Retrieves a UI element by its index (const version).
          *
-         * @param index The ui element index.
+         * @param handle The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget& operator[]( int32_t index ) const;
+        const kege::ui::Widget& operator[]( const Handle& handle ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
          *
-         * @param index The ui element index.
+         * @param handle The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget& operator[]( int32_t index );
+        kege::ui::Widget& operator[]( const Handle& handle );
+
+
+            void duplicate( const Handle& handle );
 
         /**
          * Creates a UI element with the give info.
@@ -72,14 +74,14 @@ namespace kege::ui{
          *
          * @return The element id.
          */
-        int32_t make( const Widget& widget );
+        Handle make( const Widget& widget );
 
         /**
          * recycle the give index for reuse.
          *
          * @param index the given index.
          */
-        void recycle( int32_t index );
+        void recycle( const Handle& index );
 
         /**
          * Resize total number of layout elements.
@@ -88,18 +90,14 @@ namespace kege::ui{
          */
         void resize( int32_t max_quantity );
 
-
         void refresh();
 
         WidgetManager();
 
     private:
 
-        int32_t generate();
-
-    private:
-
-        std::vector< Content > _contents;
+        std::vector< kege::ui::Widget > _widgets;
+        std::vector< EntryInfo > _contents;
 
         /**
          * The recycles list of elements are transfered to this list so that they
@@ -112,12 +110,6 @@ namespace kege::ui{
          * List of the currently recycled elements
          */
         List _recycled;
-
-//        int32_t _recycled_count;
-//        int32_t _recycled_head;
-//        int32_t _recycled_tail;
-//        int32_t _available_id;
-//        int32_t _recycled_id;
     };
 
 }

@@ -20,7 +20,7 @@
 #include <GLFW/glfw3.h>
 #pragma clang diagnostic pop
 
-#include "app-window.hpp" // your abstract interface
+#include "../../../app/app-window.hpp" // your abstract interface
 
 namespace kege{
 
