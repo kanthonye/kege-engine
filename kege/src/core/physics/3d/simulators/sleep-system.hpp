@@ -15,7 +15,7 @@
 
 //     struct WakeSleepableObjects{};
 
-//     class SleepSystem : public kege::EntitySystem
+//     class SleepSystem : public kege::ecs::System
 //     {
 //     public:
 
@@ -24,7 +24,7 @@
 //         bool initialize();
 //         void shutdown();
 
-//         SleepSystem( kege::EntitySystemManager* esm );
+//         SleepSystem( kege::ECS* ecs );
 
 //         float _sleep_threshold;     // Velocity threshold to enter sleep
 //         float _sleep_motion_bias;   // Damping factor for the body calculation

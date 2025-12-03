@@ -23,14 +23,14 @@ namespace kege::physics{
 
         for (kege::Ref< ForceDriver >& force : _force_drivers )
         {
-            if ( !force->enabled )
-                continue;
-
-            for (ComponentCacheT< Rigidbody >::Iterator body = _simulator->rigidbodies().begin();  body.valid(); body++ )
+            if ( force->enabled )
             {
-                if ( !body->immovable )
+                for (auto [entity, body] : _simulator->rigidbodies() )
                 {
-                    force->apply( dms, *body );
+                    if ( !body->immovable )
+                    {
+                        force->apply( dms, body );
+                    }
                 }
             }
         }

@@ -49,9 +49,9 @@ namespace kege::ui
         return active || tree.state[1];
     }
 
-    bool transform( ui::Layout& layout, ui::Tree& tree, kege::Entity& entity )
+    bool transform( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
     {
-        Transform* transform = entity.get< kege::Transform >();
+        Transform* transform = ecs->get< kege::Transform >( entity );
         ui::TreeNode& node = tree[ transform ];
 
         if ( node.elements.empty() )

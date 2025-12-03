@@ -8,7 +8,7 @@
 #ifndef tree_node_hpp
 #define tree_node_hpp
 
-#include "../../core/ecs/entity.hpp"
+#include "../../core/scene/ecs.hpp"
 #include "../../core/input/input-context-manager.hpp"
 #include "../../core/graphics/gui/ui-input.hpp"
 #include "../../core/graphics/gui/ui-layout.hpp"
@@ -26,7 +26,7 @@ namespace kege::ui{
     };
 
     typedef std::map< void*, ui::TreeNode > Tree;
-    typedef std::map< int, bool(*)( ui::Layout&, ui::Tree&, Entity& ) > UIElementCreator;
+    typedef std::map< int, bool(*)( kege::ECS* ecs, ui::Layout&, ui::Tree&, ecs::Entity& ) > UIElementCreator;
 
 }
 #endif /* tree_node_hpp */

@@ -8,7 +8,7 @@
 #ifndef update_decay_over_time_hpp
 #define update_decay_over_time_hpp
 
-#include "entity-system.hpp"
+#include "ecs.hpp"
 
 namespace kege{
 
@@ -17,13 +17,13 @@ namespace kege{
         double lifespand = 0.0;
     };
 
-    class UpdateDecayOverTime : public kege::EntitySystem
+    class UpdateDecayOverTime : public kege::ecs::System
     {
     public:
 
-        UpdateDecayOverTime( kege::EntitySystemManager* esm );
+        UpdateDecayOverTime( kege::ECS* ecs );
         void update( double dms );
-        bool initialize();
+        //bool initialize();
     };
 }
 #endif /* update_decay_over_time_hpp */

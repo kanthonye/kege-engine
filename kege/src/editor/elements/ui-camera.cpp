@@ -43,9 +43,9 @@ namespace kege::ui
         return active;
     }
 
-    bool camera( ui::Layout& layout, ui::Tree& tree, kege::Entity& entity )
+    bool camera( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
     {
-        kege::Camera* camera = entity.get< kege::Camera >();
+        kege::Camera* camera = ecs->get< kege::Camera >( entity );
         ui::TreeNode& node = tree[ camera ];
 
         if ( node.elements.empty() )

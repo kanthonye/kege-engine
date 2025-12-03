@@ -9,35 +9,34 @@
 
 namespace kege{
 
-    RigidbodyToTransform::RigidbodyToTransform( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "rigidbody-to-transform", REQUIRE_UPDATE, esm  )
-    {
-        _signature = createEntitySignature< kege::Rigidbody, kege::Transform >();
-    }
-
+    RigidbodyToTransform::RigidbodyToTransform( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "RigidbodyToTransform", REQUIRE_UPDATE  )
+    {}
     void RigidbodyToTransform::update( double dms )
     {
-        for (kege::Entity entity : *_entities )
+        for (auto [entity, rigidbody, transform] : view< kege::Rigidbody, kege::Transform >() )
         {
-            kege::Rigidbody* rigidbody = entity.get< kege::Rigidbody >();
-            kege::Transform* transform = entity.get< kege::Transform >();
-
             transform->position = rigidbody->center;
             transform->orientation = rigidbody->orientation;
         }
     }
+    KEGE_REGISTER_ENTITY_SYSTEM( RigidbodyToTransform, "RigidbodyToTransform" );
 
-    bool RigidbodyToTransform::initialize()
+}
+
+namespace kege{
+    
+    TransformToRigidbody::TransformToRigidbody( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "TransformToRigidbody", REQUIRE_UPDATE  )
+    {}
+    void TransformToRigidbody::update( double dms )
     {
-        _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
-        return EntitySystem::initialize();
+        for (auto [entity, rigidbody, transform] : view< kege::Rigidbody, kege::Transform >() )
+        {
+            rigidbody->center = transform->position;
+            rigidbody->orientation = transform->orientation;
+        }
     }
-
-    void RigidbodyToTransform::shutdown()
-    {
-        return EntitySystem::shutdown();
-    }
-
-    KEGE_REGISTER_ENTITY_SYSTEM( RigidbodyToTransform, "rigidbody-to-transform" );
+    KEGE_REGISTER_ENTITY_SYSTEM( TransformToRigidbody, "TransformToRigidbody" );
 
 }

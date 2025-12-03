@@ -8,12 +8,12 @@
 #include "project.hpp"
 namespace kege{
 
-    Project::Project( const std::string& name )
+    Project::Project( const std::string& name, ref::ECS& ecs )
     :   file( nullptr )
     ,   name( name )
     {
         asset_manager = new AssetManager;
-        scene_manager = new SceneManager;
+        scene_manager = new SceneManager( ecs );
     }
 
     Project::~Project()

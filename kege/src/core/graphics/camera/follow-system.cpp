@@ -11,36 +11,20 @@ namespace kege{
 
     void FollowSystem::update( double dms )
     {
-        if ( !_entities ) return;
-        
-        for( Entity entity : *_entities )
+        for(auto [entity, follow, transform] : view<Follow, Transform>())
         {
-            Transform* transform = entity.get< Transform >();
-            Follow* follow = entity.get<Follow>();
-
             if ( follow->target )
             {
-                Transform* target = follow->target.get< Transform >();
+                Transform* target = _ecs->get< Transform >( follow->target );
                 vec3 direction = getAxesZ( transform->orientation );
                 transform->position = target->position + (direction * follow->distance) + follow->offset;
             }
         }
     }
 
-    bool FollowSystem::initialize()
+    FollowSystem::FollowSystem( kege::ECS* esm )
+    :   kege::ecs::System( esm, "follow-system", REQUIRE_UPDATE  )
     {
-        return EntitySystem::initialize();
-    }
-
-    void FollowSystem::shutdown()
-    {
-        return EntitySystem::shutdown();
-    }
-
-    FollowSystem::FollowSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "follow-system", REQUIRE_UPDATE, esm  )
-    {
-        _signature = createEntitySignature< Follow, Transform >();
     }
 
     KEGE_REGISTER_ENTITY_SYSTEM( FollowSystem, "follow" );

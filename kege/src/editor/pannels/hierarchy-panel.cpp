@@ -24,8 +24,8 @@ namespace kege{
 
                 _layout->put( _create_entity );
 
-                const kege::Entity& root = scene->root();
-                for (Entity e = root.begin(); e != 0 ; e = e.next() )
+                const ecs::Entity& root = scene->root();
+                for (ecs::Entity e = _ecs->begin(root); e != 0 ; e = _ecs->next(e) )
                 {
                     buildHierarchy( e, 0 );
                 }
@@ -35,25 +35,27 @@ namespace kege{
 
         if ( _scene && _layout->click( _create_entity ) )
         {
-            Entity entity = Entity::create();
-            entity.add< EntityTag >({ "entity" });
+            ecs::Entity entity = _ecs->createWith<Tag>();
+            Tag* tag = _ecs->get< Tag >( entity );
+            *tag = "entity";
             _scene->insert( entity );
             _butn_down = true;
         }
     }
 
-    ui::HierarchyDroplist* HierarchyPanel::makeEntityUI( Entity& entity, int space )
+    ui::HierarchyDroplist* HierarchyPanel::makeEntityUI( ecs::Entity& entity, int space )
     {
-        const bool entity_has_children = entity.isParent();
+        const bool entity_has_children = _ecs->isParent(entity);
 
+        uint64_t key = ecs::to_uint64(entity);
         ui::HierarchyDroplist* list = 0;
-        auto i = _hierarchy.find( entity.getID() );
+        auto i = _hierarchy.find( key );
         if ( i == _hierarchy.end() )
         {
-            const EntityTag* tag = entity.get< EntityTag >();
+            const kege::Tag* tag = _ecs->get< kege::Tag >(entity);
             const char* entity_name = ( tag ) ? tag->c_str() : "un-named";
 
-            list = &_hierarchy[ entity.getID() ];
+            list = &_hierarchy[ key ];
 
             list->text_field.init( _layout, entity_name );
 
@@ -108,7 +110,7 @@ namespace kege{
 
         if(_scene && _layout->click( list->delete_button ))
         {
-            _hierarchy.erase( _hierarchy.find( entity.getID() ) );
+            _hierarchy.erase( _hierarchy.find( key ) );
             _scene->remove( entity );
             return nullptr;
         }
@@ -136,7 +138,7 @@ namespace kege{
         return list;
     }
 
-    void HierarchyPanel::buildHierarchy( Entity& entity, int spacer )
+    void HierarchyPanel::buildHierarchy( ecs::Entity& entity, int spacer )
     {
         ui::HierarchyDroplist* list = makeEntityUI( entity, spacer );
         if ( list == nullptr ) return;
@@ -144,7 +146,7 @@ namespace kege{
         if ( clicked( list ) )
         {
             _layout->push( list->content );
-            for (Entity e = entity.begin(); e != 0 ; e = e.next() )
+            for (ecs::Entity e = _ecs->begin(entity); e != 0 ; e = _ecs->next(e) )
             {
                 buildHierarchy( e, spacer + 15 );
             }
@@ -154,7 +156,7 @@ namespace kege{
         if ( list->text_field.modified )
         {
             list->text_field.modified = false;
-            EntityTag* tag = entity.get< EntityTag >();
+            Tag* tag = _ecs->get< Tag >(entity);
             *tag = list->text_field.text->text.text.c_str();
         }
     }
@@ -176,13 +178,13 @@ namespace kege{
         return list->open[1];
     }
 
-    Entity HierarchyPanel::getSelectedEntity()
+    ecs::Entity HierarchyPanel::getSelectedEntity()
     {
         return _selected_entity;
     }
 
-    HierarchyPanel::HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l )
-    :   kege::ui::Panel( "Hierarchy", pm, l )
+    HierarchyPanel::HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e )
+    :   kege::ui::Panel( "Hierarchy", pm, l, e )
     {
         _panel = _layout->make
         ({

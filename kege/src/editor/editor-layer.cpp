@@ -56,9 +56,9 @@ namespace kege{
         _layout->setFont( font );
         _layout->resize( 200 );
 
-        addPanel( new HierarchyPanel( _project_manager, _layout.ref() ) );
-        addPanel( new InspectorPanel( _project_manager, _layout.ref() ) );
-        addPanel( new ViewportPanel( _project_manager, _layout.ref() ) );
+        addPanel( new HierarchyPanel( _project_manager, _layout.ref(), _ecs ) );
+        addPanel( new InspectorPanel( _project_manager, _layout.ref(), _ecs ) );
+        addPanel( new ViewportPanel( _project_manager, _layout.ref(), _ecs ) );
 
         _root = new ui::DockNode( _layout.ref(), "main" );
 
@@ -80,13 +80,14 @@ namespace kege{
         _viewer.shutdown();
     }
 
-    EditorLayer::EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm )
+    EditorLayer::EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm, kege::ECS* ecs )
     :   kege::AppLayer( "EditorLayer" )
     ,   _input_context_manager( icm )
     ,   _asset_manager( am )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
     ,   _paused( false )
+    ,   _ecs( ecs )
     {
     }
 }

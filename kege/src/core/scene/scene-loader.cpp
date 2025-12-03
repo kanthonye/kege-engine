@@ -18,7 +18,7 @@ namespace kege{
     SceneLoader::EntityComponentParsers SceneLoader::_entity_component_parsers;
 
 
-    Entity SceneLoader::parseEntity( kege::Json& entities, kege::Json& components, int entity_index )
+    ecs::Entity SceneLoader::parseEntity( kege::ECS& ecs, kege::Json& entities, kege::Json& components, int entity_index )
     {
         kege::Json entity_json = entities[ entity_index ];
 
@@ -26,8 +26,9 @@ namespace kege{
         kege::Json entity_components = entity_json[ "components" ];
         kege::Json entity_children   = entity_json[ "children" ];
 
-        Entity entity = Entity::create();
-        entity.add< EntityTag >({ entity_name });
+        ecs::Entity entity = ecs.create();
+        *ecs.add< Tag >( entity ) = entity_name;
+
         for (int comp_index = 0; comp_index < entity_components.count(); ++comp_index )
         {
             kege::Json component = components[ comp_index ];
@@ -38,20 +39,20 @@ namespace kege{
             auto itr_funct = _entity_component_parsers.find( type );
             if( itr_funct != _entity_component_parsers.end() )
             {
-                itr_funct->second( entity, component[ "data" ] );
+                itr_funct->second( ecs, entity, component[ "data" ] );
             }
         }
 
         for (int child_index = 0; child_index < entity_children.count(); ++child_index )
         {
             int entity_index = entity_children[ child_index ].toInt();
-            Entity child = parseEntity( entities, components, entity_index );
-            entity.attach( child );
+            ecs::Entity child = parseEntity( ecs, entities, components, entity_index );
+            ecs.attach( entity, child );
         }
         return entity;
     }
 
-    kege::Ref< kege::Scene > SceneLoader::load( const std::string& filename )
+    kege::Ref< kege::Scene > SceneLoader::load( kege::ECS& ecs, const std::string& filename )
     {
         kege::Json json = kege::JsonParser::load( filename.data() );
         if ( !json )
@@ -60,7 +61,7 @@ namespace kege{
             return {};
         }
 
-        kege::Ref< kege::Scene > scene = new kege::Scene( "" );
+        kege::Ref< kege::Scene > scene = new kege::Scene( "", *ecs.getEntityManager() );
 
         Params params;
 //        params.scene = scene.ref();
@@ -80,14 +81,14 @@ namespace kege{
         for (int i = 0; i < main_scene_entities.count(); ++i )
         {
             int entity_index = main_scene_entities[i].toInt();
-            Entity entity = parseEntity( entities, components, entity_index );
+            ecs::Entity entity = parseEntity( ecs, entities, components, entity_index );
             scene->insert( entity );
         }
 
         return scene;
     }
 
-//    void SceneLoader::getAssetManager( Params* params, Entity* entity, Json json )
+//    void SceneLoader::getAssetManager( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        for (int i = 0; i < json.count(); ++i )
 //        {
@@ -102,7 +103,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::atmosphere( Params* params, Entity* entity, Json json )
+//    void SceneLoader::atmosphere( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Atmosphere atmosphere = kege::Atmosphere
 //        {
@@ -140,7 +141,7 @@ namespace kege{
         return ( mass != 0 ) ? (1.0 / mass) : 0.0;
     }
 //
-//    void SceneLoader::rigidbody( Params* params, Entity* entity, Json json )
+//    void SceneLoader::rigidbody( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Rigidbody rigidbody = kege::Rigidbody
 //        {
@@ -184,7 +185,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::transform( Params* params, Entity* entity, Json json )
+//    void SceneLoader::transform( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Transform transform = kege::Transform
 //        {
@@ -203,7 +204,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::particleEffect( Params* params, Entity* entity, Json json )
+//    void SceneLoader::particleEffect( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::ParticleEffect effect;
 //        effect.rate_of_deterioration = json[ "rate_of_deterioration" ].toFloat();
@@ -274,7 +275,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::orthographic( Params* params, Entity* entity, Json json )
+//    void SceneLoader::orthographic( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::Projection > projection = new Orthographic
 //        {
@@ -296,7 +297,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::perspective( Params* params, Entity* entity, Json json )
+//    void SceneLoader::perspective( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::Projection > projection = new Perspective
 //        {
@@ -316,7 +317,7 @@ namespace kege{
 //        }
 //    }
 //    
-//    void SceneLoader::directional( Params* params, Entity* entity, Json json )
+//    void SceneLoader::directional( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::Light > light = new Light
 //        {
@@ -337,7 +338,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::point( Params* params, Entity* entity, Json json )
+//    void SceneLoader::point( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::Light > light = new Light
 //        {
@@ -359,7 +360,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::spot( Params* params, Entity* entity, Json json )
+//    void SceneLoader::spot( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::Light > light = new Light
 //        {
@@ -384,17 +385,17 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::skeleton( Params* params, Entity* entity, Json json )
+//    void SceneLoader::skeleton( Params* params, ecs::Entity& entity, Json json )
 //    {}
 //
-//    void SceneLoader::pbr( Params* params, Entity* entity, Json json )
+//    void SceneLoader::pbr( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Json properties = json[ "properties" ];
 //        Json textures = json[ "textures" ];
 //        Json passes = json[ "passes" ];
 //    }
 //
-//    void SceneLoader::mesh( Params* params, Entity* entity, Json json )
+//    void SceneLoader::mesh( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Json json_operation = json[ "draw-operation" ];
 //
@@ -402,13 +403,13 @@ namespace kege{
 //        std::vector< int32_t > indices = json[ "indices" ].getVector< int32_t >( atoi );
 //    }
 //
-//    void SceneLoader::meshPath( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshPath( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        std::string mesh_path = json[ "mesh-path" ].value();
 //        MeshLoader::load( params->assets, mesh_path );
 //    }
 //
-//    void resolveGeometry( SceneLoader::Params* params, Entity* entity, kege::Ref< kege::MeshPrimitive > primative )
+//    void resolveGeometry( SceneLoader::Params* params, ecs::Entity& entity, kege::Ref< kege::MeshPrimitive > primative )
 //    {
 //        if ( entity )
 //        {
@@ -445,13 +446,13 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::meshBox( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshBox( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new CuboidMesh( vec3( 0.0 ), toVec3( json[ "extent" ] ) );
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshCone( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshCone( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new ConeMesh
 //        (
@@ -462,7 +463,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshRect( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshRect( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new RectMesh
 //        (
@@ -473,7 +474,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshGrid( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshGrid( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new GridMesh
 //        (
@@ -485,7 +486,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshSphere( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshSphere( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        float v_radius = 1;
 //        float h_radius = 1;
@@ -512,7 +513,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshCircle( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshCircle( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new CircleMesh
 //        (
@@ -523,7 +524,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::meshCylinder( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshCylinder( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new CylinderMesh
 //        (
@@ -534,7 +535,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //    
-//    void SceneLoader::meshIcosahedron( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meshIcosahedron( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::Ref< kege::MeshPrimitive > primative = new IcosahedronMesh
 //        (
@@ -543,7 +544,7 @@ namespace kege{
 //        resolveGeometry( params, entity, primative );
 //    }
 //
-//    void SceneLoader::cameraController( Params* params, Entity* entity, Json json )
+//    void SceneLoader::cameraController( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::CameraControls controller = kege::CameraControls
 //        {
@@ -571,7 +572,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::movementController( Params* params, Entity* entity, Json json )
+//    void SceneLoader::movementController( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        kege::MovementControl controller = kege::MovementControl
 //        {
@@ -596,7 +597,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::components( Params* params, Entity* entity, Json json )
+//    void SceneLoader::components( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        for (int i = 0; i < json.count(); ++i )
 //        {
@@ -609,7 +610,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::entities( Params* params, Entity* entity, Json json )
+//    void SceneLoader::entities( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        for (int i = 0; i < json.count(); ++i )
 //        {
@@ -617,7 +618,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::component( Params* params, Entity* entity, Json json )
+//    void SceneLoader::component( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        const std::string type = json[ "type" ].value();
 //        ResourceParserFunctMap::iterator funct = _resource_parsers.find( type );
@@ -627,7 +628,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::entity( Params* params, Entity* parent, Json json )
+//    void SceneLoader::entity( Params* params, ecs::Entity& parent, Json json )
 //    {
 //        const std::string name = json[ "name" ].value();
 //        const Json components = json[ "components" ];
@@ -648,7 +649,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::sourceEffect( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceEffect( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        ParticleEffect* resource = params->assets->fetch< ParticleEffect >( json[ "id" ].value() );
 //        if ( resource )
@@ -656,7 +657,7 @@ namespace kege{
 //            entity->add< ParticleEffect >( *resource );
 //        }
 //    }
-//    void SceneLoader::sourceAtmosphere( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceAtmosphere( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Atmosphere* resource = params->assets->fetch< Atmosphere >( json[ "id" ].value() );
 //        if ( resource )
@@ -664,7 +665,7 @@ namespace kege{
 //            entity->add< Atmosphere >( *resource );
 //        }
 //    }
-//    void SceneLoader::sourceTerrain( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceTerrain( Params* params, ecs::Entity& entity, Json json )
 //    {
 ////        Ref< ParticleEffect >* resource = assets->fetch< Ref< Atmosphere > >( json[ "id" ].value() );
 ////        if ( resource )
@@ -672,7 +673,7 @@ namespace kege{
 ////            entity->add< Ref< ParticleEffect > >( *resource );
 ////        }
 //    }
-//    void SceneLoader::sourcePlanet( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourcePlanet( Params* params, ecs::Entity& entity, Json json )
 //    {
 ////        Ref< ParticleEffect >* resource = assets->fetch< Ref< ParticleEffect > >( json[ "id" ].value() );
 ////        if ( resource )
@@ -680,7 +681,7 @@ namespace kege{
 ////            entity->add< Ref< ParticleEffect > >( *resource );
 ////        }
 //    }
-//    void SceneLoader::sourceLight( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceLight( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Light >* resource = params->assets->fetch< Ref< Light > >( json[ "id" ].value() );
 //        if ( resource )
@@ -688,7 +689,7 @@ namespace kege{
 //            entity->add< Ref< Light > >( *resource );
 //        }
 //    }
-//    void SceneLoader::sourceTexture( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceTexture( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Light >* resource = params->assets->fetch< Ref< Light > >( json[ "id" ].value() );
 //        if ( resource )
@@ -696,7 +697,7 @@ namespace kege{
 //            entity->add< Ref< Light > >( *resource );
 //        }
 //    }
-//    void SceneLoader::sourceCamera( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceCamera( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Projection >* resource = params->assets->fetch< Ref< Projection > >( json[ "id" ].value() );
 //        if ( resource )
@@ -704,7 +705,7 @@ namespace kege{
 //            entity->add< Camera >({ .projection = (*resource).ref() });
 //        }
 //    }
-//    void SceneLoader::sourceCollider( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceCollider( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Collider >* resource = params->assets->fetch< Ref< Collider > >( json[ "id" ].value() );
 //        if ( resource )
@@ -716,7 +717,7 @@ namespace kege{
 //            entity->get< Rigidbody >()->collider = *resource;
 //        }
 //    }
-//    void SceneLoader::sourceMaterial( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceMaterial( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Material >* resource = params->assets->fetch< Ref< Material > >( json[ "id" ].value() );
 //        if ( resource )
@@ -724,7 +725,7 @@ namespace kege{
 //            entity->add< Ref< Material > >( *resource );
 //        }
 //    }
-//    void SceneLoader::sourceSkeleton( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceSkeleton( Params* params, ecs::Entity& entity, Json json )
 //    {
 ////        Ref< ParticleEffect >* resource = assets->fetch< Ref< ParticleEffect > >( json[ "id" ].value() );
 ////        if ( resource )
@@ -732,7 +733,7 @@ namespace kege{
 ////            entity->add< Ref< ParticleEffect > >( *resource );
 ////        }
 //    }
-//    void SceneLoader::sourceMesh( Params* params, Entity* entity, Json json )
+//    void SceneLoader::sourceMesh( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Ref< Mesh >* resource = params->assets->fetch< Ref< Mesh > >( json[ "id" ].value() );
 //        if ( resource )
@@ -741,11 +742,11 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::meta( Params* params, Entity* entity, Json json )
+//    void SceneLoader::meta( Params* params, ecs::Entity& entity, Json json )
 //    {
 //    }
 //
-//    void setRigidbodyCollider( Entity* entity, kege::Ref< kege::Collider > collider )
+//    void setRigidbodyCollider( ecs::Entity& entity, kege::Ref< kege::Collider > collider )
 //    {
 //        kege::Rigidbody* rigidbody = entity->get< kege::Rigidbody >();
 //        if ( rigidbody )
@@ -758,7 +759,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderCircle( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderCircle( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Circle shape;
 //        shape.center = toVec3( json[ "center" ] );
@@ -778,11 +779,11 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderMesh( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderMesh( Params* params, ecs::Entity& entity, Json json )
 //    {
 //    }
 //
-//    void SceneLoader::colliderCone( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderCone( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Cone shape;
 //        shape.height = json[ "height" ].toFloat();
@@ -801,7 +802,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderCylinder( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderCylinder( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Cylinder shape;
 //        shape.height = json[ "height" ].toFloat();
@@ -822,7 +823,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderPlane( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderPlane( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Plane shape;
 //        shape.point = toVec3( json[ "point" ] );
@@ -842,7 +843,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderSphere( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderSphere( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Sphere shape;
 //        shape.center = toVec3( json[ "center" ] );
@@ -860,7 +861,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::colliderBox( Params* params, Entity* entity, Json json )
+//    void SceneLoader::colliderBox( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        OBB shape;
 //        shape.center = toVec3( json[ "center" ] );
@@ -881,7 +882,7 @@ namespace kege{
 //        }
 //    }
 //
-//    void SceneLoader::collider( Params* params, Entity* entity, Json json )
+//    void SceneLoader::collider( Params* params, ecs::Entity& entity, Json json )
 //    {
 //        Json shape = json[ "shape" ];
 //        Json type = shape[ "type" ];
@@ -1143,17 +1144,17 @@ namespace kege{
 //    }
 
 
-    void parseComponentTransform( Entity& entity, Json data )
+    void parseComponentTransform( kege::ECS& ecs, ecs::Entity& entity, Json data )
     {
-        Transform* transform = entity.add< Transform >();
+        Transform* transform = ecs.add< Transform >( entity );
         transform->position = toVec3( data[ "position" ] );
         transform->orientation = toQuat( data[ "rotation" ] );
         transform->scale = toVec3( data[ "scale" ] );
     }
 
-    void parseComponentRigidBody( Entity& entity, Json data )
+    void parseComponentRigidBody( kege::ECS& ecs, ecs::Entity& entity, Json data )
     {
-        kege::Rigidbody* rigidbody = entity.add< kege::Rigidbody >();
+        kege::Rigidbody* rigidbody = ecs.add< kege::Rigidbody >( entity );
         rigidbody->linear = {};
 
         rigidbody->linear.forces = {};
@@ -1176,9 +1177,9 @@ namespace kege{
         rigidbody->up = vec3(0.f, 1.f, 0.f);
     }
 
-    void parseComponentOrthographic( Entity& entity, Json json )
+    void parseComponentOrthographic( kege::ECS& ecs, ecs::Entity& entity, Json json )
     {
-        kege::Camera* camera = entity.add< kege::Camera >();
+        kege::Camera* camera = ecs.add< kege::Camera >( entity );
         camera->projection = new Orthographic
         {
             json[ "left"  ].toFloat(),
@@ -1190,9 +1191,9 @@ namespace kege{
         };
     }
 
-    void parseComponentPerspective( Entity& entity, Json json )
+    void parseComponentPerspective( kege::ECS& ecs, ecs::Entity& entity, Json json )
     {
-        kege::Camera* camera = entity.add< kege::Camera >();
+        kege::Camera* camera = ecs.add< kege::Camera >( entity );
         camera->projection = new Perspective
         {
             json[ "aspect_ratio" ].toFloat(),
@@ -1202,25 +1203,25 @@ namespace kege{
         };
     }
 
-    void parseComponentCameraController( Entity& entity, Json data )
+    void parseComponentCameraController( kege::ECS& ecs, ecs::Entity& entity, Json data )
     {
-        kege::CameraControls* controller = entity.add< kege::CameraControls >();
+        kege::CameraControls* controller = ecs.add< kege::CameraControls >( entity );
         controller->angles = toVec3( data[ "angles" ] );
         controller->euler = toVec3( data[ "euler" ] );
         controller->sensitivity = data[ "sensitivity" ].toFloat();
         controller->stiffness = data[ "stiffness" ].toFloat();
     }
 
-    void parseComponentMovementController( Entity& entity, Json json )
+    void parseComponentMovementController( kege::ECS& ecs, ecs::Entity& entity, Json json )
     {
-        kege::MovementControl* controller = entity.add< kege::MovementControl >();
+        kege::MovementControl* controller = ecs.add< kege::MovementControl >( entity );
         controller->speed = toVec3( json[ "speed" ] );
     }
 
-    void parseComponentRenderable( Entity& entity, Json conponent )
+    void parseComponentRenderable( kege::ECS& ecs, ecs::Entity& entity, Json conponent )
     {}
 
-    void parseComponentPlanet( Entity& entity, Json data )
+    void parseComponentPlanet( kege::ECS& ecs, ecs::Entity& entity, Json data )
     {
 //        "radius": 6371000.0,
 //        "mass": 5.972e24,
@@ -1233,7 +1234,7 @@ namespace kege{
 //        "has_clouds": true,
 //        "cloud_height": 10000.0
     }
-    void parseComponentSphericalTerrain( Entity& entity, Json conponent )
+    void parseComponentSphericalTerrain( kege::ECS& ecs, ecs::Entity& entity, Json conponent )
     {
 //        "lodLevels": 6,
 //        "maxSubdivisions": 8,
@@ -1284,11 +1285,11 @@ namespace kege{
 //        }
 //    }
 
-    void parseComponentPlanarTerrain( Entity& entity, Json conponent )
+    void parseComponentPlanarTerrain( kege::ECS& ecs, ecs::Entity& entity, Json conponent )
     {}
-    void parseComponentBiomeMap( Entity& entity, Json conponent )
+    void parseComponentBiomeMap( kege::ECS& ecs, ecs::Entity& entity, Json conponent )
     {}
-    void parseComponentAtmosphere( Entity& entity, Json conponent )
+    void parseComponentAtmosphere( kege::ECS& ecs, ecs::Entity& entity, Json conponent )
     {}
 
     SceneLoader::SceneLoader()
@@ -1336,10 +1337,6 @@ namespace kege{
 //        _resource_parsers[ "source-planet" ] = sourcePlanet;
 //        _resource_parsers[ "source-camera" ] = sourceCamera;
 //        _resource_parsers[ "source-skeleton" ] = sourceSkeleton;
-//
-//
-//
-//
 //
 //        _resource_parsers[ "collider-mesh" ] = colliderMesh;
 //        _resource_parsers[ "collider-cont" ] = colliderCone;

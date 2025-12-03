@@ -8,19 +8,19 @@
 #ifndef control_camera_movement_hpp
 #define control_camera_movement_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "../../input/input-context-manager.hpp"
+#include "../../scene/ecs.hpp"
 #include "movement-controls.hpp"
 
 namespace kege{
 
-    class MovementSystem : public kege::EntitySystem
+    class MovementSystem : public kege::ecs::System
     {
     public:
 
-        MovementSystem( kege::EntitySystemManager* esm );
+        //void input( const MappedInputs& inputs, double dms );
+        MovementSystem( kege::ECS* ecs );
         void input( double dms );
-        bool initialize();
-        void shutdown();
     };
 
 }

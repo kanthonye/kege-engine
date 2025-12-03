@@ -8,21 +8,22 @@
 #ifndef update_scene_camera_hpp
 #define update_scene_camera_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "../../scene/ecs.hpp"
+#include "../../math/algebra/vmath.hpp"
 #include "../render/graph/render-graph.hpp"
 #include "camera.hpp"
 
 namespace kege{
 
-    class UpdateSceneCamera : public kege::EntitySystem
+    class UpdateSceneCamera : public kege::ecs::System
     {
     public:
 
-        UpdateSceneCamera( kege::EntitySystemManager* esm );
+        UpdateSceneCamera( kege::ECS* ecs );
 
         void update( double dms )override;
-        bool initialize()override;
-        void shutdown()override;
+        //bool initialize()override;
+        //void shutdown()override;
     };
 
 }

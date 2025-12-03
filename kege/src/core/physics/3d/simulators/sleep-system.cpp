@@ -19,7 +19,7 @@
 //         if ( !_entities ) return;
 
 //         kege::Rigidbody* body;
-//         for ( kege::Entity& entity : *_entities )
+//         for ( [entity, body, transform] : view<< kege::Rigidbody, kege::Transform >() )
 //         {
 //             body = entity.get< kege::Rigidbody >();
 //             if ( body->immovable )
@@ -76,8 +76,8 @@
 //         return EntitySystem::shutdown();
 //     }
 
-//     SleepSystem::SleepSystem( kege::EntitySystemManager* esm )
-//     :   kege::EntitySystem( manager, "sleep-system", REQUIRE_UPDATE, esm  )
+//     SleepSystem::SleepSystem( kege::ECS* ecs )
+//     :   kege::ecs::System( manager, "sleep-system", REQUIRE_UPDATE, esm  )
 //     ,   _sleep_threshold( 0.0005 )
 //     ,   _sleep_motion_bias( 0.98f )
 //     ,   _wake_sleepable_objects( false )

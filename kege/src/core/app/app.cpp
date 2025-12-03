@@ -163,10 +163,12 @@ namespace kege{
         // Create Project Manager
         //-----------------------------------------------------------------------//
 
+        _ecs = new kege::ECS;
+        
         /**
          * Next step, create our project manager
          */
-        _project_manager = new ProjectManager( _graphics );
+        _project_manager = new ProjectManager( _graphics, _ecs );
 
         //-----------------------------------------------------------------------//
         // Add Asset Loaders
@@ -193,7 +195,7 @@ namespace kege{
         success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager.ref(), _render_graph, _project_manager.ref() ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::ECSLayer( _input_context_manager, _asset_manager, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::ECSLayer( _ecs, _input_context_manager, _asset_manager, _render_graph, _project_manager ) );
         if( !success ) return false;
 
         _running = success;

@@ -82,6 +82,7 @@ namespace kege
         {
             return _ref;
         }
+
         inline T* operator ->()
         {
             return _ref;
@@ -91,6 +92,7 @@ namespace kege
         {
             return _ref;
         }
+        
         inline T* ref()
         {
             return _ref;

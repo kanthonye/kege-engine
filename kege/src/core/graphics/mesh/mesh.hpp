@@ -67,11 +67,12 @@ namespace kege{
         uint32_t stride;
     };
 
-    struct IndirectDrawObject : public kege::array< kege::IndirectDrawCommandBuffer >
+    struct IndirectDrawObject : public kege::RefCounter
     {
         IndirectDrawObject( const std::initializer_list< kege::IndirectDrawCommandBuffer >& init )
-        :   kege::array< kege::IndirectDrawCommandBuffer >( init )
+        :   commands( init )
         {}
+        kege::array< kege::IndirectDrawCommandBuffer > commands;
     };
 }
 namespace kege::ref{
@@ -258,12 +259,6 @@ namespace kege::sref{
 
 namespace kege{
     using MeshSet = kege::array< ref::Mesh >;
-}
-namespace kege::ref{
-    using MeshSet = kege::Ref< kege::MeshSet >;
-}
-namespace kege::sref{
-    using MeshSet = kege::Ref< const kege::MeshSet >;
 }
 
 

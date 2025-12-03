@@ -19,7 +19,7 @@ namespace kege{
     {
     public:
 
-        NavbarPanel( kege::ProjectManager* pm, ui::Layout* l );
+        NavbarPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
         void update();
 
     public:

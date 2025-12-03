@@ -10,7 +10,6 @@
 
 #include "../simulators/simulator.hpp"
 #include "../bodies/rigidbody.hpp"
-#include "../../../ecs/component-cache.hpp"
 
 namespace kege::physics{
 
@@ -22,15 +21,14 @@ namespace kege::physics{
         void addSimulator( Stage stage, Simulator* simulator );
 
         kege::CollisionRegistry& getCollisionRegistry();
-
-        ComponentCacheT< Rigidbody >& rigidbodies();
+        ecs::ViewT< Rigidbody >& rigidbodies();
 
 //        Rigidbody* getRigidbody( Key id );
 //        void deleteRigidbody( Key id );
 //        Key createRigidbody();
 
-        void simulate( double dms );
-        bool initialize( ComponentCacheT< Rigidbody >* components );
+        void simulate( double dms, ecs::ViewT< Rigidbody >& rigidbodies );
+        bool initialize();
         void shutdown();
 
         ~Simulation();
@@ -43,10 +41,9 @@ namespace kege::physics{
     private:
 
         std::vector< Ref< Simulator > > _simulators[ MAX_STAGES ];
-        ComponentCacheT< Rigidbody >* _rigidbodies;
         kege::CollisionRegistry _collisions;
+        ecs::ViewT< Rigidbody >* _rigidbodies;
         int _iterations;
-
         friend class System;
     };
 }

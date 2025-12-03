@@ -8,23 +8,22 @@
 #ifndef follow_system_hpp
 #define follow_system_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "../../scene/ecs.hpp"
+#include "../../math/algebra/vmath.hpp"
 
 namespace kege{
 
-    class FollowSystem : public kege::EntitySystem
+    class FollowSystem : public kege::ecs::System
     {
     public:
 
-        FollowSystem( kege::EntitySystemManager* esm );
+        FollowSystem( kege::ECS* ecs );
         void update( double dms )override;
-        bool initialize()override;
-        void shutdown()override;
     };
 
     struct Follow
     {
-        Entity target; // The entity to follow
+        ecs::Entity target; // The entity to follow
         vec3   offset = vec3(0, 0, 0); // Camera offset from the target
         float  distance = 10.f;
     };

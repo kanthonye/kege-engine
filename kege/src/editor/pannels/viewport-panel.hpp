@@ -16,7 +16,7 @@ namespace kege{
     {
     public:
 
-        ViewportPanel( kege::ProjectManager* pm, ui::Layout* l );
+        ViewportPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
         void update();
 
     public:

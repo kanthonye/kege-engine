@@ -6,13 +6,12 @@
 //
 
 #include "motion-dampener.hpp"
-#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 
     void MotionDampener::simulate( double dms )
     {
-        for (ComponentCacheT< Rigidbody >::Iterator body = _simulator->rigidbodies().begin(); body.valid(); body++ )
+        for (auto [entity, body] : _simulator->rigidbodies() )
         {
             body->angular.velocity *= pow( body->angular.damping, dms );
             body->linear.velocity *= pow( body->linear.damping, dms );

@@ -9,13 +9,12 @@
 #define debug_renderer_hpp
 
 #include "../../graphics/render/graph/render-graph.hpp"
-#include "../../ecs/system.hpp"
-#include "../../ecs/entity-system-manager.hpp"
+#include "../../scene/ecs.hpp"
 #include "draw-commands.hpp"
 
 namespace kege {
 
-    class DebugLineRenderSystem : public kege::System
+    class DebugLineRenderSystem : public kege::ecs::System
     {
     public:
 
@@ -40,7 +39,7 @@ namespace kege {
 
         void reset();
         ~ DebugLineRenderSystem();
-        DebugLineRenderSystem( kege::EntitySystemManager* esm );
+        DebugLineRenderSystem( kege::ECS* ecs );
 
     private:
 

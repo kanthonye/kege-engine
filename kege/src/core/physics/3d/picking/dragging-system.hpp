@@ -8,13 +8,16 @@
 #ifndef dragging_system_hpp
 #define dragging_system_hpp
 
+#include "../../../math/algebra/vmath.hpp"
+#include "../../../scene/ecs-system-factory.hpp"
+#include "../../../input/input-context-manager.hpp"
 #include "../bodies/rigidbody.hpp"
 #include "../bodies/collider.hpp"
 #include "selection-system.hpp"
 
 namespace kege{
 
-    class EntityDraggingSystem : public kege::EntitySystem
+    class EntityDraggingSystem : public kege::ecs::System
     {
     public:
 
@@ -24,9 +27,9 @@ namespace kege{
         bool initialize()override;
         void shutdown()override;
 
-        EntityDraggingSystem( kege::EntitySystemManager* esm );
+        EntityDraggingSystem( kege::ECS* ecs );
 
-        kege::Entity _selected_entity;
+        ecs::Entity _selected_entity;
         double _distance;
         bool _drag_entity;
     };

@@ -11,7 +11,7 @@ namespace kege{
 
     bool ProjectManager::createProject( const std::string& filepath )
     {
-        _current_project = new kege::Project( filepath );
+        _current_project = new kege::Project( filepath, _ecs );
         return true;
     }
     
@@ -51,8 +51,9 @@ namespace kege{
         _current_project.clear();
     }
 
-    ProjectManager::ProjectManager( ref::Graphics graphics )
+    ProjectManager::ProjectManager( ref::Graphics graphics, ref::ECS& ecs )
     :   _graphics( graphics )
+    ,   _ecs( ecs )
     {}
 
 }

@@ -12,12 +12,12 @@ namespace kege{
 
     void CameraControlSystem::input( double dms )
     {
-        Entity entity = getScene()->getCameraEntity();
-        if( !entity ) return;
-
-
-        CameraControls* controls = entity.get< CameraControls >();
-        if( !controls ) return;
+//        Entity entity = getScene()->getCameraEntity();
+//        if( !entity ) return;
+//
+//
+//        CameraControls* controls = entity.get< CameraControls >();
+//        if( !controls ) return;
 
 //        const MappedInputs& inputs = getMappedInputs();
 //        if ( inputs[ kege::ACTION_CONTROL_CAMERA ] )
@@ -44,48 +44,35 @@ namespace kege{
 
     void CameraControlSystem::update( double dms )
     {
-        if ( !_entities ) return;
+        //if ( !_entities ) return;
 
-        for( Entity entity : *_entities )
-        {
-            CameraControls* controls = entity.get< CameraControls >();
-
-            vec3 up;
-            quat* orientation;
-
-            if ( entity.has< Rigidbody >() )
-            {
-                orientation = &entity.get< Rigidbody >()->orientation;
-                up = entity.get< Rigidbody >()->up;
-            }
-            else
-            {
-                orientation = &entity.get< Transform >()->orientation;
-                up = vec3( 0.f ,1.f , 0.f );
-            }
-
-            controls->euler.x = lerp( controls->euler.x, controls->angles.x, dms * controls->stiffness );
-            controls->euler.y = lerp( controls->euler.y, controls->angles.y, dms * controls->stiffness );
-
-            quat rotation = quat( controls->euler.y, up );
-            *orientation = quat( controls->euler.x, getAxesX( rotation ) ) * rotation;
-        }
+//        for( auto [entity, camera, controls] : view< kege::Camera, kege::CameraControls >() )
+//        {
+//            vec3 up;
+//            quat* orientation;
+//
+//            if ( entity.has< Rigidbody >() )
+//            {
+//                orientation = &entity.get< Rigidbody >()->orientation;
+//                up = entity.get< Rigidbody >()->up;
+//            }
+//            else
+//            {
+//                orientation = &entity.get< Transform >()->orientation;
+//                up = vec3( 0.f ,1.f , 0.f );
+//            }
+//
+//            controls->euler.x = lerp( controls->euler.x, controls->angles.x, dms * controls->stiffness );
+//            controls->euler.y = lerp( controls->euler.y, controls->angles.y, dms * controls->stiffness );
+//
+//            quat rotation = quat( controls->euler.y, up );
+//            *orientation = quat( controls->euler.x, getAxesX( rotation ) ) * rotation;
+//        }
     }
-
-    bool CameraControlSystem::initialize()
+    CameraControlSystem::CameraControlSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "camera-controller", REQUIRE_UPDATE | REQUIRE_INPUT )
     {
-        return EntitySystem::initialize();
-    }
-
-    void CameraControlSystem::shutdown()
-    {
-        return EntitySystem::shutdown();
-    }
-
-    CameraControlSystem::CameraControlSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "camera-controller", REQUIRE_UPDATE | REQUIRE_INPUT, esm )
-    {
-        _signature = createEntitySignature< kege::Camera, kege::CameraControls >();
+        //_signature = createEntitySignature< kege::Camera, kege::CameraControls >();
     }
 
     KEGE_REGISTER_ENTITY_SYSTEM( CameraControlSystem, "camera-controller" );

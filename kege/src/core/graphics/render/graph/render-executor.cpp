@@ -148,9 +148,9 @@ namespace kege{
             {
                 encoder->bind( set );
             }
-            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            for (int i=0; i<mesh->indirect_draw_object->commands.size(); ++i )
             {
-                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->commands.at(i);
                 encoder->drawIndexIndirect
                 (
                     indirect_buffer.buffer,
@@ -162,9 +162,9 @@ namespace kege{
         }
         else if ( mesh->indirect_draw_object )
         {
-            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            for (int i=0; i<mesh->indirect_draw_object->commands.size(); ++i )
             {
-                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->commands.at(i);
                 encoder->drawIndexIndirect
                 (
                     indirect_buffer.buffer,
@@ -210,9 +210,9 @@ namespace kege{
             {
                 encoder->bind( set );
             }
-            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            for (int i=0; i<mesh->indirect_draw_object->commands.size(); ++i )
             {
-                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->commands.at(i);
                 encoder->drawIndirect
                 (
                     indirect_buffer.buffer,
@@ -224,9 +224,9 @@ namespace kege{
         }
         else if ( mesh->indirect_draw_object )
         {
-            for (int i=0; i<mesh->indirect_draw_object->size(); ++i )
+            for (int i=0; i<mesh->indirect_draw_object->commands.size(); ++i )
             {
-                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->at(i);
+                const IndirectDrawCommandBuffer& indirect_buffer = mesh->indirect_draw_object->commands.at(i);
                 encoder->drawIndirect
                 (
                     indirect_buffer.buffer,

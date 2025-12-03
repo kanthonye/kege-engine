@@ -11,11 +11,8 @@ namespace kege{
 
     void ParticleEffectSystem::update( double dms )
     {
-        for ( kege::Entity entity : *_entities )
+        for (auto [entity, effect, buffer, transform] : view< ParticleEffect, ParticleBuffer, Transform >() )
         {
-            ParticleEffect* effect = entity.get< ParticleEffect >();
-            ParticleBuffer* buffer = entity.get< ParticleBuffer >();
-
             for (int i=0; i < buffer->particle_count; ++i)
             {
                 Particle& particle = buffer->particles[ i ];
@@ -68,17 +65,17 @@ namespace kege{
 
     bool ParticleEffectSystem::initialize()
     {
-        _signature = createEntitySignature< ParticleEffect, Transform >();
-        return EntitySystem::initialize();
+        //_signature = createEntitySignature< ParticleEffect, Transform >();
+        return ecs::System::initialize();
     }
     
     void ParticleEffectSystem::shutdown()
     {
-        return EntitySystem::shutdown();
+        return ecs::System::shutdown();
     }
 
-    ParticleEffectSystem::ParticleEffectSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "particle-effect-updater", REQUIRE_UPDATE, esm  )
+    ParticleEffectSystem::ParticleEffectSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "particle-effect-updater", REQUIRE_UPDATE )
     {}
 
     KEGE_REGISTER_ENTITY_SYSTEM( ParticleEffectSystem, "particle-effect-updater" );

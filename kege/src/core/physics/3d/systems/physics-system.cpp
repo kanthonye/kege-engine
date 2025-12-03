@@ -16,30 +16,30 @@ namespace kege{
 
     void PhysicsSystem::update( double dms )
     {
-        _simulation.simulate( dms );
+        _simulation.simulate( dms, view<Rigidbody>() );
     }
 
-    bool PhysicsSystem::initialize()
-    {
-        ComponentCacheT< Rigidbody >* rigidbodies = Entity::getManager().getComponentManager< Rigidbody >();
+//    bool PhysicsSystem::initialize()
+//    {
+//        ComponentCacheT< Rigidbody >* rigidbodies = Entity::getManager().getComponentManager< Rigidbody >();
+//
+//        _simulation.initialize( rigidbodies );
+//        _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
+//        return EntitySystem::initialize();
+//    }
 
-        _simulation.initialize( rigidbodies );
-        _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
-        return EntitySystem::initialize();
-    }
+//    void PhysicsSystem::shutdown()
+//    {
+//        Setting::singleton().remove( "Physics" );
+//        _simulation.shutdown();
+//        return EntitySystem::shutdown();
+//    }
 
-    void PhysicsSystem::shutdown()
-    {
-        Setting::singleton().remove( "physics-system-iteration-count" );
-        _simulation.shutdown();
-        return EntitySystem::shutdown();
-    }
-
-    PhysicsSystem::PhysicsSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "physics-system", REQUIRE_UPDATE, esm )
+    PhysicsSystem::PhysicsSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "physics-system", REQUIRE_UPDATE )
     {}
 
-    KEGE_REGISTER_ENTITY_SYSTEM( PhysicsSystem, "physics" );
+    KEGE_REGISTER_ENTITY_SYSTEM( PhysicsSystem, "Physics" );
 }
 
 

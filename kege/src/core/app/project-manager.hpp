@@ -27,13 +27,14 @@ namespace kege{
 
         bool empty()const;
 
-        ProjectManager( ref::Graphics graphics );
+        ProjectManager( ref::Graphics graphics, ref::ECS& ecs );
         ~ProjectManager();
 
     private:
         
         ref::Project _current_project;
         ref::Graphics _graphics;
+        ref::ECS _ecs;
     };
 
 }

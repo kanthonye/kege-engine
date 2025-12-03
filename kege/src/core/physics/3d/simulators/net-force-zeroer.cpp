@@ -12,7 +12,7 @@ namespace kege::physics{
 
     void NetForceZeroer::simulate( double time_step )
     {
-        for (ComponentCacheT< Rigidbody >::Iterator body = _simulator->rigidbodies().begin(); body.valid(); body++ )
+        for (auto [entity, body] : _simulator->rigidbodies() )
         {
             body->angular.torques = {0.f, 0.f, 0.f};
             body->linear.forces = {0.f, 0.f, 0.f};

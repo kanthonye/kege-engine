@@ -139,7 +139,7 @@ namespace kege::ui{
             return 0;
         }
 
-        _nodes[ node_index ].content = &_widget_manager[ elem._handle ];
+        _nodes[ node_index ].widgit = &_widget_manager[ elem._handle ];
         _nodes[ node_index ].parent = _parent;
         _nodes[ node_index ].count = 0;
         _nodes[ node_index ].head = 0;
@@ -151,13 +151,13 @@ namespace kege::ui{
 
 
         // if style width and height is fixed, set the rect width and height of the ui element
-        if ( _nodes[ node_index ].content->style->height.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ node_index ].widgit->style->height.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ node_index ].content->rect.height = _nodes[ node_index ].content->style->height.size;
+            _nodes[ node_index ].widgit->rect.height = _nodes[ node_index ].widgit->style->height.size;
         }
-        if ( _nodes[ node_index ].content->style->width.type == kege::ui::SIZE_FIXED )
+        if ( _nodes[ node_index ].widgit->style->width.type == kege::ui::SIZE_FIXED )
         {
-            _nodes[ node_index ].content->rect.width = _nodes[ node_index ].content->style->width.size;
+            _nodes[ node_index ].widgit->rect.width = _nodes[ node_index ].widgit->style->width.size;
         }
 
         // setup the layout tree hierarchy
@@ -222,12 +222,12 @@ namespace kege::ui{
 
     const Widget* Layout::operator[]( NodeIndex node_id )const
     {
-        return _nodes[ node_id ].content;
+        return _nodes[ node_id ].widgit;
     }
 
     Widget* Layout::operator[]( NodeIndex index )
     {
-        return _nodes[ index ].content;
+        return _nodes[ index ].widgit;
     }
 
     uint32_t Layout::addStyle( const AddStyle& as )
@@ -319,7 +319,7 @@ namespace kege::ui{
         // First, check if previous hot element is still valid and under mouse
         if (_hot[1].id != 0)
         {
-            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ _hot[1].id ].content->rect ) )
+            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ _hot[1].id ].widgit->rect ) )
             {
                 // If previous hot element has children, there is a possibility that the mouse
                 // is over its child element. So, we need to account for those child elements.
@@ -372,9 +372,9 @@ namespace kege::ui{
             findNewHotElement( ui_index );
         }
 
-        if ( _nodes[ root ].content->mouseover && _nodes[ root ].content->visible )
+        if ( _nodes[ root ].widgit->mouseover && _nodes[ root ].widgit->visible )
         {
-            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ root ].content->rect ) )
+            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ root ].widgit->rect ) )
             {
                 if ( _hot[0].depth < _nodes[ root ].depth  )
                 {
@@ -383,7 +383,7 @@ namespace kege::ui{
                         _hot[0].id    = _nodes[ root ].id;
                         _hot[0].depth = _nodes[ root ].depth;
                     }
-                    else if ( _nodes[ _hot[0].id ].content->style->zindex <= _nodes[ root ].content->style->zindex )
+                    else if ( _nodes[ _hot[0].id ].widgit->style->zindex <= _nodes[ root ].widgit->style->zindex )
                     {
                         _hot[0].id    = _nodes[ root ].id;
                         _hot[0].depth = _nodes[ root ].depth;
@@ -399,8 +399,8 @@ namespace kege::ui{
         {
             if
             (
-                _nodes[ _active[1].id ].content->single_click == ui::ClickTrigger::OnRelease ||
-                _nodes[ _active[1].id ].content->double_click == ui::ClickTrigger::OnRelease
+                _nodes[ _active[1].id ].widgit->single_click == ui::ClickTrigger::OnRelease ||
+                _nodes[ _active[1].id ].widgit->double_click == ui::ClickTrigger::OnRelease
             )
             {
                 std::cout  <<"release: " << _active[1].id <<"| " << _hot[1].id <<"\n";
@@ -426,8 +426,8 @@ namespace kege::ui{
             // OnClick fires continuous
             if
             (
-                _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Continuous ||
-                _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Continuous
+                _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Continuous ||
+                _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Continuous
             )
             {
                 std::cout <<"DOUBLE CLICK: FIRE CONTINUOUSLY\n";
@@ -447,8 +447,8 @@ namespace kege::ui{
                 // OnClick fires immediately
                 if
                 (
-                    _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Immediate ||
-                    _nodes[_active[0].id].content->double_click == ui::ClickTrigger::Continuous
+                    _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Immediate ||
+                    _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Continuous
                 )
                 {
                     std::cout <<"DOUBLE CLICK: FIRE IMMEDIATELY\n";
@@ -465,8 +465,8 @@ namespace kege::ui{
                 // OnClick fires immediately
                 if
                 (
-                    _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Immediate ||
-                    _nodes[_active[0].id].content->single_click == ui::ClickTrigger::Continuous
+                    _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Immediate ||
+                    _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Continuous
                 )
                 {
                     std::cout <<"SINGLE CLICK: FIRE IMMEDIATELY\n";
@@ -480,7 +480,39 @@ namespace kege::ui{
         // If button not down, _active[0] stays empty
         // but _active[1] retains value for release detection
     }
+    HitRecord Layout::scanEvents(uint32_t root)
+    {
+        HitRecord rec{};
+        const auto* inp = &_input->_curr_frame;
+        const bool  leftDown  = inp->button_down && inp->single_click;
+        const bool  leftPressed  = inp->single_click;
+        const bool  leftReleased = !leftDown && _button_down;
+        const bool  doubleClick  = inp->double_click;
 
+        for (uint32_t i = root; i != 0; i = next(i))
+        {
+            const Node& n = _nodes[i];
+            if (!n.widgit->visible) continue;
+
+            bool inside = testPointVsRect(inp->position, n.widgit->rect);
+            if (inside) {
+                rec.hotId = n.id;
+                if (leftPressed || doubleClick) {
+                    rec.activeId = n.id;
+                    rec.focusId  = n.id;
+                    rec.clicks   = doubleClick ? 2 : 1;
+                }
+            }
+            // depth-first recursion
+            if (n.count) {
+                auto childRec = scanEvents(n.id + 1);  // first child
+                if (childRec.hotId && !rec.hotId) rec = childRec;
+            }
+        }
+        rec.release = leftReleased && rec.activeId;
+        return rec;
+    }
+    
     void Layout::begin( double dms, ui::Input* input )
     {
         _root = 0;
@@ -494,6 +526,23 @@ namespace kege::ui{
     }
 
     void Layout::end()
+//    {
+//        if (_node_counter == 0) return;
+//
+//        align( *this, _root );                    // one layout pass
+//        HitRecord hit = scanEvents(_root);
+//
+//        _hot[CURR] = {hit.hotId, 0, 0, 0, false};
+//        if (hit.activeId) {
+//            _active[CURR] = {hit.activeId, 0, 0, hit.clicks, false};
+//            _focus = {hit.focusId, 0, 0, 0, false};
+//        }
+//        _clicked = (hit.release && hit.activeId == hit.hotId) ? _active[CURR] : State{};
+//
+//        _hot[PREV]    = _hot[CURR];
+//        _active[PREV] = _active[CURR];
+//        _button_down  = _input->buttonDown();
+//    }
     {
         /**
          * If the nodes are not empty, we align the layout.

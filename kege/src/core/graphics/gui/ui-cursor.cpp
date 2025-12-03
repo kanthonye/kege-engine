@@ -17,7 +17,7 @@ namespace kege::ui{
 
         _position = 0;
         float char_width;
-        float max_length = _input->_curr_frame.position.x - _layout->_nodes[ node_index ].content->rect.x;
+        float max_length = _input->_curr_frame.position.x - _layout->_nodes[ node_index ].widgit->rect.x;
         for ( const char* s = text.c_str(); *s != 0; ++s )
         {
             char_width = font->getCharWidth( font_size, *s );

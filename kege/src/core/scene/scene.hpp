@@ -10,25 +10,18 @@
 
 #include "../memory/ref.hpp"
 #include "../math/algebra/vectors.hpp"
-#include "../ecs/entity.hpp"
-#include "../ecs/entity-registry.hpp"
 #include "../resource/asset-manager.hpp"
-#include "entity-tag.hpp"
+#include "ecs-entity-registry.hpp"
 
 namespace kege{
 
-    class Scene : public kege::RefCounter
+    class Scene : public kege::ecs::EntityRegistry
     {
     public:
 
-        struct Changed{ kege::Ref< kege::Scene > scene; };
+        ecs::Entity getEntityChild( ecs::Entity entity, const std::string& name );
 
-        /**
-         * @fn getEntityRegistry
-         *
-         * @return entity registry of this scene
-         */
-        kege::EntityRegistry& getEntityRegistry();
+        struct Changed{ kege::Ref< kege::Scene > scene; };
 
         /**
          * @fn setSceneRay
@@ -49,28 +42,28 @@ namespace kege{
          * @brief Set the camera entit
          * @param entity The value to set the camera entity to.
          */
-        void setCameraEntity( const Entity& entity );
+        void setCameraEntity( const ecs::Entity& entity );
 
         /**
          * @fn getCameraEntity
          * @brief Get the camera entity
          * @return the camera entity
          */
-        const Entity& getCameraEntity()const;
+        const ecs::Entity& getCameraEntity()const;
 
         /**
          * @fn setPlayer
          * @brief Set the player entit
          * @param entity The value to set the player to
          */
-        void setPlayer( const Entity& entity );
+        void setPlayer( const ecs::Entity& entity );
 
         /**
          * @fn getPlayer
          * @brief Get the player entity
          * @return the player entity
          */
-        const Entity& getPlayer()const;
+        const ecs::Entity& getPlayer()const;
 
         /**
          * @fn get
@@ -78,28 +71,28 @@ namespace kege{
          * @param name The name of the entity
          * @return the entity associated with the name or a invalid entity
          */
-        Entity get( const std::string& name );
+        ecs::Entity get( const std::string& name );
 
         /**
          * @fn remove
          * @brief Remove an entity from the scene by name
          * @param name The name of the entity to remove
          */
-        bool remove( const std::string& name );
+        void remove( const std::string& name );
 
         /**
          * @fn remove
          * @brief Remove an entity from the scene
          * @param entity the entity to remove
          */
-        bool remove( Entity& entity );
+        void remove( const ecs::Entity& entity );
 
         /**
          * @fn init
          * @brief Integrate an entity into a set based on its component bitmask
          * @param entity The ID of the entity to integrate into the set.
          */
-        void insert( Entity entity );
+        void insert( ecs::Entity& entity );
 
         /**
          * @fn initialize
@@ -120,8 +113,8 @@ namespace kege{
 
         const std::string& name()const;
     
-        kege::Entity root();
-        
+        ecs::Entity root();
+
         /**
          * @fn ready
          *
@@ -129,30 +122,27 @@ namespace kege{
          */
         bool ready()const;
 
-        Scene( const std::string& name );
+        Scene( const std::string& name, ecs::EntityManager &ecs );
         ~Scene();
 
     protected:
 
-        /**
-         * The scene entity set group manager
-         */
-        kege::EntityRegistry _registry;
+        void registerEntities( const ecs::Entity& entity );
 
         /**
          * The camera entity
          */
-        kege::Entity _camera;
+        ecs::Entity _camera;
 
         /**
          * The player entity
          */
-        kege::Entity _player;
+        ecs::Entity _player;
 
         /**
          * The root scene node
          */
-        kege::Entity _root;
+        ecs::Entity _root;
 
         /**
          * The from the camera into the scene
@@ -167,6 +157,7 @@ namespace kege{
         std::string _name;
     };
 
+    using Tag = std::string;
 }
 
 namespace kege::ref{

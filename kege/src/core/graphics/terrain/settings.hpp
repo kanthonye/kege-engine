@@ -11,7 +11,7 @@
 #include <vector>
 #include <map>
 
-#include "system.hpp"
+#include "ecs-system.hpp"
 
 namespace kege{
 

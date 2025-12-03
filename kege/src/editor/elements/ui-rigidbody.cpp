@@ -9,9 +9,9 @@
 
 namespace kege::ui
 {
-    bool rigidbody( ui::Layout& layout, ui::Tree& tree, kege::Entity& entity )
+    bool rigidbody( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
     {
-        kege::Rigidbody* body = entity.get< kege::Rigidbody >();
+        kege::Rigidbody* body = ecs->get< kege::Rigidbody >( entity );
         ui::TreeNode& node = tree[ body ];
 
         if ( node.elements.empty() )

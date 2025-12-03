@@ -233,8 +233,8 @@ namespace kege {
         _isize = 0;
     }
 
-    DebugLineRenderSystem::DebugLineRenderSystem( kege::EntitySystemManager* esm )
-    :   kege::System( nullptr, "line-renderer" )
+    DebugLineRenderSystem::DebugLineRenderSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "line-renderer", 0 )
     ,   _vcount( 0 )
     ,   _vsize( 0 )
     ,   _icount( 0 )

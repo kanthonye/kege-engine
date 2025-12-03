@@ -6,61 +6,87 @@
 //
 
 #include "scene.hpp"
-#include "entity-tag.hpp"
 
 namespace kege{
 
-    EntityRegistry& Scene::getEntityRegistry()
+    ecs::Entity Scene::getEntityChild( ecs::Entity entity, const std::string& name )
     {
-        return _registry;
+        for (ecs::Entity child = _ecs.begin( entity ); _ecs.valid(child); child = _ecs.next( entity ) )
+        {
+            std::string* str = _ecs.get< std::string >( child );
+            if ( str )
+            {
+                if ( *str == name )
+                {
+                    return child;
+                }
+            }
+        }
+
+        for (ecs::Entity child = _ecs.begin( entity ); _ecs.valid(child); child = _ecs.next( entity ) )
+        {
+            ecs::Entity e = getEntityChild( child, name );
+            if ( _ecs.valid(e) )
+            {
+                return e;
+            }
+        }
+
+        return {};
     }
 
-    void Scene::setCameraEntity( const Entity& entity )
+    void Scene::setCameraEntity( const ecs::Entity& entity )
     {
         _camera = entity;
     }
 
-    const Entity& Scene::getCameraEntity()const
+    const ecs::Entity& Scene::getCameraEntity()const
     {
         return _camera;
     }
 
-    void Scene::setPlayer( const Entity& entity )
+    void Scene::setPlayer( const ecs::Entity& entity )
     {
         _player = entity;
     }
 
-    const Entity& Scene::getPlayer()const
+    const ecs::Entity& Scene::getPlayer()const
     {
         return _player;
     }
 
-    Entity Scene::get( const std::string& name )
+    ecs::Entity Scene::get( const std::string& name )
     {
         return getEntityChild( _root, name.data() );
     }
 
-    bool Scene::remove( const std::string& name )
+    void Scene::remove( const std::string& name )
     {
-        Entity entity = get( name );
-        return remove( entity );
+        ecs::Entity entity = get( name );
+        remove( entity );
     }
 
-    void Scene::insert( Entity entity )
+    void Scene::registerEntities( const ecs::Entity& entity )
     {
-        _root.attach( entity );
-        _registry.insert( entity );
-    }
-
-    bool Scene::remove( Entity& entity )
-    {
-        if ( _root != entity )
+        ecs::EntityRegistry::insert( entity );
+        for (ecs::Entity e = _ecs.begin(entity); _ecs.valid(e); e = _ecs.next(e))
         {
-            _registry.remove( entity );
-            entity.destroy();
-            return true;
+            registerEntities(e);
         }
-        return false;
+    }
+    void Scene::insert( ecs::Entity& entity )
+    {
+        _ecs.attach(_root, entity);
+        registerEntities( entity );
+    }
+
+    void Scene::remove( const ecs::Entity& entity )
+    {
+        for (ecs::Entity e = _ecs.begin(entity); _ecs.valid(e); e = _ecs.next(e))
+        {
+            remove(e);
+        }
+        ecs::EntityRegistry::remove( entity );
     }
 
     void Scene::setSceneRay( const kege::vec3& ray )
@@ -77,22 +103,22 @@ namespace kege{
     {
 
 
-//        Entity entity = kege::Entity::create();
+//        Entity entity = ecs::Entity::create();
 //        entity.add< EntityTag >( "camera" );
 //        insert( entity );
 //
-//        entity = kege::Entity::create();
+//        entity = ecs::Entity::create();
 //        entity.add< EntityTag >( "circle" );
 //        insert( entity );
 //
-//        Entity square = kege::Entity::create();
+//        Entity square = ecs::Entity::create();
 //        square.add< EntityTag >( "square" );
 //        {
-//            entity = kege::Entity::create();
+//            entity = ecs::Entity::create();
 //            entity.add< EntityTag >( "triangle1" );
 //            square.attach( entity );
 //
-//            entity = kege::Entity::create();
+//            entity = ecs::Entity::create();
 //            entity.add< EntityTag >( "triangle2" );
 //            square.attach( entity );
 //        }
@@ -105,17 +131,18 @@ namespace kege{
 
     void Scene::shutdown()
     {
-        _ready = false;
-        if( _camera ) _camera.destroy();
-        if( _player ) _player.destroy();
-        if( _root ) _root.destroy();
-        _registry.clear();
-        _camera = 0;
-        _player = 0;
-        _root = 0;
+        _ecs.destroy(_root);
+//        _ready = false;
+//        if( _camera ) _camera.destroy();
+//        if( _player ) _player.destroy();
+//        if( _root ) _root.destroy();
+//        _registry.clear();
+//        _camera = 0;
+//        _player = 0;
+//        _root = 0;
     }
 
-    kege::Entity Scene::root()
+    ecs::Entity Scene::root()
     {
         return _root;
     }
@@ -134,11 +161,12 @@ namespace kege{
         shutdown();
     }
 
-    Scene::Scene( const std::string& name )
-    :   _name( name )
+    Scene::Scene( const std::string& name, ecs::EntityManager &ecs )
+    :   kege::ecs::EntityRegistry( ecs )
+    ,   _name( name )
     ,   _ready( false )
     {
-        _root = kege::Entity::create();
-        _root.add< EntityTag >( "world" );
+        _root = _ecs.create();
+        *_ecs.add< Tag >(_root) = "world";
     }
 }

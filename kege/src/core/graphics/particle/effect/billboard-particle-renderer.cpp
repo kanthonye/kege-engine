@@ -40,7 +40,7 @@ namespace kege{
 //
 //        ModelMatrices model_matrices;
 //
-//        for ( kege::Entity entity : *_entities )
+//        for ( ecs::Entity entity : *_entities )
 //        {
 ////            ParticleBuffer* buffer = entity.get< ParticleBuffer >();
 ////            Transform* transform = entity.get< Transform >();
@@ -85,19 +85,19 @@ namespace kege{
         }
 
         //Communication::add< kege::RenderPassContext*, BillboardParticleRenderer>( this );
-        return EntitySystem::initialize();
+        return ecs::System::initialize();
     }
 
     void BillboardParticleRenderer::shutdown()
     {
         //Communication::remove< kege::RenderPassContext*, BillboardParticleRenderer >( this );
-        EntitySystem::shutdown();
+        ecs::System::shutdown();
     }
 
-    BillboardParticleRenderer::BillboardParticleRenderer( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "billboard-particle-rendering-system", 0, esm  )
+    BillboardParticleRenderer::BillboardParticleRenderer( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "billboard-particle-rendering-system", 0  )
     {
-        _signature = kege::createEntitySignature< kege::Transform, kege::ParticleBuffer, kege::BillboardSprite >();
+        //_signature = kege::createEntitySignature< kege::Transform, kege::ParticleBuffer, kege::BillboardSprite >();
     }
 
 

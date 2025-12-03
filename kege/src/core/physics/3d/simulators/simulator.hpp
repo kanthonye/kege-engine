@@ -13,6 +13,8 @@
 #include "../bodies/contact.hpp"
 #include "../bodies/contact.hpp"
 #include "../collision/rayhit/rayhit.hpp"
+#include "../../../math/algebra/vmath.hpp"
+#include "../../../scene/ecs-system-factory.hpp"
 
 namespace kege::physics{
 

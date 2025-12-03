@@ -8,25 +8,19 @@
 #ifndef mesh_rendering_system_hpp
 #define mesh_rendering_system_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "../../scene/ecs-system-factory.hpp"
 #include "../../input/input-commands.hpp"
 #include "../../graphics/mesh/mesh.hpp"
 #include "../render/core/graphics.hpp"
 
 namespace kege{
 
-    class MeshRenderingSystem : public kege::EntitySystem
+    class MeshRenderingSystem : public kege::ecs::System
     {
     public:
 
         void render( double dms );
-        bool initialize();
-        void shutdown();
-
-        MeshRenderingSystem( kege::EntitySystemManager* esm );
-
-
-        Ref< Material > _default_material;
+        MeshRenderingSystem( kege::ECS* esm );
     };
     
 }

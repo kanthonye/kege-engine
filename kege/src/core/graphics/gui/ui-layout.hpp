@@ -288,6 +288,8 @@ namespace kege::ui{
          * @return True if index is valid, falss otherwise.
          */
         bool validate( uint32_t index )const;
+        
+        HitRecord scanEvents(uint32_t root);
 
         /**
          * Begins the UI layout construction. Must be called before creating any UI elements.

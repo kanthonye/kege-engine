@@ -13,7 +13,7 @@
 #include <vector>
 #include "mesh.hpp"
 #include "vmath.hpp"
-#include "entity.hpp"
+#include "ecs.hpp"
 #include "camera.hpp"
 
 
@@ -148,11 +148,11 @@ namespace kege::gltf{
         return out;
     }
 
-    kege::ref::MeshSet parseMesh( tinygltf::Model& model, tinygltf::Mesh& mesh )
+    kege::array< ref::Mesh > parseMesh( tinygltf::Model& model, tinygltf::Mesh& mesh )
     {
         //int submesh_index = 0;
-        kege::ref::MeshSet mesh_set = new kege::MeshSet;
-        mesh_set->resize( mesh.primitives.size() );
+        kege::array< ref::Mesh > mesh_set;
+        mesh_set.resize( mesh.primitives.size() );
 
         for (int i=0; i<mesh.primitives.size(); ++i)
         {
@@ -206,7 +206,7 @@ namespace kege::gltf{
                     mesh_primitive->vertices[i].bitangent = cross( normalize( tangents[i].xyz ), normalize( tangents[i].xyz )) * tangents[i].w;
                 }
             }
-            mesh_set->at(i) = new kege::Mesh
+            mesh_set.at(i) = new kege::Mesh
             {
                 mesh_primitive, 1, 0, 0,
                 static_cast<uint32_t>(mesh_primitive->indices.size())
@@ -241,7 +241,7 @@ namespace kege::gltf{
         return cam;
     }
 
-    int load( const std::string& filename )
+    int load( kege::ECS* ecs, const std::string& filename )
     {
         tinygltf::Model model;
         tinygltf::TinyGLTF gltf_ctx;
@@ -288,19 +288,19 @@ namespace kege::gltf{
                 int node_id = model.scenes[i].nodes[j];
                 tinygltf::Node& node = model.nodes[ node_id ];
 
-                kege::Entity entity;
+                ecs::Entity entity = ecs->create();
 
 
                 if ( node.translation.empty() )
                 {
-                    Transform* transform = entity.add< Transform >();
+                    Transform* transform = ecs->add< Transform >( entity );
                     transform->position.x = node.translation[0];
                     transform->position.y = node.translation[1];
                     transform->position.z = node.translation[2];
                 }
                 if ( node.rotation.empty() )
                 {
-                    Transform* transform = entity.add< Transform >();
+                    Transform* transform = ecs->add< Transform >( entity );
                     transform->orientation.x = node.rotation[0];
                     transform->orientation.y = node.rotation[1];
                     transform->orientation.z = node.rotation[2];
@@ -308,7 +308,7 @@ namespace kege::gltf{
                 }
                 if ( node.scale.empty() )
                 {
-                    Transform* transform = entity.add< Transform >();
+                    Transform* transform = ecs->add< Transform >( entity );
                     transform->scale.x = node.scale[0];
                     transform->scale.y = node.scale[1];
                     transform->scale.z = node.scale[2];
@@ -317,13 +317,13 @@ namespace kege::gltf{
 
                 if ( 0 <= node.camera )
                 {
-                    entity.add< Camera >( parseCamera( model, model.cameras[ node.camera ] ) );
+                    *ecs->add< Camera >( entity ) = parseCamera( model, model.cameras[ node.camera ] );
                 }
 
                 if ( 0 <= node.mesh )
                 {
-                    kege::ref::MeshSet mesh = parseMesh( model, model.meshes[ node.mesh ] );
-                    entity.add< kege::ref::MeshSet >( mesh );
+                    kege::array< ref::Mesh > mesh = parseMesh( model, model.meshes[ node.mesh ] );
+                    *ecs->add< kege::array< ref::Mesh > >( entity ) = mesh;
                 }
 
                 if ( 0 <= node.skin )

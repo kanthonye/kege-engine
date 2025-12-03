@@ -52,26 +52,30 @@ namespace kege::physics{
 
     void CollisionDetector::simulate( double time_step )
     {
-        ComponentCacheT< Rigidbody >::Iterator body[2];
-        for ( body[0] = _simulator->rigidbodies().begin(); body[0].valid(); body[0]++ )
+        ecs::ViewT< Rigidbody >::iterator itr[2];
+        for ( itr[0] = _simulator->rigidbodies().begin(); itr[0].valid(); ++itr[0] )
         {
-            if ( !body[0]->collider )
+            auto [entity, body1] = *itr[0];
+            if ( !body1->collider )
                 continue;
 
-            for ( body[1] = body[0] + 1; body[1].valid(); body[1]++ )
+            itr[1] = ++itr[0];
+
+            for ( ; itr[1].valid(); ++itr[1] )
             {
-                if ( !body[1]->collider )
+                auto [entity, body2] = *itr[1];
+                if ( !body2->collider )
                     continue;
 
-                if ( body[0]->immovable && body[1]->immovable )
+                if ( body1->immovable && body2->immovable )
                     continue;
 
-                if ( !body[0]->is_awake && !body[1]->is_awake )
+                if ( !body1->is_awake && !body2->is_awake )
                     continue;
 
-                const RigidShape& shape1 = body[ 0 ]->collider->shape_type;
-                const RigidShape& shape2 = body[ 1 ]->collider->shape_type;
-                if( _collision_function_table[ shape1 ][ shape1 ]( *body[ 0 ], *body[ 1 ], _simulator->getCollisionRegistry() ) )
+                const RigidShape& shape1 = body1->collider->shape_type;
+                const RigidShape& shape2 = body2->collider->shape_type;
+                if( _collision_function_table[ shape1 ][ shape1 ]( body1, body2, _simulator->getCollisionRegistry() ) )
                 {}
             }
         }

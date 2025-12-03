@@ -25,7 +25,8 @@ namespace kege{
                 _asset_manager.ref(),
                 _render_graph.ref(),
                 _project_manager.ref(),
-                _input_context_manager.ref()
+                _input_context_manager.ref(),
+                _ecs.ref()
             );
             _running = _app_layer_stack->push( ui_app_layer );
             return _running;

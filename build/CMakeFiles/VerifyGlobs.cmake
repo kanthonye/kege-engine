@@ -20,17 +20,6 @@ endif()
 # ECS_SOURCES at CMakeLists.txt:37 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/*.cpp")
 set(OLD_GLOB
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/ecs-layer.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
@@ -347,7 +336,14 @@ endif()
 # SCENE_SOURCES at CMakeLists.txt:64 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/*.cpp")
 set(OLD_GLOB
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-kind.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-registry.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-layer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system-factory.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-view.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene-loader.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/scene.cpp"

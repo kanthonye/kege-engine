@@ -8,23 +8,23 @@
 #ifndef lookat_system_hpp
 #define lookat_system_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "../../math/algebra/vmath.hpp"
+#include "../../scene/ecs.hpp"
+#include "../../scene/ecs-system-factory.hpp"
 
 namespace kege{
 
-    class LookAtSystem : public kege::EntitySystem
+    class LookAtSystem : public kege::ecs::System
     {
     public:
 
-        LookAtSystem( kege::EntitySystemManager* esm );
+        LookAtSystem( kege::ECS* esm );
         void update( double dms )override;
-        bool initialize()override;
-        void shutdown()override;
     };
 
     struct LookAt
     {
-        Entity target; // The entity to follow
+        ecs::Entity target; // The entity to follow
         vec3 up = vec3(0, 1, 0); // Camera offset from the target
     };
 

@@ -8,20 +8,18 @@
 #ifndef kege_camera_controller_hpp
 #define kege_camera_controller_hpp
 
-#include "../../ecs/entity-system.hpp"
+#include "camera.hpp"
+#include "../../scene/ecs-system-factory.hpp"
 
 namespace kege{
 
-    class CameraControlSystem : public kege::EntitySystem
+    class CameraControlSystem : public kege::ecs::System
     {
     public:
 
-        CameraControlSystem( kege::EntitySystemManager* esm );
-
-        void input( double dms )override;
+        CameraControlSystem( kege::ECS* ecs );
         void update( double dms )override;
-        bool initialize()override;
-        void shutdown()override;
+        void input( double dms )override;
     };
 
 }

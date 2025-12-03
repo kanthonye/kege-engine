@@ -15,20 +15,20 @@
 
 namespace kege{
 
-    typedef std::map< int, void(*)( Entity& ) > EntityComponentFactory;
+    typedef std::map< int, void(*)( kege::ECS*, ecs::Entity& ) > EntityComponentFactory;
 
     class InspectorPanel : public kege::ui::Panel
     {
     public:
 
         int select( ui::Layout* layout, const std::vector< std::string >& options );
-        InspectorPanel( kege::ProjectManager* pm, ui::Layout* l );
+        InspectorPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
         void operator()( const SetSelectedEntity& msg );
         void update();
 
     public:
 
-        void add(const std::string& stype, int component_type, void(*funct)( Entity& ));
+        void add(const std::string& stype, int component_type, void(*funct)( kege::ECS*, ecs::Entity& ));
 
         std::map< std::string, int > _string_to_component_type;
         std::vector< std::string > _component_string_types;
@@ -38,11 +38,11 @@ namespace kege{
         ui::Elem _add_component;
         ui::Tree _tree;
         ui::Elem _main;
-
+        
         std::vector< ui::Elem > _selection_elements;
         ui::Elem _selection_container;
 
-        Entity _selected_entity;
+        ecs::Entity _selected_entity;
         bool _show_component_selections;
     };
 }

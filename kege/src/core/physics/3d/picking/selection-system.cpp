@@ -18,76 +18,76 @@ namespace kege{
     }
     void EntitySelectionSystem::update( double dms )
     {
-        if ( !getScene()->getCameraEntity() )
-        {
-            return;
-        }
-
-        if ( !_make_selection )
-        {
-            return;
-        }
-
-        _make_selection = false;
-        kege::vec3 ray = getScene()->getSceneRay();
-        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
-
-        std::vector< std::pair< kege::Entity, double > > selections;
-
-        // test ray against entities. store the entities hit by the ray, also store the distance from origin
-
-        for ( kege::Entity entity : *_entities )
-        {
-            kege::Rigidbody* body = entity.get< kege::Rigidbody >();
-            if( body->collider )
-            {
-                if( body->collider->shape_type != RIGID_SHAPE_PLANE )
-                {
-                    kege::algo::RayHit result;
-                    if( kege::algo::rayhit({origin, ray}, body->collider.ref(), &result ) )
-                    {
-                        selections.push_back({ entity, kege::magn( body->center - origin ) });
-                    }
-                }
-            }
-        }
-
-        if ( !selections.empty() )
-        {
-            // sort entity fromt closest to farest from origin.
-            std::sort
-            (
-                selections.begin(),
-                selections.end(),
-                []( const std::pair< kege::Entity, double >& a, const std::pair< kege::Entity, double >& b )
-                {
-                    return a.second < b.second;
-                }
-            );
-
-            // select the closest entity.
-            Communication::broadcast< const MsgEntitySelection& >({ selections[0].first });
-            //std::cout <<"entity: "<< selections[0].first <<"\n";
-        }
+//        if ( !getScene()->getCameraEntity() )
+//        {
+//            return;
+//        }
+//
+//        if ( !_make_selection )
+//        {
+//            return;
+//        }
+//
+//        _make_selection = false;
+//        kege::vec3 ray = getScene()->getSceneRay();
+//        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
+//
+//        std::vector< std::pair< ecs::Entity, double > > selections;
+//
+//        // test ray against entities. store the entities hit by the ray, also store the distance from origin
+//
+//        for ( ecs::Entity entity : *_entities )
+//        {
+//            kege::Rigidbody* body = entity.get< kege::Rigidbody >();
+//            if( body->collider )
+//            {
+//                if( body->collider->shape_type != RIGID_SHAPE_PLANE )
+//                {
+//                    kege::algo::RayHit result;
+//                    if( kege::algo::rayhit({origin, ray}, body->collider.ref(), &result ) )
+//                    {
+//                        selections.push_back({ entity, kege::magn( body->center - origin ) });
+//                    }
+//                }
+//            }
+//        }
+//
+//        if ( !selections.empty() )
+//        {
+//            // sort entity fromt closest to farest from origin.
+//            std::sort
+//            (
+//                selections.begin(),
+//                selections.end(),
+//                []( const std::pair< ecs::Entity, double >& a, const std::pair< ecs::Entity, double >& b )
+//                {
+//                    return a.second < b.second;
+//                }
+//            );
+//
+//            // select the closest entity.
+//            Communication::broadcast< const MsgEntitySelection& >({ selections[0].first });
+//            //std::cout <<"entity: "<< selections[0].first <<"\n";
+//        }
     }
     
     bool EntitySelectionSystem::initialize()
     {
         Communication::add< const MappedInputs&, EntitySelectionSystem >( this );
-        return kege::EntitySystem::initialize();
+        return kege::ecs::System::initialize();
     }
 
     void EntitySelectionSystem::shutdown()
     {
         Communication::remove< const MappedInputs&, EntitySelectionSystem >( this );
-        kege::EntitySystem::shutdown();
+        kege::ecs::System::shutdown();
     }
 
-    EntitySelectionSystem::EntitySelectionSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "entity-selection-system", REQUIRE_UPDATE | REQUIRE_INPUT, esm  )
+    EntitySelectionSystem::EntitySelectionSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "entity-selection-system", REQUIRE_UPDATE | REQUIRE_INPUT  )
     ,   _make_selection( false )
     {
-        _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
+//        _signature = kege::createEntitySignature< kege::Rigidbody, kege::Transform >();
     }
 
     KEGE_REGISTER_ENTITY_SYSTEM( EntitySelectionSystem, "entity-selecter" );

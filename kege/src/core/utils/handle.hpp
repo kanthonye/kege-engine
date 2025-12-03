@@ -43,6 +43,35 @@ namespace kege
         uint64_t value;
     };
 
+    inline constexpr bool operator ==(const kege::Handle& a, const kege::Handle& b)
+    {
+        return a.value == b.value;
+    }
+    
+    inline constexpr bool operator !=(const kege::Handle& a, const kege::Handle& b)
+    {
+        return a.value != b.value;
+    }
+
+    inline constexpr bool operator <(const kege::Handle& a, uint64_t v)
+    {
+        return a.value < v;
+    }
+
+    inline constexpr bool operator >(const kege::Handle& a, uint64_t v)
+    {
+        return a.value > v;
+    }
+
+    inline constexpr bool operator <(uint64_t v, const kege::Handle& a)
+    {
+        return v < a.value;
+    }
+
+    inline constexpr bool operator >(uint64_t v, const kege::Handle& a)
+    {
+        return v > a.value;
+    }
 
     enum ObjtType
     {

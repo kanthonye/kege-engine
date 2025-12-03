@@ -28,7 +28,7 @@ namespace kege{
         void shutdown();
         void update();
 
-        EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm );
+        EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm, kege::ECS* ecs );
 
     public:
 
@@ -43,6 +43,7 @@ namespace kege{
         kege::ProjectManager* _project_manager;
         kege::AssetManager* _asset_manager;
         kege::RenderGraph* _render_graph;
+        kege::ECS* _ecs;
 
         Ref< ui::DockNode > _root;
 

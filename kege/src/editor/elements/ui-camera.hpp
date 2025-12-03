@@ -15,6 +15,6 @@ namespace kege::ui
 {
     bool orthographic( ui::Layout& layout, TreeNode& tree, Orthographic* orthographic );
     bool perspective( ui::Layout& layout, TreeNode& tree, Perspective* perspective );
-    bool camera( ui::Layout& layout, ui::Tree& tree, kege::Entity& entity );
+    bool camera( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity );
 }
 #endif /* ui_camera_hpp */

@@ -234,7 +234,7 @@ namespace kege::ui{
     // Node contains the widget specific data that specific to a widget
     struct Node
     {
-        Widget* content    = nullptr;
+        Widget* widgit      = nullptr;
         uint32_t depth      = 0;
         uint32_t id         = 0;
 
@@ -271,6 +271,15 @@ namespace kege::ui{
     ui::Background bgImage(int img_index, const ui::Rect& texel);
     ui::Background bgColor(const ui::Color& color);
     ui::Background bgColor(uint32_t color);
+
+
+    struct HitRecord {
+        uint32_t hotId   = 0;
+        uint32_t activeId= 0;
+        uint32_t focusId = 0;
+        uint8_t  clicks  = 0;
+        bool     release = false;
+    };
 }
 
 #endif /* ui_primitives_hpp */

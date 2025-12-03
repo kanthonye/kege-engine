@@ -8,12 +8,14 @@
 #ifndef selection_system_hpp
 #define selection_system_hpp
 
-#include "../../../ecs/entity-system.hpp"
+#include "../../../math/algebra/vmath.hpp"
+#include "../../../scene/ecs.hpp"
+#include "../../../input/input-context-manager.hpp"
 #include "../collision/rayhit/rayhit.hpp"
 
 namespace kege{
 
-    class EntitySelectionSystem : public kege::EntitySystem
+    class EntitySelectionSystem : public kege::ecs::System
     {
     public:
 
@@ -22,13 +24,13 @@ namespace kege{
         bool initialize()override;
         void shutdown()override;
         
-        EntitySelectionSystem( kege::EntitySystemManager* esm );
+        EntitySelectionSystem( kege::ECS* ecs );
         bool _make_selection;
     };
 
     struct MsgEntitySelection
     {
-        kege::Entity entity;
+        ecs::Entity entity;
     };
 
     struct MsgEntitySelectionDistance

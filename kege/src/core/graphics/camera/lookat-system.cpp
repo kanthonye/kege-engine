@@ -11,41 +11,20 @@ namespace kege{
 
     void LookAtSystem::update( double dms )
     {
-        if( _entities == nullptr ) return;
-        
-        vec3 direction;
-        LookAt* look;
-        Transform* target;
-        Transform* transform;
-
-        for( Entity entity : *_entities )
+        for( auto [entity, lookat, transform] : view< LookAt, Transform >() )
         {
-            transform = entity.get< Transform >();
-            look = entity.get< LookAt >();
-
-            if ( look->target )
+            if ( lookat->target )
             {
-                target = look->target.get< Transform >();
-                direction = target->position - transform->position;
-                transform->orientation = quatLookAt( direction, look->up );
+                Transform* target = _ecs->get< Transform >( lookat->target );
+                vec3 direction = target->position - transform->position;
+                transform->orientation = quatLookAt( direction, lookat->up );
             }
         }
     }
 
-    bool LookAtSystem::initialize()
+    LookAtSystem::LookAtSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "lookat-system", REQUIRE_UPDATE  )
     {
-        return EntitySystem::initialize();
-    }
-
-    void LookAtSystem::shutdown()
-    {
-        return EntitySystem::shutdown();
-    }
-
-    LookAtSystem::LookAtSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "lookat-system", REQUIRE_UPDATE, esm  )
-    {
-        _signature = createEntitySignature< LookAt, Transform >();
     }
 
     KEGE_REGISTER_ENTITY_SYSTEM( LookAtSystem, "lookat" );

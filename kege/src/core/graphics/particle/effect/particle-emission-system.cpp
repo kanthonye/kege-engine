@@ -10,13 +10,9 @@ namespace kege{
 
     void ParticleEmissionSystem::update( double dms )
     {
-        for ( kege::Entity entity : *_entities )
+        for ( auto [entity, emitter, buffer, transform] : view<ParticleEmitter, ParticleBuffer, Transform>() )
         {
-            ParticleBuffer* buffer = entity.get< ParticleBuffer >();
-            ParticleEmitter* emitter = entity.get< ParticleEmitter >();
-
             uint32_t count = emitter->emitter->update( dms );
-
             for (int i=0; i < count && buffer->particles.size() <= buffer->particle_count; ++i)
             {
                 Particle& particle = buffer->particles[ buffer->particle_count++ ];
@@ -33,18 +29,18 @@ namespace kege{
 
     bool ParticleEmissionSystem::initialize()
     {
-        return EntitySystem::initialize();
+        return ecs::System::initialize();
     }
     
     void ParticleEmissionSystem::shutdown()
     {
-        return EntitySystem::shutdown();
+        return ecs::System::shutdown();
     }
 
-    ParticleEmissionSystem::ParticleEmissionSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "particle-emitter-updater", REQUIRE_UPDATE, esm  )
+    ParticleEmissionSystem::ParticleEmissionSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "particle-emitter-updater", REQUIRE_UPDATE )
     {
-        _signature = createEntitySignature< ParticleEffect, ParticleBuffer, Transform >();
+        //_signature = createEntitySignature< ParticleEffect, ParticleBuffer, Transform >();
     }
 
     KEGE_REGISTER_ENTITY_SYSTEM( ParticleEmissionSystem, "particle-emitter-updater" );

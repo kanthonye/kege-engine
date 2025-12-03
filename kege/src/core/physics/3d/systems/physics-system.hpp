@@ -8,21 +8,22 @@
 #ifndef physics_system_hpp
 #define physics_system_hpp
 
-#include "../../../../core/ecs/entity-system.hpp"
+#include "../../../math/algebra/vmath.hpp"
+#include "../../../scene/ecs-system-factory.hpp"
 #include "../simulation/physics-simulation.hpp"
 
 namespace kege{
 
-    class PhysicsSystem : public kege::EntitySystem
+    class PhysicsSystem : public kege::ecs::System
     {
     public:
 
         physics::Simulation& getPhysicsSimulation();
         void update( double dms );
-        bool initialize();
-        void shutdown();
+        //bool initialize();
+        //void shutdown();
 
-        PhysicsSystem( kege::EntitySystemManager* esm );
+        PhysicsSystem( kege::ECS* ecs );
 
     private:
 

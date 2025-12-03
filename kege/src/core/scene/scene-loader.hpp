@@ -38,6 +38,7 @@
 #include "../physics/3d/bodies/rigid-shapes.hpp"
 
 
+#include "../scene/ecs.hpp"
 #include "scene.hpp"
 
 // #include "rigid-shapes.hpp"
@@ -88,7 +89,7 @@ namespace kege{
         typedef std::function< Ref< Mesh >( AssetManager* assets, Json json ) > MeshParserFunct;
         typedef std::map< std::string, MeshParserFunct > MeshParserFunctMap;
 
-        typedef std::function< void( Params* params, Entity* entity, Json json ) > ResourceParserFunct;
+        typedef std::function< void( Params* params, ecs::Entity& entity, Json json ) > ResourceParserFunct;
         typedef std::map< std::string, ResourceParserFunct > ResourceParserFunctMap;
 
         typedef std::function< Ref< Behavior >( Json json ) > ParticleBehaviorFunct;
@@ -101,73 +102,73 @@ namespace kege{
         typedef std::map< std::string, ColliderFunct > ColliderFunctMap;
 
 
-        typedef std::function< void( Entity&, Json ) > EntityComponentParser;
+        typedef std::function< void( kege::ECS& ecs, ecs::Entity&, Json ) > EntityComponentParser;
         typedef std::map< std::string, EntityComponentParser > EntityComponentParsers;
 
 
-        static Entity parseEntity( kege::Json& entities, kege::Json& components, int entity_index );
-        static kege::Ref< kege::Scene > load( const std::string& filename );
+        static ecs::Entity parseEntity( kege::ECS& ecs, kege::Json& entities, kege::Json& components, int entity_index );
+        static kege::Ref< kege::Scene > load( kege::ECS& ecs, const std::string& filename );
         SceneLoader();
 
     private:
 
-        static void getAssetManager( Params* params, Entity* entity, Json json );
-        static void meta( Params* params, Entity* entity, Json json );
+        static void getAssetManager( Params* params, ecs::Entity& entity, Json json );
+        static void meta( Params* params, ecs::Entity& entity, Json json );
 
-        static void cameraController( Params* params, Entity* entity, Json json );
-        static void movementController( Params* params, Entity* entity, Json json );
-        static void terrain( Params* params, Entity* entity, Json json );
-        static void planet( Params* params, Entity* entity, Json json );
-        static void particleEffect( Params* params, Entity* entity, Json json );
-        static void atmosphere( Params* params, Entity* entity, Json json );
-        static void rigidbody( Params* params, Entity* entity, Json json );
-        static void transform( Params* params, Entity* entity, Json json );
-        static void orthographic( Params* params, Entity* entity, Json json );
-        static void perspective( Params* params, Entity* entity, Json json );
-        static void camera( Params* params, Entity* entity, Json json );
-        static void directional( Params* params, Entity* entity, Json json );
-        static void point( Params* params, Entity* entity, Json json );
-        static void spot( Params* params, Entity* entity, Json json );
-        static void skeleton( Params* params, Entity* entity, Json json );
-        static void pbr( Params* params, Entity* entity, Json json );
+        static void cameraController( Params* params, ecs::Entity& entity, Json json );
+        static void movementController( Params* params, ecs::Entity& entity, Json json );
+        static void terrain( Params* params, ecs::Entity& entity, Json json );
+        static void planet( Params* params, ecs::Entity& entity, Json json );
+        static void particleEffect( Params* params, ecs::Entity& entity, Json json );
+        static void atmosphere( Params* params, ecs::Entity& entity, Json json );
+        static void rigidbody( Params* params, ecs::Entity& entity, Json json );
+        static void transform( Params* params, ecs::Entity& entity, Json json );
+        static void orthographic( Params* params, ecs::Entity& entity, Json json );
+        static void perspective( Params* params, ecs::Entity& entity, Json json );
+        static void camera( Params* params, ecs::Entity& entity, Json json );
+        static void directional( Params* params, ecs::Entity& entity, Json json );
+        static void point( Params* params, ecs::Entity& entity, Json json );
+        static void spot( Params* params, ecs::Entity& entity, Json json );
+        static void skeleton( Params* params, ecs::Entity& entity, Json json );
+        static void pbr( Params* params, ecs::Entity& entity, Json json );
 
-        static void mesh( Params* params, Entity* entity, Json json );
-        static void meshPath( Params* params, Entity* entity, Json json );
-        static void meshBox( Params* params, Entity* entity, Json json );
-        static void meshCone( Params* params, Entity* entity, Json json );
-        static void meshRect( Params* params, Entity* entity, Json json );
-        static void meshGrid( Params* params, Entity* entity, Json json );
-        static void meshSphere( Params* params, Entity* entity, Json json );
-        static void meshCircle( Params* params, Entity* entity, Json json );
-        static void meshCylinder( Params* params, Entity* entity, Json json );
-        static void meshIcosahedron( Params* params, Entity* entity, Json json );
+        static void mesh( Params* params, ecs::Entity& entity, Json json );
+        static void meshPath( Params* params, ecs::Entity& entity, Json json );
+        static void meshBox( Params* params, ecs::Entity& entity, Json json );
+        static void meshCone( Params* params, ecs::Entity& entity, Json json );
+        static void meshRect( Params* params, ecs::Entity& entity, Json json );
+        static void meshGrid( Params* params, ecs::Entity& entity, Json json );
+        static void meshSphere( Params* params, ecs::Entity& entity, Json json );
+        static void meshCircle( Params* params, ecs::Entity& entity, Json json );
+        static void meshCylinder( Params* params, ecs::Entity& entity, Json json );
+        static void meshIcosahedron( Params* params, ecs::Entity& entity, Json json );
 
-        static void components( Params* params, Entity* entity, Json json );
-        static void entities( Params* params, Entity* entity, Json json );
+        static void components( Params* params, ecs::Entity& entity, Json json );
+        static void entities( Params* params, ecs::Entity& entity, Json json );
 
-        static void component( Params* params, Entity* entity, Json json );
-        static void entity( Params* params, Entity* entity, Json json );
+        static void component( Params* params, ecs::Entity& entity, Json json );
+        static void entity( Params* params, ecs::Entity& entity, Json json );
 
-        static void sourceEffect( Params* params, Entity* entity, Json json );
-        static void sourceAtmosphere( Params* params, Entity* entity, Json json );
-        static void sourceTerrain( Params* params, Entity* entity, Json json );
-        static void sourcePlanet( Params* params, Entity* entity, Json json );
-        static void sourceLight( Params* params, Entity* entity, Json json );
-        static void sourceCamera( Params* params, Entity* entity, Json json );
-        static void sourceCollider( Params* params, Entity* entity, Json json );
-        static void sourceMaterial( Params* params, Entity* entity, Json json );
-        static void sourceSkeleton( Params* params, Entity* entity, Json json );
-        static void sourceMesh( Params* params, Entity* entity, Json json );
-        static void sourceTexture( Params* params, Entity* entity, Json json );
+        static void sourceEffect( Params* params, ecs::Entity& entity, Json json );
+        static void sourceAtmosphere( Params* params, ecs::Entity& entity, Json json );
+        static void sourceTerrain( Params* params, ecs::Entity& entity, Json json );
+        static void sourcePlanet( Params* params, ecs::Entity& entity, Json json );
+        static void sourceLight( Params* params, ecs::Entity& entity, Json json );
+        static void sourceCamera( Params* params, ecs::Entity& entity, Json json );
+        static void sourceCollider( Params* params, ecs::Entity& entity, Json json );
+        static void sourceMaterial( Params* params, ecs::Entity& entity, Json json );
+        static void sourceSkeleton( Params* params, ecs::Entity& entity, Json json );
+        static void sourceMesh( Params* params, ecs::Entity& entity, Json json );
+        static void sourceTexture( Params* params, ecs::Entity& entity, Json json );
 
-        static void colliderCircle( Params* params, Entity* entity, Json json );
-        static void colliderMesh( Params* params, Entity* entity, Json json );
-        static void colliderCone( Params* params, Entity* entity, Json json );
-        static void colliderCylinder( Params* params, Entity* entity, Json json );
-        static void colliderPlane( Params* params, Entity* entity, Json json );
-        static void colliderSphere( Params* params, Entity* entity, Json json );
-        static void colliderBox( Params* params, Entity* entity, Json json );
-        static void collider( Params* params, Entity* entity, Json json );
+        static void colliderCircle( Params* params, ecs::Entity& entity, Json json );
+        static void colliderMesh( Params* params, ecs::Entity& entity, Json json );
+        static void colliderCone( Params* params, ecs::Entity& entity, Json json );
+        static void colliderCylinder( Params* params, ecs::Entity& entity, Json json );
+        static void colliderPlane( Params* params, ecs::Entity& entity, Json json );
+        static void colliderSphere( Params* params, ecs::Entity& entity, Json json );
+        static void colliderBox( Params* params, ecs::Entity& entity, Json json );
+        static void collider( Params* params, ecs::Entity& entity, Json json );
 
         static Ref< Behavior > airResistance( Json json );
         static Ref< Behavior > colorOverLifetime( Json json );

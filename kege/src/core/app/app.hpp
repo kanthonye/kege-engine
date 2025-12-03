@@ -46,7 +46,7 @@ namespace kege{
         ref::RenderGraph _render_graph;
         ref::Graphics _graphics;
         ref::AppWindow _window;
-        //ref::RenderLayer _render_layer;
+        ref::ECS _ecs;
         //ref::InputLayer _input_layer;
 
         kege::VirtualDirectory _virdir;

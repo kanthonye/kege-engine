@@ -47,7 +47,7 @@ namespace kege{
         return System::initialize();
     }
 
-    LandscapeSystem::LandscapeSystem( kege::EntitySystemManager* esm )
+    LandscapeSystem::LandscapeSystem( kege::ECS* ecs )
     :   kege::System( "landscape", engine )
     {
     }

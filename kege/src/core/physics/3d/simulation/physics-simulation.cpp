@@ -29,7 +29,7 @@ namespace kege::physics{
         simulator->_simulator = this;
     }
 
-    ComponentCacheT< Rigidbody >& Simulation::rigidbodies()
+    ecs::ViewT< Rigidbody >& Simulation::rigidbodies()
     {
         return *_rigidbodies;
     }
@@ -60,8 +60,9 @@ namespace kege::physics{
         }
     }
 
-    void Simulation::simulate( double dms )
+    void Simulation::simulate( double dms, ecs::ViewT< Rigidbody >& rigidbodies )
     {
+        _rigidbodies = &rigidbodies;
         update( PRE_UPDATE, dms );
         const double time_step = dms / double( _iterations );
         for (int i=0; i < _iterations; ++i )
@@ -71,14 +72,14 @@ namespace kege::physics{
         update( POST_UPDATE, dms );
     }
 
-    bool Simulation::initialize( ComponentCacheT< Rigidbody >* rigidbodies )
+    bool Simulation::initialize()
     {
-        if ( _rigidbodies != nullptr )
-        {
-            return false;
-        }
-        
-        _rigidbodies = rigidbodies;
+//        if ( _rigidbodies != nullptr )
+//        {
+//            return false;
+//        }
+//        
+        //_rigidbodies = rigidbodies;
         _collisions.resize( 500 );
 
         addSimulator( PRE_UPDATE,  new ForceApplier() );
@@ -100,7 +101,7 @@ namespace kege::physics{
         {
             _simulators[ i ].clear();
         }
-        _rigidbodies = nullptr;
+        //_rigidbodies = nullptr;
         //_collisions.clear();
     }
 

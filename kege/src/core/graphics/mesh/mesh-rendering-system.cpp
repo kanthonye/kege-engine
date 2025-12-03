@@ -5,6 +5,7 @@
 //  Created by Kenneth Esdaile on 3/18/25.
 //
 
+#include "../render/graph/render-executor.hpp"
 #include "mesh-rendering-system.hpp"
 
 namespace kege{
@@ -12,10 +13,10 @@ namespace kege{
     void MeshRenderingSystem::render( double dms )
     {
         RenderObject object = {};
-        for (kege::Entity entity : *_entities )
+        for (auto [entity, geometry, transform] : view< kege::Geometry, kege::Transform >() )
         {
-            kege::Geometry* geometry = entity.get< kege::Geometry >();
-            kege::Transform* transform = entity.get< kege::Transform >();
+            //kege::Geometry* geometry = entity.get< kege::Geometry >();
+            //kege::Transform* transform = entity.get< kege::Transform >();
 
             //for ( Ref< Mesh >& source : geometry->mesh->sources )
             {
@@ -57,38 +58,38 @@ namespace kege{
                     object.constant.stages = ShaderStageFlag::Vertex;
                 }
 
-                if ( mesh->primative )
-                {
-                    if ( !mesh->primative->vertex_buffer )
-                    {
-                        mesh->primative->upload( getGraphics() );
-                    }
-                }
-
-                ref::Material material;
-                if ( geometry->material_set )
-                {
-                    if ( 0 <= mesh->material_index )
-                    {
-                        material = geometry->material_set->materials[ mesh->material_index ];
-                    }
-                    else
-                    {
-                        material = geometry->material_set->materials[ 0 ];
-                    }
-                }
-                else
-                {
-                    material = _default_material;
-                }
-
-                getRenderExecutor()->submit( material->getPass(), mesh, material.ref(), object.constant );
+//                if ( mesh->primative )
+//                {
+//                    if ( !mesh->primative->vertex_buffer )
+//                    {
+//                        mesh->primative->upload( getGraphics() );
+//                    }
+//                }
+//
+//                ref::Material material;
+//                if ( geometry->material_set )
+//                {
+//                    if ( 0 <= mesh->material_index )
+//                    {
+//                        material = geometry->material_set->materials[ mesh->material_index ];
+//                    }
+//                    else
+//                    {
+//                        material = geometry->material_set->materials[ 0 ];
+//                    }
+//                }
+//                else
+//                {
+//                    material = _default_material;
+//                }
+//
+//                getRenderExecutor()->submit( material->getPass(), mesh, material.ref(), object.constant );
             }
         }
     }
 
-    bool MeshRenderingSystem::initialize()
-    {
+//    bool MeshRenderingSystem::initialize()
+//    {
 //        Ref< Material >* material = getAssetManager()->fetch< Ref< Material > >( "default-material" );
 //        if ( !material )
 //        {
@@ -103,18 +104,18 @@ namespace kege{
 //        {
 //            _default_material = *material;
 //        }
-        return EntitySystem::initialize();
-    }
+//        return EntitySystem::initialize();
+//    }
+//
+//    void MeshRenderingSystem::shutdown()
+//    {
+//        EntitySystem::shutdown();
+//    }
 
-    void MeshRenderingSystem::shutdown()
+    MeshRenderingSystem::MeshRenderingSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "mesh-rendering-system", REQUIRE_RENDER  )
     {
-        EntitySystem::shutdown();
-    }
-
-    MeshRenderingSystem::MeshRenderingSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "mesh-rendering-system", REQUIRE_RENDER, esm  )
-    {
-        _signature = createEntitySignature< kege::Geometry, kege::Transform >();
+//        _signature = createEntitySignature< kege::Geometry, kege::Transform >();
     }
 
 

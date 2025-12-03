@@ -8,7 +8,7 @@
 #ifndef kege_system_terrain_hpp
 #define kege_system_terrain_hpp
 
-#include "../../../ecs/entity-system.hpp"
+#include "../../../scene/ecs.hpp"
 #include "terrain.hpp"
 
 namespace kege{
@@ -44,7 +44,7 @@ namespace kege{
 //        TerrainPushConstBlockData data;
 //    };
 
-    class TerrainSystem : public kege::EntitySystem
+    class TerrainSystem : public kege::ecs::System
     {
     public:
 
@@ -53,7 +53,7 @@ namespace kege{
         void update( double dms );
         bool initialize();
 
-        TerrainSystem( kege::EntitySystemManager* esm );
+        TerrainSystem( kege::ECS* ecs );
         ~TerrainSystem();
     };
 

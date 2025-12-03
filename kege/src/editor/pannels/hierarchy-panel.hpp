@@ -38,7 +38,7 @@ namespace kege{
 
     struct SetSelectedEntity
     {
-        Entity entity;
+        ecs::Entity entity;
     };
 
     class HierarchyPanel : public kege::ui::Panel
@@ -46,22 +46,22 @@ namespace kege{
     public:
 
         void update();
-        Entity getSelectedEntity();
-        HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l );
+        ecs::Entity getSelectedEntity();
+        HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
 
     public:
 
-        ui::HierarchyDroplist* makeEntityUI( Entity& entity, int space );
-        void buildHierarchy( Entity& root, int spacer = 0 );
+        ui::HierarchyDroplist* makeEntityUI( ecs::Entity& entity, int space );
+        void buildHierarchy( ecs::Entity& root, int spacer = 0 );
         bool clicked( ui::HierarchyDroplist* list );
 
     public:
 
-        std::map< uint32_t, ui::HierarchyDroplist > _hierarchy;
+        std::map< uint64_t, ui::HierarchyDroplist > _hierarchy;
 
         ref::Scene _scene;
 
-        kege::Entity _selected_entity;
+        ecs::Entity _selected_entity;
         ui::Elem _create_entity;
         ui::Elem _panel;
         bool _butn_down;

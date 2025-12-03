@@ -9,6 +9,7 @@
 #define motion_dampener_hpp
 
 #include "simulator.hpp"
+#include "../simulation/physics-simulation.hpp"
 
 namespace kege::physics{
 

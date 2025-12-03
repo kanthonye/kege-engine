@@ -13,6 +13,6 @@
 
 namespace kege::ui
 {
-    bool rigidbody( ui::Layout& layout, ui::Tree& tree, kege::Entity& entity );
+    bool rigidbody( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity );
 }
 #endif /* ui_rigidbody_hpp */

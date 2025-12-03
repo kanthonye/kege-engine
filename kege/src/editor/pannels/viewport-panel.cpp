@@ -9,8 +9,8 @@
 
 namespace kege{
 
-    ViewportPanel::ViewportPanel( kege::ProjectManager* pm, ui::Layout* l )
-    :   kege::ui::Panel( "Viewport", pm, l )
+    ViewportPanel::ViewportPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs )
+    :   kege::ui::Panel( "Viewport", pm, l, ecs )
     {
         _main = _layout->make
         ({

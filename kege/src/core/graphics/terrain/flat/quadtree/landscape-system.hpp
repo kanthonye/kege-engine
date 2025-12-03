@@ -17,7 +17,7 @@ namespace kege{
     {
     public:
 
-        LandscapeSystem( kege::EntitySystemManager* esm );
+        LandscapeSystem( kege::ECS* ecs );
         //void render( core::HierarchicalRenderList& render_objects );
         void execute( kege::CommandBuffer& command_buffer );
         void update( double dms );

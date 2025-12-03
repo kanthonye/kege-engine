@@ -70,30 +70,30 @@ namespace kege{
     
     void EntityDraggingSystem::operator()( const MsgEntitySelection& msg )
     {
-        _selected_entity = msg.entity;
-
-        kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
-        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
-
-        _distance = kege::magn( body->center - origin );
-        Communication::broadcast< const MsgEntitySelectionDistance& >({ _distance });
+//        _selected_entity = msg.entity;
+//
+//        kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
+//        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
+//
+//        _distance = kege::magn( body->center - origin );
+//        Communication::broadcast< const MsgEntitySelectionDistance& >({ _distance });
     }
     
     void EntityDraggingSystem::update( double dms )
     {
-        if ( !_drag_entity || !_selected_entity ) return;
-
-        _drag_entity = false;
-        kege::vec3 ray = getScene()->getSceneRay();
-        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
-        kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
-
-        if ( body == nullptr ) return;
-        if ( body->immovable ) return;
-
-        body->prev = body->center;
-        body->center = origin + ray * _distance;
-        body->linear.velocity = {0.f,0.f,0.f};
+//        if ( !_drag_entity || !_selected_entity ) return;
+//
+//        _drag_entity = false;
+//        kege::vec3 ray = getScene()->getSceneRay();
+//        kege::vec3 origin = getScene()->getCameraEntity().get< kege::Transform >()->position;
+//        kege::Rigidbody* body = _selected_entity.get< kege::Rigidbody >();
+//
+//        if ( body == nullptr ) return;
+//        if ( body->immovable ) return;
+//
+//        body->prev = body->center;
+//        body->center = origin + ray * _distance;
+//        body->linear.velocity = {0.f,0.f,0.f};
 //        if ( body->collider )
 //        {
 //            body->collider->integrate( body );
@@ -104,18 +104,18 @@ namespace kege{
     {
         Communication::add< const MappedInputs&, EntityDraggingSystem>( this );
         Communication::add< const MsgEntitySelection&, EntityDraggingSystem>( this );
-        return kege::EntitySystem::initialize();
+        return kege::ecs::System::initialize();
     }
 
     void EntityDraggingSystem::shutdown()
     {
         Communication::remove< const MsgEntitySelection&, EntityDraggingSystem>( this );
         Communication::remove< const MappedInputs&, EntityDraggingSystem>( this );
-        kege::EntitySystem::shutdown();
+        kege::ecs::System::shutdown();
     }
 
-    EntityDraggingSystem::EntityDraggingSystem( kege::EntitySystemManager* esm )
-    :   kege::EntitySystem( "entity-dragging-system", REQUIRE_UPDATE | REQUIRE_INPUT, esm  )
+    EntityDraggingSystem::EntityDraggingSystem( kege::ECS* ecs )
+    :   kege::ecs::System( ecs, "entity-dragging-system", REQUIRE_UPDATE | REQUIRE_INPUT )
     ,   _drag_entity( false )
     ,   _selected_entity({})
     {}

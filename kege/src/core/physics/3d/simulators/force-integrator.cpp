@@ -12,8 +12,7 @@ namespace kege::physics{
 
     void ForceIntegrator::simulate( double time_step )
     {
-        ComponentCacheT< Rigidbody >& cache = _simulator->rigidbodies();
-        for (ComponentCacheT< Rigidbody >::Iterator body = cache.begin(); body.valid(); body++ )
+        for (auto [entity, body] : _simulator->rigidbodies() )
         {
             if ( body->sleepable )
             {
@@ -80,7 +79,7 @@ namespace kege::physics{
 
             if ( body->collider )
             {
-                body->collider->integrate( *body );
+                body->collider->integrate( body );
             }
         }
     }

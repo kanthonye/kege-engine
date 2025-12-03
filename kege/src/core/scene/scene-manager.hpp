@@ -8,6 +8,7 @@
 #ifndef kege_scene_manager_hpp
 #define kege_scene_manager_hpp
 
+#include "ecs.hpp"
 #include "scene.hpp"
 #include "communication.hpp"
 
@@ -31,16 +32,17 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        ~SceneManager() = default;
-        SceneManager() = default;
+        SceneManager( ref::ECS& ecs );
 
+        ~SceneManager();
+        
     private:
 
         std::unordered_map< std::string, size_t > _scene_fast_index_lookup;
         std::vector< ref::Scene > _scenes;
 
         ref::Scene _curr_scene;
-
+        ref::ECS _ecs;
         kege::Communication _communication;
     };
 

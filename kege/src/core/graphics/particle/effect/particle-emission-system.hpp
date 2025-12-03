@@ -9,15 +9,15 @@
 #define particle_emission_system_hpp
 
 #include "particle-effect.hpp"
-#include "../../../ecs/entity-system.hpp"
+#include "../../../scene/ecs.hpp"
 
 namespace kege{
 
-    class ParticleEmissionSystem : public kege::EntitySystem
+    class ParticleEmissionSystem : public kege::ecs::System
     {
     public:
 
-        ParticleEmissionSystem( kege::EntitySystemManager* esm );
+        ParticleEmissionSystem( kege::ECS* ecs );
         void update( double dms );
         bool initialize();
         void shutdown();
