@@ -24,11 +24,11 @@ namespace kege{
         void endContent( ui::Layout& layout );
         void end( ui::Layout& layout );
 
-        ui::Elem container;
-        ui::Elem content;
-        ui::Elem field;
-        ui::Elem label;
-        ui::Elem icon;
+        UID container;
+        UID content;
+        UID field;
+        UID label;
+        UID icon;
 
         DropState state;
     };

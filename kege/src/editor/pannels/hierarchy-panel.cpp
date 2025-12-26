@@ -10,7 +10,7 @@ namespace kege{
 
     void HierarchyPanel::update()
     {
-        _layout->push( _panel );
+        _gui->push({.style = &_styles[PANEL]});
         if ( !_project_manager->empty() )
         {
             ref::Scene scene = _project_manager->getSceneManager()->getScene();
@@ -22,148 +22,71 @@ namespace kege{
                     _hierarchy.clear();
                 }
 
-                _layout->put( _create_entity );
+                if ( _gui->button(_create_entity, "create") )
+                {
+                    ecs::Entity entity = _ecs->createWith<Tag>();
+                    {
+                        Tag* tag = _ecs->get< Tag >( entity );
+                        *tag = "entity";
+                    }
+                    _scene->insert( entity );
+                }
 
                 const ecs::Entity& root = scene->root();
+                _gui->push({.style = &_styles[CONTINER]});
                 for (ecs::Entity e = _ecs->begin(root); e != 0 ; e = _ecs->next(e) )
                 {
-                    buildHierarchy( e, 0 );
+                    makeEntityUI( e, 0 );
                 }
+                _gui->pop();
             }
         }
-        _layout->pop();
-
-        if ( _scene && _layout->click( _create_entity ) )
-        {
-            ecs::Entity entity = _ecs->createWith<Tag>();
-            Tag* tag = _ecs->get< Tag >( entity );
-            *tag = "entity";
-            _scene->insert( entity );
-            _butn_down = true;
-        }
+        _gui->pop();
     }
 
-    ui::HierarchyDroplist* HierarchyPanel::makeEntityUI( ecs::Entity& entity, int space )
+    HierarchyPanel::EntityUI* HierarchyPanel::makeEntityUI( ecs::Entity& entity, int space )
     {
         const bool entity_has_children = _ecs->isParent(entity);
-
         uint64_t key = ecs::to_uint64(entity);
-        ui::HierarchyDroplist* list = 0;
-        auto i = _hierarchy.find( key );
-        if ( i == _hierarchy.end() )
-        {
-            const kege::Tag* tag = _ecs->get< kege::Tag >(entity);
-            const char* entity_name = ( tag ) ? tag->c_str() : "un-named";
+        HierarchyPanel::EntityUI* list = &_hierarchy[ key ];
+        list->spacer_style.width.size = space;
 
-            list = &_hierarchy[ key ];
-
-            list->text_field.init( _layout, entity_name );
-
-            list->spacer_style = ui::Style
-            {
-                .width = ui::fixed( space ),
-                .height = ui::extend(),
-            };
-
-            list->spacer = _layout->make
-            ({
-                .visible = false,
-                .style = &list->spacer_style,
-            });
-
-            list->container = _layout->make
-            ({
-                .style = _layout->getStyleByName( "droplist" ),
-            });
-
-            list->field = _layout->make
-            ({
-                .style = _layout->getStyleByName( "droplist-field" ),
-                .single_click = ui::ClickTrigger::Immediate,
-            });
-
-            list->expand_toggle = _layout->make
-            ({
-                .style = _layout->getStyleByName( "droplist-icon" ),
-                .single_click = ui::ClickTrigger::OnRelease,
-                .text = {"-",0,0,0,0},
-            });
-
-            list->delete_button = _layout->make
-            ({
-                .style = _layout->getStyleByName( "droplist-label" ),
-                .single_click = ui::ClickTrigger::OnRelease,
-                .text = {"x", 0, 0, 0, 0},
-            });
-
-            list->content = _layout->make
-            ({
-                .style = _layout->getStyleByName( "droplist-content" ),
-                .mouseover = false,
-            });
-        }
-        else
-        {
-            list = &i->second;
-            //list->label->text = {entity_name, 0, 0, 0, 0};
-        }
-
-        if(_scene && _layout->click( list->delete_button ))
+        if(_scene && _gui->click( list->delete_button ))
         {
             _hierarchy.erase( _hierarchy.find( key ) );
             _scene->remove( entity );
             return nullptr;
         }
 
-        list->expand_toggle->text.text = ( entity_has_children )
-        ? (( list->open[1] ) ? "-" : "+") : "-";
-
-        // droplist hierarchy
-        _layout->push( list->container );
+        Tag* entt_tag = _ecs->get< Tag >(entity);
+        _gui->push({.id = &list->container, .style = &_styles[ENTITY], .single_click = ui::ClickTrigger::OnRelease });
         {
-            _layout->put( list->spacer );
-            _layout->push( list->field );
-            {
-                _layout->put( list->expand_toggle );
-                if ( list->text_field.update( _layout ) )
-                {
-                    Communication::broadcast< const SetSelectedEntity& >({ entity });
-                }
-                _layout->put( list->delete_button );
-            }
-            _layout->pop();
+            _gui->button( list->expand_toggle, &_styles[ENTITY_BUTON], ( entity_has_children ) ? (( list->open[1] ) ? "-" : "+") : "-" );
+            _gui->label( (entt_tag)? entt_tag->c_str(): "unnamed" );
+            _gui->button( list->delete_button, &_styles[ENTITY_BUTON], "x" );
         }
-        _layout->pop();
+        _gui->pop();
 
+        if ( _gui->click(list->container) )
+        {
+            Communication::broadcast< const SetSelectedEntity& >({ entity });
+        }
+
+        if ( expand( list ) && entity_has_children )
+        {
+            _gui->push({.style = &_styles[ENTITY_CONTENT]});
+            for (ecs::Entity e = _ecs->begin(entity); e != 0 ; e = _ecs->next(e) )
+            {
+                makeEntityUI( e, space + 15 );
+            }
+            _gui->pop();
+        }
         return list;
     }
 
-    void HierarchyPanel::buildHierarchy( ecs::Entity& entity, int spacer )
+    bool HierarchyPanel::expand( HierarchyPanel::EntityUI* list )
     {
-        ui::HierarchyDroplist* list = makeEntityUI( entity, spacer );
-        if ( list == nullptr ) return;
-        
-        if ( clicked( list ) )
-        {
-            _layout->push( list->content );
-            for (ecs::Entity e = _ecs->begin(entity); e != 0 ; e = _ecs->next(e) )
-            {
-                buildHierarchy( e, spacer + 15 );
-            }
-            _layout->end();
-        }
-
-        if ( list->text_field.modified )
-        {
-            list->text_field.modified = false;
-            Tag* tag = _ecs->get< Tag >(entity);
-            *tag = list->text_field.text->text.text.c_str();
-        }
-    }
-
-    bool HierarchyPanel::clicked( ui::HierarchyDroplist* list )
-    {
-        if ( _layout->click( list->expand_toggle ) )
+        if ( _gui->click( list->expand_toggle ) )
         {
             if ( !list->open[0] )
             {
@@ -171,7 +94,7 @@ namespace kege{
                 list->open[1] = !list->open[1];
             }
         }
-        else if( list->open[0] && _layout->input()->buttonDown() )
+        else if( list->open[0] && _gui->buttonDown() )
         {
             list->open[0] = false;
         }
@@ -183,19 +106,73 @@ namespace kege{
         return _selected_entity;
     }
 
-    HierarchyPanel::HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e )
-    :   kege::ui::Panel( "Hierarchy", pm, l, e )
+    HierarchyPanel::HierarchyPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
+    :   kege::ui::Panel( "Hierarchy", pm, gui, e )
     {
-        _panel = _layout->make
-        ({
-            .style = _layout->getStyleByName( "panel" )
-        });
-        _create_entity = _layout->make
-        ({
-            .single_click = ui::ClickTrigger::OnRelease,
-            .style = _layout->getStyleByName( "button" ),
-            .text = {"Create Entity", 0, 0, 0, 0},
-        });
+        _styles[PANEL] = kege::ui::Style
+        {
+            .background = ui::Background(0x171420FF),
+            .height = ui::extend(),
+            .width = ui::extend(),
+            .padding = {10,10,10,10},
+            .gap = {2,2},
+            .align =
+            {
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
+
+        _styles[CONTINER] = kege::ui::Style
+        {
+            .background = ui::Background(0x17142000),
+            .height = ui::flexible(),
+            .width = ui::extend(),
+            .padding = {4,4,4,4},
+            .gap = {2,2},
+            .align =
+            {
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
+
+        _styles[ENTITY] = kege::ui::Style
+        {
+            .background = ui::Background(0xFFFFFF10),
+            .height = ui::flexible(),
+            .width = ui::extend(),
+            .border_radius = {4,4,4,4},
+            .padding = {4,4,4,4},
+            .gap = {2,2},
+            .align =
+            {
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::HORIZONTAL
+            }
+        };
+        _styles[ENTITY_BUTON] = kege::ui::Style
+        {
+            .background = ui::Background(0xFFFFFF00),
+            .height = ui::fixed(18),
+            .width = ui::fixed(18),
+            .align_text = ui::AlignText::Center,
+            .border_radius = {2,2,2,2},
+        };
+
+        _styles[ENTITY_CONTENT] = kege::ui::Style
+        {
+            .background = ui::Background(0xFFFFFF0F),
+            .height = ui::flexible(),
+            .width = ui::extend(),
+            //.padding = {10,10,10,10},
+            .gap = {2,2},
+            .align =
+            {
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
     }
 
 }

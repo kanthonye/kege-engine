@@ -9,19 +9,19 @@
 
 namespace kege{
 
-    NavbarPanel::NavbarPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e )
-    :   kege::ui::Panel( "Navbar", pm, l, e )
+    NavbarPanel::NavbarPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
+    :   kege::ui::Panel( "Navbar", pm, gui, e )
     {
-        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
+//        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }
 
     void NavbarPanel::update()
     {
-        _layout->push( _main );
-        if ( 0 <= file.select( *_layout, "File", { "Save", "Open", "Import", "Export" } ) )
-        {
-            std::cout <<"selection: " << file.index[0] <<"\n";
-        }
-        _layout->pop();
+//        _layout->push({ .id = &_main });
+//        if ( 0 <= file.select( *_layout, "File", { "Save", "Open", "Import", "Export" } ) )
+//        {
+//            std::cout <<"selection: " << file.index[0] <<"\n";
+//        }
+//        _layout->pop();
     }
 }

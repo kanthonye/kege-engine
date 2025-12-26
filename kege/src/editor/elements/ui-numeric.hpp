@@ -15,8 +15,8 @@ namespace kege::ui{
     void setupDroplist( ui::Layout& layout, TreeNode& tree, const char* text );
     bool droplistOpen( ui::Layout& layout, TreeNode& tree );
 
-    ui::Elem makeRow( ui::Layout& layout );
-    ui::Elem makeCol( ui::Layout& layout );
+//    UID makeRow( ui::Layout& layout );
+//    UID makeCol( ui::Layout& layout );
 
     bool numeric
     (

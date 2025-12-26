@@ -17,8 +17,8 @@ namespace kege::ui{
         void recreate( ui::Layout* layout, const std::vector< std::string >& tabs );
         bool update( ui::Layout* layout, const std::vector< std::string >& tabs );
         Tabs();
-        std::vector< ui::Elem > tab_elements;
-        ui::Elem container;
+        std::vector< UID > tab_elements;
+        UID container;
         int selection;
     };
 

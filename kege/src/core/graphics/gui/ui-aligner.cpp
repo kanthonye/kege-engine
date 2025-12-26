@@ -10,576 +10,365 @@
 
 namespace kege::ui{
 
-    void alignTopToBottom( Layout& layout, NodeIndex pid )
+    vec2 calcPos( const Style* s, const Rect& rect, const ui::Extent& extent )
     {
+        vec2 p;
+        switch ( s->align.content.x )
+        {
+            case AlignPosX::LEFT:   p.x = rect.x + s->padding.left; break;
+            case AlignPosX::CENTER: p.x = rect.x + (rect.width - extent.width) * 0.5f; break;
+            case AlignPosX::RIGHT:  p.x = rect.x + rect.width - extent.width - s->padding.right; break;
+        }
+
+        switch ( s->align.content.y )
+        {
+            case AlignPosY::TOP:    p.y = rect.y + s->padding.above; break;
+            case AlignPosY::CENTER: p.y = rect.y + (rect.height - extent.height) * 0.5f; break;
+            case AlignPosY::BOTTOM: p.y = rect.y + rect.height - extent.height - s->padding.below; break;
+        }
+        return p;
+    }
+
+    vec2 calcPos( const Style* s, const vec2& pos, const ui::Extent& extent )
+    {
+        vec2 p;
+        switch ( s->align.origin.x )
+        {
+            case AlignPosX::LEFT:   p.x = pos.x /*+ s->padding.left*/; break;
+            case AlignPosX::CENTER: p.x = pos.x + extent.width * 0.5; break;
+            case AlignPosX::RIGHT:  p.x = pos.x + extent.width /*+ s->padding.right*/; break;
+        }
+
+        switch ( s->align.origin.y )
+        {
+            case AlignPosY::TOP:    p.y = pos.y /*+ s->padding.above*/; break;
+            case AlignPosY::CENTER: p.y = pos.y + extent.height * 0.5f; break;
+            case AlignPosY::BOTTOM: p.y = pos.y + extent.height /*+ s->padding.below*/; break;
+        }
+        return p;
+    }
+
+    struct Boundary
+    {
+        std::vector< ui::Extent > rects;
+        Extent max;
+    };
+
+    Boundary computeInnerBoundaries( Layout& layout, NodeIndex pid, const Rect& outer_boundary )
+    {
+        Boundary boundary;
+        boundary.max = {};
+        boundary.rects.reserve(16);
+
+        Widget* p = layout[ pid ];
+        Rect rect = {};
+        //rect.x = p->style->padding.left;
+        //rect.y = p->style->padding.above;
+        rect.height = 0.f;
+        rect.width = 0.f;
+
+        float x = 0.f;
+        float curr = 0.f;
+
+        float max_width = p->rect.width;// - p->style->padding.left - p->style->padding.right;
+        const float max_height = p->rect.height;// - p->style->padding.above - p->style->padding.below;
+
+        Extent extent = {};
+        if( p->style->align.direction == ui::AlignDir::HORIZONTAL )
+        {
+            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
+            {
+                Widget* e = layout[ eid ];
+                extent.height = kege::max(extent.height, e->rect.height);
+
+                if ( e->style->position == Positioning::Independent || e->style->position == Positioning::Absolute )
+                {
+                    continue;
+                }
+
+                extent.width = curr;
+                curr += e->rect.width + p->style->gap.width;
+                if (curr > max_width && p->style->align.wrap_around)
+                {
+                    x += extent.height;
+                    boundary.rects.push_back(extent);
+                    curr = e->rect.width + p->style->gap.width;
+                }
+                boundary.max.height = kege::max(boundary.max.height, x);
+                boundary.max.width = kege::max(boundary.max.width, curr);
+            }
+            boundary.max.height += extent.height;
+            boundary.rects.push_back(extent);
+        }
+        else
+        {
+            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
+            {
+                Widget* e = layout[ eid ];
+                extent.width = kege::max(extent.width, e->rect.width);
+
+                if ( e->style->position == Positioning::Independent || e->style->position == Positioning::Absolute )
+                {
+                    continue;
+                }
+
+                extent.height = curr;
+                curr += e->rect.height + p->style->gap.height;
+                if (curr > max_height && p->style->align.wrap_around)
+                {
+                    x += extent.width;
+                    boundary.rects.push_back(extent);
+                    curr = e->rect.height + p->style->gap.height;
+                }
+                boundary.max.height = kege::max(boundary.max.height, curr);
+                boundary.max.width = kege::max(boundary.max.width, x);
+            }
+            boundary.max.width += extent.width;
+            boundary.rects.push_back(extent);
+        }
+
+        return boundary;
+    }
+
+    void alignVertically( Layout& layout, NodeIndex pid )
+    {
+        const Widget* p = layout[ pid ];
+        Boundary boundaries = computeInnerBoundaries( layout, pid, p->rect );
+        vec2 min = calcPos( p->style, p->rect, boundaries.max);
+        vec2 start = calcPos( p->style, min, boundaries.max );
+        vec2 pos = start;
+
         int count = 0;
-        vec2 offset;
+        float threshold = 0;
+        if (p->style->align.flow.x == AlignDirX::ETW)
+        {
+            pos.x -= boundaries.rects[0].width;
+            threshold = start.y - boundaries.max.height;
+        }
+        else
+        {
+            threshold = min.y + boundaries.max.height;
 
-        offset.x = layout[ pid ]->rect.x + layout[ pid ]->style->padding.left;
-        offset.y = layout[ pid ]->rect.y + layout[ pid ]->style->padding.above;
+        }
 
         for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
         {
-            if ( layout[ eid ]->style->position == Positioning::Absolute )
-            {
-                layout[ eid ]->rect.x = layout[ eid ]->x;
-                layout[ eid ]->rect.y = layout[ eid ]->y;
-                count++;
-                continue;
-            }
+            Widget* e = layout[ eid ];
+            const ui::Extent* rect = &boundaries.rects[ count ];
 
-            layout[ eid ]->rect.x = layout[ eid ]->x + offset.x;
-            layout[ eid ]->rect.y = layout[ eid ]->y + offset.y;
-
-            offset.y += layout[ eid ]->rect.height;
-            if( count < layout.count( pid ))
+            if ( e->style->position == Positioning::Independent )
             {
-                offset.y += layout[ pid ]->style->gap.height;
+                e->rect.x = e->offset.x;
+                e->rect.y = e->offset.y;
             }
-            count++;
+            else if ( e->style->position == Positioning::Absolute )
+            {
+                e->rect.x = pos.x + e->offset.x;
+                e->rect.y = pos.y + e->offset.y;
+            }
+            else
+            {
+                if (p->style->align.flow.y == AlignDirY::NTS)
+                {
+                    if (pos.y >= threshold && p->style->align.wrap_around)
+                    {
+                        if (p->style->align.flow.x == AlignDirX::ETW)
+                        {
+                            pos.x -= rect->width;
+                        }
+                        else
+                        {
+                            pos.x += rect->width;
+                        }
+                        pos.y = start.y;
+
+                        if (count + 1 < boundaries.rects.size())
+                        {
+                            count += 1;
+                            if (count < boundaries.rects.size()) rect = &boundaries.rects[ count ];
+                        }
+                    }
+                    e->rect.x = pos.x + e->offset.x;
+                    e->rect.y = pos.y + e->offset.y;
+                    pos.y += e->rect.height + p->style->gap.height;
+                }
+                else //p->style->align_y == AlignDirY::SouthToNorth
+                {
+                    pos.y -= e->rect.height;
+                    if (pos.y < threshold && p->style->align.wrap_around)
+                    {
+                        if (p->style->align.flow.x == AlignDirX::ETW)
+                        {
+                            pos.x -= rect->width;
+                        }
+                        else
+                        {
+                            pos.x += rect->width;
+                        }
+                        pos.y = start.y - e->rect.height - p->style->gap.height;
+
+                        if (count + 1 < boundaries.rects.size())
+                        {
+                            count += 1;
+                            if (count < boundaries.rects.size()) rect = &boundaries.rects[ count ];
+                        }
+                    }
+                    e->rect.x = pos.x + e->offset.x;
+                    e->rect.y = pos.y + e->offset.y;
+                    pos.y -= p->style->gap.height;
+                }
+            }
         }
     }
 
-    void alignBottomToTop( Layout& layout, NodeIndex pid )
+    void alignHorizontally( Layout& layout, NodeIndex pid )
     {
-        const Style* style = layout[ pid ]->style;
+        const Widget* p = layout[ pid ];
+        Boundary boundaries = computeInnerBoundaries( layout, pid, p->rect );
+        vec2 min = calcPos( p->style, p->rect, boundaries.max);
+        vec2 start = calcPos( p->style, min, boundaries.max );
+        vec2 pos = start;
+
         int count = 0;
+        float threshold = 0;
+        if (p->style->align.flow.x == AlignDirX::ETW)
+        {
+            pos.x = start.x;
+            threshold = start.x - boundaries.max.width;
+        }
+        else
+        {
+            threshold = min.x + boundaries.max.width;
 
-        vec2 offset;
-        offset.x = layout[ pid ]->rect.x + style->padding.left;
-        offset.y = layout[ pid ]->rect.y + style->padding.above;
+        }
 
         for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
         {
-            const Style* s = layout[ eid ]->style;
-            if ( s->position == Positioning::Absolute )
+            Widget* e = layout[ eid ];
+            const ui::Extent* rect = &boundaries.rects[ count ];
+
+            if ( e->style->position == Positioning::Independent )
             {
-                layout[ eid ]->rect.x = layout[ eid ]->x;
-                layout[ eid ]->rect.y = layout[ eid ]->y;
-                count++;
-                continue;
+                e->rect.x = e->offset.x;
+                e->rect.y = e->offset.y;
             }
-
-            offset.y -= layout[ eid ]->rect.height;
-
-            layout[ eid ]->rect.x = layout[ eid ]->x + offset.x;
-            layout[ eid ]->rect.y = layout[ eid ]->y + offset.y;
-
-            if( count < layout.count( pid ) )
+            else if ( e->style->position == Positioning::Absolute )
             {
-                offset.y -= style->gap.height;
+                e->rect.x = pos.x + e->offset.x;
+                e->rect.y = pos.y + e->offset.y;
             }
-            count++;
-        }
-    }
-
-    void alignLeftToRight( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-        int count = 0;
-
-        vec2 offset;
-        offset.x = layout[ pid ]->rect.x + style->padding.left;
-        offset.y = layout[ pid ]->rect.y + style->padding.above;
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            const Style* s = layout[ eid ]->style;
-            if ( s->position == Positioning::Absolute )
+            else
             {
-                layout[ eid ]->rect.x = layout[ eid ]->x;
-                layout[ eid ]->rect.y = layout[ eid ]->y;
-                count++;
-                continue;
-            }
-
-            layout[ eid ]->rect.x = layout[ eid ]->x + offset.x;
-            layout[ eid ]->rect.y = layout[ eid ]->y + offset.y;
-
-            offset.x += layout[ eid ]->rect.width;
-            if( count < layout.count( pid ) )
-            {
-                offset.x += style->gap.width;
-            }
-            count++;
-        }
-    }
-
-    void alignRightToLeft( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-        int count = 0;
-
-        vec2 offset;
-        offset.x = layout[ pid ]->rect.x + layout[ pid ]->rect.width + style->padding.left;
-        offset.y = layout[ pid ]->rect.y + layout[ pid ]->rect.height + style->padding.above;
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            const Style* s = layout[ eid ]->style;
-            if ( s->position == Positioning::Absolute )
-            {
-                layout[ eid ]->rect.x = layout[ eid ]->x;
-                layout[ eid ]->rect.y = layout[ eid ]->y;
-                count++;
-                continue;
-            }
-
-            offset.x -= layout[ eid ]->rect.width;
-
-            layout[ eid ]->rect.x = layout[ eid ]->x + offset.x;
-            layout[ eid ]->rect.y = layout[ eid ]->y + offset.y;
-
-            if( count < layout.count( pid ) - 1 )
-            {
-                offset.x -= style->gap.width;
-            }
-            count++;
-        }
-    }
-
-    float getPercentWidth( Layout& layout, NodeIndex eid )
-    {
-        const Style* style =layout[ eid ]->style;
-        Widget* elem = layout[ eid ];
-        elem->rect.width = 0;
-        if ( 1 <= layout.parent( eid ) )
-        {
-            uint32_t parent = layout.parent( eid );
-            elem->rect.width += style->padding.left;
-            elem->rect.width += style->padding.right;
-            elem->rect.width += style->gap.width * (layout.count( parent ) - 1);
-            elem->rect.width += layout[ parent ]->rect.width;
-        }
-        elem->rect.width = elem->rect.width * style->width.size;
-        return elem->rect.width;
-    }
-
-    float getPercentHeight( Layout& layout, NodeIndex eid )
-    {
-        const Style* style = layout[ eid ]->style;
-        Widget* elem = layout[ eid ];
-        elem->rect.height = 0;
-
-        if ( 1 <= layout.parent( eid ) )
-        {
-            uint32_t parent = layout.parent( eid );
-            elem->rect.height += style->padding.above;
-            elem->rect.height += style->padding.below;
-            elem->rect.height += style->gap.height * (layout.count( parent ) - 1);
-            elem->rect.height += layout[ parent ]->rect.height;
-        }
-        elem->rect.height = elem->rect.height * style->height.size;
-        return elem->rect.height;
-    }
-
-    float getFlexibleWidth( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-        Widget* elem = layout[ pid ];
-
-        elem->rect.width = 0;//(style->width.type == ui::SizingType::SIZE_FIXED)
-//        ? style->width.size
-//        : 0;
-
-        bool percentage = false;
-        uint32_t count = 0;
-
-//        if ( 1 <= layout.parent( pid ) )
-//        {
-//            const Style* s = layout[ layout.parent( pid ) ]->style;
-        elem->rect.width += style->padding.left;
-        elem->rect.width += style->padding.right;
-//        }
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            const Style* s = layout[ eid ]->style;
-            switch ( s->width.type )
-            {
-                case ui::SizingType::SIZE_FIXED:
+                if (p->style->align.flow.x == AlignDirX::WTE)
                 {
-                    elem->rect.width += layout[ eid ]->rect.width;
-                    count += 1;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_FLEXIBLE:
-                {
-                    elem->rect.width += getFlexibleWidth( layout, eid );
-                    count += 1;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_PERCENT:
-                {
-                    percentage = true;
-                    break;
-                }
-
-                default: break;
-            }
-        }
-
-        if ( percentage )
-        {
-            float width = 0;
-            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->width.type == ui::SizingType::SIZE_PERCENT )
-                {
-                    width += elem->rect.width * s->width.size;
-                    count += 1;
-                }
-            }
-            elem->rect.width = width;
-        }
-
-        if ( 2 <= count )
-        {
-            elem->rect.width += style->gap.width * (count - 1);
-        }
-        else if ( !layout[ pid ]->text.text.empty() )
-        {
-            elem->rect.width += layout[ pid ]->text.width;
-        }
-
-        return elem->rect.width;
-    }
-
-    float getFlexibleHeight( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-
-        float height = (style->height.type == ui::SizingType::SIZE_FIXED)
-        ? style->height.size
-        : 0;
-
-        uint32_t count = 0;
-        bool percentage = false;
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            const Style* s = layout[ eid ]->style;
-            switch ( s->height.type )
-            {
-                case ui::SizingType::SIZE_FIXED:
-                {
-                    if ( style->align.direction == ui::DIRECTION_LEFT_TO_RIGHT )
+                    if (pos.x >= threshold && p->style->align.wrap_around)
                     {
-                        height = max( height, layout[ eid ]->rect.height );
+                        if (p->style->align.flow.y == AlignDirY::STN)
+                        {
+                            pos.y -= rect->height;
+                        }
+                        else
+                        {
+                            pos.y += rect->height;
+                        }
+                        pos.x = start.x;
+
+                        if (count + 1 < boundaries.rects.size())
+                        {
+                            count += 1;
+                            if (count < boundaries.rects.size()) rect = &boundaries.rects[ count ];
+                        }
                     }
-                    else
+                    e->rect.x = pos.x + e->offset.x;
+                    e->rect.y = pos.y + e->offset.y;
+                    pos.x += e->rect.width + p->style->gap.width;
+                }
+                else //p->style->align_y == AlignDirY::SouthToNorth
+                {
+                    pos.x -= e->rect.width;
+                    if (pos.x < threshold && p->style->align.wrap_around)
                     {
-                        height += layout[ eid ]->rect.height;
+                        if (p->style->align.flow.y == AlignDirY::STN)
+                        {
+                            pos.y -= rect->height;
+                        }
+                        else
+                        {
+                            pos.y += rect->height;
+                        }
+                        pos.x = start.x - e->rect.width;
+
+                        if (count + 1 < boundaries.rects.size())
+                        {
+                            count += 1;
+                            if (count < boundaries.rects.size()) rect = &boundaries.rects[ count ];
+                        }
                     }
-                    count += 1;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_FLEXIBLE:
-                {
-                    float h = getFlexibleHeight( layout, eid );
-                    if ( style->align.direction == ui::DIRECTION_LEFT_TO_RIGHT )
-                    {
-                        height = max( height, h );
-                    }
-                    else
-                    {
-                        height += h;
-                    }
-                    count += 1;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_PERCENT:
-                {
-                    percentage = true;
-                    break;
-                }
-
-                default: break;
-            }
-        }
-
-        if ( percentage )
-        {
-            /**
-             * after the fixed heights are summed, compute the children ui percentage widths of the summed width
-             */
-            float h = 0.f;
-            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->height.type == ui::SizingType::SIZE_PERCENT )
-                {
-                    h += layout[ pid ]->rect.height * s->height.size;
-                    count += 1;
+                    e->rect.x = pos.x + e->offset.x;
+                    e->rect.y = pos.y + e->offset.y;
+                    pos.x -= p->style->gap.width;
                 }
             }
-            height = h;
         }
-
-        /**
-         * gap between elements are only accountable if the elements are being aligned in a vertical manner.
-         */
-        if ( 2 <= count )
-        {
-            if
-            (
-                style->align.direction == ui::DIRECTION_TOP_TO_BOTTOM ||
-                style->align.direction == ui::DIRECTION_BOTTOM_TO_TOP
-            )
-            {
-                height += style->gap.height * (count - 1);
-            }
-        }
-        else if ( !layout[ pid ]->text.text.empty() )
-        {
-            height += layout[ pid ]->text.height;
-        }
-
-        height += style->padding.above;
-        height += style->padding.below;
-        layout[ pid ]->rect.height = height;
-        return height;
     }
 
-    float updateChildrenWidth( Layout& layout, NodeIndex pid )
+    void alignChildren( Layout& layout, NodeIndex pid )
     {
-        const Style* style = layout[ pid ]->style;
-        float pad = 0;
-        float width = 0;
-        uint32_t extend_count = 0;
-        bool percentage = false;
-
-        pad += style->padding.left;
-        pad += style->padding.right;
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
+        Widget* p = layout[ pid ];
+        switch ( p->style->align.direction )
         {
-            const Style* s = layout[ eid ]->style;
-            switch ( s->width.type )
+            case AlignDir::HORIZONTAL:
             {
-                case ui::SizingType::SIZE_FIXED:
-                {
-                    width += layout[ eid ]->rect.width;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_FLEXIBLE:
-                {
-                    width += getFlexibleWidth( layout, eid );
-                    break;
-                }
-
-                case ui::SizingType::SIZE_PERCENT:
-                {
-                    percentage = true;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_EXTEND:
-                {
-                    extend_count += 1;
-                    break;
-                }
-
-                default: break;
-            }
-        }
-
-        if ( percentage )
-        {
-            float w = 0;
-            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->width.type == ui::SizingType::SIZE_PERCENT )
-                {
-                    w += width * s->width.size;
-                }
-            }
-            width += w;
-        }
-
-        if ( 0 < extend_count  )
-        {
-            float w = layout[ pid ]->rect.width - pad;
-
-            if
-            (
-                style->align.direction == DIRECTION_LEFT_TO_RIGHT ||
-                style->align.direction == DIRECTION_RIGHT_TO_LEFT
-            )
-            {
-                w = w - width - style->gap.width * (layout.count( pid ) - 1);
-                w = w / float(extend_count);
-            }
-
-            for (uint32_t eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->width.type == ui::SizingType::SIZE_EXTEND )
-                {
-                    layout[ eid ]->rect.width = w;
-                    width += w;
-                }
-            }
-        }
-
-        return width;
-    }
-
-    float updateChildrenHeight( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-        float pad = 0;
-        float height = 0;
-        uint32_t extend_count = 0;
-        bool percentage = false;
-
-        pad += style->padding.above;
-        pad += style->padding.below;
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            const Style* s = layout[ eid ]->style;
-            switch ( s->height.type )
-            {
-                case ui::SizingType::SIZE_FIXED:
-                {
-                    height += layout[ eid ]->rect.height;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_FLEXIBLE:
-                {
-                    height += getFlexibleHeight( layout, eid );
-                    break;
-                }
-
-                case ui::SizingType::SIZE_PERCENT:
-                {
-                    percentage = true;
-                    break;
-                }
-
-                case ui::SizingType::SIZE_EXTEND:
-                {
-                    extend_count += 1;
-                    break;
-                }
-
-                default: break;
-            }
-        }
-
-        if ( percentage )
-        {
-            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->height.type == ui::SizingType::SIZE_PERCENT )
-                {
-                    layout[ eid ]->rect.height = layout[ pid ]->rect.height * s->height.size;
-                    height += layout[ eid ]->rect.height;
-                }
-            }
-        }
-
-        if ( 0 < extend_count  )
-        {
-            float h = layout[ pid ]->rect.height - pad;
-
-            if
-            (
-                style->align.direction == DIRECTION_TOP_TO_BOTTOM ||
-                style->align.direction == DIRECTION_BOTTOM_TO_TOP
-            )
-            {
-                h = h - height - style->gap.height * (layout.count( pid ) - 1);
-                h = h / float(extend_count);
-            }
-
-            for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-            {
-                const Style* s = layout[ eid ]->style;
-                if ( s->height.type == ui::SizingType::SIZE_EXTEND )
-                {
-                    layout[ eid ]->rect.height = h;
-                    height += h;
-                }
-            }
-        }
-
-        return height;
-    }
-
-    void computeChildrenExtent( Layout& layout, NodeIndex pid )
-    {
-        updateChildrenWidth( layout, pid );
-        updateChildrenHeight( layout, pid );
-
-        for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
-        {
-            computeChildrenExtent( layout, eid );
-        }
-    }
-    
-    void alignChildrenNodes( Layout& layout, NodeIndex pid )
-    {
-        const Style* style = layout[ pid ]->style;
-        switch ( style->align.direction )
-        {
-            case Direction::DIRECTION_LEFT_TO_RIGHT:
-            {
-                alignLeftToRight( layout, pid );
+                alignHorizontally( layout, pid );
                 break;
             }
-
-            case Direction::DIRECTION_RIGHT_TO_LEFT:
+            case AlignDir::VERTICAL:
             {
-                alignRightToLeft( layout, pid );
+                alignVertically( layout, pid );
                 break;
             }
-
-            case Direction::DIRECTION_TOP_TO_BOTTOM:
-            {
-                alignTopToBottom( layout, pid );
-                break;
-            }
-
-            case Direction::DIRECTION_BOTTOM_TO_TOP:
-            {
-                alignBottomToTop( layout, pid );
-                break;
-            }
-
             default:
             {
                 break;
             }
         }
+
         for (NodeIndex eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
         {
-            alignChildrenNodes( layout, eid );
+            alignChildren( layout, eid );
         }
     }
 
     void align( Layout& layout, NodeIndex pid )
     {
-        const Style* style = layout[ pid ]->style;
-        if( style->width.type == ui::SizingType::SIZE_EXTEND )
+        Widget* e = layout[ pid ];
+        e->rect.x = e->offset.x;
+        e->rect.y = e->offset.y;
+        switch ( e->style->align.direction )
         {
-            layout[ pid ]->rect.width = layout.getWidth();
+            case AlignDir::HORIZONTAL:
+            {
+                alignHorizontally( layout, pid );
+                break;
+            }
+            case AlignDir::VERTICAL:
+            {
+                alignVertically( layout, pid );
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
-        if( style->height.type == ui::SizingType::SIZE_EXTEND )
+        alignChildren( layout, pid );
+    }
+
+    void Aligner::align( Layout& layout )
+    {
+        for (int root_index = 0; root_index < layout._root_count; ++root_index)
         {
-            layout[ pid ]->rect.height = layout.getHeight();
+            ui::align( layout, layout._roots[ root_index ] );
         }
-        computeChildrenExtent( layout, pid );
-        alignChildrenNodes( layout, pid );
     }
 }

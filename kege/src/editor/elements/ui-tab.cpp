@@ -11,30 +11,30 @@ namespace kege::ui{
 
     void Tabs::recreate( ui::Layout* layout, const std::vector< std::string >& tabs )
     {
-        this->tab_elements.resize( tabs.size() );
-        for (int i=0; i < tabs.size(); ++i)
-        {
-            this->tab_elements[i] = layout->make
-            ({
-                .mouseover = true,
-                .single_click = ClickTrigger::Immediate,
-                .style = layout->getStyleByName( "tab" ),
-                .text = {tabs[i].c_str(), 0, 0, 0, 0},
-            });
-        }
-        if ( !this->container )
-        {
-            this->container = layout->make
-            ({
-                .mouseover = false,
-                .style = layout->getStyleByName( "bar" )
-            });
-        }
+//        this->tab_elements.resize( tabs.size() );
+//        for (int i=0; i < tabs.size(); ++i)
+//        {
+//            this->tab_elements[i] = layout->make
+//            ({
+//                .mouseover = true,
+//                .single_click = ClickTrigger::Immediate,
+//                .style = layout->getStyleByName( "tab" ),
+//                .text = {tabs[i].c_str(), 0, 0, 0, 0},
+//            });
+//        }
+//        if ( !this->container )
+//        {
+//            this->container = layout->make
+//            ({
+//                .mouseover = false,
+//                .style = layout->getStyleByName( "bar" )
+//            });
+//        }
     }
 
     bool Tabs::update( ui::Layout* layout, const std::vector< std::string >& tabs )
     {
-        ui::Elem elem;
+        UID elem;
         /**
          if the tabs and tab elements are of different size then recreate the tabs elements
          */
@@ -44,27 +44,27 @@ namespace kege::ui{
         }
 
         bool active = false;
-        if ( !this->tab_elements.empty() )
-        {
-            // push the elements to the layout so that the elements can be updated and rendered
-            layout->push( this->container );
-            for (int i=0; i < this->tab_elements.size(); ++i)
-            {
-                layout->put( this->tab_elements[i] );
-            }
-            layout->pop();
-
-            // select the clicked tab element
-            for (int i=0; i < tabs.size(); ++i)
-            {
-                if( layout->click( this->tab_elements[i] ) )
-                {
-                    this->selection = i;
-                    active = true;
-                    break;
-                }
-            }
-        }
+//        if ( !this->tab_elements.empty() )
+//        {
+//            // push the elements to the layout so that the elements can be updated and rendered
+//            layout->push( this->container );
+//            for (int i=0; i < this->tab_elements.size(); ++i)
+//            {
+//                layout->put( this->tab_elements[i] );
+//            }
+//            layout->pop();
+//
+//            // select the clicked tab element
+//            for (int i=0; i < tabs.size(); ++i)
+//            {
+//                if( layout->click( this->tab_elements[i] ) )
+//                {
+//                    this->selection = i;
+//                    active = true;
+//                    break;
+//                }
+//            }
+//        }
         return active;
     }
     

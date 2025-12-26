@@ -11,8 +11,8 @@ namespace kege::ui{
 
     bool TextField::update( ui::Layout* layout )
     {
-        layout->push( container );
-        layout->put( this->text );
+        layout->push({ .id = &container });
+        layout->put({ .id = &this->text });
         layout->pop();
 
         bool clicked = false;
@@ -40,7 +40,7 @@ namespace kege::ui{
         if ( state.has_focus )
         {
             modified = true;
-            state.has_focus = layout->onTextInput( this->text, &this->text->text.text );
+            //state.has_focus = layout->onTextInput( this->text, &this->text->text.text );
             if ( !state.has_focus )
             {
                 mode = 0;
@@ -52,19 +52,19 @@ namespace kege::ui{
 
     void TextField::init( ui::Layout* layout, const std::string& txt )
     {
-        container = layout->make
-        ({
-            .single_click = ui::ClickTrigger::OnRelease,
-            .double_click = ui::ClickTrigger::Immediate,
-            .style = layout->getStyleByName( "bar" ),
-        });
-
-        this->text = layout->make
-        ({
-            .mouseover = false,
-            .style = layout->getStyleByName( "text" ),
-            .text = {txt.c_str(), 0,0,0,0}
-        });
+//        container = layout->make
+//        ({
+//            .single_click = ui::ClickTrigger::OnRelease,
+//            .double_click = ui::ClickTrigger::Immediate,
+//            .style = layout->getStyleByName( "bar" ),
+//        });
+//
+//        this->text = layout->make
+//        ({
+//            .mouseover = false,
+//            .style = layout->getStyleByName( "text" ),
+//            .text = {txt.c_str(), 0,0,0,0}
+//        });
         modified = false;
         mode = 0;
     }

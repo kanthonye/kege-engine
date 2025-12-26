@@ -9,10 +9,10 @@
 
 namespace kege::ui{
 
-    Panel::Panel( const std::string& name, kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e )
+    Panel::Panel( const std::string& name, kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
     :   _name( name  )
     ,   _project_manager( pm )
-    ,   _layout( l )
+    ,   _gui( gui )
     ,   _ecs( e )
     {}
 }

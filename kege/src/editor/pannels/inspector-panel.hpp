@@ -10,7 +10,7 @@
 
 #include "../elements/droplist.hpp"
 #include "../elements/ui-numeric.hpp"
-#include "../elements/ui-panel.hpp"
+#include "ui-panel.hpp"
 #include "hierarchy-panel.hpp"
 
 namespace kege{
@@ -21,8 +21,8 @@ namespace kege{
     {
     public:
 
-        int select( ui::Layout* layout, const std::vector< std::string >& options );
-        InspectorPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
+        int select( const std::vector< std::string >& options );
+        InspectorPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs );
         void operator()( const SetSelectedEntity& msg );
         void update();
 
@@ -30,17 +30,21 @@ namespace kege{
 
         void add(const std::string& stype, int component_type, void(*funct)( kege::ECS*, ecs::Entity& ));
 
-        std::map< std::string, int > _string_to_component_type;
-        std::vector< std::string > _component_string_types;
-
-        EntityComponentFactory _entity_component_factory;
-        ui::UIElementCreator _ui_element_creator;
-        ui::Elem _add_component;
-        ui::Tree _tree;
-        ui::Elem _main;
+        kege::ui::Style _styles[5];
         
-        std::vector< ui::Elem > _selection_elements;
-        ui::Elem _selection_container;
+        std::vector<std::pair<kege::UID, std::string>> _component_uis;
+
+        std::map< std::string, int > _string_to_component_type;
+        //std::vector< std::string > _component_string_types;
+
+        EntityComponentFactory _component_factory;
+        ui::UIElementCreator _ui_element_creator;
+        UID _add_component;
+        ui::Tree _tree;
+        UID _main;
+        
+        std::vector< UID > _selection_elements;
+        UID _selection_container;
 
         ecs::Entity _selected_entity;
         bool _show_component_selections;

@@ -22,14 +22,14 @@ namespace kege::ui{
     {
     private:
 
-        float getClickToCursorOffset( const ui::Elem& elem, const kege::string& text, int font_size, const ref::Font& font );
+        float getClickToCursorOffset( const UID& elem, const kege::string& text, int font_size, const ref::Font& font );
         bool onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, kege::string& text );
         void deleteSelection( int font_size, const ref::Font& font, kege::string& text );
         void handleDeletion( int font_size, const ref::Font& font, kege::string& text );
 
     public:
 
-        bool onInput(Input::Type type, const ui::Elem& elem, const ref::Font& font, kege::string* text);
+        bool onInput(Input::Type type, const UID& elem, const ref::Font& font, kege::string* text);
         void update( double dms, ui::Input* input );
         Cursor( ui::Layout* layout );
 

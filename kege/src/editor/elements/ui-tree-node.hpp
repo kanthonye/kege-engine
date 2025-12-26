@@ -14,13 +14,15 @@
 #include "../../core/graphics/gui/ui-layout.hpp"
 #include "../../core/graphics/gui/ui-viewer.hpp"
 
+#include "../gui.hpp"
+
 namespace kege::ui{
 
     struct TreeNode
     {
         bool state[2];
         std::string name;
-        std::vector< ui::Elem > elements;
+        std::vector< UID > elements;
         std::vector< TreeNode > children;
         ui::TextFieldState text_state;
     };

@@ -9,29 +9,42 @@
 
 namespace kege{
 
-    ViewportPanel::ViewportPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs )
-    :   kege::ui::Panel( "Viewport", pm, l, ecs )
+    ViewportPanel::ViewportPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs )
+    :   kege::ui::Panel( "Viewport", pm, gui, ecs )
     {
-        _main = _layout->make
-        ({
-            .visible    = true,
-            .mouseover  = false,
-            .texr       = ui::TexrID
+        _style = kege::ui::Style
+        {
+            .background = ui::Background(0x171420FF),
+            .height = ui::extend(),
+            .width = ui::extend(),
+            .padding = {10,10,10,10},
+            .gap = {2,2},
+            .align =
             {
-                .id     = 2,
-                .x      = 0.f,
-                .y      = 0.f,
-                .width  = 1.f,
-                .height = 1.f,
-            },
-            .style      = _layout->getStyleByName( "panel" )
-        });
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
+//        _main = _layout->make
+//        ({
+//            .visible    = true,
+//            .mouseover  = false,
+//            .texr       = ui::TexrID
+//            {
+//                .id     = 2,
+//                .x      = 0.f,
+//                .y      = 0.f,
+//                .width  = 1.f,
+//                .height = 1.f,
+//            },
+//            .style      = _layout->getStyleByName( "panel" )
+//        });
     }
 
     void ViewportPanel::update()
     {
-        _layout->push( _main );
-        _layout->pop();
+        _gui->put({ .style = &_style, .enabled = false });
+//        _gui->pop();
     }
 
 }

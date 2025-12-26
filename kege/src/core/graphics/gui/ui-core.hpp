@@ -17,6 +17,7 @@
 #include "../../graphics/font/font.hpp"
 #include "../../resource/font-loader.hpp"
 #include "../../graphics/font/font-creator.hpp"
+#include "../../graphics/gui/uid.hpp"
 
 namespace kege::ui{
 
@@ -38,38 +39,64 @@ namespace kege::ui{
     {
         Relative,
         Absolute,
+        Independent,
     };
 
-    typedef enum : uint8_t
+    enum struct AlignDir: uint8_t
     {
-        ALIGN_TOP_LEFT,
-        ALIGN_TOP_CENTER,
-        ALIGN_TOP_RIGHT,
-        ALIGN_LEFT_CENTER,
-        ALIGN_CENTER_CENTER,
-        ALIGN_RIGHT_CENTER,
-        ALIGN_BOTTOM_LEFT,
-        ALIGN_BOTTOM_CENTER,
-        ALIGN_BOTTOM_RIGHT,
-    }
-    AlignOrigin;
+        HORIZONTAL,
+        VERTICAL,
+    };
 
-    typedef enum : uint8_t
+    enum struct AlignDirX : uint8_t
     {
-        DIRECTION_LEFT_TO_RIGHT,
-        DIRECTION_RIGHT_TO_LEFT,
-        DIRECTION_TOP_TO_BOTTOM,
-        DIRECTION_BOTTOM_TO_TOP,
-    } Direction;
+        ETW,
+        WTE,
+    };
+    enum struct AlignDirY : uint8_t
+    {
+        NTS,
+        STN,
+    };
+
+    enum struct AlignPosX: uint8_t
+    {
+        LEFT,
+        RIGHT,
+        CENTER,
+    };
+
+    enum struct AlignPosY: uint8_t
+    {
+        TOP,
+        BOTTOM,
+        CENTER,
+    };
+
+    struct AlignXY
+    {
+        AlignPosX x = AlignPosX::LEFT;
+        AlignPosY y = AlignPosY::TOP;
+    };
+
+    struct AlignFlow
+    {
+        AlignDirX x = AlignDirX::WTE;
+        AlignDirY y = AlignDirY::NTS;
+    };
 
     struct Alignment
     {
-        AlignOrigin origin = ALIGN_TOP_LEFT;
-        Direction direction = DIRECTION_LEFT_TO_RIGHT;
+        AlignFlow flow;
+        AlignXY   origin;
+        AlignXY   content;
+        AlignDir  direction = AlignDir::HORIZONTAL;
+        bool wrap_around = false;
     };
 
     typedef enum : uint8_t
     {
+        SIZE_UNDEFINED,
         SIZE_FIXED,
         SIZE_PERCENT,
         SIZE_FLEXIBLE,
@@ -139,6 +166,18 @@ namespace kege::ui{
         float width;
         float height;
     };
+    
+
+    struct Coord
+    {
+        float x = 0.f;
+        float y = 0.f;
+    };
+    struct Extent
+    {
+        float width = 0.f;
+        float height = 0.f;
+    };
 
     struct Rect
     {
@@ -185,6 +224,10 @@ namespace kege::ui{
         Color       color;
         Sizing      width;
         Sizing      height;
+        Sizing      min_width;
+        Sizing      min_height;
+        Sizing      max_width;
+        Sizing      max_height;
         Corners     border_radius;
 
         Padding     padding;
@@ -199,29 +242,45 @@ namespace kege::ui{
     };
 
     // Widget contains the widget specific data that specific to a widget
-    struct Widget
+    struct alignas(8) Desc
     {
+        Coord offset;
+
+        kege::UID* id = nullptr;
+
         Style* style = nullptr;
 
-        float x = 0.f;
-        float y = 0.f;
+        const char* text = nullptr;
 
-        bool mouseover = true;
+        TexrID texr;
+
+        bool enabled = true;
+        bool visible = true;
+
+        ClickTrigger single_click = ui::ClickTrigger::Disable;
+        ClickTrigger double_click = ui::ClickTrigger::Disable;
+    };
+
+
+    // Widget contains the widget specific data that specific to a widget
+    struct Widget
+    {
+        Id id;
+        Id elem_id;
+
+        Style* style = nullptr;
+
+        bool enabled = true;
         bool visible = true;
 
         ClickTrigger single_click = ui::ClickTrigger::Disable;
         ClickTrigger double_click = ui::ClickTrigger::Disable;
 
-        Callback on_release;
-        Callback on_scroll;
-        Callback on_click;
-        Callback on_enter;
-        Callback on_exit;
-
         /**
          * note rect is recomputed every frame, rect is the visual shape of the gui shape
          */
         Rect rect = {};
+        Rect offset = {};
 
         /**
          * text is the xy position of a text and the width and height that text span
@@ -229,15 +288,7 @@ namespace kege::ui{
         mutable Text text = {};
 
         TexrID texr = {};
-    };
-
-    // Node contains the widget specific data that specific to a widget
-    struct Node
-    {
-        Widget* widgit      = nullptr;
-        uint32_t depth      = 0;
-        uint32_t id         = 0;
-
+        uint32_t version    = 0;
         int32_t parent      = 0;
         int32_t head        = 0;
         int32_t tail        = 0;
@@ -245,6 +296,13 @@ namespace kege::ui{
         int32_t count       = 0;
     };
 
+    struct Link
+    {
+        int32_t node_index = 0;
+        int32_t next       = 0;
+        int32_t prev       = 0;
+    };
+    
     struct DrawElem
     {
         ui::Rect rect;
@@ -268,17 +326,33 @@ namespace kege::ui{
     ui::Color rgb(uint32_t hex_color);
     ui::Color rgba(uint32_t hex_color);
 
-    ui::Background bgImage(int img_index, const ui::Rect& texel);
-    ui::Background bgColor(const ui::Color& color);
-    ui::Background bgColor(uint32_t color);
+    //ui::Background bgImage(int img_index, const ui::Rect& texel);
+    //ui::Background bgColor(const ui::Color& color);
+    //ui::Background bgColor(uint32_t color);
 
 
-    struct HitRecord {
-        uint32_t hotId   = 0;
-        uint32_t activeId= 0;
-        uint32_t focusId = 0;
-        uint8_t  clicks  = 0;
-        bool     release = false;
+    struct HitRecord
+    {
+        Id hot     = {};
+        Id active  = {};
+        Id focus  = {};
+
+        uint8_t  clicks     = 0;
+        bool     release    = false;
+    };
+
+    struct AllocParam
+    {
+        size_t index;
+        size_t size;
+    };
+
+    struct DeferredOp
+    {
+        typedef void (*Fn)(Layout* layout, const kege::UID& id, void* data);
+        DeferredOp::Fn fn;
+        AllocParam alloc;
+        const kege::UID* id;
     };
 }
 

@@ -18,8 +18,8 @@ namespace kege::ui{
         void init( ui::Layout* layout, const std::string& text );
 
         ui::TextFieldState state;
-        ui::Elem container;
-        ui::Elem text;
+        UID container;
+        UID text;
 
         uint16_t mode;
         bool modified;

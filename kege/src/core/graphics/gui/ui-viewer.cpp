@@ -114,8 +114,10 @@ namespace kege::ui{
             {
                 case AlignText::Center:
                 {
+                    const kege::Glyph& g = _font->glyphs()[ '{' ];
+                    float h = content.style->font_size * g.scaled_height;
                     start.x += (content.rect.width  - content.text.width) * 0.5;
-                    start.y += (content.rect.height - content.text.height) * 0.5;
+                    start.y += (content.rect.height - h) * 0.5;
                     break;
                 }
                 case AlignText::Right:
@@ -146,7 +148,7 @@ namespace kege::ui{
                 };
             }
 
-            drawText
+            vec2 r = drawText
             (
                 start,
                 content.rect.width,
@@ -156,15 +158,15 @@ namespace kege::ui{
                 content.text.text.str(),
                 clip_rect
             );
-//            content.text.width = dim.x;
-//            content.text.height = dim.y;
+            content.text.width = r.x;
+            content.text.height = r.y;
+            //content.text.width = dim.x;
+            //content.text.height = dim.y;
         }
     }
 
     void Viewer::draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect )
     {
-        drawsort( layout, pid );
-        
         const Cursor& cursor = layout._cursor;
         if ( cursor._visible && cursor._editing )
         {
@@ -173,7 +175,7 @@ namespace kege::ui{
             if( cursor._selection )
             {
                 width = cursor._selection_end - cursor._offset;
-                color = ui::Color(1,1,1,0.3);
+                color = ui::Color(1,1,1,0.2);
             }
             _drawbuffer[ _draw_count ].border_radius = 4;
             _drawbuffer[ _draw_count ].texture_id    = 0;
@@ -194,11 +196,11 @@ namespace kege::ui{
             flush();
         }
 
-//        draw( *layout[ pid ], clip_rect );
-//        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-//        {
-//            draw( layout, eid, clip_rect );
-//        }
+        draw( *layout[ pid ], clip_rect );
+        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+        {
+            draw( layout, eid, clip_rect );
+        }
 
 //        std::vector< std::pair< int, ui::Widget* > > contents( layout.count( pid ) );
 //        int count = 0;
@@ -248,6 +250,7 @@ namespace kege::ui{
 
     void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& contents, int& count )
     {
+        if( count >= contents.size() ) return;
         contents[count++] = { zindex, layout[pid] };
         for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
         {
@@ -276,10 +279,10 @@ namespace kege::ui{
 
     void Viewer::drawsort( ui::Layout& layout, int pid )
     {
-        std::vector< std::pair< int, ui::Widget* > > contents( layout.count() );
+        std::vector< std::pair< int, ui::Widget* > > contents( layout._widgets[pid].count );
         int count = 0;
 
-        linearize( layout, 1, layout[1]->style->zindex, contents, count );
+        linearize( layout, pid, layout[pid]->style->zindex, contents, count );
         insertionSort( contents );
 
         std::vector< ui::Rect > clip_rect_stack;
@@ -305,15 +308,14 @@ namespace kege::ui{
         }
     }
 
-    void Viewer::collectVisibleWidgets( RenderExecutor* manager, ui::Layout& layout )
+    void Viewer::collectVisibleWidgets( ui::Layout& layout )
     {
         if ( layout.count() == 0 ) return;
         
-        begin();
-        draw( layout, 1, layout[1]->rect );
-        end();
-
-        manager->submit( RenderPassType::UI, _meshs[ _graphics->getFrameIndex() ], _shader_data, _push_constant );
+        for ( int i = 0; i < layout._root_count; ++i  )
+        {
+            draw( layout, layout._roots[i], _clip_rect );
+        }
     }
 
     void Viewer::begin()
@@ -322,12 +324,13 @@ namespace kege::ui{
         _draw_count = 0;
     }
 
-    void Viewer::end()
+    void Viewer::end(RenderExecutor* manager)
     {
         if ( 0 < _draw_count )
         {
             flush();
         }
+        manager->submit( RenderPassType::UI, _meshs[ _graphics->getFrameIndex() ], _shader_data, _push_constant );
     }
 
     void Viewer::setFont( const ref::Font& font )
@@ -384,6 +387,11 @@ namespace kege::ui{
         _asset_manager = asset_manager;
         _graphics = graphics;
         _font = font;
+
+        Extent2D extent = _graphics->getWindow()->getFramebufferSize();
+        _clip_rect.x = _clip_rect.y = 0;
+        _clip_rect.height = extent.height;
+        _clip_rect.width = extent.width;
 
         kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
         _pipeline = _asset_manager->load< ref::ShaderPipeline >( shader_file.c_str() );

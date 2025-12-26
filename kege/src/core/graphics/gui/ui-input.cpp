@@ -13,34 +13,37 @@ namespace kege::ui{
     {
         if ( input.key.code == 0 )
         {
-            if ( input.key.state != 0 && !_curr_frame.button_down )
+            if ( input.key.state != 0 && !_clicks[ input.key.code ].down )
             {
-                _curr_frame.button_down = true;
+                _clicks[ input.key.code ].down = true;
 
                 double now = (double)clock() / (double)CLOCKS_PER_SEC;
                 double time_span = (now - _click_time);
                 if ( time_span > 0 && time_span <= _click_speed )
                 {
-                    _curr_frame.double_click = true;
+                    _clicks[ input.key.code ].clicks = 2;
                     std::cout <<"DOUBLE_CLICK\n";
                 }
                 else
                 {
-                    //std::cout <<"SINGLE_CLICK\n";
-                    _curr_frame.single_click = true;
+                    _clicks[ input.key.code ].clicks = 1;
                 }
-                _curr_frame.click_position = _curr_frame.position;
+                _clicks[ input.key.code ].position = _current_position;
+                _button_down = true;
             }
-            else if ( input.key.state == 0 && _curr_frame.button_down )
+            else if ( input.key.state == 0 && _clicks[ input.key.code ].down )
             {
-                _curr_frame.button_down = false;
+
+                _clicks[ input.key.code ].position = _current_position;
+                _clicks[ input.key.code ].down = false;
+                _clicks[ input.key.code ].clicks = 0;
 
                 _click_time = (double)clock() / (double)CLOCKS_PER_SEC;
-                _curr_frame.release_position = _curr_frame.position;
-                _curr_frame.pointer_dragging = false;
-                _curr_frame.double_click = false;
-                _curr_frame.single_click = false;
+                //_curr_frame.release_position = _curr_frame.position;
+                //_curr_frame.pointer_dragging = false;
+                //_curr_frame.single_click = false;
                 //std::cout <<"CLICK_RELEASE\n";
+                _button_down = false;
             }
         }
     }
@@ -49,9 +52,9 @@ namespace kege::ui{
     void Input::update( const InputEvents& inputs )
     {
         _key_count = 0;
-        _last_frame = _curr_frame;
+        //_last_frame = _curr_frame;
         //_curr_frame.button_down = false;
-        _curr_frame.key_down = false;
+        _key_down = false;
 
         for (int i=0; i<inputs.size(); ++i)
         {
@@ -67,7 +70,7 @@ namespace kege::ui{
                     _keyboard_keys[ _key_count ] = inputs[ i ];
                     _key_count++;
                 }
-                _curr_frame.key_down = true;
+                _key_down = true;
             }
             else
             {
@@ -78,15 +81,15 @@ namespace kege::ui{
 
                     case kege::Input::POINTER:
                     {
-                        _curr_frame.position.x = inputs[ i ].coord.x;
-                        _curr_frame.position.y = inputs[ i ].coord.y;
+                        _current_position.x = inputs[ i ].coord.x;
+                        _current_position.y = inputs[ i ].coord.y;
                         break;
                     }
 
                     case kege::Input::SCROLL:
                     {
-                        _curr_frame.scroll.x = inputs[ i ].coord.x;
-                        _curr_frame.scroll.y = inputs[ i ].coord.y;
+                        _scroll_offset.x = inputs[ i ].coord.x;
+                        _scroll_offset.y = inputs[ i ].coord.y;
                         break;
                     }
 
@@ -95,93 +98,74 @@ namespace kege::ui{
             }
         }
 
-        _curr_frame.delta_position = _curr_frame.position - _last_frame.position;
-        _curr_frame.scroll_offset = _curr_frame.scroll;
-        _curr_frame.scroll = {};
+        _delta_position = _current_position - _previous_position;
+        _previous_position = _current_position;
+        //_curr_frame.scroll_offset = _curr_frame.scroll;
+        //_curr_frame.scroll = {};
 
         /** Handle mouse pointer dragging */
-        if ( _curr_frame.delta_position.x != 0.0 || _curr_frame.delta_position.y != 0.0 )
+        if ( _delta_position.x != 0.0 || _delta_position.y != 0.0 )
         {
-            if ( _last_frame.button_down )
+            if ( _button_down )
             {
-                _curr_frame.pointer_dragging = true;
+                _pointer_dragging = true;
             }
         }
-        if ( !_last_frame.button_down )
+        if ( !_button_down )
         {
-            _curr_frame.pointer_dragging = false;
+            _pointer_dragging = false;
         }
     }
 
-//    const kege::dvec2& Input::releasedPosition()const
-//    {
-//        return _release_position;
-//    }
-//
-//    const kege::dvec2& Input::clickPosition()const
-//    {
-//        return _click_position;
-//    }
-//
-//    const kege::dvec2& Input::previousPosition()const
-//    {
-//        return _position[1];
-//    }
-//
-//    const kege::dvec2& Input::currentPosition()const
-//    {
-//        return _position[0];
-//    }
-//
-//    const kege::dvec2& Input::deltaPosition()const
-//    {
-//        return _delta_position;
-//    }
-//
-//    const kege::dvec2& Input::scrollOffset()const
-//    {
-//        return _scroll_offset;
-//    }
-//
-//    const bool Input::pointerDragging()const
-//    {
-//        return _pointer_dragging;
-//    }
-//
-//    const bool Input::primaryClick()const
-//    {
-//        return _single_click;
-//    }
-//
-//    const bool Input::doubleClick()const
-//    {
-//        return _double_click;
-//    }
-
-    const InputState& Input::getLastState()const
+    const kege::dvec2& Input::previousPosition()const
     {
-        return _last_frame;
+        return _previous_position;
     }
-    const InputState& Input::getCurrState()const
+
+    const kege::dvec2& Input::currentPosition()const
     {
-        return _curr_frame;
+        return _current_position;
+    }
+
+    const kege::dvec2& Input::deltaPosition()const
+    {
+        return _delta_position;
+    }
+
+    const kege::dvec2& Input::scrollOffset()const
+    {
+        return _scroll_offset;
+    }
+
+    const bool Input::pointerDragging()const
+    {
+        return _pointer_dragging;
     }
 
     bool Input::buttonDown()const
     {
-        return _curr_frame.button_down;
+        return _button_down;
+    }
+
+    const Input::Click& Input::getClick( int i )const
+    {
+        return _clicks[i];
     }
 
     bool Input::keyDown()const
     {
-        return _curr_frame.key_down;
+        return _key_down;
     }
 
     Input::Input()
     :   _click_time(0.0)
     ,   _key_count( 0 )
-    ,   _curr_frame{}
-    ,   _last_frame{}
+    ,   _previous_position(0, 0)
+    ,   _current_position(0, 0)
+    ,   _delta_position(0, 0)
+    ,   _scroll_offset(0, 0)
+    ,   _pointer_dragging(false)
+    ,   _button_down(false)
     {
         _click_speed = 0.032;
         _caplock = false;

@@ -80,13 +80,14 @@ namespace kege{
         registerEntities( entity );
     }
 
-    void Scene::remove( const ecs::Entity& entity )
+    void Scene::remove( ecs::Entity& entity )
     {
         for (ecs::Entity e = _ecs.begin(entity); _ecs.valid(e); e = _ecs.next(e))
         {
             remove(e);
         }
         ecs::EntityRegistry::remove( entity );
+        _ecs.detach(entity);
     }
 
     void Scene::setSceneRay( const kege::vec3& ray )

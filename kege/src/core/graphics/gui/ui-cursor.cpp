@@ -10,14 +10,14 @@
 
 namespace kege::ui{
 
-    float Cursor::getClickToCursorOffset( const ui::Elem& elem, const kege::string& text, int font_size, const ref::Font& font )
+    float Cursor::getClickToCursorOffset( const UID& uid, const kege::string& text, int font_size, const ref::Font& font )
     {
-        uint32_t node_index = _layout->_widget_manager.getNodeIndex( elem._handle );
+        if ( text.empty() ) return 0;
         float length = 0;
 
         _position = 0;
         float char_width;
-        float max_length = _input->_curr_frame.position.x - _layout->_nodes[ node_index ].widgit->rect.x;
+        float max_length = _input->_current_position.x - _layout->elem( uid )->rect.x;
         for ( const char* s = text.c_str(); *s != 0; ++s )
         {
             char_width = font->getCharWidth( font_size, *s );
@@ -262,12 +262,13 @@ namespace kege::ui{
         return _reading_input;
     }
 
-    bool Cursor::onInput(Input::Type type, const ui::Elem& elem, const ref::Font& font, kege::string* text)
+    bool Cursor::onInput(Input::Type type, const UID& uid, const ref::Font& font, kege::string* text)
     {
-        int font_size = _layout->_widget_manager[ elem._handle ].style->font_size;
-        if (elem->rect.height > 0) _height = elem->rect.height;
-        _x = elem->rect.x;
-        _y = elem->rect.y;
+        Widget* widget = _layout->elem( uid );
+        int font_size = widget->style->font_size;
+        if (widget->rect.height > 0) _height = widget->rect.height;
+        _x = widget->rect.x;
+        _y = widget->rect.y;
         _reading_input = true;
 
         /**
@@ -277,7 +278,7 @@ namespace kege::ui{
         {
             if( !_initial_click )
             {
-                _offset = getClickToCursorOffset( elem, *text, font_size, font );
+                _offset = getClickToCursorOffset( uid, *text, font_size, font );
                 _initial_click = true;
                 _anchor = _position;
                 _selection = false;
@@ -289,9 +290,9 @@ namespace kege::ui{
             _initial_click = false;
         }
 
-        if( _input->_last_frame.pointer_dragging && _editing )
+        if( _input->_pointer_dragging && _editing )
         {
-            _selection_end = getClickToCursorOffset( elem, *text, font_size, font );
+            _selection_end = getClickToCursorOffset( uid, *text, font_size, font );
             _selection = true;
         }
 
@@ -327,7 +328,7 @@ namespace kege::ui{
             }
 
             /* dont blick if -> selection is active, dragging to select range, or clicking to select range */
-            if ( _input->keyDown() || _selection || _input->_last_frame.pointer_dragging )
+            if ( _input->keyDown() || _selection || _input->_pointer_dragging )
             {
                 _visible = true;
                 _timer = 0;

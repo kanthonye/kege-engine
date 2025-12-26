@@ -15,7 +15,7 @@ namespace kege::ui{
     struct Button
     {
         bool clicked( ui::Layout& layout, const char* text );
-        ui::Elem field;
+        UID field;
     };
 
 }

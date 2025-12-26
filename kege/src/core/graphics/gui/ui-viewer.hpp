@@ -45,12 +45,12 @@ namespace kege::ui{
 
         void drawsort( ui::Layout& layout, int pid );
 
-        void collectVisibleWidgets( RenderExecutor* manager, ui::Layout& layout );
+        void collectVisibleWidgets( ui::Layout& layout );
 
         /**
          */
         void begin();
-        void end();
+        void end(RenderExecutor* manager);
 
         /**
          * Sets the current font for rendering text.
@@ -108,6 +108,7 @@ namespace kege::ui{
         kege::ref::Mesh _meshs[2];
 
         kege::BufferBindings _buffer_bindings[2];
+        ui::Rect _clip_rect;
 
         const int _max_render_instances;
         uint64_t _pipeline;

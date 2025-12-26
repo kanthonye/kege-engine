@@ -8,31 +8,8 @@
 #ifndef hierarchy_panel_hpp
 #define hierarchy_panel_hpp
 
-#include "../elements/ui-panel.hpp"
+#include "ui-panel.hpp"
 #include "../elements/ui-text-field.hpp"
-
-namespace kege::ui{
-
-    struct HierarchyDroplist
-    {
-        ui::Style spacer_style;
-
-        //ui::Elem text_field;
-        //ui::Elem text_field;
-
-        ui::TextField text_field;
-
-        ui::Elem expand_toggle;
-        ui::Elem delete_button;
-        ui::Elem container;
-        ui::Elem content;
-        ui::Elem field;
-        ui::Elem spacer;
-
-        bool open[2] = {false, false};
-    };
-
-}
 
 namespace kege{
 
@@ -45,26 +22,39 @@ namespace kege{
     {
     public:
 
+        struct EntityUI
+        {
+            ui::Style spacer_style;
+
+            UID expand_toggle;
+            UID delete_button;
+            UID container;
+
+            bool open[2] = {false, false};
+        };
+
+    public:
+
         void update();
         ecs::Entity getSelectedEntity();
-        HierarchyPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
+        HierarchyPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs );
 
     public:
 
-        ui::HierarchyDroplist* makeEntityUI( ecs::Entity& entity, int space );
-        void buildHierarchy( ecs::Entity& root, int spacer = 0 );
-        bool clicked( ui::HierarchyDroplist* list );
+        EntityUI* makeEntityUI( ecs::Entity& entity, int space );
+        bool expand( EntityUI* list );
 
     public:
 
-        std::map< uint64_t, ui::HierarchyDroplist > _hierarchy;
+        enum{PANEL, CONTINER, ENTITY, ENTITY_BUTON, ENTITY_CONTENT, COUNT};
+        std::map< uint64_t, EntityUI > _hierarchy;
 
         ref::Scene _scene;
 
         ecs::Entity _selected_entity;
-        ui::Elem _create_entity;
-        ui::Elem _panel;
-        bool _butn_down;
+        UID _create_entity;
+
+        kege::ui::Style _styles[COUNT];
     };
 }
 

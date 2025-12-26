@@ -17,10 +17,10 @@ namespace kege::ui{
     {
         int select( ui::Layout& layout, const char* text, const std::vector<const char*>& list );
 
-        std::vector< ui::Elem > options;
-        ui::Elem container;
-        ui::Elem content;
-        ui::Elem field;
+        std::vector< UID > options;
+        UID container;
+        UID content;
+        UID field;
 
         uint32_t index[2];
         bool state;

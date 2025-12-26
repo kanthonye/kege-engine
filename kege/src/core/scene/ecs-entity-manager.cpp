@@ -164,14 +164,20 @@ namespace kege::ecs{
             {
                 ecs::Child* c = get< ecs::Child >( p->head );
                 p->head = c->next;
-                if ( valid( p->head ) ) c->prev.index = INVALID_INDEX_U32;
+                if ( valid( p->head ) )
+                {
+                    get< ecs::Child >( p->head )->prev.index = INVALID_INDEX_U32;
+                }
                 else p->tail.index = INVALID_INDEX_U32;
             }
             else if ( p->tail.index == child.index )
             {
                 ecs::Child* c = get< ecs::Child >( p->tail );
                 p->tail = c->prev;
-                if ( valid( p->tail ) ) c->next.index = INVALID_INDEX_U32;
+                if ( valid( p->tail ) )
+                {
+                    get< ecs::Child >( p->tail )->next.index = INVALID_INDEX_U32;
+                }
                 else p->head.index = INVALID_INDEX_U32;
             }
             else

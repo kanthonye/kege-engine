@@ -11,7 +11,7 @@
 #include "../elements/ui-menu.hpp"
 #include "../elements/ui-options.hpp"
 #include "../elements/ui-button.hpp"
-#include "../elements/ui-panel.hpp"
+#include "ui-panel.hpp"
 
 namespace kege{
 
@@ -19,13 +19,13 @@ namespace kege{
     {
     public:
 
-        NavbarPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* ecs );
+        NavbarPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs );
         void update();
 
     public:
 
         ui::Options file;
-        ui::Elem _main;
+        UID _main;
     };
 }
 

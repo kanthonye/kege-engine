@@ -12,42 +12,18 @@
 
 namespace kege::ui{
 
-    struct InputState
-    {
-        // Position where the mouse button was released.
-        kege::dvec2 release_position;
-
-        // Position where the mouse button was clicked.
-        kege::dvec2 click_position;
-
-        // The current position of the mouse pointer.
-        kege::dvec2 position;
-
-        // Delta (change) in the current mouse pointer's position.
-        kege::dvec2 delta_position;
-
-        kege::dvec2 scroll_offset; // Mouse scroll offset.
-        kege::dvec2 scroll;
-
-        // Indicates if the mouse pointer is being dragged.
-        bool pointer_dragging;
-
-        // Indicates if the primary mouse button was clicked.
-        bool single_click;
-
-        // Indicates if a double-click occurred.
-        bool double_click;
-
-        // Indicates if any mouse button is down
-        int button_down;
-
-        // Indicates if any keyboard key is down
-        int key_down;
-    };
-
     class Input : public kege::RefCounter
     {
     public:
+
+
+        struct Click
+        {
+            // Position where the mouse button was released.
+            kege::dvec2 position;
+            int  clicks;
+            bool down;
+        };
 
         enum Type
         {
@@ -59,6 +35,39 @@ namespace kege::ui{
         {
             char normal;
             char shifted;
+        };
+
+        struct State
+        {
+            // Position where the mouse button was released.
+            kege::dvec2 release_position;
+
+            // Position where the mouse button was clicked.
+            kege::dvec2 click_position;
+
+            // The current position of the mouse pointer.
+            kege::dvec2 position;
+
+            // Delta (change) in the current mouse pointer's position.
+            kege::dvec2 delta_position;
+
+            kege::dvec2 scroll_offset; // Mouse scroll offset.
+            kege::dvec2 scroll;
+
+            // Indicates if the mouse pointer is being dragged.
+            bool pointer_dragging;
+
+            // Indicates if the primary mouse button was clicked.
+            bool single_click;
+
+            // Indicates if a double-click occurred.
+            bool double_click;
+
+            // Indicates if any mouse button is down
+            int button_down;
+
+            // Indicates if any keyboard key is down
+            int key_down;
         };
 
         /**
@@ -88,41 +97,41 @@ namespace kege::ui{
 //         * @return The click position as a 2D vector.
 //         */
 //        const kege::dvec2& clickPosition() const;
-//
-//        /**
-//         * Retrieves the previous position of the mouse pointer.
-//         *
-//         * @return The previous position as a 2D vector.
-//         */
-//        const kege::dvec2& previousPosition() const;
-//
-//        /**
-//         * Retrieves the current position of the mouse pointer.
-//         *
-//         * @return The current position as a 2D vector.
-//         */
-//        const kege::dvec2& currentPosition() const;
-//
-//        /**
-//         * Retrieves the delta (change) in the mouse pointer's position.
-//         *
-//         * @return The delta position as a 2D vector.
-//         */
-//        const kege::dvec2& deltaPosition() const;
-//
-//        /**
-//         * Retrieves the mouse scroll offset.
-//         *
-//         * @return The scroll offset as a 2D vector.
-//         */
-//        const kege::dvec2& scrollOffset() const;
-//
-//        /**
-//         * Checks if the mouse pointer is being dragged.
-//         *
-//         * @return true if the pointer is being dragged, false otherwise.
-//         */
-//        const bool pointerDragging() const;
+
+        /**
+         * Retrieves the previous position of the mouse pointer.
+         *
+         * @return The previous position as a 2D vector.
+         */
+        const kege::dvec2& previousPosition() const;
+
+        /**
+         * Retrieves the current position of the mouse pointer.
+         *
+         * @return The current position as a 2D vector.
+         */
+        const kege::dvec2& currentPosition() const;
+
+        /**
+         * Retrieves the delta (change) in the mouse pointer's position.
+         *
+         * @return The delta position as a 2D vector.
+         */
+        const kege::dvec2& deltaPosition() const;
+
+        /**
+         * Retrieves the mouse scroll offset.
+         *
+         * @return The scroll offset as a 2D vector.
+         */
+        const kege::dvec2& scrollOffset() const;
+
+        /**
+         * Checks if the mouse pointer is being dragged.
+         *
+         * @return true if the pointer is being dragged, false otherwise.
+         */
+        const bool pointerDragging() const;
 //
 //        /**
 //         * Checks if the mouse primary button was clicked.
@@ -138,9 +147,7 @@ namespace kege::ui{
 //         */
 //        const bool doubleClick() const;
 
-
-        const InputState& getCurrState()const;
-        const InputState& getLastState()const;
+        const Click& getClick( int i )const;
 
         bool buttonDown()const;
         bool keyDown()const;
@@ -160,8 +167,24 @@ namespace kege::ui{
         bool _caplock; // Indicates if a capclock is down.
         bool _shift; // Indicates if a shift key is donw.
 
-        InputState _curr_frame;
-        InputState _last_frame;
+        //Input::State _curr_frame;
+        //Input::State _last_frame;
+
+
+        // Position where the mouse button was clicked.
+        kege::dvec2 _previous_position;
+        kege::dvec2 _current_position;
+        kege::dvec2 _delta_position;
+        kege::dvec2 _scroll_offset;
+        Click _clicks[ 32 ];
+
+        bool _pointer_dragging;
+
+        // Indicates if any mouse button is down
+        std::atomic<bool> _button_down;
+
+        // Indicates if any keyboard key is down
+        std::atomic<bool> _key_down;
 
 //        kege::dvec2 _release_position; // Position where the mouse button was released.
 //        kege::dvec2 _click_position;   // Position where the mouse button was clicked.

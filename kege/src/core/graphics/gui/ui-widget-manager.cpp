@@ -56,7 +56,7 @@ namespace kege::ui{
         _contents[ index ].duplicates = 1;
         _contents[ index ].version = (_contents[ index ].version == 0) ? 1 : _contents[ index ].version + 1;
 
-        _widgets[ index ] = widget;
+        //_widgets[ index ] = widget;
 
         return {index, _contents[ index ].version, 0};
     }

@@ -61,6 +61,7 @@ namespace kege::ui{
         this->color = rgba(color);
     }
 
+
     ui::Color rgb(uint32_t hex_color)
     {
       float r = ((hex_color >> 16) & 0xFF) / 255.0;

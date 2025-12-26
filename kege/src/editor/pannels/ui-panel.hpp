@@ -20,11 +20,11 @@ namespace kege::ui{
         const std::string getName()const{ return _name; }
         virtual void update() = 0;
 
-        Panel( const std::string& name, kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e );
+        Panel( const std::string& name, kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e );
         virtual ~Panel(){}
 
         kege::ProjectManager* _project_manager;
-        ui::Layout* _layout;
+        kege::GUI* _gui;
         kege::ECS* _ecs;
         std::string _name;
     };

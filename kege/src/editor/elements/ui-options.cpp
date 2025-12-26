@@ -11,79 +11,79 @@ namespace kege::ui{
 
     int Options::select( ui::Layout& layout, const char* text, const std::vector<const char*>& list )
     {
-        if ( !field )
-        {
-            field = layout.make
-            ({
-                .text = text,
-                .single_click = ClickTrigger::Immediate,
-                .style = layout.getStyleByName( "option-field" )
-            });
-
-            content = layout.make
-            ({
-                .style = layout.getStyleByName( "option-content" )
-            });
-            content->y = 40;
-            show = false;
-
-            if ( options.empty() )
-            {
-                options.resize( list.size() );
-            }
-
-            for (int i=0; i < list.size(); ++i)
-            {
-                if ( !options[i] )
-                {
-                    options[i] = layout.make
-                    ({
-                        .text = list[i],
-                        .single_click = ClickTrigger::Immediate,
-                        .style = layout.getStyleByName( "option-item" )
-                    });
-                }
-                else
-                {
-                    options[i]->text.text = list[i];
-                }
-            }
-        }
-
-
-
-        layout.put( field );
-
+//        if ( !field )
+//        {
+//            field = layout.make
+//            ({
+//                .text = text,
+//                .single_click = ClickTrigger::Immediate,
+//                .style = layout.getStyleByName( "option-field" )
+//            });
+//
+//            content = layout.make
+//            ({
+//                .style = layout.getStyleByName( "option-content" )
+//            });
+//            content->y = 40;
+//            show = false;
+//
+//            if ( options.empty() )
+//            {
+//                options.resize( list.size() );
+//            }
+//
+//            for (int i=0; i < list.size(); ++i)
+//            {
+//                if ( !options[i] )
+//                {
+//                    options[i] = layout.make
+//                    ({
+//                        .text = list[i],
+//                        .single_click = ClickTrigger::Immediate,
+//                        .style = layout.getStyleByName( "option-item" )
+//                    });
+//                }
+//                else
+//                {
+//                    options[i]->text.text = list[i];
+//                }
+//            }
+//        }
+//
+//
+//
+//        layout.put( field );
+//
         int selection = -1;
-        if ( show )
-        {
-            layout.push( content );
-            for (int i=0; i < options.size(); ++i)
-            {
-                layout.put( options[i] );
-
-                if( layout.mouseover( options[i] ) )
-                {
-                    index[1] = index[0];
-                    index[0] = i;
-
-                    if( index[1] != index[0] )
-                    {
-                        if ( index[1] < options.size() )
-                        {
-                            options[ index[1] ]->style = layout.getStyleByName( "option-item" );
-                        }
-                        options[ i ]->style = layout.getStyleByName( "option-highllight" );
-                    }
-                }
-                else if( index[0] == i )
-                {
-                    options[ index[0] ]->style = layout.getStyleByName( "option-item" );
-                    index[0] = -1;
-                }
-            }
-            layout.pop();
-        }
+//        if ( show )
+//        {
+//            layout.push( content );
+//            for (int i=0; i < options.size(); ++i)
+//            {
+//                layout.put( options[i] );
+//
+//                if( layout.mouseover( options[i] ) )
+//                {
+//                    index[1] = index[0];
+//                    index[0] = i;
+//
+//                    if( index[1] != index[0] )
+//                    {
+//                        if ( index[1] < options.size() )
+//                        {
+//                            options[ index[1] ]->style = layout.getStyleByName( "option-item" );
+//                        }
+//                        options[ i ]->style = layout.getStyleByName( "option-highllight" );
+//                    }
+//                }
+//                else if( index[0] == i )
+//                {
+//                    options[ index[0] ]->style = layout.getStyleByName( "option-item" );
+//                    index[0] = -1;
+//                }
+//            }
+//            layout.pop();
+//        }
 
         if( layout.buttonDown() )
         {

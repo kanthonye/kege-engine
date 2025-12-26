@@ -11,15 +11,15 @@ namespace kege::ui{
 
     bool Button::clicked( ui::Layout& layout, const char* text )
     {
-        if ( !field )
-        {
-            field = layout.make
-            ({
-                .text = text,
-                .style = layout.getStyleByName( "button" ),
-            });
-        }
-        layout.put( field );
+//        if ( !field )
+//        {
+//            field = layout.make
+//            ({
+//                .text = text,
+//                .style = layout.getStyleByName( "button" ),
+//            });
+//        }
+        layout.put({ .id = &field, .text = text });
         return layout.click( field );
     }
 

@@ -12,21 +12,41 @@
 
 namespace kege{
 
-    InspectorPanel::InspectorPanel( kege::ProjectManager* pm, ui::Layout* l, kege::ECS* e )
-    :   kege::ui::Panel( "Inspector", pm, l, e )
+    InspectorPanel::InspectorPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
+    :   kege::ui::Panel( "Inspector", pm, gui, e )
     ,   _show_component_selections( false )
     ,   _selected_entity{}
     {
-        Communication::add< const SetSelectedEntity&, InspectorPanel >( this );
-        _main = _layout->make({ .style = _layout->getStyleByName( "panel" ), .mouseover = false });
+        _styles[0] = kege::ui::Style
+        {
+            .background = ui::Background(0x171420FF),
+            .height = ui::extend(),
+            .width = ui::extend(),
+            .padding = {10,10,10,10},
+            .gap = {2,2},
+            .align =
+            {
+                .origin = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
+        _styles[1] = kege::ui::Style
+        {
+            .background = ui::Background(0xFFFFFF10),
+            .height = ui::flexible(),
+            .width = ui::extend(),
+            .padding = {10,10,10,10},
+            .gap = {2,2},
+            .align =
+            {
+                .origin = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
+                .direction = ui::AlignDir::VERTICAL
+            }
+        };
 
-        _add_component = _layout->make
-        ({
-            .mouseover = true,
-            .single_click = ui::ClickTrigger::OnRelease,
-            .style = _layout->getStyleByName( "button" ),
-            .text = {"Add Component", 0, 0, 0, 0},
-        });
+        Communication::add< const SetSelectedEntity&, InspectorPanel >( this );
 
         _ui_element_creator[ ecs::Component::type< kege::Camera >()    ] = ui::camera;
         _ui_element_creator[ ecs::Component::type< kege::Rigidbody >() ] = ui::rigidbody;
@@ -42,9 +62,11 @@ namespace kege{
 
     void InspectorPanel::add(const std::string& stype, int component_type, void(*funct)( kege::ECS*, ecs::Entity& ))
     {
-        _entity_component_factory[ component_type ] = funct;
+        _component_factory[ component_type ] = funct;
         _string_to_component_type[ stype ] = component_type;
-        _component_string_types.push_back( stype );
+        std::pair<kege::UID, std::string> pair;
+        pair.second = stype;
+        _component_uis.push_back(pair);
     }
 
     void InspectorPanel::operator()( const SetSelectedEntity& msg )
@@ -52,83 +74,41 @@ namespace kege{
         _selected_entity = msg.entity;
     }
 
-
-    int InspectorPanel::select( ui::Layout* layout, const std::vector< std::string >& options )
-    {
-        if ( _selection_elements.size() != options.size() )
-        {
-            _selection_elements.resize( options.size() );
-            for (int i=0; i < _selection_elements.size(); ++i)
-            {
-                _selection_elements[i] = layout->make
-                ({
-                    .mouseover = true,
-                    .single_click = ui::ClickTrigger::Immediate,
-                    .style = layout->getStyleByName( "button" ),
-                    .text = {options[i].c_str(), 0, 0, 0, 0},
-                });
-            }
-            _selection_container = layout->make
-            ({
-                .mouseover = false,
-                .style = layout->getStyleByName( "v-container" )
-            });
-        }
-
-        layout->push( _selection_container );
-        for (int i=0; i < _selection_elements.size(); ++i)
-        {
-            layout->put( _selection_elements[i] );
-        }
-        layout->pop();
-
-        // select the clicked tab element
-        for (int i=0; i < _selection_elements.size(); ++i)
-        {
-            if( layout->click( _selection_elements[i] ) )
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     void InspectorPanel::update()
     {
-        _layout->push( _main );
+        _gui->push({ .style = &_styles[0] });
         if ( _selected_entity )
         {
-            _layout->put( _add_component );
-            if( _layout->click( _add_component ) )
+            if( _gui->button(_add_component, "add component") )
             {
-                _show_component_selections = true;
+                _show_component_selections = !_show_component_selections;
             }
 
-            if ( _show_component_selections && _selected_entity )
+            if ( _show_component_selections )
             {
                 int selection;
-                if (( selection = select( _layout, _component_string_types ) ) >= 0)
+                if ( _gui->select(&_styles[1], _component_uis, selection) )
                 {
-                    auto i = _string_to_component_type.find( _component_string_types[ selection ] );
+                    auto i = _string_to_component_type.find( _component_uis[ selection ].second );
                     if (i != _string_to_component_type.end())
                     {
-                        _entity_component_factory[ i->second ]( _ecs, _selected_entity );
+                        _component_factory[ i->second ]( _ecs, _selected_entity );
                         _show_component_selections = false;
                     }
                 }
             }
 
-            const ecs::Component::Layout& layout = _ecs->getLayout( _selected_entity );
-            for (int i = 0; i < layout.attributes.size(); ++i)
-            {
-                auto m = _ui_element_creator.find( layout.attributes[i].info->type );
-                if ( m != _ui_element_creator.end() )
-                {
-                    m->second( _ecs, *_layout, _tree, _selected_entity );
-                }
-            }
+//            const ecs::Component::Layout& layout = _ecs->getLayout( _selected_entity );
+//            for (int i = 0; i < layout.attributes.size(); ++i)
+//            {
+//                auto m = _ui_element_creator.find( layout.attributes[i].info->type );
+//                if ( m != _ui_element_creator.end() )
+//                {
+//                    //TODO: m->second( _ecs, *_gui, _tree, _selected_entity );
+//                }
+//            }
         }
-        _layout->pop();
+        _gui->pop();
     }
 
 }

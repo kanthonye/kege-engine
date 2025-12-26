@@ -10,6 +10,24 @@
 
 namespace kege::ui{
 
+
+    void* Layout::getParams(AllocParam param)
+    {
+        if (param.index + param.size > _state_buffer.size()) return nullptr;
+        return &_state_buffer[ param.index ];
+    }
+
+    AllocParam Layout::alloc(size_t size)
+    {
+        size_t index = _state_buffer_size;
+        if (index + size >= _state_buffer.size())
+        {
+            _state_buffer.resize(index + size + 1024);
+        }
+        _state_buffer_size += size;
+        return AllocParam{ .index = index, .size = size };
+    }
+
     kege::vec2 Layout::computeExtent( int font_size, const char* text )
     {
         //const int text_index = node.text_id;
@@ -25,12 +43,12 @@ namespace kege::ui{
         return cursor;
     }
 
-    bool Layout::onNumericInput(const ui::Elem& elem, kege::string* text)
+    bool Layout::onNumericInput(const UID& elem, kege::string* text)
     {
         return _cursor.onInput(Input::INPUT_NUMERIC, elem, _font, text);
     }
 
-    bool Layout::onTextInput(const ui::Elem& elem, kege::string* text)
+    bool Layout::onTextInput(const UID& elem, kege::string* text)
     {
         return _cursor.onInput(Input::INPUT_TEXT, elem, _font, text);
     }
@@ -46,188 +64,210 @@ namespace kege::ui{
         );
     }
 
-    const kege::dvec2& Layout::pointerPosition() const
+//    const kege::dvec2& Layout::pointerPosition() const
+//    {
+//        return _input->_last_frame.position;
+//    }
+//
+//    const kege::dvec2& Layout::deltaPosition() const
+//    {
+//        return _input->_last_frame.delta_position;
+//    }
+//
+//    const kege::dvec2& Layout::scrollOffset() const
+//    {
+//        return _input->_last_frame.scroll_offset;
+//    }
+//
+//    const bool Layout::pointerDragging() const
+//    {
+//        return _input->_last_frame.pointer_dragging;
+//    }
+
+    bool Layout::mouseover( const UID& uid )const
     {
-        return _input->_last_frame.position;
+        return _hit_record.hot.id == uid.id.id;
     }
 
-    const kege::dvec2& Layout::deltaPosition() const
+    bool Layout::doubleClick( const UID& uid )const
     {
-        return _input->_last_frame.delta_position;
+        return _hit_record.active.id == uid.id.id && _hit_record.clicks == 2;
     }
 
-    const kege::dvec2& Layout::scrollOffset() const
+    bool Layout::click( const UID& uid )const
     {
-        return _input->_last_frame.scroll_offset;
+        return _hit_record.active.id == uid.id.id && _hit_record.clicks == 1;
     }
 
-    const bool Layout::pointerDragging() const
+    bool Layout::hasFocus( const UID& uid )const
     {
-        return _input->_last_frame.pointer_dragging;
+        return _focus.id == uid.id.id;
     }
 
-    bool Layout::mouseover( const ui::Elem& elem )const
+    uint32_t Layout::put( const Desc& desc )
     {
-        return _hot[1].id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
-    }
-
-    bool Layout::doubleClick( const ui::Elem& elem )const
-    {
-        return _clicked.clicks == 2 && _clicked.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
-    }
-
-    bool Layout::click( const ui::Elem& elem )const
-    {
-        return _clicked.clicks == 1 && _clicked.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
-    }
-
-    bool Layout::hasFocus( const ui::Elem& elem )const
-    {
-        return _focus.id == _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
-    }
-
-    void Layout::setFocus( const ui::Elem& elem )
-    {
-        _focus.id = _nodes[ _widget_manager.getNodeIndex( elem._handle ) ].id;
-    }
-
-    Elem Layout::make( const Widget& widget )
-    {
-        Handle handle = _widget_manager.make( widget );
-        if ( !_widget_manager[ handle ].text.text.empty() )
-        {
-//            if
-//            (
-//             _widget_manager[ id ].style->height.type == ui::SizingType::SIZE_FLEXIBLE ||
-//             _widget_manager[ id ].style->align_text  == ui::AlignText::Right ||
-//             _widget_manager[ id ].style->align_text  == ui::AlignText::Center
-//            )
-            {
-                vec2 extent = computeExtent
-                (
-                 _widget_manager[ handle ].style->font_size,
-                 _widget_manager[ handle ].text.text.c_str()
-                );
-
-                _widget_manager[ handle ].text.height = extent.y;
-                _widget_manager[ handle ].text.width = extent.x;
-            }
-        }
-        return Elem{ handle, this };
-    }
-
-    uint32_t Layout::put( const Elem& elem )
-    {
-        if ( !elem )
-        {
-            kege::Log::error << "Invalid Widget Index"<<Log::nl;
+        if (_widget_count >= _widgets.size()) {
+            kege::Log::error << "exceeding maximum ui widget capacity.";
             return 0;
         }
 
-        if ( _node_counter + 1 >= _nodes.size() )
+        Widget* widget = &_widgets[ _widget_count ];
+        uint32_t index = _widget_count;
+        _widget_count += 1;
+
+        if( desc.id )
         {
-            kege::Log::error << "Reached Maximum amount of UI Node";
-            return 0;
+            desc.id->elem_id.version = ++widget->version;
+            desc.id->elem_id.index = index;
+            widget->id = desc.id->id;
+            widget->elem_id = desc.id->elem_id;
+        }
+        else
+        {
+            widget->id.index = index;
         }
 
-        int node_index = ( _node_counter += 1 );
-        _widget_manager.setNodeIndex( elem._handle, node_index );
+        if( desc.text ) widget->text.text = desc.text;
+        else widget->text.text = "";
 
-        if ( 0 != _parent && node_index == _parent )
-        {
-            kege::Log::error << "Death cycle detected. Attaching child node to its self will cause the program to looping infinetly and become stuck"<<Log::nl;
-            return 0;
-        }
+        widget->style        = desc.style;
+        widget->offset.x     = desc.offset.x;
+        widget->offset.y     = desc.offset.y;
+        widget->enabled      = desc.enabled;
+        widget->single_click = desc.single_click;
+        widget->double_click = desc.double_click;
+        widget->visible      = desc.visible;
 
-        _nodes[ node_index ].widgit = &_widget_manager[ elem._handle ];
-        _nodes[ node_index ].parent = _parent;
-        _nodes[ node_index ].count = 0;
-        _nodes[ node_index ].head = 0;
-        _nodes[ node_index ].tail = 0;
-        _nodes[ node_index ].next = 0;
-        //_nodes[ node_index ].next_free = 0;
-        //_nodes[ node_index ].freed = false;
-        _nodes[ node_index ].id = node_index;
+        widget->parent       = _parent;
+        widget->count        = 0;
+        widget->head         = 0;
+        widget->tail         = 0;
+        widget->next         = 0;
 
-
-        // if style width and height is fixed, set the rect width and height of the ui element
-        if ( _nodes[ node_index ].widgit->style->height.type == kege::ui::SIZE_FIXED )
-        {
-            _nodes[ node_index ].widgit->rect.height = _nodes[ node_index ].widgit->style->height.size;
-        }
-        if ( _nodes[ node_index ].widgit->style->width.type == kege::ui::SIZE_FIXED )
-        {
-            _nodes[ node_index ].widgit->rect.width = _nodes[ node_index ].widgit->style->width.size;
-        }
+        widget->rect       = {};
 
         // setup the layout tree hierarchy
         if ( 0 < _parent )
         {
-            if ( _nodes[ _parent ].head == 0 )
+            if ( _widgets[ _parent ].head == 0 )
             {
-                _nodes[ _parent ].tail = _nodes[ _parent ].head = _node_counter;
+                _widgets[ _parent ].tail = _widgets[ _parent ].head = index;
             }
             else
             {
-                _nodes[ _nodes[ _parent ].tail ].next = _node_counter;
-                _nodes[ _parent ].tail = _node_counter;
+                _widgets[ _widgets[ _parent ].tail ].next = index;
+                _widgets[ _parent ].tail = index;
             }
-            _nodes[ _parent ].count++;
+            _widgets[ _parent ].count++;
 
-            _nodes[ node_index ].depth = 1 + _nodes[ _parent ].depth;
+            //node->depth = 1 + _nodes[ _parent ].depth;
         }
-
-        if ( _root == 0 )
+        else
         {
-            _root = node_index;
+            if (_root_count >= _roots.size())
+            {
+                _roots.resize((!_roots.empty()? 2 * _roots.size(): 16 ));
+            }
+            _roots[ _root_count ] = index;
+            _root_count += 1;
         }
-        return node_index;
+
+
+        vec2 text_extent = {};
+        if(!widget->text.text.empty())
+        {
+            text_extent = computeExtent(widget->style->font_size, widget->text.text.c_str());
+        }
+
+        if(widget->style->width.type == kege::ui::SIZE_FIXED)
+        {
+            widget->rect.width = widget->style->width.size;
+        }
+        else if(widget->style->width.type == kege::ui::SIZE_FLEXIBLE && !widget->text.text.empty())
+        {
+            widget->rect.width = text_extent.x + widget->style->padding.left + widget->style->padding.right;
+        }
+
+        if(widget->style->height.type == kege::ui::SIZE_FIXED)
+        {
+            widget->rect.height = widget->style->height.size;
+        }
+        else if(widget->style->height.type == kege::ui::SIZE_FLEXIBLE && !widget->text.text.empty())
+        {
+            widget->rect.height = text_extent.y + widget->style->padding.above + widget->style->padding.below;
+        }
+
+        return index;
     }
 
-    uint32_t Layout::push( const Elem& elem )
+    uint32_t Layout::push( const Desc& desc )
     {
-        _parent = put( elem );
+        _parent = put( desc );
         return _parent;
     }
+
+//    uint32_t Layout::push( const Elem& elem )
+//    {
+//        _parent = put( elem );
+//        return _parent;
+//    }
 
     uint32_t Layout::pop()
     {
         int pid = _parent;
         if ( 0 != _parent )
         {
-            _parent = _nodes[ _parent ].parent;
-//            if ( _aligner.shouldPreCalcFlexibleSize( *this, pid ) )
-//            /**
-//             * We only need to compute the lengths for elements with flexible lengths. This
-//             * is best done when popping a parent element from the stack. for onter lengths
-//             * types like percentage and extend, these length are computed at the end of
-//             * building the interface.
-//             */
-//            {
-//                _aligner.computeFlexibleLengths( *this, pid );
-//            }
+            _parent = _widgets[ _parent ].parent;
         }
+        //if ( _widgets[pid].style->width.type == SizingType::SIZE_FLEXIBLE || _widgets[pid].style->height.type == SizingType::SIZE_FLEXIBLE )
+        //{
+        //    Resizer::calcFlexSize( *this, pid );
+        //}
         return pid;
     }
 
-    const kege::ui::Widget* Layout::operator[]( const Elem& elem ) const
+    const kege::ui::Widget* Layout::elem( const UID& uid ) const
     {
-        return &_widget_manager[ elem._handle ];
+        if ( _widgets.size() <= uid.elem_id.index)
+        {
+            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            return nullptr;
+        }
+        if ( _widgets[ uid.elem_id.index ].version != uid.elem_id.version) return nullptr;
+        return &_widgets[ uid.elem_id.index ];
     }
 
-    kege::ui::Widget* Layout::operator[]( const Elem& elem )
+    kege::ui::Widget* Layout::elem( const UID& uid )
     {
-        return &_widget_manager[ elem._handle ];
+        if ( _widgets.size() <= uid.elem_id.index)
+        {
+            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            return nullptr;
+        }
+        if ( _widgets[ uid.elem_id.index ].version != uid.elem_id.version) return nullptr;
+        return &_widgets[ uid.elem_id.index ];
+    }
+
+    kege::ui::Widget* Layout::elemParent( const UID& uid )
+    {
+        if ( _widgets.size() <= uid.elem_id.index)
+        {
+            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            return nullptr;
+        }
+        if ( _widgets[ uid.elem_id.index ].version != uid.elem_id.version) return nullptr;
+        //int32_t parent = _widgets[ _widgets[ uid.index ].parent ].parent;
+        return &_widgets[ _widgets[ uid.elem_id.index ].parent ];
     }
 
     const Widget* Layout::operator[]( NodeIndex node_id )const
     {
-        return _nodes[ node_id ].widgit;
+        return &_widgets[ node_id ];
     }
 
     Widget* Layout::operator[]( NodeIndex index )
     {
-        return _nodes[ index ].widgit;
+        return &_widgets[ index ];
     }
 
     uint32_t Layout::addStyle( const AddStyle& as )
@@ -262,22 +302,22 @@ namespace kege::ui{
 
     NodeIndex Layout::parent( NodeIndex index )const
     {
-        return _nodes[ index ].parent;
+        return _widgets[ index ].parent;
     }
     
     NodeIndex Layout::head( NodeIndex index )const
     {
-        return _nodes[ index ].head;
+        return _widgets[ index ].head;
     }
 
     NodeIndex Layout::tail( NodeIndex index )const
     {
-        return _nodes[ index ].tail;
+        return _widgets[ index ].tail;
     }
 
     NodeIndex Layout::next( NodeIndex index )const
     {
-        return _nodes[ index ].next;
+        return _widgets[ index ].next;
     }
 
     uint32_t Layout::getHeight()const
@@ -292,294 +332,225 @@ namespace kege::ui{
 
     uint32_t Layout::count( NodeIndex index )const
     {
-        return _nodes[ index ].count;
+        return _widgets[ index ].count;
     }
 
     void Layout::resize( uint32_t max_nodes )
     {
-        _widget_manager.resize( max_nodes );
-        _nodes.resize( max_nodes );
+        _widgets.resize( max_nodes );
+        for (int i=0; i<max_nodes; ++i)
+        {
+            _widgets[i].id.index = i;
+            _widgets[i].id.version = 0;
+        }
     }
 
     uint32_t Layout::count()const
     {
-        return _node_counter;
+        return _widget_count;
     }
 
     bool Layout::validate( uint32_t node_id )const
     {
-        return node_id > 0 && node_id < _nodes.size();
+        return node_id > 0 && node_id < _widgets.size();
     }
 
-    void Layout::handleMouseOverEvents()
-    {
-        // Reset current hot element at start of frame
-        _hot[0] = {};
-
-        // First, check if previous hot element is still valid and under mouse
-        if (_hot[1].id != 0)
-        {
-            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ _hot[1].id ].widgit->rect ) )
-            {
-                // If previous hot element has children, there is a possibility that the mouse
-                // is over its child element. So, we need to account for those child elements.
-                if ( _nodes[ _hot[1].id ].count )
-                {
-                    findNewHotElement( _hot[1].id );
-                }
-
-                // If the previous hot element has no children then it is still under mouse - keep it hot
-                if (_hot[0].id == 0)
-                {
-                    _hot[0] = _hot[1];
-                }
-
-            }
-        }
-
-        // If we didn't find a persistent hot element, search for a new one
-        if (_hot[0].id == 0)
-        {
-            findNewHotElement(1);
-        }
-
-        // Handle mouse enter/leave events
-        if (_hot[0].id != _hot[1].id)
-        {
-            if (_hot[1].id != 0)
-            {
-                std::cout  <<"mouse exit: " << _hot[1].id <<"\n";
-            }
-
-            if (_hot[0].id != 0)
-            {
-                std::cout  <<"mouse enter: " << _hot[0].id <<"\n";
-            }
-        }
-
-        // Handle focus logic (separate from mouseover)
-        //handleFocusLogic(root);
-
-        // Store current hot for next frame
-        _hot[1] = _hot[0];
-    }
-
-
-    void Layout::findNewHotElement( uint32_t root )
-    {
-        for (uint32_t ui_index = _nodes[ root ].head; ui_index != 0 ; ui_index = _nodes[ ui_index ].next )
-        {
-            findNewHotElement( ui_index );
-        }
-
-        if ( _nodes[ root ].widgit->mouseover && _nodes[ root ].widgit->visible )
-        {
-            if ( testPointVsRect( _input->_curr_frame.position, _nodes[ root ].widgit->rect ) )
-            {
-                if ( _hot[0].depth < _nodes[ root ].depth  )
-                {
-                    if ( _hot[0].id == 0 )
-                    {
-                        _hot[0].id    = _nodes[ root ].id;
-                        _hot[0].depth = _nodes[ root ].depth;
-                    }
-                    else if ( _nodes[ _hot[0].id ].widgit->style->zindex <= _nodes[ root ].widgit->style->zindex )
-                    {
-                        _hot[0].id    = _nodes[ root ].id;
-                        _hot[0].depth = _nodes[ root ].depth;
-                    }
-                }
-            }
-        }
-    }
-
-    void Layout::handleButtonUpEvents()
-    {
-        if ( _active[1].id != 0 && _active[1].id < _nodes.size() )
-        {
-            if
-            (
-                _nodes[ _active[1].id ].widgit->single_click == ui::ClickTrigger::OnRelease ||
-                _nodes[ _active[1].id ].widgit->double_click == ui::ClickTrigger::OnRelease
-            )
-            {
-                std::cout  <<"release: " << _active[1].id <<"| " << _hot[1].id <<"\n";
-                if ( _hot[1].id == _active[1].id )
-                {
-                    std::cout <<"FIRE ON RELEASE\n";
-                    _clicked = _active[1];
-                }
-            }
-            _active[1] = {};
-        }
-    }
-
-    void Layout::handleButtonDownEvents()
-    {
-        _active[0] = {};
-
-        // Persist active state while holding
-        if (_active[1].id != 0)
-        {
-            _active[0] = _active[1];
-
-            // OnClick fires continuous
-            if
-            (
-                _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Continuous ||
-                _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Continuous
-            )
-            {
-                std::cout <<"DOUBLE CLICK: FIRE CONTINUOUSLY\n";
-                _clicked = _active[0];
-                // Fire callback here
-            }
-        }
-        // Initiate new click
-        else if (_hot[0].id != 0)
-        {
-            if (_input->_curr_frame.double_click )
-            {
-                _active[0] = _hot[0];
-                _active[0].clicks = 2;
-                _focus = _active[0];
-
-                // OnClick fires immediately
-                if
-                (
-                    _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Immediate ||
-                    _nodes[_active[0].id].widgit->double_click == ui::ClickTrigger::Continuous
-                )
-                {
-                    std::cout <<"DOUBLE CLICK: FIRE IMMEDIATELY\n";
-                    _clicked = _active[0];
-                    // Fire callback here
-                }
-            }
-            else if ( _input->_curr_frame.single_click )
-            {
-                _active[0] = _hot[0];
-                _active[0].clicks = 1;
-                _focus = _active[0];
-
-                // OnClick fires immediately
-                if
-                (
-                    _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Immediate ||
-                    _nodes[_active[0].id].widgit->single_click == ui::ClickTrigger::Continuous
-                )
-                {
-                    std::cout <<"SINGLE CLICK: FIRE IMMEDIATELY\n";
-                    _clicked = _active[0];
-                    // Fire callback here
-                }
-            }
-        }
-        _active[1] = _active[0];  // Store for next frame
-
-        // If button not down, _active[0] stays empty
-        // but _active[1] retains value for release detection
-    }
-    HitRecord Layout::scanEvents(uint32_t root)
-    {
-        HitRecord rec{};
-        const auto* inp = &_input->_curr_frame;
-        const bool  leftDown  = inp->button_down && inp->single_click;
-        const bool  leftPressed  = inp->single_click;
-        const bool  leftReleased = !leftDown && _button_down;
-        const bool  doubleClick  = inp->double_click;
-
-        for (uint32_t i = root; i != 0; i = next(i))
-        {
-            const Node& n = _nodes[i];
-            if (!n.widgit->visible) continue;
-
-            bool inside = testPointVsRect(inp->position, n.widgit->rect);
-            if (inside) {
-                rec.hotId = n.id;
-                if (leftPressed || doubleClick) {
-                    rec.activeId = n.id;
-                    rec.focusId  = n.id;
-                    rec.clicks   = doubleClick ? 2 : 1;
-                }
-            }
-            // depth-first recursion
-            if (n.count) {
-                auto childRec = scanEvents(n.id + 1);  // first child
-                if (childRec.hotId && !rec.hotId) rec = childRec;
-            }
-        }
-        rec.release = leftReleased && rec.activeId;
-        return rec;
-    }
-    
     void Layout::begin( double dms, ui::Input* input )
     {
-        _root = 0;
         _parent = 0;
+        _root_count = 0;
+        _widget_count = 1;
+        _state_buffer_size = 0;
+        _deferred_op_count = 0;
+
         _input = input;
-        _node_counter = 0;
-
-        _widget_manager.refresh();
-
         _cursor.update( dms, input );
+
+        if ( _hit.id != 0)
+        {
+            _hit_record.active = _hit;
+        }
+        else
+            _hit_record.active.id = 0;
+
+        if ( _focus.id != 0)
+        {
+            _hit_record.focus = _focus;
+        }
+        _hit_record.hot = _hot;
     }
 
-    void Layout::end()
-//    {
-//        if (_node_counter == 0) return;
-//
-//        align( *this, _root );                    // one layout pass
-//        HitRecord hit = scanEvents(_root);
-//
-//        _hot[CURR] = {hit.hotId, 0, 0, 0, false};
-//        if (hit.activeId) {
-//            _active[CURR] = {hit.activeId, 0, 0, hit.clicks, false};
-//            _focus = {hit.focusId, 0, 0, 0, false};
-//        }
-//        _clicked = (hit.release && hit.activeId == hit.hotId) ? _active[CURR] : State{};
-//
-//        _hot[PREV]    = _hot[CURR];
-//        _active[PREV] = _active[CURR];
-//        _button_down  = _input->buttonDown();
-//    }
+    Id Layout::getHotElem(uint32_t node_index, bool button)
     {
-        /**
-         * If the nodes are not empty, we align the layout.
-         */
-        if ( 0 < _node_counter )
+        if ( !_widgets[ node_index ].visible || !_widgets[ node_index ].enabled ) return {};
+
+        for (int child_index = _widgets[ node_index ].head; child_index != 0; child_index = _widgets[ child_index ].next)
         {
-            if ( 0 < _root )
+            Id id = getHotElem( child_index, button );
+            if ( id.id != 0 )
             {
-                align( *this, _root );
+                return id;
+            }
+        }
+
+        if (button)
+        {
+            if (_widgets[ node_index ].single_click == ui::ClickTrigger::Disable &&
+                _widgets[ node_index ].double_click == ui::ClickTrigger::Disable)
+            {
+                return {};
+            }
+        }
+        if ( testPointVsRect( _input->_current_position, _widgets[ node_index ].rect ) )
+        {
+            _hot_index = node_index;
+            return _widgets[ node_index ].id;
+        }
+        return {};
+    }
+
+    Id Layout::getHotElem(bool button)
+    {
+        Id hot;
+        for (int i=0; i<_root_count; ++i)
+        {
+            hot = getHotElem( _roots[i], button );
+            if ( hot.id != 0 )
+            {
+                break;
+            }
+        }
+        return hot;
+    }
+
+    uint32_t Layout::find(uint32_t widget_index, const ui::Id& id)
+    {
+        if ( id.id == _widgets[ widget_index ].id.id )
+        {
+            return widget_index;
+        }
+
+        for (int child_index = _widgets[ widget_index ].head; child_index != 0; child_index = _widgets[ child_index ].next)
+        {
+            uint32_t index = find( child_index, id );
+            if ( index != 0 )
+            {
+                return index;
+            }
+        }
+        return 0;
+    }
+
+    uint32_t Layout::find(const ui::Id& id)
+    {
+        for (int i=0; i<_root_count; ++i)
+        {
+            uint32_t index = find( _roots[i], id );
+            if ( index != 0 )
+            {
+                return index;;
+            }
+        }
+        return 0;
+    }
+
+    void Layout::handleInputEvents()
+    {
+        _hit.id = 0;
+
+        // when mouse button not down scan for hot element
+        _button_down = _input->buttonDown();
+        if ( !_button_down )
+        {
+            if ( _button_active )
+            {
+                _button_active = false;
+                _active_index = find( _active );
+
+                const Input::Click& click = _input->getClick(0);
+                if( testPointVsRect( click.position, _widgets[ _active_index ].rect ) )
+                {
+                    if (_widgets[ _active_index ].single_click == ui::ClickTrigger::OnRelease)
+                    {
+                        std::cout <<"release: "<< _active.id <<"\n";
+                        _hit.id = _active.id;
+                        _focus.id = _hot.id;
+                        return;
+                    }
+                }
             }
 
-            handleMouseOverEvents();
+            _hot = getHotElem();
+            _active_index = 0;
+            _active.id = 0;
+        }
+        else if ( _button_down && !_button_active )
+        {
+            _button_active = true;
+            _hot = getHotElem(true);
+        }
 
-            _clicked = {};
-            _button_down = _input->buttonDown();
-            if ( _button_down )
+        if ( _button_down )
+        {
+            if ( _active.id == 0 && _hot.id != 0 )
             {
-                handleButtonDownEvents();
+                const Input::Click& click = _input->getClick(0);
+                if ( click.down )
+                {
+                    if( testPointVsRect( click.position, _widgets[ _hot_index ].rect ) )
+                    {
+                        _hit_record.clicks = click.clicks;
+                        _active_index = _hot_index;
+                        _active.id = _hot.id;
+                        _focus.id = _hot.id;
+
+                        if (_widgets[ _hot_index ].single_click == ui::ClickTrigger::Immediate ||
+                            _widgets[ _hot_index ].single_click == ui::ClickTrigger::Continuous)
+                        {
+                            _hit.id = _active.id;
+                        }
+                        //std::cout <<"clicked: "<< _active.id <<"\n";
+                    }
+                }
+            }
+            else if ( _active.id != 0 )
+            {
+                _active_index = find( _active );
+                if (_widgets[ _active_index ].single_click == ui::ClickTrigger::Continuous ||
+                    _widgets[ _active_index ].double_click == ui::ClickTrigger::Continuous)
+                {
+                    _hit.id = _widgets[ _active_index ].id.id;
+                }
             }
             else
             {
-                handleButtonUpEvents();
+                _focus.id = 0;
             }
         }
-//        if ( _active[0].id )
-//        {
-//            _cursor = _nodes[ _active[0].id ].content->rect;
-//            _cursor.width = 4;
-//        }
+    }
+
+    void Layout::end()
+    {
+        if ( 0 < _widget_count )
+        {
+            Resizer::resize( *this );
+            for (int i=0; i<_deferred_op_count; i++)
+            {
+                char* data = &_state_buffer[_deferred_ops[i].alloc.index];
+                _deferred_ops[i].fn(this, *_deferred_ops[i].id, data);
+            }
+            Aligner::align( *this );
+
+            handleInputEvents();
+        }
     }
 
     bool Layout::buttonDown()const
     {
-        return _input->_last_frame.button_down;
+        return _button_down;
     }
 
-    ui::Input* Layout::input()
+    const ui::Input* Layout::input()const
     {
         return _input;
     }
@@ -588,12 +559,15 @@ namespace kege::ui{
     :   _parent( 0 )
     ,   _hot{}
     ,   _active{}
-    ,   _node_counter( 0 )
-    ,   _root( 0 )
+    ,   _active_index(0)
+    ,   _hot_index(0)
+    ,   _widget_count( 1 )
     ,   _button_down( false )
     ,   _height( height )
     ,   _width( width )
     ,   _cursor( this )
+//    ,   _head(-1)
+//    ,   _tail(-1)
     {
     }
 

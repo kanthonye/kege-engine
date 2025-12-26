@@ -85,7 +85,7 @@ namespace kege{
          * @brief Remove an entity from the scene
          * @param entity the entity to remove
          */
-        void remove( const ecs::Entity& entity );
+        void remove( ecs::Entity& entity );
 
         /**
          * @fn init

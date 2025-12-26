@@ -14,9 +14,8 @@
 #include "inspector-panel.hpp"
 #include "viewport-panel.hpp"
 #include "navbar-panel.hpp"
-#include "elements/ui-dock-node.hpp"
-#include "elements/ui-panel.hpp"
-#include "elements/ui-dock-node.hpp"
+#include "ui-dock.hpp"
+#include "gui.hpp"
 
 namespace kege{
 
@@ -45,15 +44,17 @@ namespace kege{
         kege::RenderGraph* _render_graph;
         kege::ECS* _ecs;
 
-        Ref< ui::DockNode > _root;
+        kege::GUI _gui;
+
+        Ref< ui::Panel > hp;
+
+        Ref< ui::DockManager > _dock_mngr;
 
         Ref< ui::Layout > _layout;
         ui::Viewer _viewer;
         ui::Input _input;
 
         bool _paused;
-
-        ui::Elem main_panel;
     };
 }
 

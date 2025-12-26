@@ -13,21 +13,11 @@
 
 namespace kege::ui{
 
-    class Layout;
-
-    struct CoverageData
+    class Aligner
     {
-        Extent2D padding;
-        Extent2D bounding;
-        Extent2D gap;
-        Extent2D sum;
-        Extent2D max;
-        Extent2D region;
-        int extendable_width_count;
-        int extendable_height_count;
+        public: static void align( Layout& layout );
     };
 
-    void align( Layout& layout, NodeIndex eid );
 }
 
 #endif // ui_aligner_hpp

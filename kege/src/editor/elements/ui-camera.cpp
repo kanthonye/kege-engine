@@ -55,17 +55,17 @@ namespace kege::ui
             node.children.resize(3);
         }
 
-        layout.push( node.elements[0] );
+        layout.push({ .id = &node.elements[0] });
         {
-            layout.push( node.elements[1] );
+            layout.push({ .id = &node.elements[1] });
             {
-                layout.put( node.elements[2] );
+                layout.put({ .id = &node.elements[2] });
             }
             layout.pop();
 
             if ( ui::droplistOpen( layout, node ) )
             {
-                layout.push( node.elements[3] );
+                layout.push({ .id = &node.elements[3] });
                 if ( camera->projection->type == Projection::PERSPECTIVE )
                 {
                     Perspective* projection = (Perspective*) camera->projection.ref();

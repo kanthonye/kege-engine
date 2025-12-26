@@ -166,10 +166,10 @@ namespace kege::ui{
     Alignment parseAlignment( kege::Json json )
     {
         Alignment alignment;
-        alignment.origin = ALIGN_TOP_LEFT;
-        alignment.direction = DIRECTION_LEFT_TO_RIGHT;
+        alignment.content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP};
+        alignment.direction = AlignDir::HORIZONTAL;
 
-        static std::map< std::string, AlignOrigin > origins;
+        static std::map< std::string, AlignPosX > origins;
         if ( json )
         {
             kege::Json direction = json[ "direction" ];
@@ -177,15 +177,15 @@ namespace kege::ui{
             {
                 if ( strcmp( direction.value(), "right to left" ) == 0)
                 {
-                    alignment.direction = DIRECTION_RIGHT_TO_LEFT;
+                    alignment.direction = AlignDir::HORIZONTAL;
                 }
                 else if ( strcmp( direction.value(), "top to bottom" ) == 0)
                 {
-                    alignment.direction = DIRECTION_TOP_TO_BOTTOM;
+                    alignment.direction = AlignDir::VERTICAL;
                 }
                 else if ( strcmp( direction.value(), "bottom to top" ) == 0)
                 {
-                    alignment.direction = DIRECTION_BOTTOM_TO_TOP;
+                    alignment.direction = AlignDir::VERTICAL;
                 }
             }
             kege::Json origin = json[ "origin" ];
@@ -193,20 +193,20 @@ namespace kege::ui{
             {
                 if ( origins.empty() )
                 {
-                    origins[ "top left" ] = ALIGN_TOP_LEFT;
-                    origins[ "top center" ] = ALIGN_TOP_CENTER;
-                    origins[ "top right" ] = ALIGN_TOP_RIGHT;
-                    origins[ "left center" ] = ALIGN_LEFT_CENTER;
-                    origins[ "center center" ] = ALIGN_CENTER_CENTER;
-                    origins[ "right center" ] = ALIGN_RIGHT_CENTER;
-                    origins[ "bottom left" ] = ALIGN_BOTTOM_LEFT;
-                    origins[ "bottom center" ] = ALIGN_BOTTOM_CENTER;
-                    origins[ "bottom right" ] = ALIGN_BOTTOM_RIGHT;
+//                    origins[ "top left" ] = AlignPos::TOP_LEFT;
+//                    origins[ "top center" ] = AlignPos::TOP_CENTER;
+//                    origins[ "top right" ] = AlignPos::TOP_RIGHT;
+//                    origins[ "left center" ] = AlignPos::LEFT_CENTER;
+//                    origins[ "center center" ] = AlignPos::CENTER_CENTER;
+//                    origins[ "right center" ] = AlignPos::RIGHT_CENTER;
+//                    origins[ "bottom left" ] = AlignPos::BOTTOM_LEFT;
+//                    origins[ "bottom center" ] = AlignPos::BOTTOM_CENTER;
+//                    origins[ "bottom right" ] = AlignPos::BOTTOM_RIGHT;
                 }
                 auto m = origins.find( origin.value() );
                 if ( m != origins.end() )
                 {
-                    alignment.origin = m->second;
+//                    alignment.position = m->second;
                 }
             }
         }
