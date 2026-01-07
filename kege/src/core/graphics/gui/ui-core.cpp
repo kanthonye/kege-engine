@@ -13,7 +13,7 @@ namespace kege::ui{
     {
         return ui::Sizing
         {
-            .type = ui::SIZE_FIXED,
+            .type = ui::SizingType::Fixed,
             .size = size
         };
     }
@@ -22,7 +22,7 @@ namespace kege::ui{
     {
         return ui::Sizing
         {
-            .type = ui::SIZE_EXTEND,
+            .type = ui::SizingType::Extend,
             .size = 1.f
         };
     }
@@ -31,7 +31,7 @@ namespace kege::ui{
     {
         return ui::Sizing
         {
-            .type = ui::SIZE_FLEXIBLE,
+            .type = ui::SizingType::Flexible,
             .size = 0.f
         };
     }
@@ -40,25 +40,25 @@ namespace kege::ui{
     {
         return ui::Sizing
         {
-            .type = ui::SIZE_PERCENT,
+            .type = ui::SizingType::Percent,
             .size = (percent / 100.0f)
         };
     }
 
     Background::Background(uint32_t img_index, const ui::Rect& texel)
     {
-        this->id = 0;
+        this->type = BackgroundType::IMAGE;
         this->texel = texel;
     }
     ui::Background::Background(const ui::Color& color)
     {
-        this->id = 0;
-        this->color = color;
+        this->type = BackgroundType::COLOR;
+        this->color = packRGBA8(color);
     }
     ui::Background::Background(uint32_t color)
     {
-        this->id = 0;
-        this->color = rgba(color);
+        this->type = BackgroundType::COLOR;
+        this->color = color;
     }
 
 
@@ -81,4 +81,13 @@ namespace kege::ui{
       return ui::Color{r, g, b, a};
     }
 
+    uint32_t packRGBA8(float r, float g, float b, float a)
+    {
+        uint32_t R = uint32_t(kege::clamp(r, 0.0f, 1.0f) * 255.0f);
+        uint32_t G = uint32_t(kege::clamp(g, 0.0f, 1.0f) * 255.0f);
+        uint32_t B = uint32_t(kege::clamp(b, 0.0f, 1.0f) * 255.0f);
+        uint32_t A = uint32_t(kege::clamp(a, 0.0f, 1.0f) * 255.0f);
+
+        return (A << 24) | (B << 16) | (G << 8) | R;
+    }
 }

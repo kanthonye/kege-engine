@@ -19,7 +19,7 @@ namespace kege::ui{
 //                .style = layout.getStyleByName( "button" ),
 //            });
 //        }
-        layout.put({ .id = &field, .text = text });
+        layout.put({ .uid = &field, .text = text });
         return layout.click( field );
     }
 

@@ -70,17 +70,17 @@ namespace kege{
 
     void Droplist::beginContent( ui::Layout& layout )
     {
-        layout.push({ .id = &content });
+        layout.push({ .uid = &content });
     }
 
     void Droplist::endContent( ui::Layout& layout )
     {
-        layout.pop();
+        //layout.pop();
     }
 
     void Droplist::end( ui::Layout& layout )
     {
-        layout.pop();
+        //layout.pop();
     }
 
 }

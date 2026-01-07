@@ -19,18 +19,99 @@
 
 namespace kege::ui{
 
+    /**
+     * UIDrawInstance hold the data required to draw a single ui element
+     */
+    struct UIDrawInstance
+    {
+        /**
+         * rect: hold the position and size of the ui element
+         */
+        ui::Rect rect;  // 16 bytes
+
+        /**
+         * texel: hold the uv coordinates for the texture
+         */
+        ui::Rect texel;  // 16 bytes
+
+        /**
+         * corner_curves: hold the radius for each corner of the rectangle
+         */
+        ui::Border border;  // 16 bytes
+
+        /**
+         * clip_rect: hold the clipping rectangle for this ui element
+         */
+        ui::Rect clip_rect;  // 16 bytes
+
+        struct // 16 bytes
+        {
+            /**
+             * color is a hex color value holding the rgba value for each color channel.
+             note the value is unpacked on the GPU to make a vec4
+             */
+            uint32_t color;
+
+            /**
+             * texr_info hold the texture information for this ui element
+             */
+            TexrInfo texr_info;
+
+            float pad[2];
+        };
+    };
+
+
     class Viewer : public kege::RefCounter
     {
     public:
 
-        kege::vec2 drawText
+        UIDrawInstance& nextInstance();
+
+        void push( const ui::UIDrawInstance& instance );
+
+        ui::Extent drawText
         (
             const kege::vec2& start,
             float width,
             float font_size,
-            const ui::Color& color,
+            uint32_t color,
             bool wrap_around,
             const char* text,
+            const ui::Rect& clip_rect
+        );
+
+        void drawRect
+        (
+            /**
+             rect: hold the position and size of the ui element
+             */
+            const ui::Rect& rect,
+
+            /**
+             color is a hex color value holding the rgba value for each color channel.
+             note the value is unpacked on the GPU to make a vec4
+             */
+            const ui::Color& color,
+
+            /**
+             corner_curves: hold the radius for each corner of the rectangle
+             */
+            const ui::Border& border,
+
+            /**
+             texr_info hold the texture information for this ui element
+             */
+            const TexrInfo& texr_info,
+
+            /**
+             texel: hold the uv coordinates for the texture
+             */
+            const ui::Rect& texel,
+
+            /**
+             clip_rect: hold the clipping rectangle for this ui element
+             */
             const ui::Rect& clip_rect
         );
 
@@ -40,12 +121,12 @@ namespace kege::ui{
          */
         void draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect );
 
-        void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& nodes, int& count );
-        void insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr);
+        //void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& nodes, int& count );
+        //void insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr);
 
-        void drawsort( ui::Layout& layout, int pid );
+        //void drawsort( ui::Layout& layout, int pid );
 
-        void collectVisibleWidgets( ui::Layout& layout );
+        void render( ui::Layout& layout );
 
         /**
          */
@@ -93,7 +174,7 @@ namespace kege::ui{
 
         kege::BufferBindInfo createBuffer();
 
-        std::vector< kege::ui::DrawElem > _drawbuffer;
+        std::vector< ui::UIDrawInstance > _drawbuffer;
         ref::Font _font; // The current font used for rendering text.
 
         ref::ShaderPipeline _shader_pipeline;

@@ -55,17 +55,17 @@ namespace kege::ui
             node.children.resize(3);
         }
 
-        layout.push({ .id = &node.elements[0] });
+        layout.push({ .uid = &node.elements[0] });
         {
-            layout.push({ .id = &node.elements[1] });
+            layout.push({ .uid = &node.elements[1] });
             {
-                layout.put({ .id = &node.elements[2] });
+                layout.put({ .uid = &node.elements[2] });
             }
-            layout.pop();
+            layout.pop(0);
 
             if ( ui::droplistOpen( layout, node ) )
             {
-                layout.push({ .id = &node.elements[3] });
+                layout.push({ .uid = &node.elements[3] });
                 if ( camera->projection->type == Projection::PERSPECTIVE )
                 {
                     Perspective* projection = (Perspective*) camera->projection.ref();
@@ -82,10 +82,10 @@ namespace kege::ui
                         camera->modified = true;
                     }
                 }
-                layout.pop();
+                layout.pop(0);
             }
         }
-        layout.pop();
+        layout.pop(0);
         return node.state[1];
     }
 }

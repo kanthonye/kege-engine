@@ -21,6 +21,11 @@ namespace kege{
 
         char name[64];
         fscanf(file, "image %s\n", name );
+
+        FontMetrics metrics;
+        fscanf(file, "ascent %f\n", &metrics.ascent );
+        fscanf(file, "descent %f\n", &metrics.descent );
+
         std::vector< kege::Glyph > glyphs( 128 );
         for (int i=0; i<glyphs.size(); ++i)
         {
@@ -52,7 +57,7 @@ namespace kege{
             .address_mode_w = AddressMode::Repeat
         });
 
-        return new kege::Font( glyphs, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
+        return new kege::Font( glyphs, metrics, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
     };
 
     void FontLoader::operator()( kege::Graphics* graphics )

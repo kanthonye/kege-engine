@@ -11,10 +11,8 @@
 #include "../font/font.hpp"
 #include "ui-input.hpp"
 #include "ui-core.hpp"
-#include "ui-elem.hpp"
 #include "ui-aligner.hpp"
 #include "ui-style-manager.hpp"
-#include "ui-widget-manager.hpp"
 
 namespace kege::ui{
 
@@ -22,16 +20,19 @@ namespace kege::ui{
     {
     private:
 
-        float getClickToCursorOffset( const UID& elem, const kege::string& text, int font_size, const ref::Font& font );
-        bool onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, kege::string& text );
-        void deleteSelection( int font_size, const ref::Font& font, kege::string& text );
-        void handleDeletion( int font_size, const ref::Font& font, kege::string& text );
+        float getClickToCursorOffset( const UID& elem, const ref::Font& font, int font_size, const char* str, size_t& size );
+        bool onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, char* str, size_t& size );
+        void deleteSelection( int font_size, const ref::Font& font, char* str, size_t& size );
+        void handleDeletion( int font_size, const ref::Font& font, char* str, size_t& size );
 
     public:
 
-        bool onInput(Input::Type type, const UID& elem, const ref::Font& font, kege::string* text);
+        bool onInput(Input::Type type, const UID& elem, const ref::Font& font, char* str, size_t& size);
         void update( double dms, ui::Input* input );
         Cursor( ui::Layout* layout );
+
+        void insertChar( char* str, size_t& length, size_t pos, size_t count, char ch );
+        void eraseChar( char* str, size_t& length, size_t begin, size_t end );
 
     private:
 

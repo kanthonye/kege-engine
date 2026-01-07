@@ -9,22 +9,25 @@
 
 namespace kege{
 
-    bool GUI::textField( kege::UID (&uid)[2], int& mode, kege::string& text )
+    bool GUI::textField( uint16_t layer, ui::UID (&uid)[2], int& mode, char* str, size_t& size )
     {
         _layout->push
         ({
-            .id = &uid[0],
+            .layer = layer,
+            .uid = &uid[0],
             .style = ( mode == 2 ) ? getStyle( Theme::NumericFocus ) : getStyle( Theme::NumericValue ),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
         _layout->put
         ({
-            .id = &uid[1],
+            .layer = layer,
+            .uid = &uid[1],
             .style = getStyle( Theme::NumericLabel ),
-            .text = (text.empty())? "empty": text.c_str()
+            .text.ptr = str,
+            .text.length = size,
         });
-        _layout->pop();
+        _layout->pop( layer );
 
         bool clicked = false;
 
@@ -44,7 +47,7 @@ namespace kege{
 
         if ( mode == 2 )
         {
-            if ( !_layout->onTextInput( uid[1], &text ) )
+            if ( !_layout->onTextInput( uid[1], str, size ) )
             {
                 mode = 0;
             }
@@ -53,20 +56,21 @@ namespace kege{
         return clicked;
     }
     
-    bool GUI::scrubber( kege::UID (&uid)[2], int& mode, float& num )
+    bool GUI::scrubber( uint16_t layer, ui::UID (&uid)[2], int& mode, float& num, char* str, size_t& size )
     {
         char snum[16];
         snprintf(snum, 16, "%.6g", num );
 
         _layout->push
         ({
-            .id = &uid[0],
+            .layer = layer,
+            .uid = &uid[0],
             .style = ( mode == 2 ) ? getStyle( Theme::NumericFocus ) : getStyle( Theme::NumericValue ),
             .single_click = ui::ClickTrigger::Continuous,
             .double_click = ui::ClickTrigger::Immediate,
         });
-        _layout->put({ .id = &uid[1], .style = getStyle( Theme::NumericLabel ), .text = snum });
-        _layout->pop();
+        _layout->put({ .uid = &uid[1], .style = getStyle( Theme::NumericLabel ), .text = snum });
+        _layout->pop( layer );
 
         bool active = false;
         if ( _layout->buttonDown() )
@@ -95,37 +99,38 @@ namespace kege{
 
         if ( mode == 2 )
         {
-            if ( !_layout->onTextInput( uid[1], &_layout->elem( uid[1] )->text.text ) )
+            if ( !_layout->onTextInput( uid[1], str, size ) )
             {
                 active = true;
                 mode = 0;
             }
-            num = atof( _layout->elem( uid[1] )->text.text.c_str() );
+            num = atof( str );
         }
 
         return active;
     }
 
-    bool GUI::numeric( kege::UID (&uid)[3], int& mode, float& num )
+    bool GUI::numeric( uint16_t layer, ui::UID (&uid)[3], int& mode, float& num, char* str, size_t& size )
     {
-        char snum[16];
-        snprintf(snum, 16, "%.6g", num );
+        snprintf(str, size, "%.6g", num );
 
-        _layout->push(kege::ui::Desc{
-            .id = &uid[0],
+        _layout->push(kege::ui::WidgetDesc{
+            .uid = &uid[0],
+            .layer = layer,
             .style = getStyle( Theme::Numeric ),
         });
         {
             _layout->put
             ({
-                .id = &uid[2],
+                .layer = layer,
+                .uid = &uid[2],
                 .style = ( mode == 2 )? getStyle( Theme::NumericFocus ) : getStyle( Theme::NumericValue ),
                 .single_click = ui::ClickTrigger::OnRelease,
                 .double_click = ui::ClickTrigger::Immediate,
-                .text = snum
+                .text.ptr = str
             });
         }
-        _layout->pop();
+        _layout->pop( layer );
 
         bool clicked = false;
 
@@ -145,26 +150,31 @@ namespace kege{
 
         if ( mode == 2 )
         {
-            if ( !_layout->onTextInput( uid[2], &_layout->elem( uid[2] )->text.text ) )
+            if ( !_layout->onTextInput( uid[2], str, size ) )
             {
                 mode = 0;
             }
-            num = atof( _layout->elem( uid[2] )->text.text.c_str() );
+            num = atof( str );
         }
 
         return clicked;
     }
 
-    bool  GUI::select( ui::Style* style, std::vector<std::pair< kege::UID, std::string >>& list, int& selection )
+    bool  GUI::select( uint16_t layer, ui::Style* style, std::vector<std::pair< ui::UID, ui::Text >>& list, int& selection )
     {
         bool has_selection = false;
-        _layout->push({ .style = style });
+        _layout->push
+        ({
+            .layer = layer,
+            .style = style
+        });
         for (int i=0; i<list.size(); ++i)
         {
             _layout->put
             ({
-                .id = &list[i].first,
-                .text = list[i].second.c_str(),
+                .layer = layer,
+                .uid = &list[i].first,
+                .text = list[i].second,
                 .single_click = ui::ClickTrigger::OnRelease,
                 .style = (selection == i) ? getStyle( Theme::ListSelection ) : getStyle( Theme::ListElem )
             });
@@ -175,38 +185,40 @@ namespace kege{
                 //break;
             }
         }
-        _layout->pop();
+        _layout->pop( layer );
         return has_selection;
     }
     
-    bool GUI::select( std::vector<std::pair< kege::UID, std::string >>& list, int& selection )
+    bool GUI::select( uint16_t layer, std::vector<std::pair< ui::UID, ui::Text >>& list, int& selection )
     {
-        return select(getStyle( Theme::List ), list, selection);
+        return select( layer, getStyle( Theme::List ), list, selection);
     }
 
-    void GUI::list( std::vector<std::pair<kege::UID,std::string>>& list, int selection )
+    void GUI::list( uint16_t layer, std::vector<std::pair<ui::UID,std::string>>& list, int selection )
     {
-        _layout->push({ .style = getStyle( Theme::List ) });
+        _layout->push({ .layer = layer, .style = getStyle( Theme::List ) });
         for (int i=0; i<list.size(); ++i)
         {
             _layout->put
             ({
-                .id = &list[i].first,
+                .layer = layer,
+                .uid = &list[i].first,
                 .text = list[i].second.c_str(),
                 .style = getStyle( Theme::ListElem )
             });
         }
-        _layout->pop();
+        _layout->pop( layer );
     }
 
-    bool GUI::tab( std::vector<std::pair< kege::UID, std::string >>& list, int& selection )
+    bool GUI::tab( uint16_t layer, std::vector<std::pair< ui::UID, std::string >>& list, int& selection )
     {
         bool active = false;
-        _layout->push({ .style = getStyle( Theme::Tab ) });
+        _layout->push({ .layer = layer, .style = getStyle( Theme::Tab ) });
         for (int i=0; i<list.size(); ++i)
         {
             _layout->put({
-                .id = &list[i].first,
+                .layer = layer,
+                .uid = &list[i].first,
                 .text = list[i].second.c_str(),
                 .single_click = ui::ClickTrigger::OnRelease,
                 .style = (selection == i)
@@ -219,11 +231,11 @@ namespace kege{
                 active = true;
             }
         }
-        _layout->pop();
+        _layout->pop( layer );
         return active;
     }
 
-    void slidebarOp(ui::Layout* layout, const kege::UID& id, void* data)
+    void slidebarOp(ui::Layout* layout, const ui::UID& id, void* data)
     {
         //layout->elemParent(id)->uid
         RangeParams* params = reinterpret_cast<RangeParams*>(data);
@@ -253,43 +265,44 @@ namespace kege{
         }
     }
 
-    bool GUI::numSlideBar( kege::UID (&id)[2], float* val, float min, float max )
+    bool GUI::numSlideBar( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max )
     {
         char snum[16];
         snprintf(snum, 16, "%.6g", *val );
 
         _layout->push
         ({
-            .id = &id[1],
+            .layer = layer,
+            .uid = &id[1],
             .style = getStyle( Theme::SlideBarTrack ),
             .single_click = ui::ClickTrigger::Continuous,
             .double_click = ui::ClickTrigger::Immediate
         });
-        _layout->put({ .id = &id[0], .style = getStyle( Theme::SlideBar ) });
-        _layout->put({ .style = getStyle( Theme::SlideBarNumber ), .text = snum });
-        _layout->pop();
+        _layout->put({ .layer = layer, .uid = &id[0], .style = getStyle( Theme::SlideBar ) });
+        _layout->put({ .layer = layer, .style = getStyle( Theme::SlideBarNumber ), .text = snum });
+        _layout->pop( layer );
 
         _layout->pushDeferredOp(id[1], slidebarOp, RangeParams{min,max,val,&id[0]});
 
         return _layout->click( id[1] );
     }
 
-    bool GUI::slidebar( kege::UID (&id)[2], float* val, float min, float max )
+    bool GUI::slidebar( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max )
     {
-        _layout->push({ .id = &id[1], .style = getStyle( Theme::SliderTrack ), .single_click = ui::ClickTrigger::Continuous });
-        _layout->put({ .id = &id[0], .style = getStyle( Theme::SlideBar ) });
-        _layout->pop();
+        _layout->push({ .layer = layer, .uid = &id[1], .style = getStyle( Theme::SliderTrack ), .single_click = ui::ClickTrigger::Continuous });
+        _layout->put({ .layer = layer, .uid = &id[0], .style = getStyle( Theme::SlideBar ) });
+        _layout->pop( layer );
 
         _layout->pushDeferredOp(id[1], slidebarOp, RangeParams{min,max,val,&id[0]});
 
         return _layout->click( id[1] );
     }
 
-    void sliderOp(ui::Layout* layout, const kege::UID& id, void* data)
+    void sliderOp(ui::Layout* layout, const ui::UID& id, void* data)
     {
         RangeParams* params = reinterpret_cast<RangeParams*>(data);
         float length = layout->elemParent(id)->rect.width - layout->elem(id)->rect.width;
-        float& x = layout->elem(id)->offset.x;
+        float& x = layout->elem(id)->rect.x;
 
         // calculate where the slider should be (base on the numeric value) before moving it.
         x = (length * (*params->val - params->min)) / (params->max - params->min);
@@ -303,83 +316,103 @@ namespace kege{
             // calculate the new numeric value base on the updated position
             *params->val = (params->max - params->min) * (x / length) + params->min;
         }
+        layout->elem(id)->rect.x += x;
     }
 
-    bool GUI::slider( kege::UID (&id)[2], float* val, float min, float max )
+    bool GUI::slider( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max )
     {
-        _layout->push({ .id = &id[1], .style = getStyle( Theme::SliderTrack ) });
-        _layout->put({ .id = &id[0], .style = getStyle( Theme::Slider ), .single_click = ui::ClickTrigger::Continuous });
-        _layout->pop();
+        _layout->push({ .layer = layer, .uid = &id[1], .style = getStyle( Theme::SliderTrack ) });
+        _layout->put({ .layer = layer, .uid = &id[0], .style = getStyle( Theme::Slider ), .single_click = ui::ClickTrigger::Continuous });
+        _layout->pop( layer );
 
         _layout->pushDeferredOp(id[0], sliderOp, RangeParams{min,max,val});
 
         return _layout->click( id[0] );
     }
 
-    bool GUI::button( kege::UID& id, ui::Style* style, const char* text )
+    bool GUI::button( uint16_t layer, ui::UID& id, ui::Style* style, const ui::Text& text )
     {
-        return button( kege::ui::Desc{
-            .id = &id,
+        return button
+        ({
+            .layer = layer,
+            .uid = &id,
             .text = text,
             .style = style,
             .single_click = ui::ClickTrigger::OnRelease,
         });
     }
-    bool GUI::button( const kege::ui::Desc& desc )
+    bool GUI::button( const kege::ui::WidgetDesc& desc )
     {
         _layout->put( desc );
-        return _layout->click( *desc.id );
+        return _layout->click( *desc.uid );
     }
 
-    bool GUI::button( kege::UID& id, const char* text )
+    bool GUI::button( uint16_t layer, ui::UID& id, const ui::Text& text )
     {
-        return button(  id, getStyle( Theme::Button ), text );
+        return button( layer, id, getStyle( Theme::Button ), text );
     }
 
-    void GUI::label( const char* text )
+    void GUI::label( uint16_t layer, const char* text )
     {
-        _layout->put({ .text = text, .style = getStyle( Theme::Label ), .enabled = false });
+        _layout->put
+        ({
+            .layer = layer,
+            .text = text,
+            .style = getStyle( Theme::Label ),
+            .enabled = false
+        });
     }
 
-    void GUI::pushHPanel()
+    void GUI::pushHPanel( uint16_t layer )
     {
-        _layout->push({
+        _layout->push
+        ({
+            .layer = layer,
             .style = getStyle( Theme::HPanel )
         });
     }
 
-    void GUI::pushVPanel()
+    void GUI::pushVPanel( uint16_t layer )
     {
-        _layout->push(kege::ui::Desc{ .style = getStyle( Theme::VPanel ) });
+        _layout->push({ .layer = layer, .style = getStyle( Theme::VPanel ) });
     }
 
-    void GUI::push( const kege::ui::Desc& desc )
+    void GUI::push( const kege::ui::WidgetDesc& desc )
     {
         _layout->push( desc );
     }
-    void GUI::put( const kege::ui::Desc& desc )
+
+    void GUI::put( const kege::ui::WidgetDesc& desc )
     {
         _layout->put( desc );
     }
-    void GUI::pop()
+
+    void GUI::pop( uint16_t layer )
     {
-        _layout->pop();
+        _layout->pop( layer );
     }
 
-    bool GUI::click( kege::UID& id )
+    const bool GUI::pointerDragging() const
+    {
+        return _layout->input()->pointerDragging();
+    }
+    
+    bool GUI::click( ui::UID& id )
     {
         return _layout->click( id );
     }
-    bool GUI::hot( kege::UID& id )
+    
+    bool GUI::hot( ui::UID& id )
     {
         return _layout->mouseover( id );
     }
+
     bool GUI::buttonDown()const
     {
         return _layout->buttonDown();
     }
 
-    ui::Widget* GUI::get( kege::UID& id )
+    ui::Widget* GUI::get( ui::UID& id )
     {
         return _layout->elem( id );
     }
@@ -393,6 +426,11 @@ namespace kege{
     {
         _layout = layout;
         return true;
+    }
+
+    void GUI::createLayers( uint32_t quantity )
+    {
+        _layout->createLayers( quantity );
     }
 
     vec2d GUI::deltaPointer()const
@@ -416,10 +454,10 @@ namespace kege{
     Theme::Theme()
     {
         styles[Label] = kege::ui::Style{
-            .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Left,
+            .background = 0xFFFFFF00,
+            .align_text = ui::AlignText::Left,
             .padding = {10,0,0,0},
-            .color = ui::rgba(0xFFFFFFFF),
+            .text_color = 0xFFFFFFFF,
             .height = ui::fixed(18),
             .width = ui::extend(),
             .font_size = 20,
@@ -428,40 +466,40 @@ namespace kege{
         styles[Button] = kege::ui::Style{
             .height = ui::fixed(20),
             .width = ui::extend(),
-            .background = ui::Background(0xFFFFFF20),
+            .background = 0xFFFFFF20,
             .align_text =  ui::AlignText::Center,
         };
         styles[CloseButn] = kege::ui::Style{
             .height = ui::fixed(18),
             .width = ui::fixed(18),
-            .background = ui::Background(0xFFFFFF20),
+            .background = 0xFFFFFF20,
             .align_text =  ui::AlignText::Center,
             .font_size = 20,
-            .border_radius = {2,2,2,2},
+            .border.corner_curves = {2,2,2,2},
         };
 
         styles[Slider] = kege::ui::Style{
             .height = ui::fixed(14),
             .width = ui::fixed(14),
-            .background = ui::Background(0xFF22FFFF),
+            .background = 0xFF22FFFF,
             .align_text =  ui::AlignText::Center,
         };
         styles[SliderTrack] = kege::ui::Style{
             .height = ui::fixed(14),
             .width = ui::extend(),
-            .background = ui::Background(0xFFFFFF20),
-            .align_text =  ui::AlignText::Center,
+            .background = 0xFFFFFF20,
+            .align_text = ui::AlignText::Center,
         };
 
 
         styles[SlideBar] = kege::ui::Style{
-            .background = ui::Background(0xFF22FFFF),
+            .background = 0xFF22FFFF,
             .position = ui::Positioning::Absolute,
             .height = ui::fixed(14),
             .width = ui::fixed(14),
         };
         styles[SlideBarTrack] = kege::ui::Style{
-            .background = ui::Background(0xFFFFFF20),
+            .background = 0xFFFFFF20,
             .height = ui::fixed(14),
             .width = ui::extend(),
             .align =
@@ -472,8 +510,8 @@ namespace kege{
         };
         styles[SlideBarNumber] = kege::ui::Style{
             .position = ui::Positioning::Absolute,
-            .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Center,
+            .background = 0xFFFFFF00,
+            .align_text = ui::AlignText::Center,
             .height = ui::fixed(14),
             .width = ui::percent(100),
             .font_size = 20,
@@ -494,15 +532,15 @@ namespace kege{
         styles[ListElem] = kege::ui::Style{
             .height = ui::fixed(20),
             .width = ui::extend(),
-            .background = ui::Background(0xFFFFFF10),
-            .align_text =  ui::AlignText::Center,
-            .border_radius = {4,4,4,4},
+            .background = 0xFFFFFF10,
+            .align_text = ui::AlignText::Center,
+            .border.corner_curves = {4,4,4,4},
             .font_size = 20,
         };
         styles[ListSelection] = kege::ui::Style{
             .height = ui::fixed(20),
             .width = ui::extend(),
-            .background = ui::Background(0xFFFFFF30),
+            .background = 0xFFFFFF30,
             .align_text =  ui::AlignText::Center,
             .font_size = 20,
         };
@@ -521,17 +559,17 @@ namespace kege{
         styles[TabElem] = kege::ui::Style{
             .height = ui::fixed(20),
             .width = ui::fixed(120),
-            .background = ui::Background(0x171420FF),
-            .align_text =  ui::AlignText::Center,
-            .color = ui::rgba(0xBBA0FFFF),
+            .background = 0x171420FF,
+            .align_text = ui::AlignText::Center,
+            .text_color = 0xBBA0FFFF,
             .font_size = 20,
         };
         styles[TabSelection] = kege::ui::Style{
             .height = ui::fixed(20),
             .width = ui::fixed(120),
             .background = ui::Background(0x171420FF),
-            .align_text =  ui::AlignText::Center,
-            .border_radius = {4,4,4,4},
+            .align_text = ui::AlignText::Center,
+            .border.corner_curves = {4,4,4,4},
             .font_size = 20,
         };
 
@@ -621,8 +659,8 @@ namespace kege{
         };
         styles[NumericLabel] = kege::ui::Style{
             .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Right,
-            .color = ui::rgba(0xFFFFFFFF),
+            .align_text = ui::AlignText::Right,
+            .text_color = 0xFFFFFFFF,
             .height = ui::fixed(18),
             .width = ui::fixed(100),
             .font_size = 20,
@@ -634,9 +672,9 @@ namespace kege{
         };
         styles[NumericValue] = kege::ui::Style{
             .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Left,
-            .color = ui::rgba(0xFFFFFFFF),
-            .border_radius = {5,5,5,5},
+            .align_text = ui::AlignText::Left,
+            .text_color = 0xFFFFFFFF,
+            .border.corner_curves = {5,5,5,5},
             .height = ui::fixed(18),
             .width = ui::extend(),
             .font_size = 20,
@@ -648,9 +686,9 @@ namespace kege{
         };
         styles[NumericFocus] = kege::ui::Style{
             .background = ui::Background(0xFFFFFF1B),
-            .align_text =  ui::AlignText::Left,
-            .color = ui::rgba(0xFFFFFFFF),
-            .border_radius = {5,5,5,5},
+            .align_text = ui::AlignText::Left,
+            .text_color = 0xFFFFFFFF,
+            .border.corner_curves = {5,5,5,5},
             .height = ui::fixed(18),
             .width = ui::extend(),
             .font_size = 20,

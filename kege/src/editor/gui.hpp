@@ -19,7 +19,7 @@ namespace kege{
         float  min;
         float  max;
         float* val;
-        kege::UID* id;
+        ui::UID* id;
     };
 
     struct Theme
@@ -55,39 +55,73 @@ namespace kege{
     {
     public:
 
-        bool textField( kege::UID (&uid)[2], int& mode, kege::string& text );
+        template<typename Params>void pushDeferredOp(const ui::UID& id, ui::DeferredOp::Fn fn, const Params& params)
+        {
+            _layout->pushDeferredOp< Params >( id, fn, params );
+        }
 
-        bool scrubber( kege::UID (&uid)[2], int& mode, float& num );
-        bool numeric( kege::UID (&uid)[3], int& mode, float& num );
-        bool select( ui::Style* style, std::vector<std::pair< kege::UID, std::string >>& list, int& selection );
-        bool select( std::vector<std::pair< kege::UID, std::string >>& list, int& selection );
-        void list( std::vector<std::pair< kege::UID, std::string >>& list, int selection = -1 );
-        bool tab( std::vector<std::pair< kege::UID, std::string >>& list, int& selection );
+        bool textField( uint16_t layer, ui::UID (&uid)[2], int& mode, char* str, size_t& size );
 
-        bool numSlideBar( kege::UID (&id)[2], float* val, float min, float max );
-        bool slidebar( kege::UID (&id)[2], float* val, float min, float max );
-        bool slider( kege::UID (&id)[2], float* val, float min, float max );
+        bool scrubber( uint16_t layer, ui::UID (&uid)[2], int& mode, float& num, char* str, size_t& size );
+        bool numeric( uint16_t layer, ui::UID (&uid)[3], int& mode, float& num, char* str, size_t& size );
+        bool select( uint16_t layer, ui::Style* style, std::vector<std::pair< ui::UID, ui::Text >>& list, int& selection );
+        bool select( uint16_t layer, std::vector<std::pair< ui::UID, ui::Text >>& list, int& selection );
+        void list( uint16_t layer, std::vector<std::pair< ui::UID, std::string >>& list, int selection = -1 );
+        bool tab( uint16_t layer, std::vector<std::pair< ui::UID, std::string >>& list, int& selection );
 
-        bool button( kege::UID& id, ui::Style* style, const char* text );
-        bool button( kege::UID& id, const char* text );
-        bool button( const kege::ui::Desc& desc );
-        void label( const char* text );
+        bool numSlideBar( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max );
+        bool slidebar( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max );
+        bool slider( uint16_t layer, ui::UID (&id)[2], float* val, float min, float max );
 
-        void pushHPanel();
-        void pushVPanel();
+        bool button( uint16_t layer, ui::UID& id, ui::Style* style, const ui::Text& text );
+        bool button( uint16_t layer, ui::UID& id, const ui::Text& text );
+        bool button( const kege::ui::WidgetDesc& desc );
+        void label( uint16_t layer, const char* text );
 
-        void push( const kege::ui::Desc& desc );
-        void put( const kege::ui::Desc& desc );
-        void pop();
+        ui::Layout* layout()
+        {
+            return _layout.ref();
+        }
 
-        bool click( kege::UID& id );
-        bool hot( kege::UID& id );
+        void pushHPanel( uint16_t layer );
+        void pushVPanel( uint16_t layer );
+
+        void push( const kege::ui::WidgetDesc& desc );
+        void put( const kege::ui::WidgetDesc& desc );
+        void pop( uint16_t layer );
+
+        /**
+         * Checks if the mouse pointer is being dragged.
+         *
+         * @return true if the pointer is being dragged, false otherwise.
+         */
+        const bool pointerDragging() const;
+        bool click( ui::UID& id );
+        bool hot( ui::UID& id );
         bool buttonDown()const;
+        bool dragging()const;
 
-        ui::Widget* get( kege::UID& id );
+
+        /**
+         * Checks if geven point and rectangular shape intersects.
+         *
+         * @param p The given point to test the rectangle against.
+         * @param rect The rectangle to test the point against.
+         *
+         * @return true if mouse is over ui element, false otherwise.
+         */
+        inline bool testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const
+        {
+            return _layout->testPointVsRect( p, rect );
+        }
+
+        ui::Widget* get( ui::UID& id );
         kege::ui::Style* getStyle( int index );
         bool initialize(Ref< ui::Layout > layout);
 
+
+        void createLayers( uint32_t quantity );
+        
         vec2d deltaPointer()const;
         vec2d pointer()const;
 

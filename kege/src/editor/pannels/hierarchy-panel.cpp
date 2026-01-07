@@ -10,7 +10,7 @@ namespace kege{
 
     void HierarchyPanel::update()
     {
-        _gui->push({.style = &_styles[PANEL]});
+        _gui->push({ .layer = 0, .style = &_styles[PANEL]});
         if ( !_project_manager->empty() )
         {
             ref::Scene scene = _project_manager->getSceneManager()->getScene();
@@ -22,7 +22,7 @@ namespace kege{
                     _hierarchy.clear();
                 }
 
-                if ( _gui->button(_create_entity, "create") )
+                if ( _gui->button(0, _create_entity, text_create) )
                 {
                     ecs::Entity entity = _ecs->createWith<Tag>();
                     {
@@ -33,22 +33,33 @@ namespace kege{
                 }
 
                 const ecs::Entity& root = scene->root();
-                _gui->push({.style = &_styles[CONTINER]});
+                _gui->push({.layer = 0, .style = &_styles[CONTINER]});
                 for (ecs::Entity e = _ecs->begin(root); e != 0 ; e = _ecs->next(e) )
                 {
                     makeEntityUI( e, 0 );
                 }
-                _gui->pop();
+                _gui->pop(0);
             }
         }
-        _gui->pop();
+        _gui->pop(0);
     }
 
     HierarchyPanel::EntityUI* HierarchyPanel::makeEntityUI( ecs::Entity& entity, int space )
     {
         const bool entity_has_children = _ecs->isParent(entity);
         uint64_t key = ecs::to_uint64(entity);
-        HierarchyPanel::EntityUI* list = &_hierarchy[ key ];
+
+        HierarchyPanel::EntityUI* list = 0;
+        auto m = _hierarchy.find( key );
+        if ( m == _hierarchy.end() )
+        {
+            list = &_hierarchy[ key ];
+            list->text_delete = _gui->layout()->text("x", 20);
+            list->text_expand = _gui->layout()->text(">", 20);
+        }
+        else list = &m->second;
+        //list->text_expand.ptr = ( entity_has_children ) ? (( list->open[1] ) ? "-_+" : "+") : "-";
+        //HierarchyPanel::EntityUI* list = &_hierarchy[ key ];
         list->spacer_style.width.size = space;
 
         if(_scene && _gui->click( list->delete_button ))
@@ -59,13 +70,13 @@ namespace kege{
         }
 
         Tag* entt_tag = _ecs->get< Tag >(entity);
-        _gui->push({.id = &list->container, .style = &_styles[ENTITY], .single_click = ui::ClickTrigger::OnRelease });
+        _gui->push({.layer = 0, .uid = &list->container, .style = &_styles[ENTITY], .single_click = ui::ClickTrigger::OnRelease });
         {
-            _gui->button( list->expand_toggle, &_styles[ENTITY_BUTON], ( entity_has_children ) ? (( list->open[1] ) ? "-" : "+") : "-" );
-            _gui->label( (entt_tag)? entt_tag->c_str(): "unnamed" );
-            _gui->button( list->delete_button, &_styles[ENTITY_BUTON], "x" );
+            _gui->button( 0, list->expand_toggle, &_styles[ENTITY_BUTON], list->text_expand );
+            _gui->label( 0, (entt_tag)? entt_tag->c_str(): "unnamed" );
+            _gui->button( 0, list->delete_button, &_styles[ENTITY_BUTON], list->text_delete );
         }
-        _gui->pop();
+        _gui->pop(0);
 
         if ( _gui->click(list->container) )
         {
@@ -74,12 +85,12 @@ namespace kege{
 
         if ( expand( list ) && entity_has_children )
         {
-            _gui->push({.style = &_styles[ENTITY_CONTENT]});
+            _gui->push({.layer = 0, .style = &_styles[ENTITY_CONTENT]});
             for (ecs::Entity e = _ecs->begin(entity); e != 0 ; e = _ecs->next(e) )
             {
                 makeEntityUI( e, space + 15 );
             }
-            _gui->pop();
+            _gui->pop(0);
         }
         return list;
     }
@@ -109,6 +120,8 @@ namespace kege{
     HierarchyPanel::HierarchyPanel( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
     :   kege::ui::Panel( "Hierarchy", pm, gui, e )
     {
+        text_create = gui->layout()->text("create", 20);
+
         _styles[PANEL] = kege::ui::Style
         {
             .background = ui::Background(0x171420FF),
@@ -142,7 +155,7 @@ namespace kege{
             .background = ui::Background(0xFFFFFF10),
             .height = ui::flexible(),
             .width = ui::extend(),
-            .border_radius = {4,4,4,4},
+            .border.corner_curves = {4,4,4,4},
             .padding = {4,4,4,4},
             .gap = {2,2},
             .align =
@@ -157,7 +170,7 @@ namespace kege{
             .height = ui::fixed(18),
             .width = ui::fixed(18),
             .align_text = ui::AlignText::Center,
-            .border_radius = {2,2,2,2},
+            .border.corner_curves = {2,2,2,2},
         };
 
         _styles[ENTITY_CONTENT] = kege::ui::Style

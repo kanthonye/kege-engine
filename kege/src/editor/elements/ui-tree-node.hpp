@@ -18,6 +18,15 @@
 
 namespace kege::ui{
 
+    struct TextFieldState
+    {
+        size_t cursor_pos = 0;
+        size_t selection_start = 0;
+        size_t selection_end = 0;
+        bool has_focus = false;
+        bool is_selected = false;
+    };
+
     struct TreeNode
     {
         bool state[2];

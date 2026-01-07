@@ -12,18 +12,28 @@
 
 namespace kege{
 
+    struct FontMetrics
+    {
+        float ascent;   // distance from baseline to highest pixel
+        float descent;  // distance from baseline to lowest pixel (positive)
+        float baseline;
+    };
     struct Glyph
     {
-        // Position in the texture atlas
-        float x, y, width, height;
+        // Texture atlas (UVs or normalized rect)
+        float x;
+        float y;
+        float width;
+        float height;
 
-        // Quad scale and y offset
+        // Size relative to the font cell
         float scaled_width;
         float scaled_height;
-        float bearing_x;
-        float bearing_y;
-        float offset_y;
-        float advance;
+
+        // Layout metrics
+        float bearing_x;   // pen → left of glyph
+        float bearing_y;   // baseline → top of glyph
+        float advance;     // pen advance
     };
 
 }
@@ -42,10 +52,10 @@ namespace kege{
 
         kege::ImageBindInfo getImageBindInfo()const;
         const std::vector< Glyph >& glyphs()const;
-
+        const FontMetrics& matrics()const;
         operator bool()const;
 
-        Font( const std::vector< kege::Glyph >& glyphs, const kege::ImageBindInfo& image_binf_info );
+        Font( const std::vector< kege::Glyph >& glyphs, FontMetrics matrics, const kege::ImageBindInfo& image_binf_info );
         ~ Font();
         Font();
 
@@ -54,6 +64,7 @@ namespace kege{
         std::vector< kege::Glyph > _glyphs;
         kege::ImageBindInfo _image_binf_info;
         std::string _filename;
+        FontMetrics _matrics;
     };
 
 }

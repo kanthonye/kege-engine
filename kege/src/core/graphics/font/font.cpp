@@ -60,6 +60,11 @@ namespace kege{
         return _glyphs;
     }
 
+    const FontMetrics& Font::matrics()const
+    {
+        return _matrics;
+    }
+
     float Font::getTextWidth( int font_size, const char* str )const
     {
         float length = 0;
@@ -80,9 +85,10 @@ namespace kege{
         return !_glyphs.empty();
     }
 
-    Font::Font( const std::vector< kege::Glyph >& glyphs, const kege::ImageBindInfo& image_binf_info )
+    Font::Font( const std::vector< kege::Glyph >& glyphs, FontMetrics matrics, const kege::ImageBindInfo& image_binf_info )
     :   _image_binf_info( image_binf_info )
     ,   _glyphs( glyphs )
+    ,   _matrics( matrics )
     {}
     
     Font::~ Font()

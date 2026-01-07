@@ -64,13 +64,13 @@
                     "size":   16,
                 },
                 {
-                    "name":   "color",
+                    "name":   "texel",
                     "type":   "vec4",
                     "count":  1,
                     "size":   16,
                 },
                 {
-                    "name":   "texel",
+                    "name":   "border",
                     "type":   "vec4",
                     "count":  1,
                     "size":   16,

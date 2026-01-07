@@ -26,9 +26,19 @@ namespace kege::ui{
         };
         uint64_t id;
     };
+    constexpr inline bool operator==(const ui::Id &a, const ui::Id &b) { return a.id == b.id; }
+    constexpr inline bool operator!=(const ui::Id &a, const ui::Id &b) { return a.id != b.id; }
 
+    struct EID
+    {
+        ui::Id global;
+        ui::Id local;
+    };
+
+    constexpr inline bool operator==(const ui::EID &a, const ui::EID &b) { return a.global == b.global && a.local == b.local; }
+    constexpr inline bool operator!=(const ui::EID &a, const ui::EID &b) { return a.global != b.global && a.local == b.local; }
 }
-namespace kege{
+namespace kege::ui{
 
     struct UID
     {
@@ -41,12 +51,13 @@ namespace kege{
         UID();
         ~UID();
 
-        ui::Id id;
-        ui::Id elem_id;
+        ui::Id global;
+        ui::Id local;
 
     private:
 
         mutable int* duplicates;
+        
         static int32_t _head;
         static int32_t _tail;
         static uint32_t _enumerator;
@@ -54,8 +65,8 @@ namespace kege{
     };
 
 
-    constexpr inline bool operator==(const UID &a, const UID &b) { return a.id.id == b.id.id; }
-    constexpr inline bool operator!=(const UID &a, const UID &b) { return a.id.id != b.id.id; }
+    constexpr inline bool operator==(const UID &a, const UID &b) { return a.global == b.global; }
+    constexpr inline bool operator!=(const UID &a, const UID &b) { return a.global != b.global; }
 
 }
 #endif  /* kege_uid_hpp */

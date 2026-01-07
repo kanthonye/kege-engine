@@ -28,13 +28,13 @@ double bench_repeat(const char *name, size_t iterations, std::function<void()> f
 namespace kege{
 
     float v[5] = {0,0.2,0.2,0,0};
-    kege::UID id;
-    kege::UID slider[2];
-    kege::UID slider1[2];
-    kege::UID slider2[2];
-    kege::UID scrubber[2];
-    kege::UID numeric[3];
-    kege::UID tex[2];
+    ui::UID id;
+    ui::UID slider[2];
+    ui::UID slider1[2];
+    ui::UID slider2[2];
+    ui::UID scrubber[2];
+    ui::UID numeric[3];
+    ui::UID tex[2];
     kege::string text;
     int selection = -1;
     bool state = false;
@@ -55,6 +55,7 @@ namespace kege{
         .align_text =  ui::AlignText::Right,
         .height = ui::flexible(),
         .width = ui::extend(),
+        .padding = {100,100,100,100},
         .font_size = 20,
         .gap = {4,4},
         .align =
@@ -67,13 +68,13 @@ namespace kege{
             .wrap_around = true,
         },
     };
-    std::vector<std::pair< kege::UID, std::string >> fruits_list = {
-        {kege::UID{},"blueberries"},
-        {kege::UID{},"raspberries"},
-        {kege::UID{},"strawberries"},
-        {kege::UID{},"mangos"},
-        {kege::UID{},"apples"},
-        {kege::UID{},"grapes"},
+    std::vector<std::pair< ui::UID, std::string >> fruits_list = {
+        {ui::UID{},"blueberries"},
+        {ui::UID{},"raspberries"},
+        {ui::UID{},"strawberries"},
+        {ui::UID{},"mangos"},
+        {ui::UID{},"apples"},
+        {ui::UID{},"grapes"},
     };
 
     char fps_text[32];
@@ -94,9 +95,9 @@ namespace kege{
         //_root->update( this );
 
         //_dock_mngr->update(_dock_mngr->getRoot()->child[0]);
-        auto begin = Clock::now();
+//        auto begin = Clock::now();
         _dock_mngr->update();
-        auto end = Clock::now();
+//        auto end = Clock::now();
 
 //        auto begin = Clock::now();
 //        {
@@ -105,7 +106,6 @@ namespace kege{
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
-//            _gui.put({.style = &style2});
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
@@ -117,52 +117,38 @@ namespace kege{
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
 //            _gui.put({.style = &style});
-//            _gui.pop();
+//            _gui.pop(0);
 //        }
 //        auto end = Clock::now();
 //
-        double ms = std::chrono::duration<double, std::milli>(end - begin).count();
-        sum += ms;
-        count += 1;
-        if (count  >= 60)
-        {
-            sum /= double(count);
-            snprintf(fps_text, 31, "%f ms", sum);
-            sum = 0.0;
-            count = 0;
-        }
-        //std::cout << name << ": " << ms << " ms\n"; \
-//        _gui.push({.style = &style_main});
-////        _gui.tab( fruits_list, selection );
-////        _gui.textField(tex, mode[0], text );
-////        _gui.scrubber(scrubber, mode[2], v[4] );
-////        _gui.slider(slider, &v[0], 0, 2);
-////        _gui.slidebar(slider1, &v[1], 0, 2);
-////        _gui.numSlideBar(slider2, &v[2], 0, 2);
-////        _gui.numeric(numeric, mode[1], v[3] );
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.put({.style = &style});
-//        _gui.pop();
+//        double ms = std::chrono::duration<double, std::milli>(end - begin).count();
+//        sum += ms;
+//        count += 1;
+//        if (count  >= 60)
+//        {
+//            sum /= double(count);
+//            snprintf(fps_text, 31, "%f ms", sum);
+//            sum = 0.0;
+//            count = 0;
+//        }
+//        std::cout << name << ": " << ms << " ms\n";
+
+//        _gui.push({.layer = 0, .style = &style_main});
+//        _gui.tab(0, fruits_list, selection );
+//        _gui.textField(0,tex, mode[0], text );
+//        _gui.scrubber(0,scrubber, mode[2], v[4] );
+//        _gui.slider(0,slider, &v[0], 0, 2);
+//        _gui.slidebar(0,slider1, &v[1], 0, 2);
+//        _gui.numSlideBar(0,slider2, &v[2], 0, 2);
+//        _gui.numeric(0,numeric, mode[1], v[3] );
+//        _gui.pop(0);
+
 
         _layout->end();
 
         _viewer.begin();
-        _viewer.collectVisibleWidgets( *_layout );
-        _viewer.drawText({0.f,0.f}, 200, 20, {1,1,1,1}, true, fps_text, {0,0,1000,400});
+        _viewer.render( *_layout );
+        //_viewer.drawText({0.f,0.f}, 200, 20, 0xFFFFFFFF, true, fps_text, {0,0,1000,400});
         _viewer.end(_render_graph->getRenderExecutor().ref());
     }
 
@@ -185,7 +171,8 @@ namespace kege{
             return false;
         }
 
-        _layout = new ui::Layout( graphics->getWindow()->getWidth(), graphics->getWindow()->getHeight() );
+        _layout = new ui::Layout( graphics->getWindow()->getWidth(), graphics->getWindow()->getHeight(), 200 );
+        _layout->createLayers(5);
 
         if( !_layout->loadStyles( kege::vfs( "config/style.json" ).c_str() ) )
         {
@@ -193,18 +180,27 @@ namespace kege{
             return false;
         }
         _layout->setFont( font );
-        _layout->resize( 200 );
 
         _gui.initialize(_layout);
 
-        _dock_mngr = new ui::DockManager( &_gui );
-        ui::Dock* root = _dock_mngr->getRoot();
-        _dock_mngr->splitNode(root, 0.28, ui::SplitDirection::VERTICAL);
-        _dock_mngr->splitNode(root->child[0].ref(), 0.65, ui::SplitDirection::HORIZONTAL);
-        _dock_mngr->dock(root->child[0]->child[0], ui::DockZone::TAB, new HierarchyPanel( _project_manager, &_gui, _ecs ));
-        _dock_mngr->dock(root->child[0]->child[1], ui::DockZone::TAB, new InspectorPanel( _project_manager, &_gui, _ecs ));
-        _dock_mngr->dock(root->child[1], ui::DockZone::TAB, new ViewportPanel( _project_manager, &_gui, _ecs ));
+        _dock_mngr = new ui::DockManager( &_gui, graphics->getWindow()->getWidth(), graphics->getWindow()->getHeight() );
+        _dock_mngr->split
+        (
+            _dock_mngr->getRoot(), ui::AlignDir::HORIZONTAL,
+            {},
+            {new ViewportPanel( _project_manager, &_gui, _ecs )}
+        );
+        _dock_mngr->split
+        (
+            _dock_mngr->getRoot().split->nodes[0], ui::AlignDir::VERTICAL,
+            {new HierarchyPanel( _project_manager, &_gui, _ecs )},
+            {new InspectorPanel( _project_manager, &_gui, _ecs )}
+        );
 
+        _dock_mngr->getRoot().name = "root";
+        _dock_mngr->getRoot().split->nodes[1].name = "dock-viewport";
+        _dock_mngr->getRoot().split->nodes[0].split->nodes[0].name = "dock-hierarchy";
+        _dock_mngr->getRoot().split->nodes[0].split->nodes[1].name = "dock-inspector";
         //hp = new HierarchyPanel( _project_manager, &_gui, _ecs );
         //std::cout << sizeof(ui::Callback)<<" style:"<< sizeof(ui::Style) <<" widgit:"<< sizeof(ui::Widget) <<" sum:" << sizeof(ui::Style) + sizeof(ui::Widget) <<"\n";
         return true;

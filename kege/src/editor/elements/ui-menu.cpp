@@ -28,7 +28,7 @@ namespace kege::ui{
 //            content->offset.y = 30;
 //        }
 
-        layout.put({ .id = &field });
+        layout.put({ .uid = &field });
 
         if ( layout.click( field ) )
         {
@@ -43,12 +43,12 @@ namespace kege::ui{
 
     void Menu::beginContent( ui::Layout& layout )
     {
-        layout.push({ .id = &content });
+        layout.push({ .uid = &content });
     }
 
     void Menu::endContent( ui::Layout& layout )
     {
-        layout.pop();
+        layout.pop(0);
     }
 
 }

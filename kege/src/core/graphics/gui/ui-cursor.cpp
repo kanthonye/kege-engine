@@ -10,15 +10,15 @@
 
 namespace kege::ui{
 
-    float Cursor::getClickToCursorOffset( const UID& uid, const kege::string& text, int font_size, const ref::Font& font )
+    float Cursor::getClickToCursorOffset( const UID& uid, const ref::Font& font, int font_size, const char* str, size_t& size )
     {
-        if ( text.empty() ) return 0;
+        if ( size == 0 ) return 0;
         float length = 0;
 
         _position = 0;
         float char_width;
         float max_length = _input->_current_position.x - _layout->elem( uid )->rect.x;
-        for ( const char* s = text.c_str(); *s != 0; ++s )
+        for ( const char* s = str; *s != 0; ++s )
         {
             char_width = font->getCharWidth( font_size, *s );
             if (length + char_width > max_length )
@@ -32,44 +32,44 @@ namespace kege::ui{
         return length;
     }
 
-    void Cursor::deleteSelection( int font_size, const ref::Font& font, kege::string& text )
+    void Cursor::deleteSelection( int font_size, const ref::Font& font, char* str, size_t& size )
     {
         if (_anchor < _position)
         {
             for ( size_t i = _anchor; i < _position; ++i )
             {
-                _offset -= font->getCharWidth( font_size, text[i] );
+                _offset -= font->getCharWidth( font_size, str[i] );
             }
-            text.erase( _anchor, _position );
+            eraseChar( str, size, _anchor, _position );
             _position = _anchor;
         }
         else if (_position < _anchor)
         {
             for ( size_t i = _position; i < _anchor; ++i )
             {
-                _offset -= font->getCharWidth( font_size, text[i] );
+                _offset -= font->getCharWidth( font_size, str[i] );
             }
-            text.erase( _position, _anchor );
+            eraseChar( str, size, _position, _anchor );
             _anchor = _position;
         }
         _selection = false;
     }
 
-    void Cursor::handleDeletion( int font_size, const ref::Font& font, kege::string& text )
+    void Cursor::handleDeletion( int font_size, const ref::Font& font, char* str, size_t& size )
     {
         if ( _selection )
         {
-            deleteSelection( font_size, font, text );
+            deleteSelection( font_size, font, str, size );
         }
         else if( 0 < _position )
         {
             _position -= 1;
-            _offset -= font->getCharWidth( font_size, text[ _position ]);
-            text.erase( _position, _position + 1 );
+            _offset -= font->getCharWidth( font_size, str[ _position ]);
+            eraseChar( str, size, _position, _position + 1 );
         }
     }
 
-    bool Cursor::onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, kege::string& text)
+    bool Cursor::onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, char* str, size_t& size)
     {
         if ( !_reading_input ) return false;
 
@@ -79,7 +79,7 @@ namespace kege::ui{
             {
                 if( input.key.state != 0 )
                 {
-                    handleDeletion( font_size, font, text );
+                    handleDeletion( font_size, font, str, size );
                 }
                 break;
             }
@@ -115,7 +115,7 @@ namespace kege::ui{
             {
                 if ( input.key.state != 0 )
                 {
-                    handleDeletion( font_size, font, text );
+                    handleDeletion( font_size, font, str, size );
                 }
                 break;
             }
@@ -125,7 +125,7 @@ namespace kege::ui{
                 if ( input.key.state != 0 )
                 {
                     _reading_input = false;
-                    _position = static_cast<uint32_t>( text.length() );
+                    _position = size;
                 }
                 break;
             }
@@ -138,15 +138,15 @@ namespace kege::ui{
                     {
                         for ( size_t i = _position; i < _anchor; ++i )
                         {
-                            _offset -= font->getCharWidth( font_size, text[i] );
+                            _offset -= font->getCharWidth( font_size, str[i] );
                         }
                         _position = kege::min(_anchor, _position);
                         _selection = false;
                     }
                     else if ( _position > 0 )
                     {
-                        size_t index = ( _position == text.length() ) ? _position - 1: _position;
-                        _offset -= font->getCharWidth( font_size, text[ index ]);
+                        size_t index = ( _position == size ) ? _position - 1: _position;
+                        _offset -= font->getCharWidth( font_size, str[ index ]);
                         _position -= 1;
                     }
                 }
@@ -155,20 +155,20 @@ namespace kege::ui{
 
             case kege::KEY_RIGHT:
             {
-                if ( input.key.state != 0 && _position < text.length() )
+                if ( input.key.state != 0 && _position < size )
                 {
                     if ( _selection )
                     {
                         for ( size_t i = _anchor; i < _position; ++i )
                         {
-                            _offset += font->getCharWidth( font_size, text[i] );
+                            _offset += font->getCharWidth( font_size, str[i] );
                         }
                         _anchor = _position;
                         _selection = false;
                     }
                     else
                     {
-                        _offset += font->getCharWidth( font_size, text[ _position ]);
+                        _offset += font->getCharWidth( font_size, str[ _position ]);
                         _position += 1;
                     }
                 }
@@ -177,7 +177,7 @@ namespace kege::ui{
 
             case kege::KEY_HOME:
             {
-                if ( _position > text.length() )
+                if ( _position > size )
                 {
                     _position = 0;
                 }
@@ -186,9 +186,9 @@ namespace kege::ui{
 
             case kege::KEY_END:
             {
-                if ( _position > text.length() )
+                if ( _position > size )
                 {
-                    _position = static_cast<uint32_t>( text.length() );
+                    _position = size;
                 }
                 break;
             }
@@ -199,7 +199,7 @@ namespace kege::ui{
                 {
                     if ( _selection )
                     {
-                        deleteSelection( font_size, font, text );
+                        deleteSelection( font_size, font, str, size );
                     }
 
                     switch ( type )
@@ -209,7 +209,7 @@ namespace kege::ui{
                             if ( _input->_shift )
                             {
                                 // Insert the character at the cursor position
-                                text.insert( _position, 1, _input->_keymap[ input.key.code ].shifted );
+                                insertChar( str, size, _position, 1, _input->_keymap[ input.key.code ].shifted );
                             }
                             else if
                             (
@@ -221,11 +221,11 @@ namespace kege::ui{
                             )
                             {
                                 // Insert the character at the cursor position
-                                text.insert( _position, 1, _input->_keymap[ input.key.code ].shifted );
+                                insertChar( str, size, _position, 1, _input->_keymap[ input.key.code ].shifted );
                             }
                             else
                             {
-                                text.insert( _position, 1, _input->_keymap[ input.key.code ].normal );
+                                insertChar( str, size, _position, 1, _input->_keymap[ input.key.code ].normal );
                             }
                             break;
                         }
@@ -235,25 +235,25 @@ namespace kege::ui{
                             if ((input.key.code >= '0' && input.key.code <= '9') || input.key.code == '.' || input.key.code == '-')
                             {
                                 // Ensure only one decimal point
-                                if (input.key.code == '.' && text.find('.') )
+                                if (input.key.code == '.' && strchr( str, '.' ) != nullptr )
                                 {
                                     break;
                                 }
 
                                 // Ensure only one negative sign at the beginning
-                                if (input.key.code == '-' && (_position != 0 || text.find('-') ))
+                                if (input.key.code == '-' && (_position != 0 || strchr( str, '-' ) != nullptr ))
                                 {
                                     break;
                                 }
 
                                 // Insert the character at the cursor position
-                                text.insert( _position, 1, _input->_keymap[ input.key.code ].normal );
+                                insertChar( str, size, _position, 1, _input->_keymap[ input.key.code ].normal );
                             }
                             break;
                         }
                     }
 
-                    _offset += font->getCharWidth( font_size, text[ _position ]);
+                    _offset += font->getCharWidth( font_size, str[ _position ]);
                     _position++;
                 }
                 break;
@@ -262,10 +262,10 @@ namespace kege::ui{
         return _reading_input;
     }
 
-    bool Cursor::onInput(Input::Type type, const UID& uid, const ref::Font& font, kege::string* text)
+    bool Cursor::onInput(Input::Type type, const UID& uid, const ref::Font& font, char* str, size_t& size)
     {
         Widget* widget = _layout->elem( uid );
-        int font_size = widget->style->font_size;
+        int font_size = widget->text.size;
         if (widget->rect.height > 0) _height = widget->rect.height;
         _x = widget->rect.x;
         _y = widget->rect.y;
@@ -278,7 +278,7 @@ namespace kege::ui{
         {
             if( !_initial_click )
             {
-                _offset = getClickToCursorOffset( uid, *text, font_size, font );
+                _offset = getClickToCursorOffset( uid, font, font_size, str, size );
                 _initial_click = true;
                 _anchor = _position;
                 _selection = false;
@@ -292,7 +292,7 @@ namespace kege::ui{
 
         if( _input->_pointer_dragging && _editing )
         {
-            _selection_end = getClickToCursorOffset( uid, *text, font_size, font );
+            _selection_end = getClickToCursorOffset( uid, font, font_size, str, size );
             _selection = true;
         }
 
@@ -301,7 +301,7 @@ namespace kege::ui{
          */
         for (int i = 0; i < _input->_key_count; ++i )
         {
-            if( !onInput( type, font, font_size, _input->_keyboard_keys[i], *text ) )
+            if( !onInput( type, font, font_size, _input->_keyboard_keys[i], str, size ) )
             {
                 _selection = false;
                 _editing = false;
@@ -342,6 +342,64 @@ namespace kege::ui{
             _editing = false;
         }
     }
+
+
+    void Cursor::insertChar( char* str, size_t& length, size_t pos, size_t count, char ch )
+    {
+        if (count == 0) return;
+
+        if (pos > length)
+        {
+            pos = length; // clamp to end
+        }
+
+        size_t new_capacity = length + count;
+        char* new_str = new char[new_capacity + 1];
+        if (str)
+        {
+            std::memcpy(new_str, str, length + 1);
+            delete[] str;
+        }
+        new_str[ new_capacity ] = 0;
+        length = new_capacity;
+        str = new_str;
+
+        // Move existing tail to make room (including null terminator)
+        std::memmove(str + pos + count, str + pos, length - pos + 1);
+
+        // Fill the gap with `ch`
+        for (size_t i = 0; i < count; ++i)
+        {
+            str[pos + i] = ch;
+        }
+
+        length = new_capacity;
+    }
+    void Cursor::eraseChar(char* str, size_t& length, size_t begin, size_t end)
+    {
+        if (begin >= length) return;
+
+        // Clamp end
+        if (end > length)
+            end = length;
+
+        // Nothing to remove
+        if (begin >= end)
+            return;
+
+        const size_t removeCount = end - begin;
+        const size_t tailCount   = length - end;
+
+        // Shift the tail left
+        if (tailCount > 0)
+        {
+            memmove(str + begin, str + end, tailCount);
+        }
+
+        length -= removeCount;
+        str[length] = '\0';
+    }
+
 
     Cursor::Cursor( ui::Layout* layout )
     :   _layout( layout )

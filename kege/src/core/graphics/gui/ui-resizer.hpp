@@ -16,13 +16,7 @@ namespace kege::ui{
     class Resizer
     {
         public:
-        static void resolveSizing(uint32_t parent, const Sizing& sizing, float& size, float available_space, int& extend_count );
-        static void calcHorizontalExtent( Layout& layout, uint32_t widget_index );
-        static void calcVerticalExtent( Layout& layout, uint32_t widget_index );
-        static void calcHorizontalFlex( Layout& layout, uint32_t widget_index );
-        static void calcVerticalFlex( Layout& layout, uint32_t widget_index );
         static void resize( Layout& layout, uint32_t widget_index );
-        static void resize( Layout& layout );
     };
 
 }

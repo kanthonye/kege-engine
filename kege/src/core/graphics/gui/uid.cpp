@@ -8,7 +8,7 @@
 #include "uid.hpp"
 #include "ui-layout.hpp"
 
-namespace kege{
+namespace kege::ui{
 
     int32_t UID::_head = -1;
     int32_t UID::_tail = -1;
@@ -17,7 +17,7 @@ namespace kege{
 
     UID& UID::operator=(const UID& other)
     {
-        id = other.id;
+        global = other.global;
         duplicates = other.duplicates;
 
         if(duplicates) *duplicates += 1;
@@ -30,17 +30,17 @@ namespace kege{
 
     UID& UID::operator=( UID&& uid)
     {
-        id = uid.id;
+        global = uid.global;
         duplicates = uid.duplicates;
 
-        uid.id.id = 0;
+        uid.global.id = 0;
         uid.duplicates = nullptr;
 
         return *this;
     }
 
     UID::UID(const UID& other)
-    :   id(other.id)
+    :   global(other.global)
     ,   duplicates( other.duplicates )
     {
         if(duplicates) *duplicates += 1;
@@ -51,10 +51,10 @@ namespace kege{
     }
 
     UID::UID( UID&& uid)
-    :   id(uid.id)
+    :   global(uid.global)
     ,   duplicates( uid.duplicates )
     {
-        uid.id.id = 0;
+        uid.global.id = 0;
         uid.duplicates = nullptr;
     }
 
@@ -70,7 +70,7 @@ namespace kege{
             duplicates = nullptr;
         }
 
-        if ( id.id != 0 )
+        if ( global.id != 0 )
         {
             if (_availables.size() == 0)
             {
@@ -86,11 +86,11 @@ namespace kege{
                 _head = _tail = 0;
             }
 
-            id.version += 1;
-            _availables[_tail] = id;
+            global.version += 1;
+            _availables[_tail] = global;
             _tail += 1;
 
-            id.id = 0;
+            global.id = 0;
         }
     }
     
@@ -99,7 +99,7 @@ namespace kege{
     {
         if (_head != -1)
         {
-            id = _availables[_head];
+            global = _availables[_head];
             _head += 1;
 
             if (_head >= _tail)
@@ -109,8 +109,8 @@ namespace kege{
             return;
         }
 
-        id.version = 1;
-        id.index = _enumerator;
+        global.version = 1;
+        global.index = _enumerator;
         _enumerator += 1;
     }
 

@@ -43,7 +43,7 @@ namespace kege{
 
     void ViewportPanel::update()
     {
-        _gui->put({ .style = &_style, .enabled = false });
+        _gui->put({ .layer = 0, .style = &_style, .enabled = false, .text = "viewport" });
 //        _gui->pop();
     }
 

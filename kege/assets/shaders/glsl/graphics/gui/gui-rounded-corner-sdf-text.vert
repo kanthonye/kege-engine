@@ -3,11 +3,12 @@
 struct DrawElem
 {
     vec4 rect;
-    vec4 color;
     vec4 texel;
+    ivec4 border;
     vec4 clip_rect;
-    vec4 combo;
+    ivec4 combo;
 };
+
 
 layout( set = 0, binding = 0 ) buffer UIViewBuffer
 {
@@ -29,30 +30,63 @@ const vec2 vertex_position[ 4 ] = vec2[]
 );
 
 layout(location = 0) out vec4  color;
-layout(location = 1) out vec2  position;   // Position of the rectangle center
-layout(location = 2) out vec2  size;       // Size of the rectangle
-layout(location = 3) out float border_radius; // border radius size
-layout(location = 4) out vec4  clip_rect;
-layout(location = 5) out vec2  text_uv;  // UV coordinates for text rendering
-layout(location = 6) out float texture_id;   // Texture array index
+layout(location = 1) out vec4  rect;
+layout(location = 2) out vec4  clip_rect;
+layout(location = 3) out vec2  text_uv;
+layout(location = 4) flat out ivec2 text_info;
+layout(location = 5) out vec4  border_radius;
+layout(location = 6) out vec4  border_color;
+layout(location = 7) out float border_width;
+
+vec4 unpackRGBA8(uint packed)
+{
+    vec4 color;
+    color.r = float((packed >> 24) & 0xFF);
+    color.g = float((packed >> 16) & 0xFF);
+    color.b = float((packed >> 8) & 0xFF);
+    color.a = float(packed & 0xFF);
+
+
+//    color.r = float(packed & 0xFFu);
+//    color.g = float((packed >> 8)  & 0xFFu);
+//    color.b = float((packed >> 16) & 0xFFu);
+//    color.a = float((packed >> 24) & 0xFFu);
+    return color / 255.0;
+}
+
+ivec2 unpackUint16x2(uint packed)
+{
+    return ivec2(
+        int(packed & 0xFFFFu),
+        int(packed >> 16)
+    );
+}
 
 void main()
 {
     clip_rect = instances[ gl_InstanceIndex ].clip_rect;
+    color = unpackRGBA8( instances[ gl_InstanceIndex ].combo.r );
+    text_info = unpackUint16x2( instances[ gl_InstanceIndex ].combo.g );
+    rect = instances[ gl_InstanceIndex ].rect;
 
-    vec4 rect = instances[ gl_InstanceIndex ].rect;
-    color = instances[ gl_InstanceIndex ].color;
-    position = rect.xy;
-    size = rect.zw;
+    border_radius.xy = vec2(unpackUint16x2( instances[ gl_InstanceIndex ].border.x ));
+    border_radius.zw = vec2(unpackUint16x2( instances[ gl_InstanceIndex ].border.y ));
+    border_color = unpackRGBA8( instances[ gl_InstanceIndex ].border.z );
+    border_width = float(instances[ gl_InstanceIndex ].border.w);
 
-    vec2 vp = vec2(rect.x, -rect.y) + size * vertex_position[ gl_VertexIndex ];
+    //color = instances[ gl_InstanceIndex ].color;
+    //position = rect.xy;
+    //size = rect.zw;
+
+    vec4 texel = instances[ gl_InstanceIndex ].texel;
+    text_uv = vertex_position[ gl_VertexIndex ] * vec2(1.f,-1.f);
+    text_uv = texel.xy + texel.zw * text_uv;
+
+    vec2 vp = vec2(rect.x, -rect.y) + rect.zw * vertex_position[ gl_VertexIndex ];
     gl_Position = projection * vec4( vp, 0.0f, 1.0f );
     gl_Position.y = -gl_Position.y;
 
-    vec4 texel = instances[ gl_InstanceIndex ].texel;
-    border_radius = instances[ gl_InstanceIndex ].combo.x;
-    texture_id = instances[ gl_InstanceIndex ].combo.y;
-    text_uv = vertex_position[ gl_VertexIndex ] * vec2(1.f,-1.f);
-    text_uv = texel.xy + texel.zw * text_uv;
+    //border_radius = instances[ gl_InstanceIndex ].combo.x;
+    //texture_id = instances[ gl_InstanceIndex ].combo.y;
 
 }

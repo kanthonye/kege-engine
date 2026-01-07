@@ -116,7 +116,8 @@ namespace kege::ui{
         }
         return padding;
     }
-    Color parseColor( kege::Json json )
+    
+    uint32_t parseColor( kege::Json json )
     {
         Color color = {};
         if ( json )
@@ -124,45 +125,30 @@ namespace kege::ui{
             if ( json.count() == 4 )
             {
                 arr< double, 4 > arr = json.getArray<double, 4>( atof );
-                color.r = arr.data[0];
-                color.g = arr.data[1];
-                color.b = arr.data[2];
-                color.a = arr.data[3];
+                return packRGBA8(arr.data[0], arr.data[1], arr.data[2], arr.data[3]);
             }
             else if ( json.count() == 3 )
             {
                 arr< double, 3 > arr = json.getArray<double, 3>( atof );
-                color.r = arr.data[0];
-                color.g = arr.data[1];
-                color.b = arr.data[2];
-                color.a = 1.0;
+                return packRGBA8(arr.data[0], arr.data[1], arr.data[2], 1.f);
             }
             else
             {
                 size_t len = strlen( json.value() );
-                uint64_t hex = std::stoul( json.value(), 0, 16 );
-                if ( len == 10 )
-                {
-                    color = ui::rgba( (uint32_t)hex );
-                }
-                else if ( len == 8 )
-                {
-                    color = ui::rgb( (uint32_t)hex );
-                }
-                else
-                {
-                    color = Color( (uint32_t)hex );
-                }
+                uint32_t hex = (uint32_t)std::stoul( json.value(), 0, 16 );
+                return hex;
             }
         }
-        return color;
+        return 0xFFFFFFFF;
     }
+
     Background parseBackground( kege::Json json )
     {
         Background background = {};
         background.color = parseColor( json );
         return background;
     }
+
     Alignment parseAlignment( kege::Json json )
     {
         Alignment alignment;
@@ -212,48 +198,48 @@ namespace kege::ui{
         }
         return alignment;
     }
-    Corners parseBorderRadius( kege::Json json )
+    Border parseBorderRadius( kege::Json json )
     {
-        Corners corners = {};
+        Border border = {};
         if ( json )
         {
             if ( json.count() == 4 )
             {
                 arr< int, 4 > arr = json.getArray<int, 4>( atoi );
-                corners.top_left     = arr.data[0];
-                corners.top_right    = arr.data[1];
-                corners.bottom_right = arr.data[2];
-                corners.bottom_right = arr.data[3];
+                border.corner_curves.top_left     = arr.data[0];
+                border.corner_curves.top_right    = arr.data[1];
+                border.corner_curves.bottom_right = arr.data[2];
+                border.corner_curves.bottom_right = arr.data[3];
             }
             else if ( json.count() == 3 )
             {
                 arr< int, 3 > arr = json.getArray<int, 3>( atoi );
-                corners.top_left     = arr.data[0];
-                corners.top_right    = arr.data[1];
-                corners.bottom_right = arr.data[2];
+                border.corner_curves.top_left     = arr.data[0];
+                border.corner_curves.top_right    = arr.data[1];
+                border.corner_curves.bottom_right = arr.data[2];
             }
             else if ( json.count() == 2 )
             {
                 arr< int, 2 > arr = json.getArray<int, 2>( atoi );
-                corners.top_left     = arr.data[0];
-                corners.top_right    = arr.data[0];
-                corners.bottom_right = arr.data[1];
-                corners.bottom_right = arr.data[1];
+                border.corner_curves.top_left     = arr.data[0];
+                border.corner_curves.top_right    = arr.data[0];
+                border.corner_curves.bottom_right = arr.data[1];
+                border.corner_curves.bottom_right = arr.data[1];
             }
             else
             {
                 int b = atoi( json.value() );
-                corners.top_left     = b;
-                corners.top_right    = b;
-                corners.bottom_right = b;
-                corners.bottom_right = b;
+                border.corner_curves.top_left     = b;
+                border.corner_curves.top_right    = b;
+                border.corner_curves.bottom_right = b;
+                border.corner_curves.bottom_right = b;
             }
         }
-        return corners;
+        return border;
     }
-    Extent2D parseGap( kege::Json json )
+    Extent parseGap( kege::Json json )
     {
-        Extent2D gap = {0,0};
+        Extent gap = {0,0};
         if ( json )
         {
             if ( json.count() == 2 )
@@ -314,17 +300,16 @@ namespace kege::ui{
             Style style = {};
 
             style.background = parseBackground( json[ "background" ] );
-            style.color = parseColor( json[ "color" ] );
+            style.text_color = parseColor( json[ "color" ] );
             style.padding = parsePadding( json[ "padding" ] );
             style.width = parseSizing( json[ "width" ] );
             style.height = parseSizing( json[ "height" ] );
             style.align = parseAlignment( json[ "align" ] );
-            style.border_radius = parseBorderRadius( json[ "border_radius" ] );
+            style.border = parseBorderRadius( json[ "border_radius" ] );
             style.gap = parseGap( json[ "gap" ] );
             style.position = parsePositioning( json[ "position" ] );
             style.align_text = parseAlignText( json[ "align_text" ] );
             style.clip_overflow = json.getBool( "clip_overflow" );
-            style.wrap_around = json.getBool( "wrap_around" );
             style.zindex = json.getInt( "zindex" );
             style.font_size = json.getInt( "font_size", 14 );
 

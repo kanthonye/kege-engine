@@ -14,12 +14,19 @@
 #include "ui-aligner.hpp"
 #include "ui-core.hpp"
 #include "ui-cursor.hpp"
+//#include "ui-layer.hpp"
 #include "ui-style-manager.hpp"
-#include "ui-widget-manager.hpp"
 
 namespace kege::ui{
 
     class Input;
+
+
+    struct Layer
+    {
+        uint32_t parent;
+        uint32_t root;
+    };
 
     class Layout : public kege::RefCounter
     {
@@ -43,10 +50,10 @@ namespace kege::ui{
             bool  left_released = false;
             bool  double_click = false;
         };
-        
+
     public:
 
-        template<typename Params>void pushDeferredOp(const kege::UID& id, DeferredOp::Fn fn, const Params& params)
+        template<typename Params>void pushDeferredOp(const ui::UID& id, DeferredOp::Fn fn, const Params& params)
         {
             AllocParam alloc = this->alloc(sizeof(Params));
             Params* dst = reinterpret_cast<Params*>( getParams(alloc) );
@@ -63,10 +70,10 @@ namespace kege::ui{
         void* getParams(AllocParam param);
         AllocParam alloc(size_t size);
 
-        kege::vec2 computeExtent( int font_size, const char* text );
+        uint32_t computeExtent( int font_size, const char* text, float& width, float& height );
 
-        bool onNumericInput(const UID& elem, kege::string* text);
-        bool onTextInput(const UID& elem, kege::string* text);
+        bool onNumericInput(const UID& elem, char* str, size_t& size);
+        bool onTextInput(const UID& elem, char* str, size_t& size);
 
 
         /**
@@ -78,34 +85,36 @@ namespace kege::ui{
          * @return true if mouse is over ui element, false otherwise.
          */
         bool testPointVsRect( const kege::dvec2& p, const ui::Rect& rect )const;
-//
-//        /**
-//         * Retrieves the current position of the mouse pointer.
-//         *
-//         * @return The current position as a 2D vector.
-//         */
-//        const kege::dvec2& pointerPosition() const;
-//
-//        /**
-//         * Retrieves the delta (change) in the mouse pointer's position.
-//         *
-//         * @return The delta position as a 2D vector.
-//         */
-//        const kege::dvec2& deltaPosition() const;
-//
-//        /**
-//         * Retrieves the mouse scroll offset.
-//         *
-//         * @return The scroll offset as a 2D vector.
-//         */
-//        const kege::dvec2& scrollOffset() const;
-//
-//        /**
-//         * Checks if the mouse pointer is being dragged.
-//         *
-//         * @return true if the pointer is being dragged, false otherwise.
-//         */
-//        const bool pointerDragging() const;
+
+
+        Text text( const char* str, int font_size );
+    //        /**
+    //         * Retrieves the current position of the mouse pointer.
+    //         *
+    //         * @return The current position as a 2D vector.
+    //         */
+    //        const kege::dvec2& pointerPosition() const;
+    //
+    //        /**
+    //         * Retrieves the delta (change) in the mouse pointer's position.
+    //         *
+    //         * @return The delta position as a 2D vector.
+    //         */
+    //        const kege::dvec2& deltaPosition() const;
+    //
+    //        /**
+    //         * Retrieves the mouse scroll offset.
+    //         *
+    //         * @return The scroll offset as a 2D vector.
+    //         */
+    //        const kege::dvec2& scrollOffset() const;
+    //
+    //        /**
+    //         * Checks if the mouse pointer is being dragged.
+    //         *
+    //         * @return true if the pointer is being dragged, false otherwise.
+    //         */
+    //        const bool pointerDragging() const;
 
         /**
          * Checks if mouse pointer is over ui element.
@@ -143,22 +152,6 @@ namespace kege::ui{
          */
         bool hasFocus( const UID& uid )const;
 
-//        /**
-//         * Set the id of the ui-element to focus on.
-//         *
-//         * @param uid The given id.
-//         */
-//        void setFocus( const UID& uid );
-
-//        /**
-//         * Creates a UI element with the give info.
-//         *
-//         * @param info contains the attribute the ui requires.
-//         *
-//         * @return The element id.
-//         */
-//        Elem make( const Widget& info );
-
         /**
          * Creates a parent UI element with the give info.
          *
@@ -166,7 +159,7 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        uint32_t push( const Desc& desc );
+        uint32_t push( const WidgetDesc& desc );
 
         /**
          * Creates a UI element with the give description.
@@ -175,14 +168,14 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        uint32_t put( const Desc& desc );
+        uint32_t put( const WidgetDesc& desc );
 
         /**
          * Pops the current parent UI element from the parent stack.
          *
          * @return The index of the popped UI element in the elements array.
          */
-        uint32_t pop();
+        uint32_t pop( int layer );
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -206,45 +199,45 @@ namespace kege::ui{
         /**
          * Retrieves a UI element by its index (const version).
          *
-         * @param elem The ui element index.
+         * @param index The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* operator[](NodeIndex elem) const;
+        const kege::ui::Widget* operator[](uint32_t index) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
          *
-         * @param elem The ui element index.
+         * @param index The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* operator[](NodeIndex elem);
+        kege::ui::Widget* operator[](uint32_t index);
 
         /**
          * Retrieves the parent index of a UI element.
          */
-        NodeIndex parent( NodeIndex elem )const;
+        uint32_t parent( uint32_t index )const;
 
         /**
          * Retrieves the head index of a UI element.
          */
-        NodeIndex head( NodeIndex elem )const;
+        uint32_t head( uint32_t index )const;
 
         /**
          * Retrieves the tail index of a UI element.
          */
-        NodeIndex tail( NodeIndex elem )const;
+        uint32_t tail( uint32_t index )const;
 
         /**
          * Retrieves the next sibling index of a UI element.
          */
-        NodeIndex next( NodeIndex elem )const;
+        uint32_t next( uint32_t index )const;
 
         /**
          * Retrieves the number of children of a UI element.
          */
-        uint32_t count( NodeIndex elem )const;
+        uint32_t count( uint32_t index )const;
 
         /**
          * Adds a new style to the layout system.
@@ -272,7 +265,7 @@ namespace kege::ui{
          * @return A pointer to the style if index is valid, nullptr otherwise.
          */
         ui::Style* getStyleByID( int index );
-        
+
         bool loadStyles( const std::string& filename );
 
         /**
@@ -288,6 +281,8 @@ namespace kege::ui{
          * @return The current font.
          */
         const ref::Font& getFont() const;
+        
+        void createLayers( uint32_t quantity );
 
         /**
          * Resize total number of layout elements.
@@ -329,7 +324,7 @@ namespace kege::ui{
 
         //void retn(uint32_t index);
 
-        Layout(uint32_t width, uint32_t height);
+        Layout(uint32_t width, uint32_t height, uint32_t quantity );
 
     private:
 
@@ -344,26 +339,15 @@ namespace kege::ui{
         std::vector< kege::ui::Widget > _widgets;
         uint32_t _widget_count;
 
-        //std::vector< kege::ui::Node > _nodes;
-        //uint32_t _node_count;
-
-        /* _roots: contains the index of all the root nodes with in this layout. */
-        std::vector< uint32_t > _roots;
-        uint32_t _root_count;
-
         std::vector<DeferredOp> _deferred_ops;
         size_t _deferred_op_count;
 
         std::vector<char> _state_buffer;
         size_t _state_buffer_size;
 
+        kege::array< ui::Layer > _layers;
 
-        //std::vector<uint32_t> _availables;
-        //int32_t _head;
-        //int32_t _tail;
-        
-
-        WidgetManager _widget_manager;
+        //TODO: remove _style_manager
         StyleManager _style_manager;
 
         ui::Cursor _cursor;
@@ -380,18 +364,18 @@ namespace kege::ui{
 
         uint32_t _active_index;
         uint32_t _hot_index;
-        uint32_t _parent; // Tracks the current parent element in the UI hierarchy.
 
         uint32_t _height;
         uint32_t _width;
+
         bool _button_down;
         bool _button_active;
 
+        friend Layer;
         friend Resizer;
         friend Aligner;
         friend Cursor;
         friend Viewer;
-        friend Elem;
     };
 
 }

@@ -17,6 +17,8 @@ namespace kege{
     ,   _show_component_selections( false )
     ,   _selected_entity{}
     {
+        _text_add = gui->layout()->text("Add Component", 20);
+
         _styles[0] = kege::ui::Style
         {
             .background = ui::Background(0x171420FF),
@@ -60,12 +62,12 @@ namespace kege{
         add("Mesh", ecs::Component::type< kege::ref::Mesh >(), [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::ref::Mesh >(e); });
     }
 
-    void InspectorPanel::add(const std::string& stype, int component_type, void(*funct)( kege::ECS*, ecs::Entity& ))
+    void InspectorPanel::add(const char* stype, int component_type, void(*funct)( kege::ECS*, ecs::Entity& ))
     {
         _component_factory[ component_type ] = funct;
         _string_to_component_type[ stype ] = component_type;
-        std::pair<kege::UID, std::string> pair;
-        pair.second = stype;
+        std::pair<ui::UID, ui::Text> pair;
+        pair.second = _gui->layout()->text(stype, 20);
         _component_uis.push_back(pair);
     }
 
@@ -76,10 +78,10 @@ namespace kege{
 
     void InspectorPanel::update()
     {
-        _gui->push({ .style = &_styles[0] });
+        _gui->push({ .layer = 0, .style = &_styles[0] });
         if ( _selected_entity )
         {
-            if( _gui->button(_add_component, "add component") )
+            if( _gui->button(0, _add_component, _text_add) )
             {
                 _show_component_selections = !_show_component_selections;
             }
@@ -87,9 +89,9 @@ namespace kege{
             if ( _show_component_selections )
             {
                 int selection;
-                if ( _gui->select(&_styles[1], _component_uis, selection) )
+                if ( _gui->select(0, &_styles[1], _component_uis, selection) )
                 {
-                    auto i = _string_to_component_type.find( _component_uis[ selection ].second );
+                    auto i = _string_to_component_type.find( _component_uis[ selection ].second.ptr );
                     if (i != _string_to_component_type.end())
                     {
                         _component_factory[ i->second ]( _ecs, _selected_entity );
@@ -108,7 +110,7 @@ namespace kege{
 //                }
 //            }
         }
-        _gui->pop();
+        _gui->pop(0);
     }
 
 }

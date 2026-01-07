@@ -26,11 +26,14 @@ namespace kege{
         {
             ui::Style spacer_style;
 
-            UID expand_toggle;
-            UID delete_button;
-            UID container;
+            ui::UID expand_toggle;
+            ui::UID delete_button;
+            ui::UID container;
 
             bool open[2] = {false, false};
+
+            ui::Text text_delete;
+            ui::Text text_expand;
         };
 
     public:
@@ -52,8 +55,8 @@ namespace kege{
         ref::Scene _scene;
 
         ecs::Entity _selected_entity;
-        UID _create_entity;
-
+        ui::UID _create_entity;
+        ui::Text text_create;
         kege::ui::Style _styles[COUNT];
     };
 }

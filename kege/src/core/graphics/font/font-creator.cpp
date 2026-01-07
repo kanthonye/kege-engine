@@ -9,13 +9,24 @@
 
 namespace kege{
 
-    std::vector< Glyph > FontCreator::createGlyphs( const FontCreator::Info& info )
+    struct TempGlyph
+    {
+        int min_y;
+        int max_y;
+    };
+
+    void FontCreator::createGlyphs( const FontCreator::Info& info )
     {
         int threshold = 20;
         int char_width  = info.width / info.columns;
         int char_height = info.height / info.rows;
 
-        std::vector< Glyph > glyphs( 128 );
+        info.glyphs.resize( 128 );
+        std::vector<TempGlyph> temp(128);
+
+        int global_min_y = char_height;
+        int global_max_y = 0;
+        int baseline;
 
         for (int i = 0; i < 128; ++i) // ASCII range 0-127
         {
@@ -45,7 +56,7 @@ namespace kege{
                     }
 
                     /**
-                     * what we want to do here is calculate the width from where the since distance
+                     * what we want to do here is calculate the width from where the sine distance
                      * field start to the where the actual glyph starts. this will allow us to calc
                      * the bearing_x offset. which is why the threshold is 200, you can increase or
                      * reduce to adjust the offset.
@@ -60,7 +71,7 @@ namespace kege{
 
             if (min_x > max_x) // No visible pixels found (empty character)
             {
-                glyphs[i] = Glyph
+                info.glyphs[i] = Glyph
                 {
                     .x = float(start_x),
                     .y = float(start_y),
@@ -71,6 +82,11 @@ namespace kege{
             }
             else // visible pixels found
             {
+                global_min_y = std::min(global_min_y, min_y);
+                global_max_y = std::max(global_max_y, max_y);
+                temp[i].min_y = min_y;
+                temp[i].max_y = max_y;
+
                 Glyph g;
                 g.x         = float(start_x + min_x);
                 g.y         = float(start_y + min_y);
@@ -80,30 +96,41 @@ namespace kege{
                 g.bearing_y = float(min_y);
 
                 // Normalize UV
-                glyphs[i].x              = g.x / float( info.width );
-                glyphs[i].y              = g.y / float( info.height );
-                glyphs[i].width          = g.width / float( info.width );
-                glyphs[i].height         = g.height / float( info.height );
+                info.glyphs[i].x              = g.x / float( info.width );
+                info.glyphs[i].y              = g.y / float( info.height );
+                info.glyphs[i].width          = g.width / float( info.width );
+                info.glyphs[i].height         = g.height / float( info.height );
 
                 // Normalize glyph size
-                glyphs[i].scaled_width   = g.width / float(char_width);
-                glyphs[i].scaled_height  = g.height / float(char_height);
-
+                info.glyphs[i].scaled_width   = g.width / float(char_width);
+                info.glyphs[i].scaled_height  = g.height / float(char_height);
 
                 // Calculate Bearing X and Bearing Y
-                glyphs[i].bearing_x = float(min_w - min_x) / float(char_width); // Distance from left edge of bounding box to left edge of glyph
-                glyphs[i].bearing_y = float(min_y) / float(char_height); // Distance from baseline to top of glyph
-                glyphs[i].offset_y  = float(min_y - min_h) / float(char_height);
+                info.glyphs[i].bearing_x = float(min_w - min_x) / float(char_width); // Distance from left edge of bounding box to left edge of glyph
+
                 /**
                  * Calculate Advance (width of the glyph plus some spacing). You can increase or
                  * reduce the percentage value to adjust the spacing between letters.
                  */
-                glyphs[i].advance = (g.width * 0.55) / float(char_width); // Add 2 pixels for spacing
+                info.glyphs[i].advance = (g.width * 0.48) / float(char_width); // Add 2 pixels for spacing
 
             }
         }
-        glyphs[32].advance = glyphs['T'].advance;
-        return glyphs;
+
+        info.matrics = {};
+        info.matrics.ascent = char_height - global_min_y;
+        info.matrics.baseline = char_height - info.matrics.ascent;  // == global_min_y
+        info.matrics.descent  = global_max_y - info.matrics.baseline;
+
+        for (int i = 0; i < 128; ++i)
+        {
+            if (info.glyphs[i].width == 0.0f)
+                continue;
+
+            info.glyphs[i].bearing_y = (info.matrics.ascent - temp[i].min_y) / float(char_height);
+        }
+
+        info.glyphs[32].advance = info.glyphs['T'].advance;
     }
 
     ref::Font FontCreator::create( Graphics* graphics, int char_per_row, int char_per_col, const std::string& font_texture_path )
@@ -117,13 +144,17 @@ namespace kege{
             return {};
         }
 
-        std::vector< Glyph > glyphs = FontCreator::createGlyphs
+        std::vector< Glyph > glyphs;
+        FontMetrics matrics;
+        FontCreator::createGlyphs
         ({
             width,
             height,
             char_per_row,
             char_per_col,
-            data.data()
+            data.data(),
+            glyphs,
+            matrics
         });
 
         ref::Image image = graphics->createImage
@@ -150,7 +181,7 @@ namespace kege{
             .address_mode_w = AddressMode::ClampToEdge
         });
 
-        return new kege::Font( glyphs, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
+        return new kege::Font( glyphs, matrics, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
     }
 
 }

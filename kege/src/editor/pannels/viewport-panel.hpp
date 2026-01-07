@@ -22,7 +22,7 @@ namespace kege{
     public:
 
         kege::ui::Style _style;
-        UID _main;
+        ui::UID _main;
     };
 }
 

@@ -9,37 +9,95 @@
 #include "ui-viewer.hpp"
 namespace kege::ui{
 
-    kege::vec2 Viewer::drawText
+    void Viewer::push( const ui::UIDrawInstance& instance )
+    {
+        memcpy(&_drawbuffer[ _draw_count ], &instance, sizeof(instance));
+        _draw_count += 1;
+
+        if ( _drawbuffer.size() <= _draw_count )
+        {
+            flush();
+        }
+    }
+
+    UIDrawInstance& Viewer::nextInstance()
+    {
+        if ( _drawbuffer.size() <= _draw_count )
+        {
+            flush();
+        }
+        return _drawbuffer[ _draw_count++ ];
+    }
+
+    void Viewer::drawRect
+    (
+        const ui::Rect& rect,
+        const ui::Color& color,
+        const ui::Border& border,
+        const ui::TexrInfo& texr_info,
+        const ui::Rect& texel,
+        const ui::Rect& clip_rect
+    )
+    {
+        if ( color.a < 0.001f || rect.width == 0.f || rect.height == 0.f) return;
+
+        UIDrawInstance& instance = nextInstance();
+
+        instance.color     = ui::packRGBA8(color);
+        instance.border    = border;
+        instance.texel     = texel;
+        instance.rect      = rect;
+        instance.texr_info = texr_info;
+        instance.clip_rect = clip_rect;
+    }
+
+    ui::Extent Viewer::drawText
     (
         const kege::vec2& start,
         float width,
         float font_size,
-        const ui::Color& color,
+        uint32_t color,
         bool wrap_around,
         const char* text,
         const ui::Rect& clip_rect
     )
     {
-        //const int text_index = node.text_id;
+        float a = (color & 0xFF) / 255.0;
+        if ( a < 0.001f ) return {};
+
         kege::vec2 cursor = {start.x, start.y};
         float max_h = 0;
-        float sum_w = 0;
+        //float sum_w = 0;
         float length;
+
+
+        //ui::Rect rect;
+        //ui::Border border = {};
+        //ui::TexrInfo texr = {1};
+        ui::Extent extent = {};
+
+        UIDrawInstance instance = {};
+        instance.texr_info.id = 1;
+        instance.texr_info.index = 1;
+        instance.clip_rect = clip_rect;
+        instance.color = color;
+
+        float baseline = font_size - 1;
+
         for (const char* c = text; 0 < *c && _draw_count < _drawbuffer.size(); ++c )
         {
             const kege::Glyph& g = _font->glyphs()[ *c ];
-            float w = font_size * g.scaled_width;
-            float h = font_size * g.scaled_height;
+            instance.rect.width  = font_size * g.scaled_width;
+            instance.rect.height = font_size * g.scaled_height;
+            max_h = kege::max<float>( max_h, instance.rect.height );
 
-            length = cursor.x + w;
+            length = cursor.x + instance.rect.width;
             if ( wrap_around && length > width )
             {
                 cursor.x = start.x; // Reset X to start of the row
                 cursor.y += max_h;  // Move Y to the next row
-                max_h = 0;          // Reset max row height
+                //max_h = 0;          // Reset max row height
             }
-
-            max_h = kege::max<float>( max_h, h );
 
             /**
              * if the render width for the text is greate than 0 then render the text.
@@ -47,196 +105,142 @@ namespace kege::ui{
              * to save us some computing power, other wise we will be computing it twice.
              * once for setting the max width and height of the text and another when rendering
              */
-            if ( *c > 32 && sum_w < width )
+            if ( *c > 32 /*&& extent.width < width*/ )
             {
-                _drawbuffer[ _draw_count ].color         = color;
-                _drawbuffer[ _draw_count ].rect.width    = w;
-                _drawbuffer[ _draw_count ].rect.height   = h;
-                _drawbuffer[ _draw_count ].rect.x        = cursor.x - font_size * g.bearing_x;
-                _drawbuffer[ _draw_count ].rect.y        = cursor.y + font_size * g.bearing_y;
-                _drawbuffer[ _draw_count ].texel.x       = g.x;
-                _drawbuffer[ _draw_count ].texel.y       = g.y;
-                _drawbuffer[ _draw_count ].texel.width   = g.width;
-                _drawbuffer[ _draw_count ].texel.height  = g.height;
-                _drawbuffer[ _draw_count ].texture_id    = 1.0f;
-                _drawbuffer[ _draw_count ].border_radius = 0.0f;
-                _drawbuffer[ _draw_count ].clip_rect     = clip_rect;
-                _draw_count++;
+                instance.rect.x = cursor.x - font_size * g.bearing_x;
+                instance.rect.y = cursor.y + baseline - font_size * g.bearing_y;
 
-                if ( _drawbuffer.size() <= _draw_count )
-                {
-                    flush();
-                }
+                instance.texel.x       = g.x;
+                instance.texel.y       = g.y;
+                instance.texel.width   = g.width;
+                instance.texel.height  = g.height;
+
+                push(instance);
             }
 
-            sum_w += g.advance * font_size;
-            cursor.x = start.x + sum_w; // Move cursor for next glyph
+            extent.width += g.advance * font_size;
+            cursor.x = start.x + extent.width; // Move cursor for next glyph
 
-            if ( sum_w > width )
+            if ( extent.width > width )
             {
                 break;
             }
         }
-        return {sum_w, max_h};
+        extent.height = cursor.y + max_h;
+        return {extent.width, extent.height};
     }
 
-    void Viewer::draw( const ui::Widget& content, const ui::Rect& clip_rect )
+    void Viewer::draw( const ui::Widget& widget, const ui::Rect& clip_rect )
     {
-        if ( !content.visible )
+        if ( !widget.visible )
             return;
-        
-        if ( content.style->background.color.a > 0.001f)
+
+        UIDrawInstance& instance = nextInstance();
+
+        instance.rect       = widget.rect;
+        instance.color      = widget.color;
+        instance.border     = widget.border;
+        instance.texel      = widget.texel;
+        instance.texr_info  = widget.texr_info;
+        instance.clip_rect  = clip_rect;
+
+        if ( widget.text.ptr && _font )
         {
-            _drawbuffer[ _draw_count ].border_radius = content.style->border_radius.top_left;
-            _drawbuffer[ _draw_count ].texture_id    = content.texr.id;
-            _drawbuffer[ _draw_count ].color         = content.style->background.color;
-            _drawbuffer[ _draw_count ].rect.height   = content.rect.height;
-            _drawbuffer[ _draw_count ].rect.width    = content.rect.width;
-            _drawbuffer[ _draw_count ].rect.x        = content.rect.x;
-            _drawbuffer[ _draw_count ].rect.y        = content.rect.y;
-            _drawbuffer[ _draw_count ].texel.x       = content.texr.x;
-            _drawbuffer[ _draw_count ].texel.y       = content.texr.y;
-            _drawbuffer[ _draw_count ].texel.width   = content.texr.width;
-            _drawbuffer[ _draw_count ].texel.height  = content.texr.height;
-            _drawbuffer[ _draw_count ].clip_rect     = clip_rect;
-            _draw_count++;
-
-            if ( _drawbuffer.size() <= _draw_count )
+            kege::vec2 start = { widget.rect.x, widget.rect.y };
+            if ( widget.style )
             {
-                flush();
-            }
-        }
+                switch ( widget.style->align_text )
+                {
+                    case AlignText::Center:
+                    {
+                        start.x += (widget.rect.width  - widget.text.width) * 0.5;
+                        start.y += (widget.rect.height - widget.text.height) * 0.5;
+                        break;
+                    }
+                        
+                    case AlignText::Right:
+                    {
+                        if ( widget.text.width != 0 )
+                        {
+                            start.x += ( widget.rect.width - widget.text.width - widget.style->padding.right);
+                        }
+                        if ( widget.text.height != 0 )
+                        {
+                            start.y +=  widget.text.y + widget.style->padding.above;
+                        }
+                        break;
+                    }
 
-        if ( content.text.text && _font )
-        {
-            kege::vec2 start = { content.rect.x, content.rect.y };
-            switch ( content.style->align_text )
-            {
-                case AlignText::Center:
-                {
-                    const kege::Glyph& g = _font->glyphs()[ '{' ];
-                    float h = content.style->font_size * g.scaled_height;
-                    start.x += (content.rect.width  - content.text.width) * 0.5;
-                    start.y += (content.rect.height - h) * 0.5;
-                    break;
+                    case AlignText::Left:
+                    default:
+                    {
+                        if ( widget.text.width != 0 )
+                        {
+                            start.x += widget.text.x + widget.style->padding.left;
+                        }
+                        if ( widget.text.height != 0 )
+                        {
+                            start.y += widget.text.y + widget.style->padding.above;
+                        }
+                        break;
+                    };
                 }
-                case AlignText::Right:
-                {
-                    if ( content.text.width != 0 )
-                    {
-                        start.x += ( content.rect.width - content.text.width - content.style->padding.right);
-                    }
-                    if ( content.text.height != 0 )
-                    {
-                        start.y +=  content.text.y + content.style->padding.above;
-                    }
-                    break;
-                }
-
-                case AlignText::Left:
-                default:
-                {
-                    if ( content.text.width != 0 )
-                    {
-                        start.x += content.text.x + content.style->padding.left;
-                    }
-                    if ( content.text.height != 0 )
-                    {
-                        start.y += content.text.y + content.style->padding.above;
-                    }
-                    break;
-                };
             }
 
-            vec2 r = drawText
+            /*
+            UIDrawInstance& instance = nextInstance();
+            instance.rect.x       = start.x;
+            instance.rect.y       = start.y;
+            instance.rect.width  = widget.text.width;
+            instance.rect.height = widget.text.height;
+            instance.color      = 0xFF00FF40;
+            instance.border     = {};
+            instance.texel      = {};
+            instance.texr_info  = {};
+            instance.clip_rect  = clip_rect;
+             */
+
+            drawText
             (
                 start,
-                content.rect.width,
-                content.style->font_size,
-                content.style->color,
-                content.style->wrap_around,
-                content.text.text.str(),
+                widget.rect.width,
+                widget.text.size,
+                widget.text.color,
+                (widget.style)?widget.style->align.wrap_around: false,
+                widget.text.ptr,
                 clip_rect
             );
-            content.text.width = r.x;
-            content.text.height = r.y;
-            //content.text.width = dim.x;
-            //content.text.height = dim.y;
         }
     }
 
     void Viewer::draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect )
     {
-        const Cursor& cursor = layout._cursor;
-        if ( cursor._visible && cursor._editing )
-        {
-            float width = cursor._width;
-            Color color = ui::Color(1,1,1,1);
-            if( cursor._selection )
-            {
-                width = cursor._selection_end - cursor._offset;
-                color = ui::Color(1,1,1,0.2);
-            }
-            _drawbuffer[ _draw_count ].border_radius = 4;
-            _drawbuffer[ _draw_count ].texture_id    = 0;
-            _drawbuffer[ _draw_count ].color         = color;
-            _drawbuffer[ _draw_count ].rect.height   = cursor._height;
-            _drawbuffer[ _draw_count ].rect.width    = width;
-            _drawbuffer[ _draw_count ].rect.x        = cursor._x + cursor._offset;
-            _drawbuffer[ _draw_count ].rect.y        = cursor._y;
-            _drawbuffer[ _draw_count ].texel.x       = 0;
-            _drawbuffer[ _draw_count ].texel.y       = 0;
-            _drawbuffer[ _draw_count ].texel.width   = 0;
-            _drawbuffer[ _draw_count ].texel.height  = 0;
-            _drawbuffer[ _draw_count ].clip_rect     = clip_rect;
-            _draw_count++;
-        }
-        if ( _drawbuffer.size() <= _draw_count )
-        {
-            flush();
-        }
-
         draw( *layout[ pid ], clip_rect );
         for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
         {
             draw( layout, eid, clip_rect );
         }
 
-//        std::vector< std::pair< int, ui::Widget* > > contents( layout.count( pid ) );
-//        int count = 0;
-//
-//        linearize( layout, 1, contents, count );
-//        insertionSort( contents );
-//
-//        for ( int i = 0; i < contents.size(); ++i  )
-//        {
-//            draw( *contents[i], clip_rect );
-//        }
-//
-//        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-//        {
-//            for ( int i = layout.head( eid ); i != 0; i = layout.next( i )  )
-//            {
-//                draw( layout, eid, clip_rect );
-//            }
-//        }
 
-//        draw( *layout[ pid ], clip_rect );
+//        Widget* widget = layout[ pid ];
+//        draw( *widget, clip_rect );
 //
-//        if ( layout[ pid ]->style->clip_overflow )
+//        if ( widget->clip_overflow )
 //        {
-//            for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+//            ui::Rect clip_rect = widget->rect;
+//            if ( widget->style )
 //            {
-//                ui::Rect clip_rect = layout[ pid ]->rect;
-//                clip_rect.x += layout[ pid ]->style->padding.left;
-//                clip_rect.y += layout[ pid ]->style->padding.above;
-//                clip_rect.width -= layout[ pid ]->style->padding.left + layout[ pid ]->style->padding.right;
-//                clip_rect.height -= layout[ pid ]->style->padding.above + layout[ pid ]->style->padding.below;
-//                if ( clip_rect.width <= 0 || clip_rect.height <= 0 )
+//                clip_rect.x += widget->style->padding.left;
+//                clip_rect.y += widget->style->padding.above;
+//                clip_rect.width -= widget->style->padding.left + widget->style->padding.right;
+//                clip_rect.height -= widget->style->padding.above + widget->style->padding.below;
+//            }
+//            if ( clip_rect.width > 0 && clip_rect.height > 0 )
+//            {
+//                for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
 //                {
-//                    continue;
+//                    draw( layout, eid, clip_rect );
 //                }
-//                draw( layout, eid, clip_rect );
 //            }
 //        }
 //        else
@@ -248,73 +252,98 @@ namespace kege::ui{
 //        }
     }
 
-    void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& contents, int& count )
-    {
-        if( count >= contents.size() ) return;
-        contents[count++] = { zindex, layout[pid] };
-        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-        {
-            linearize( layout, eid, layout[eid]->style->zindex + layout[pid]->style->zindex, contents, count );
-        }
-    }
+//    void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& contents, int& count )
+//    {
+//        if( count >= contents.size() ) return;
+//        contents[count++] = { zindex, layout[pid] };
+//        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+//        {
+//            linearize( layout, eid, layout[eid]->style->zindex + layout[pid]->style->zindex, contents, count );
+//        }
+//    }
+//
+//    void Viewer::insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr)
+//    {
+//        int n = (int)arr.size();
+//        for (int i = 1; i < n; i++)
+//        {
+//            auto key = arr[i]; // store the pair
+//            int j = i - 1;
+//
+//            // Compare using the first element of the pair
+//            while (j >= 0 && arr[j].first > key.first)
+//            {
+//                arr[j + 1] = arr[j];
+//                j--;
+//            }
+//
+//            arr[j + 1] = key;
+//        }
+//    }
+//
+//    void Viewer::drawsort( ui::Layout& layout, int pid )
+//    {
+//        std::vector< std::pair< int, ui::Widget* > > contents( layout._widgets[pid].count );
+//        int count = 0;
+//
+//        linearize( layout, pid, layout[pid]->style->zindex, contents, count );
+//        insertionSort( contents );
+//
+//        std::vector< ui::Rect > clip_rect_stack;
+//        ui::Rect clip_rect = contents[0].second->rect;
+//        for ( int i = 0; i < contents.size(); ++i  )
+//        {
+//            ui::Widget* content = contents[i].second;
+//            if( content == nullptr ) continue;
+//            
+//            draw( *content, clip_rect );
+//            if ( content->style->clip_overflow )
+//            {
+//                clip_rect = content->rect;
+//                clip_rect.x += content->style->padding.left;
+//                clip_rect.y += content->style->padding.above;
+//                clip_rect.width -= content->style->padding.left + content->style->padding.right;
+//                clip_rect.height -= content->style->padding.above + content->style->padding.below;
+//                if ( clip_rect.width <= 0 || clip_rect.height <= 0 )
+//                {
+//                    continue;
+//                }
+//            }
+//        }
+//    }
 
-    void Viewer::insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr)
+    void Viewer::render( ui::Layout& layout )
     {
-        int n = (int)arr.size();
-        for (int i = 1; i < n; i++)
+        const Cursor& cursor = layout._cursor;
+        if ( cursor._visible && cursor._editing )
         {
-            auto key = arr[i]; // store the pair
-            int j = i - 1;
-
-            // Compare using the first element of the pair
-            while (j >= 0 && arr[j].first > key.first)
+            float width = cursor._width;
+            Color color = ui::Color(1,1,1,1);
+            if( cursor._selection )
             {
-                arr[j + 1] = arr[j];
-                j--;
+                width = cursor._selection_end - cursor._offset;
+                color = ui::Color(1,1,1,0.2);
             }
 
-            arr[j + 1] = key;
+            UIDrawInstance& instance = nextInstance();
+
+            instance.color = ui::packRGBA8(color);
+            instance.rect.x = float(cursor._x + cursor._offset);
+            instance.rect.y = float(cursor._y);
+            instance.rect.width = width;
+            instance.rect.height = cursor._height;
+            instance.clip_rect = {0.f,0.f, float(layout.getWidth()),float(layout.getHeight())};
+            instance.border = {};
+            instance.texel = {};
+            instance.texr_info = {};
         }
-    }
 
-    void Viewer::drawsort( ui::Layout& layout, int pid )
-    {
-        std::vector< std::pair< int, ui::Widget* > > contents( layout._widgets[pid].count );
-        int count = 0;
-
-        linearize( layout, pid, layout[pid]->style->zindex, contents, count );
-        insertionSort( contents );
-
-        std::vector< ui::Rect > clip_rect_stack;
-        ui::Rect clip_rect = contents[0].second->rect;
-        for ( int i = 0; i < contents.size(); ++i  )
+        for (int layer=0; layer<layout._layers.size(); ++layer)
         {
-            ui::Widget* content = contents[i].second;
-            if( content == nullptr ) continue;
-            
-            draw( *content, clip_rect );
-            if ( content->style->clip_overflow )
+            for( uint32_t root = layout.head( layout._layers[ layer ].root ); root != 0; root = layout.next( root ))
             {
-                clip_rect = content->rect;
-                clip_rect.x += content->style->padding.left;
-                clip_rect.y += content->style->padding.above;
-                clip_rect.width -= content->style->padding.left + content->style->padding.right;
-                clip_rect.height -= content->style->padding.above + content->style->padding.below;
-                if ( clip_rect.width <= 0 || clip_rect.height <= 0 )
-                {
-                    continue;
-                }
+                draw( layout, root, _clip_rect );
             }
-        }
-    }
-
-    void Viewer::collectVisibleWidgets( ui::Layout& layout )
-    {
-        if ( layout.count() == 0 ) return;
-        
-        for ( int i = 0; i < layout._root_count; ++i  )
-        {
-            draw( layout, layout._roots[i], _clip_rect );
         }
     }
 
@@ -345,7 +374,7 @@ namespace kege::ui{
 
     BufferBindInfo Viewer::createBuffer()
     {
-        size_t size = _max_render_instances * sizeof( kege::ui::DrawElem );
+        size_t size = _max_render_instances * sizeof( UIDrawInstance );
         return BufferBindInfo
         {
             .range = size,
@@ -371,7 +400,7 @@ namespace kege::ui{
         else
         {
             ref::Buffer& bufr = binding[ _curr_buffer_index ].buffer;
-            bufr->copyFrom( _drawbuffer.data(), _draw_count * sizeof(ui::DrawElem), 0 );
+            bufr->copyFrom( _drawbuffer.data(), _draw_count * sizeof(UIDrawInstance), 0 );
         }
 
         //_meshs[ _graphics->getFrameIndex() ]->getInstanceShaderData()->setBuffers( 0, binding );

@@ -42,3 +42,33 @@ namespace kege{
 
 
 
+
+struct SizingStyle
+{
+};
+struct SpacingStyle
+{
+    //Padding padding;
+    //Gap gap;
+};
+struct Style
+{
+//    Rect rect;
+//    Color color;
+    SizingStyle* visual;
+    SpacingStyle* spacing;
+//    VisualStyle* visual;
+//    AlignmentStyle* alignment;
+//    ButtonConfig button_config; style.flag = WIDTH | HEIGH | GAP | PADDING | ALIGNMENT;
+};
+
+
+
+//.text_str = ""
+//.text_rect = layout->coverage("string");
+
+kege::ui::Layout* layout = 0;
+void vmain(){
+    layout->put({.text = layout->text("label", 20)});
+    layout->put({.text = "label"});
+}

@@ -24,10 +24,12 @@ namespace kege{
             int rows;
             int columns;
             unsigned char* image_data;
+            std::vector< Glyph >& glyphs;
+            FontMetrics& matrics;
         };
 
         static ref::Font create( Graphics* graphics, int char_per_row, int char_per_col, const std::string& font_texture_path );
-        static std::vector< Glyph > createGlyphs( const FontCreator::Info& info );
+        static void createGlyphs( const FontCreator::Info& info );
     };
 
 }

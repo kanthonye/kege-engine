@@ -11,9 +11,9 @@ namespace kege::ui{
 
     bool TextField::update( ui::Layout* layout )
     {
-        layout->push({ .id = &container });
-        layout->put({ .id = &this->text });
-        layout->pop();
+        layout->push({ .uid = &container });
+        layout->put({ .uid = &this->text });
+        layout->pop(0);
 
         bool clicked = false;
 
