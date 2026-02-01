@@ -98,11 +98,11 @@ namespace kege::vk{
         const std::vector<const char*>& required_extensions = _instance->getRequiredDeviceExtensions();
         create_info.enabledExtensionCount = static_cast< uint32_t >( required_extensions.size() );
         create_info.ppEnabledExtensionNames = required_extensions.data();
-        KEGE_LOG_INFO << "Enabling Device Extensions:\n";
-        for( const char* ext_name : required_extensions ) {
-            KEGE_LOG_INFO <<"  - " << ext_name <<"\n";
-        }
-        KEGE_LOG_INFO << Log::nl;
+        //KEGE_LOG_INFO << "Enabling Device Extensions:\n";
+        //for( const char* ext_name : required_extensions ) {
+        //    KEGE_LOG_INFO <<"  - " << ext_name <<"\n";
+        //}
+        //KEGE_LOG_INFO << Log::nl;
 
         // Enable Validation Layers (Device layers are deprecated - use instance layers)
         if ( _instance->isValidationEnabled() )

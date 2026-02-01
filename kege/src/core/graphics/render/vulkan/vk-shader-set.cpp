@@ -63,6 +63,7 @@ namespace kege::vk{
     void ShaderSet::update()
     {
         if( !_modified ) return;
+        _modified = false;
 
         vk::Device* device = _layout->vk()->_device;
         const int frame = device->getFrameIndex() % _descritor.frames;

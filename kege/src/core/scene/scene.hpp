@@ -11,6 +11,7 @@
 #include "../memory/ref.hpp"
 #include "../math/algebra/vectors.hpp"
 #include "../resource/asset-manager.hpp"
+#include "../graphics/render/graph/render-graph.hpp"
 #include "ecs-entity-registry.hpp"
 
 namespace kege{
@@ -22,6 +23,10 @@ namespace kege{
         ecs::Entity getEntityChild( ecs::Entity entity, const std::string& name );
 
         struct Changed{ kege::Ref< kege::Scene > scene; };
+
+
+        kege::AssetManager* getAssetManager();
+        kege::RenderGraph* getRenderGraph();
 
         /**
          * @fn setSceneRay
@@ -122,12 +127,15 @@ namespace kege{
          */
         bool ready()const;
 
-        Scene( const std::string& name, ecs::EntityManager &ecs );
+        Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am, kege::RenderGraph* rg );
         ~Scene();
 
     protected:
 
         void registerEntities( const ecs::Entity& entity );
+
+        kege::AssetManager* _asset_manager;
+        kege::RenderGraph* _render_graph;
 
         /**
          * The camera entity

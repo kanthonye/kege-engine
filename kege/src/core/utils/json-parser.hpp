@@ -73,17 +73,6 @@ namespace kege {
             }
             return a;
         };
-//
-//        template< typename T > std::vector< T > getVectr( T(*func)(const Json& j) )const
-//        {
-//            std::vector< T > a;
-//            a.reserve( count() );
-//            for( int i = 0; i < count(); ++i )
-//            {
-//                a.push_back( func( operator[]( i ) ) );
-//            }
-//            return a;
-//        };
 
         const char* getStr( const std::string& key, const char* str = "" )const;
         double getDouble( const std::string& key, double val = 0.0 )const;

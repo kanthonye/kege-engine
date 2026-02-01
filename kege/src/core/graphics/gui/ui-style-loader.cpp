@@ -237,9 +237,9 @@ namespace kege::ui{
         }
         return border;
     }
-    Extent parseGap( kege::Json json )
+    Gap parseGap( kege::Json json )
     {
-        Extent gap = {0,0};
+        Gap gap = {0,0};
         if ( json )
         {
             if ( json.count() == 2 )
@@ -304,7 +304,7 @@ namespace kege::ui{
             style.padding = parsePadding( json[ "padding" ] );
             style.width = parseSizing( json[ "width" ] );
             style.height = parseSizing( json[ "height" ] );
-            style.align = parseAlignment( json[ "align" ] );
+            style.alignment = parseAlignment( json[ "align" ] );
             style.border = parseBorderRadius( json[ "border_radius" ] );
             style.gap = parseGap( json[ "gap" ] );
             style.position = parsePositioning( json[ "position" ] );

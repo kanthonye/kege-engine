@@ -21,14 +21,14 @@ namespace kege{
 
         bool initialize();
         void shutdown();
-        void update();
+        bool update();
 
-        ECSLayer( ref::ECS ecs, ref::InputContextManager icm, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm );
+        ECSLayer( ref::ECS ecs, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm );
         ~ECSLayer();
 
     private:
 
-        ref::InputContextManager _input_context_manager;
+        //ref::InputContextManager _input_context_manager;
         //ref::EntityManager _entity_manager;
         ref::ProjectManager _project_manager;
         ref::RenderGraph _render_graph;

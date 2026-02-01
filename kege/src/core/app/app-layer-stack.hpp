@@ -20,7 +20,7 @@ namespace kege{
         bool push( ref::AppLayer layer );
         bool initialize();
         void shutdown();
-        void update();
+        bool update();
 
         ~AppLayerStack();
         AppLayerStack();

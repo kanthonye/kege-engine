@@ -8,13 +8,11 @@
 #ifndef ui_camera_hpp
 #define ui_camera_hpp
 
-#include "ui-numeric.hpp"
+#include "ui-tree-node.hpp"
 #include "../../core/graphics/camera/camera.hpp"
 
 namespace kege::ui
 {
-    bool orthographic( ui::Layout& layout, TreeNode& tree, Orthographic* orthographic );
-    bool perspective( ui::Layout& layout, TreeNode& tree, Perspective* perspective );
-    bool camera( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity );
+    bool camera( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* ui_camera_hpp */

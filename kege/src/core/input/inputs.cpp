@@ -26,10 +26,10 @@ namespace kege{
 
     Input::Input( Type typ, uint16_t code, uint16_t state, int mods )
     {
-        key.code  = code;
-        key.state = state;
-        key.mods  = mods;
-        type = typ;
+//        key.code  = code;
+//        key.state = state;
+//        key.mods  = mods;
+//        type = typ;
     }
 
     Input::Input( Type typ, double x, double y )

@@ -1,0 +1,167 @@
+{
+    "asset": {
+        "generator": "KEGE",
+        "version": "1.0",
+        "name": "shader-library",
+        "date_created": "10/29/2025"
+    },
+    "rasterizer_states": [
+        {
+            "cull_mode": "back",
+            "front_face": "ccw",
+            "polygon_mode": "fill",
+            "rasterizer_disable": "false"
+        }
+    ],
+    "depth_stencil_states": [
+        {
+            "depth_test": "false",
+            "depth_write": "true",
+            "depth_compare_op": "less"
+        }
+    ],
+    "color_blend_states": [
+        {
+            "logic_op": "copy",
+            "logic_op_enable": "false",
+            "color_blend_attachments": [
+                {
+                    "blend_enable": "true",
+                    "color_blend_op": "add",
+                    "src_color_blend_factor": "src_alpha",
+                    "dst_color_blend_factor": "one_minus_src_alpha",
+                    "alpha_blend_op": "add",
+                    "src_alpha_blend_factor": "one",
+                    "dst_alpha_blend_factor": "zero"
+                }
+            ]
+        }
+    ],
+    "attributes": [
+        {
+            "attributes": [
+                {
+                    "binding": 0,
+                    "location": 0,
+                    "format": "vec3",
+                    "input_rate": "vertex",
+                    "name": "position"
+                }
+            ],
+            "bindings": [
+                {
+                    "binding": 0,
+                    "stride": 12
+                }
+            ]
+        }
+    ],
+    "shaders": [
+        {
+            "uri": "error.vert",
+            "name": "error.vert",
+            "entry-point": "main",
+            "type": "vertex"
+        },
+        {
+            "uri": "error.frag",
+            "name": "error.frag",
+            "entry-point": "main",
+            "type": "fragment"
+        },
+    ],
+    "structs": [],
+    "uniforms": [
+        {
+            "name": "CameraBlock",
+            "fields": [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "view",
+                    "type": "mat4",
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "storages": [],
+    "push_constants": [
+        {
+            "size": 64,
+            "offset": 0,
+            "count": 1,
+            "name": "ObjectMatrices",
+            "stages": [
+                "all"
+            ],
+            "fields": [
+                {
+                    "name": "model",
+                    "type": "mat4",
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "pipeline_layouts": [
+        {
+            "push_constants": [
+                {
+                    "push_constant": 0,
+                    "name": "model",
+                    "count": 1
+                }
+            ],
+            "uniform_layouts": [
+                {
+                    "set": 0,
+                    "bindings": [
+                        {
+                            "binding": 0,
+                            "name": "camera",
+                            "count": 1,
+                            "block":
+                            {
+                                "usage": "uniform_buffer",
+                                "index":0,
+                                "target": "uniforms"
+                            },
+                            "stages": [
+                                "vs"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "location": 0,
+            "format": "bgra_u8_norm",
+            "semantic": "COLOR",
+            "name": "out_color"
+        }
+    ],
+    "pipelines": [
+        {
+            "type": "Graphics",
+            "name": "pbr-lit-texr-pipeline",
+            "topology": "triangles",
+            "attributes": 0,
+            "rasterizer": 0,
+            "depth_stencil": 0,
+            "color_blend": 0,
+            "pipeline_layout": 0,
+            "stages": [
+                0,
+                1
+            ],
+            "outputs": [0]
+        }
+    ]
+}

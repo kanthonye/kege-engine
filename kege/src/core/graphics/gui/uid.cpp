@@ -10,14 +10,19 @@
 
 namespace kege::ui{
 
-    int32_t UID::_head = -1;
-    int32_t UID::_tail = -1;
-    uint32_t UID::_enumerator = 0;
-    std::vector<ui::Id> UID::_availables;
+    static int32_t global_head = -1;
+    static int32_t global_tail = -1;
+    static uint32_t global_enumerator = 0;
+    static std::vector<ui::Id> global_availables;
+
+//    int32_t UID::_head = -1;
+//    int32_t UID::_tail = -1;
+//    uint32_t UID::_enumerator = 0;
+//    std::vector<ui::Id> UID::_availables;
 
     UID& UID::operator=(const UID& other)
     {
-        global = other.global;
+        id = other.id;
         duplicates = other.duplicates;
 
         if(duplicates) *duplicates += 1;
@@ -30,17 +35,42 @@ namespace kege::ui{
 
     UID& UID::operator=( UID&& uid)
     {
-        global = uid.global;
+        id = uid.id;
         duplicates = uid.duplicates;
 
-        uid.global.id = 0;
+        uid.id.num = 0;
         uid.duplicates = nullptr;
 
         return *this;
     }
 
+    void UID::recycle()
+    {
+        if ( id.num == 0 ) return;
+
+        if (global_availables.size() == 0)
+        {
+            global_availables.resize(64);
+        }
+        else if (global_tail >= static_cast<int32_t>(global_availables.size()))
+        {
+            global_availables.resize(global_availables.size() * 2);
+        }
+
+        if (global_head < 0)
+        {
+            global_head = global_tail = 0;
+        }
+
+        id.version += 1;
+        global_availables[global_tail] = id;
+        global_tail += 1;
+
+        id.num = 0;
+    }
+
     UID::UID(const UID& other)
-    :   global(other.global)
+    :   id(other.id)
     ,   duplicates( other.duplicates )
     {
         if(duplicates) *duplicates += 1;
@@ -51,10 +81,10 @@ namespace kege::ui{
     }
 
     UID::UID( UID&& uid)
-    :   global(uid.global)
+    :   id(uid.id)
     ,   duplicates( uid.duplicates )
     {
-        uid.global.id = 0;
+        uid.id.num = 0;
         uid.duplicates = nullptr;
     }
 
@@ -66,52 +96,34 @@ namespace kege::ui{
             if(*duplicates <= 0)
             {
                 delete duplicates;
+                duplicates = nullptr;
+                recycle();
             }
-            duplicates = nullptr;
         }
-
-        if ( global.id != 0 )
+        else
         {
-            if (_availables.size() == 0)
-            {
-                _availables.resize(64);
-            }
-            else if (_tail >= static_cast<int32_t>(_availables.size()))
-            {
-                _availables.resize(_availables.size() * 2);
-            }
-
-            if (_head < 0)
-            {
-                _head = _tail = 0;
-            }
-
-            global.version += 1;
-            _availables[_tail] = global;
-            _tail += 1;
-
-            global.id = 0;
+            recycle();
         }
     }
     
     UID::UID()
     :   duplicates( nullptr )
     {
-        if (_head != -1)
+        if (global_head != -1)
         {
-            global = _availables[_head];
-            _head += 1;
+            id = global_availables[global_head];
+            global_head += 1;
 
-            if (_head >= _tail)
+            if (global_head >= global_tail)
             {
-                _head = _tail = -1;
+                global_head = global_tail = -1;
             }
             return;
         }
 
-        global.version = 1;
-        global.index = _enumerator;
-        _enumerator += 1;
+        id.version = 1;
+        id.index = global_enumerator;
+        global_enumerator += 1;
     }
 
 }

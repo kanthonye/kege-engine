@@ -45,12 +45,10 @@ namespace kege::ui{
         }
     }
 
-    inline void integrate
+    inline bool integrate
     (
         float main_size,
-        float main_gap,
         float cross_size,
-        float cross_gap,
         float main_limit,
         bool  wrap,
         float& main_sum,
@@ -62,35 +60,37 @@ namespace kege::ui{
         cross_max = kege::max(cross_max, cross_size);
         main_sum += main_size;
 
+        bool newline = false;
         if (main_sum > main_limit && wrap)
         {
-            extent_cross += cross_max + cross_gap;
+            extent_cross += cross_max;
             main_sum = main_size;
+            newline = true;
         }
 
         extent_main = kege::max(extent_main, main_sum);
-        main_sum += main_gap;
+        return newline;
     }
 
     void resolveExtendSizes( Layout& layout, uint32_t widget_index )
     {
         Widget* widget = layout[ widget_index ];
 
-        Alignment alignment = getAlignment(widget);
-        Extent gap = (widget->style != nullptr)? widget->style->gap : Extent{};
-        const Padding& padding = (widget->style != nullptr) ? widget->style->padding : widget->padding;
+        const Padding& padding = widget->padding;
+
+        float gapsum = (widget->count > 1)? widget->gap.width * (widget->count - 1) : 0.f;
+        float h_pad = (padding.left + padding.right);
+        float v_pad = (padding.above + padding.below);
 
         Extent extent = {};
         Extent run = {};
 
-        float gapsum = (widget->count > 1)? gap.width * (widget->count - 1) : 0.f;
-        float h_pad = (padding.left + padding.right);
-        float v_pad = (padding.above + padding.below);
-
         uint32_t child_index = layout.head( widget_index );
         int extend_count[2] = {0,0};
 
-        if (alignment.direction == ui::AlignDir::HORIZONTAL)
+        int line_count = 0;
+
+        if (widget->alignment.direction == ui::AlignDir::HORIZONTAL)
         {
             Extent boundary;
             boundary.width  = kege::max(0.f, widget->rect.width - h_pad - gapsum);
@@ -123,20 +123,22 @@ namespace kege::ui{
                 {
                     continue;
                 }
-                integrate
+
+                bool newline = integrate
                 (
-                    child->rect.width,  gap.width,
-                    child->rect.height, gap.height,
-                    boundary.width,     alignment.wrap_around,
+                    child->rect.width, child->rect.height,
+                    boundary.width, widget->alignment.wrap_around,
                     run.width, run.height, extent.width, extent.height
                 );
+                if (newline)line_count += 1;
+
                 child_index = layout.next( child_index );
             }
-            extent.height += run.height;
 
             if (extend_count[0] || extend_count[1])
             {
                 if ( extent.height == 0) extent.height = boundary.height;
+                else extent.height += run.height;
 
                 float child_width = (boundary.width - extent.width) / float(extend_count[0]);
                 for (uint32_t child_index = widget->head; child_index != 0 ; child_index = layout.next( child_index ) )
@@ -189,20 +191,21 @@ namespace kege::ui{
                 {
                     continue;
                 }
-                integrate
+                bool newline = integrate
                 (
-                    child->rect.height, gap.height,
-                    child->rect.width, gap.width,
-                    boundary.width, alignment.wrap_around,
+                    child->rect.height, child->rect.width,
+                    boundary.width, widget->alignment.wrap_around,
                     run.height, run.width, extent.height, extent.width
                 );
+                if (newline) line_count += 1;
+                
                 child_index = layout.next( child_index );
             }
-            extent.width += run.width;
 
             if (extend_count[0] || extend_count[1])
             {
                 if ( extent.width == 0) extent.width = boundary.width;
+                else extent.width += run.width;
 
                 float child_height = (boundary.height - extent.height) / float(extend_count[1]);
                 for (uint32_t child_index = widget->head; child_index != 0 ; child_index = layout.next( child_index ) )
@@ -244,9 +247,10 @@ namespace kege::ui{
         {
             if (widget->style->width.type == ui::SizingType::Flexible || widget->style->height.type == ui::SizingType::Flexible)
             {
-                const Padding& padding = (widget->style != nullptr) ? widget->style->padding : widget->padding;
+                const Padding& padding = widget->padding;
                 float h_pad = (padding.left + padding.right);
                 float v_pad = (padding.above + padding.below);
+                float gapsum = (widget->count > 1)? widget->gap.width * (widget->count - 1) : 0.f;
 
                 Extent flex = {};
                 if( widget->text.ptr && (widget->style->width.type == ui::SizingType::Flexible || widget->style->height.type == ui::SizingType::Flexible) )
@@ -261,82 +265,77 @@ namespace kege::ui{
                     }
                 }
 
-//                Extent extent;
-//                if ( widget->style->align.wrap_around )
-//                {
-//                    if (widget->style->align.direction == ui::AlignDir::HORIZONTAL)
-//                    {
-//                        float gapsum = (widget->count > 1)? widget->style->gap.width * (widget->count - 1) : 0.f;
-//                        extent.width  = kege::max(0.f, widget->rect.width - h_pad - gapsum);
-//                        extent.height = kege::max(0.f, widget->rect.height - v_pad);
-//                    }
-//                    else
-//                    {
-//                        float gapsum = (widget->count > 1)? widget->style->gap.width * (widget->count - 1) : 0.f;
-//                        extent.height = kege::max(0.f, widget->rect.height - v_pad - gapsum);
-//                        extent.width  = kege::max(0.f, widget->rect.width - h_pad);
-//                    }
-//                }
-//                else
-//                {
-//                    extent = boundary;
-//                }
-
+                int line_count = 0;
                 float main_sum = 0.f;
                 float cross_max = 0.f;
+                bool newline = false;
 
-                for (uint32_t child_index = widget->head; child_index != 0 ; child_index = layout.next( child_index ) )
+                uint32_t child_index = widget->head;
+                while ( child_index != 0 )
                 {
                     Widget* child = layout[ child_index ];
 
                     if (widget->style->width.type == ui::SizingType::Percent)
                     {
+                        child_index = layout.next( child_index );
                         continue;
                     }
                     if (widget->style->height.type == ui::SizingType::Percent)
                     {
+                        child_index = layout.next( child_index );
                         continue;
                     }
-
-                    if (widget->style->align.direction == ui::AlignDir::HORIZONTAL)
+                    if (widget->style->alignment.direction == ui::AlignDir::HORIZONTAL)
                     {
-                        integrate
+                        newline = integrate
                         (
-                            child->rect.width,  widget->style->gap.width,
-                            child->rect.height, widget->style->gap.height,
-                            boundary.width,     widget->style->align.wrap_around,
+                            child->rect.width, child->rect.height,
+                            boundary.width, widget->style->alignment.wrap_around,
                             main_sum, cross_max, flex.width, flex.height
                         );
+                        if (newline) line_count += 1;
+
+                        child_index = layout.next( child_index );
                     }
                     else
                     {
-                        integrate
+                        newline = integrate
                         (
-                            child->rect.height, widget->style->gap.height,
-                            child->rect.width, widget->style->gap.width,
-                            boundary.height, widget->style->align.wrap_around,
+                            child->rect.height, child->rect.width,
+                            boundary.height, widget->style->alignment.wrap_around,
                             main_sum, cross_max, flex.height, flex.width
                         );
+                        if (newline) line_count += 1;
+
+                        child_index = layout.next( child_index );
                     }
                 }
 
-                if (widget->style->align.direction == ui::AlignDir::HORIZONTAL)
+                if (widget->style->alignment.direction == ui::AlignDir::HORIZONTAL)
                 {
                     flex.height += cross_max;
+
+                    if (widget->style->width.type == ui::SizingType::Flexible)
+                    {
+                        widget->rect.width += flex.width + h_pad + gapsum;
+                    }
+                    if (widget->style->height.type == ui::SizingType::Flexible)
+                    {
+                        widget->rect.height += flex.height + v_pad;
+                    }
                 }
                 else
                 {
                     flex.width += cross_max;
-                }
 
-                if (widget->style->width.type == ui::SizingType::Flexible)
-                {
-                    widget->rect.width += flex.width + h_pad;
-                }
-
-                if (widget->style->height.type == ui::SizingType::Flexible)
-                {
-                    widget->rect.height += flex.height + v_pad;
+                    if (widget->style->width.type == ui::SizingType::Flexible)
+                    {
+                        widget->rect.width += flex.width + h_pad;
+                    }
+                    if (widget->style->height.type == ui::SizingType::Flexible)
+                    {
+                        widget->rect.height += flex.height + v_pad + gapsum;
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@
 #include "ecs.hpp"
 #include "scene.hpp"
 #include "communication.hpp"
+#include "../graphics/render/graph/render-graph.hpp"
 
 namespace kege{
 
@@ -32,7 +33,7 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        SceneManager( ref::ECS& ecs );
+        SceneManager(ref::RenderGraph rg, ref::ECS& ecs, ref::AssetManager asset_manager );
 
         ~SceneManager();
         
@@ -41,6 +42,8 @@ namespace kege{
         std::unordered_map< std::string, size_t > _scene_fast_index_lookup;
         std::vector< ref::Scene > _scenes;
 
+        ref::AssetManager _asset_manager;
+        ref::RenderGraph _render_graph;
         ref::Scene _curr_scene;
         ref::ECS _ecs;
         kege::Communication _communication;

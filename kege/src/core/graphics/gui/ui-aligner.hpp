@@ -19,26 +19,6 @@ namespace kege::ui{
         static void align( Layout& layout, uint32_t pid );
     };
 
-
-    inline Alignment getAlignment(const Widget* p)
-    {
-        if (p->style)
-        {
-            return p->style->align;
-        }
-        return p->alignment;
-//        return Alignment
-//        {
-//            .flow.x = AlignDirX::WTE,
-//            .flow.y = AlignDirY::NTS,
-//            .origin.x = AlignPosX::LEFT,
-//            .origin.y = AlignPosY::TOP,
-//            .content.x = AlignPosX::LEFT,
-//            .content.y = AlignPosY::TOP,
-//            .direction = AlignDir::HORIZONTAL,
-//            .wrap_around = true,
-//        };
-    }
 }
 
 #endif // ui_aligner_hpp

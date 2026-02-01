@@ -9,102 +9,155 @@
 
 namespace kege::ui
 {
-    bool rotation( ui::Layout& layout, TreeNode& tree, float& x, float& y, float& z, float& w, const char* text )
-    {
-//        if ( tree.elements.empty() )
-//        {
-//            tree.elements.reserve(5);
-//            setupDroplist( layout, tree, text );
-//            tree.elements.push_back({ makeRow( layout ) });
-//            tree.children.resize(5);
-//        }
-
-        bool active = false;
-//        layout.push( tree.elements[0] );
-//        {
-//            layout.push( tree.elements[1] );
-//            {
-//                layout.put( tree.elements[2] );
-//            }
-//            layout.pop();
-//
-//            if ( droplistOpen( layout, tree ) )
-//            {
-//                layout.push( tree.elements[3] );
-//                {
-//                    if( numeric( layout, tree.children[1], w, "angle:" ) ) active = true;
-//
-//                    layout.push( tree.elements[4] );
-//                    {
-//                        if( numeric( layout, tree.children[2], x, "x:" ) ) active = true;
-//                        if( numeric( layout, tree.children[3], y, "y:" ) ) active = true;
-//                        if( numeric( layout, tree.children[4], z, "z:" ) ) active = true;
-//                    }
-//                    layout.pop();
-//                }
-//                layout.pop();
-//            }
-//        }
-//        layout.pop();
-        return active || tree.state[1];
-    }
-
-    bool transform( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
+    bool transform( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
     {
         Transform* transform = ecs->get< kege::Transform >( entity );
-        ui::TreeNode& node = tree[ transform ];
+        uint64_t component_id = ecs->getCompId< kege::Transform >( entity );
 
-        if ( node.elements.empty() )
+        ui::Text main_label
         {
-            node.elements.reserve(4);
-            setupDroplist( layout, node, "Transform" );
-            node.children.resize(3);
-        }
+            .ptr = "Transform",
+            .width = 64,
+            .font_size = 20,
+            .height = 15,
+            .color = 0xFFFFFFFF
+        };
 
-//        layout.push( node.elements[0] );
+        gui->push({ .layer = layer, .style = &gui->_theme.card });
+        switch (gui->removableHeader(layer, component_id, main_label))
+        {
+            case 1:
+            {
+                gui->push({ .layer = layer, .style = &gui->_theme.padded_list });
+                ui::Text position_label
+                {
+                    .ptr = "Position:",
+                    .width = 50,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                gui->scrubber3
+                (
+                    layer,
+                    gui->getAddressAsInt(transform->position),
+                    position_label,
+                    transform->position.x,
+                    transform->position.y,
+                    transform->position.z
+                );
+
+                ui::Text scale_label
+                {
+                    .ptr = "Scale:",
+                    .width = 50,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                gui->scrubber3
+                (
+                    layer,
+                    gui->getAddressAsInt(transform->scale),
+                    scale_label,
+                    transform->scale.x,
+                    transform->scale.y,
+                    transform->scale.z
+                );
+
+                ui::Text orientation_label
+                {
+                    .ptr = "Orientation:",
+                    .width = 50,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                gui->scrubber4
+                (
+                    layer,
+                    gui->getAddressAsInt(transform->scale),
+                    orientation_label,
+                    transform->orientation.x,
+                    transform->orientation.y,
+                    transform->orientation.z,
+                    transform->orientation.w
+                );
+                gui->pop();
+            }
+            break;
+
+            case 2:
+            {
+                ecs->remove< kege::Transform >( entity );
+            }
+            break;
+
+            default: break;
+        }
+        gui->pop();
+
+//        gui->push({ .layer = layer, .style = &gui->_theme.card });
+//        if ( gui->removableHeader(layer, component_id, main_label) )
 //        {
-//            layout.push( node.elements[1] );
+//            gui->push({ .layer = layer, .style = &gui->_theme.padded_list });
+//            ui::Text position_label
 //            {
-//                layout.put( node.elements[2] );
-//            }
-//            layout.pop();
+//                .ptr = "Position:",
+//                .width = 50,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            gui->scrubber3
+//            (
+//                layer,
+//                gui->getAddressAsInt(transform->position),
+//                position_label,
+//                transform->position.x,
+//                transform->position.y,
+//                transform->position.z
+//            );
 //
-//            if ( droplistOpen( layout, node ) )
+//            ui::Text scale_label
 //            {
-//                layout.push( node.elements[3] );
-//                {
-//                    numeric3
-//                    (
-//                        layout, node.children[0],
-//                        transform->position.x,
-//                        transform->position.y,
-//                        transform->position.z,
-//                        "Position"
-//                    );
+//                .ptr = "Scale:",
+//                .width = 50,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            gui->scrubber3
+//            (
+//                layer,
+//                gui->getAddressAsInt(transform->scale),
+//                scale_label,
+//                transform->scale.x,
+//                transform->scale.y,
+//                transform->scale.z
+//            );
 //
-//                    rotation
-//                    ( 
-//                        layout, node.children[1],
-//                        transform->orientation.x,
-//                        transform->orientation.y,
-//                        transform->orientation.z,
-//                        transform->orientation.w,
-//                        "Orientation"
-//                    );
-//
-//                    numeric3
-//                    ( 
-//                        layout, node.children[2],
-//                        transform->scale.x,
-//                        transform->scale.y,
-//                        transform->scale.z,
-//                        "Scale"
-//                    );
-//                }
-//                layout.pop();
-//            }
+//            ui::Text orientation_label
+//            {
+//                .ptr = "Orientation:",
+//                .width = 50,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            gui->scrubber4
+//            (
+//                layer,
+//                gui->getAddressAsInt(transform->scale),
+//                orientation_label,
+//                transform->orientation.x,
+//                transform->orientation.y,
+//                transform->orientation.z,
+//                transform->orientation.w
+//            );
+//            gui->pop();
 //        }
-//        layout.pop();
-        return node.state[1];
+//        gui->pop();
+        return false;
     }
 }

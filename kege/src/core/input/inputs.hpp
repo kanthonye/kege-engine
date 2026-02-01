@@ -15,9 +15,37 @@
 
 namespace kege{
 
+    enum struct Modifiers : uint8_t
+    {
+        Shift    = 1,
+        Control  = 2,
+        Option   = 4,
+        Super    = 8,
+    };
+
+    inline constexpr bool operator ==(const Modifiers m1, const Modifiers m2 )
+    {
+        return (static_cast<int>(m1) & static_cast<int>(m2)) != 0;
+    }
+
+    inline constexpr bool operator !=(const Modifiers m1, const Modifiers m2 )
+    {
+        return (static_cast<int>(m1) & static_cast<int>(m2)) == 0;
+    }
+
+    enum struct KeyState : uint8_t
+    {
+        Release   = 0,
+        Pressed,
+        PressedRepeat,
+    };
+
     struct Key
     {
-        int code, state, mods, scancode;
+        uint16_t code;
+        uint16_t scancode;
+        KeyState action;
+        Modifiers mods;
     };
 
     struct Coord2d

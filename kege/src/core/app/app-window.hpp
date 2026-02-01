@@ -8,11 +8,90 @@
 #ifndef graphics_window_hpp
 #define graphics_window_hpp
 
+#include "../utils/communication.hpp"
 #include "../graphics/render/core/graphics-core.hpp"
 
 typedef struct GLFWwindow GLFWwindow;
 
 namespace kege{
+
+    struct KeyboardEvent
+    {
+        void* window;
+
+        int code;
+        int scancode;
+        int action;
+        int mods;
+    };
+
+    struct ButtonEvent
+    {
+        void* window;
+
+        int code;
+        int action;
+        int mods;
+    };
+
+    struct PointerEvent
+    {
+        void* window;
+        double x;
+        double y;
+    };
+
+    struct ScrollEvent
+    {
+        void* window;
+        double x;
+        double y;
+    };
+
+    struct WindowSizeEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowFrameBufferSizeEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowContentScaleEvent
+    {
+        void* window;
+        float xscale;
+        float yscale;
+    };
+
+    struct WindowPositionEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowMaximizeEvent
+    {
+        void* window;
+        int state;
+    };
+
+    struct WindowFocusEvent
+    {
+        void* window;
+        int state;
+    };
+
+    struct WindowRefreshEvent
+    {
+        void* window;
+    };
 
     class GraphicsInstance;
 
@@ -74,8 +153,7 @@ namespace kege{
         virtual void setVSync(bool enabled) = 0;
 
         // Window queries
-        virtual uint32_t getWidth() const = 0;
-        virtual uint32_t getHeight() const = 0;
+        virtual Extent2D getSize() const = 0;
         //virtual ivec2 getPosition() const = 0;
         virtual bool isVisible() const = 0;
         virtual bool isResizable() const = 0;
@@ -113,38 +191,6 @@ namespace kege{
     };
 
 }
-
-namespace kege{
-
-    struct WindowResized
-    {
-    public:
-
-        static void callback(int width, int height);
-        static int getHeight();
-        static int getWidth();
-
-    private:
-
-        static int _width;
-        static int _height;
-    };
-
-    struct FramebufferResized
-    {
-    public:
-
-        static void callback(int width, int height);
-        static int getHeight();
-        static int getWidth();
-
-    private:
-
-        static int _width;
-        static int _height;
-    };
-}
-
 
 namespace kege::ref{
     typedef kege::Ref< kege::AppWindow > AppWindow;

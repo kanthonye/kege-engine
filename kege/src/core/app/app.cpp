@@ -89,14 +89,15 @@ namespace kege{
         device_init_info.engine = "KEGE";
         device_init_info.name = "dev";
         device_init_info.enable_debug_validation = true;
-        device_init_info.enable_debug_general = true;
-        device_init_info.enable_debug_performance = true;
+        //device_init_info.enable_debug_general = true;
+        //device_init_info.enable_debug_performance = true;
 
+        Extent2D window_size = _window->getSize();
         kege::SwapchainDesc swapchain_create_info = {};
         swapchain_create_info.image_count = kege::MAX_FRAMES_IN_FLIGHT + 1;
         swapchain_create_info.name = "swapchain";
-        swapchain_create_info.width = _window->getWidth();
-        swapchain_create_info.height = _window->getHeight();
+        swapchain_create_info.width = window_size.width;
+        swapchain_create_info.height = window_size.height;
         swapchain_create_info.color_format = kege::Format::bgra_u8_norm;
         swapchain_create_info.depth_format = kege::Format::depth_32;
         swapchain_create_info.present_mode = kege::PresentMode::Fifo;
@@ -111,23 +112,32 @@ namespace kege{
         }
 
         //-----------------------------------------------------------------------//
+        // Create Input Context Manager
+        //-----------------------------------------------------------------------//
+
+        _input_manager = new kege::InputManager( _window.ref() );
+        if( !_input_manager->initialize() )
+        {
+            kege::Log::error << "( INITIALIZATION_FAILED ) -> InputLayer" << Log::nl;
+            return false;
+        }
+
+        //-----------------------------------------------------------------------//
+        // Add Asset Loaders
+        //-----------------------------------------------------------------------//
+
+        _asset_manager->addLoader< ref::ShaderPipeline, kege::ShaderPipelineLoader >( ".json" );
+        _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
+        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".jpg" );
+        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".png" );
+
+        //-----------------------------------------------------------------------//
         // Create RenderGraph
         //-----------------------------------------------------------------------//
 
         _render_graph = new kege::RenderGraph( _graphics.ref(), _asset_manager.ref() );
         if( !_render_graph->load( vfs("config/render-graph.json").str() ) ) return false;
         if( !_render_graph->compile() ) return false;
-
-        //-----------------------------------------------------------------------//
-        // Create Input Context Manager
-        //-----------------------------------------------------------------------//
-
-        _input_context_manager = new kege::InputContextManager;
-        if( !_input_context_manager->initialize( _window.ref() ) )
-        {
-            kege::Log::error << "( INITIALIZATION_FAILED ) -> InputContextManager" << Log::nl;
-            return false;
-        }
 
         //-----------------------------------------------------------------------//
         // Create Default Resources add them to AssetManager so they can be accessed
@@ -159,6 +169,23 @@ namespace kege{
         });
         _asset_manager->add< ref::Sampler >( "default", default_sampler );
 
+        // fallback shader
+        kege::string shader_file = kege::vfs( "graphics-shaders/error/error.json" );
+        uint64_t error_shader_handle = _asset_manager->load< ref::ShaderPipeline >( "error-shader", shader_file.c_str() );
+        if( error_shader_handle == 0 )
+        {
+            kege::Log::error << "LOAD_FAILED -> _asset_manager->load< ref::ShaderPipeline >("<< shader_file.c_str() <<")" << Log::nl;
+            return false;
+        }
+
+        // load shader library
+        _asset_manager->setLibrary< ref::ShaderPipeline >( new kege::ShaderLibrary( _graphics.ref(), error_shader_handle ) );
+        if( !_asset_manager->loadLibrary<ref::ShaderPipeline>( kege::vfs( "graphics-shaders/shader-library.json" ).c_str() ) )
+        {
+            kege::Log::error << "LOAD_FAILED -> _asset_manager->loadLibrary< ref::ShaderPipeline >(...)" << Log::nl;
+            return false;
+        }
+
         //-----------------------------------------------------------------------//
         // Create Project Manager
         //-----------------------------------------------------------------------//
@@ -168,16 +195,7 @@ namespace kege{
         /**
          * Next step, create our project manager
          */
-        _project_manager = new ProjectManager( _graphics, _ecs );
-
-        //-----------------------------------------------------------------------//
-        // Add Asset Loaders
-        //-----------------------------------------------------------------------//
-
-        _asset_manager->addLoader< ref::ShaderPipeline, kege::ShaderPipelineLoader >( ".json" );
-        _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
-        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".jpg" );
-        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".png" );
+        _project_manager = new ProjectManager( _graphics, _input_manager.ref(), _ecs, _render_graph );
 
         //-----------------------------------------------------------------------//
         // AppLayerStack
@@ -189,13 +207,10 @@ namespace kege{
         // Create and Add Application Layers
         //-----------------------------------------------------------------------//
 
-        success = _app_layer_stack->push( new kege::InputLayer( _input_context_manager ) );
-        if( !success ) return false;
-
         success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager.ref(), _render_graph, _project_manager.ref() ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::ECSLayer( _ecs, _input_context_manager, _asset_manager, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::ECSLayer( _ecs, _asset_manager, _render_graph, _project_manager ) );
         if( !success ) return false;
 
         _running = success;
@@ -208,7 +223,7 @@ namespace kege{
         _render_graph.clear();
         _project_manager.clear();
         _asset_manager.clear();
-        _input_context_manager.clear();
+        _input_manager.clear();
         _graphics.clear();
         _window.clear();
     }
@@ -218,8 +233,14 @@ namespace kege{
         initialize();
         while ( _running && !_window->shouldClose() )
         {
-            _window->pollEvents();
-            _app_layer_stack->update();
+            _input_manager->beginInput();
+            if( !_app_layer_stack->update() )
+            {
+                _running = false;
+            }
+            _input_manager->endInput();
+
+            //_app_layer_stack->render()
         }
         shutdown();
     }

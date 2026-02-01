@@ -10,9 +10,9 @@
 
 namespace kege{
 
-    ECSLayer::ECSLayer( ref::ECS ecs, ref::InputContextManager icm, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm )
+    ECSLayer::ECSLayer( ref::ECS ecs, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm )
     :   kege::AppLayer( "ECSLayer" )
-    ,   _input_context_manager( icm )
+    //,   _input_context_manager( icm )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
     ,   _asset_manager( am )
@@ -65,14 +65,14 @@ namespace kege{
 
     void ECSLayer::shutdown()
     {
-        _input_context_manager.clear();
+        //_input_context_manager.clear();
         _project_manager.clear();
         _render_graph.clear();
         _asset_manager.clear();
         _ecs.clear();
     }
 
-    void ECSLayer::update()
+    bool ECSLayer::update()
     {
         if ( !_project_manager->empty() )
         {
@@ -81,6 +81,7 @@ namespace kege{
                 _ecs->update(0);
             }
         }
+        return true;
     }
 
     ECSLayer::~ECSLayer()

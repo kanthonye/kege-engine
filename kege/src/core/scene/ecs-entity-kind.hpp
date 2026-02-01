@@ -86,28 +86,28 @@ namespace kege::ecs{
             return (uint32_t) _layout.attributes.size();
         }
 
-        uint32_t move(EntityKind* archetype, uint32_t index)
+        uint32_t move(EntityKind* entitykind, uint32_t old_entity)
         {
-            char*src = reinterpret_cast<char*>( archetype->get( index ) );
-            uint32_t new_index = create();
+            char*src = reinterpret_cast<char*>( entitykind->get( old_entity ) );
+            uint32_t new_entity = create();
             if (src)
             {
                 size_t offset = 0;
                 //new_index = create();
-                char* dst = getPtr( new_index );
+                char* dst = getPtr( new_entity );
 
-                uint32_t min_count = (getAttributeCount() < archetype->getAttributeCount())
-                ? getAttributeCount() : archetype->getAttributeCount();
+                uint32_t min_count = (getAttributeCount() < entitykind->getAttributeCount())
+                ? getAttributeCount() : entitykind->getAttributeCount();
 
                 for (int i=0; i<min_count; ++i)
                 {
-                    const Component::Attribute& src_attrib = archetype->getAttribute( _layout.attributes[i].info->type );
+                    const Component::Attribute& src_attrib = entitykind->getAttribute( _layout.attributes[i].info->type );
                     _layout.attributes[i].info->moveConstruct(dst + _layout.attributes[i].offset, src + src_attrib.offset);
-                    archetype->getAttribute( _layout.attributes[i].info->type ).info->destructor(src + src_attrib.offset);
+                    entitykind->getAttribute( _layout.attributes[i].info->type ).info->destructor(src + src_attrib.offset);
                     offset += _layout.attributes[i].info->size;
                 }
             }
-            return new_index;
+            return new_entity;
         }
 
         inline const uint8_t& getLocalType( int comp_type )const
@@ -130,28 +130,28 @@ namespace kege::ecs{
             return _layout.attributes[ _type_to_local[ comp_type ] ].info->type;
         }
 
-        inline const void* getComponent(uint32_t index, uint32_t type)const
+        inline const void* getComponent(uint32_t entity_index, uint32_t type)const
         {
             if (_type_to_local[ type ] == 0xFF) return nullptr;
-            if (index >= _element_count) return nullptr;
-            return getPtr( index ) + getCompOffset( type );
+            if (entity_index >= _element_count) return nullptr;
+            return getPtr( entity_index ) + getCompOffset( type );
         }
 
-        inline void* getComponent(uint32_t index, uint32_t type)
+        inline void* getComponent(uint32_t entity_index, uint32_t type)
         {
             if (_type_to_local[ type ] == 0xFF) return nullptr;
-            if (index >= _element_count) return nullptr;
-            return getPtr( index ) + getCompOffset( type );
+            if (entity_index >= _element_count) return nullptr;
+            return getPtr( entity_index ) + getCompOffset( type );
         }
 
-        inline const void* get(uint32_t index)const
+        inline const void* get(uint32_t entity_index)const
         {
-            return getPtr( index );
+            return getPtr( entity_index );
         }
 
-        inline void* get(uint32_t index)
+        inline void* get(uint32_t entity_index)
         {
-            return getPtr( index );
+            return getPtr( entity_index );
         }
 
         void resize(size_t new_element_capacity)
@@ -196,20 +196,20 @@ namespace kege::ecs{
             _buffer = std::move(new_buffer);
         }
 
-        void erase(uint32_t index)
+        void erase(uint32_t entity_index)
         {
-            if ( index < _element_count )
+            if ( entity_index < _element_count )
             {
                 if (_freed_head == 0 && _freed_head == _freed_tail)
                 {
                     _freed.resize( (_freed_tail == 0)? _initial_size : 2 * _freed_tail );
-                    _freed[ _freed_tail ] = index;
+                    _freed[ _freed_tail ] = entity_index;
                     _freed_tail += 1;
                     return;
                 }
                 else if (_freed_tail < _freed_head)
                 {
-                    _freed[ _freed_tail ] = index;
+                    _freed[ _freed_tail ] = entity_index;
                     _freed_tail += 1;
 
                     if (_freed_tail == _freed_head)
@@ -221,7 +221,7 @@ namespace kege::ecs{
                 }
                 else
                 {
-                    _freed[ _freed_tail ] = index;
+                    _freed[ _freed_tail ] = entity_index;
                     _freed_tail = (_freed_tail + 1) % _freed.size();
                 }
             }
@@ -229,10 +229,10 @@ namespace kege::ecs{
 
         uint32_t create()
         {
-            uint32_t index;
+            uint32_t entity_index;
             if (_freed_head != _freed_tail )
             {
-                index = _freed_head;
+                entity_index = _freed[ _freed_head ];
                 _freed_head = (_freed_head + 1) % _freed.size();
             }
             else
@@ -241,10 +241,10 @@ namespace kege::ecs{
                 {
                     resize( (_element_count == 0)? 16 : 2 * _element_count );
                 }
-                index = _element_count;
+                entity_index = _element_count;
             }
             _element_count += 1;
-            return index;
+            return entity_index;
         }
 
         void purge()
@@ -314,14 +314,18 @@ namespace kege::ecs{
 
     private:
 
-        inline const char* getPtr(uint32_t element)const
+        inline const char* getPtr(uint32_t entity_index)const
         {
-            return _buffer.data() + (element * _layout.stride);
+            size_t ptr_offset = (entity_index * _layout.stride);
+            if (_buffer.size() <= ptr_offset) return nullptr;
+            return _buffer.data() + ptr_offset;
         }
 
-        inline char* getPtr(uint32_t element)
+        inline char* getPtr(uint32_t entity_index)
         {
-            return _buffer.data() + (element * _layout.stride);
+            size_t ptr_offset = (entity_index * _layout.stride);
+            if (_buffer.size() <= ptr_offset) return nullptr;
+            return _buffer.data() + ptr_offset;
         }
 
         template<typename E>

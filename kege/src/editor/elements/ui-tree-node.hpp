@@ -9,10 +9,13 @@
 #define tree_node_hpp
 
 #include "../../core/scene/ecs.hpp"
+#include "../../core/graphics/mesh/mesh-primitives.hpp"
+#include "../../core/graphics/light/light.hpp"
+
 #include "../../core/input/input-context-manager.hpp"
-#include "../../core/graphics/gui/ui-input.hpp"
 #include "../../core/graphics/gui/ui-layout.hpp"
 #include "../../core/graphics/gui/ui-viewer.hpp"
+#include "../../core/graphics/particle/effect/particle-effect.hpp"
 
 #include "../gui.hpp"
 
@@ -37,7 +40,14 @@ namespace kege::ui{
     };
 
     typedef std::map< void*, ui::TreeNode > Tree;
-    typedef std::map< int, bool(*)( kege::ECS* ecs, ui::Layout&, ui::Tree&, ecs::Entity& ) > UIElementCreator;
 
+    typedef bool(*InspectorComponentUIBuilder)( kege::AssetManager* am, int16_t layer, kege::GUI*, kege::ECS* ecs, ecs::Entity& );
+    typedef std::map< int, InspectorComponentUIBuilder > ComponentBuilderFactory;
+
+
+
+    bool mesh( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
+    bool light( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
+    bool particleEffect( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* tree_node_hpp */

@@ -61,9 +61,9 @@ namespace kege{
     {
         enum : uint32_t
         {
-            SPOT,
             POINT,
-            DIRECTIONAL
+            DIRECTIONAL,
+            SPOT,
         };
 
         Light( const DirectionalLight& light );
@@ -81,7 +81,7 @@ namespace kege{
 
         // Directional and Spot light specific properties
         kege::vec3 direction;
-        int type;
+        int type = 0;
 
         // Spot light specific properties
         float spot_cutoff;

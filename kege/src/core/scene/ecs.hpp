@@ -53,6 +53,13 @@ namespace kege{
 
         /**
          */
+        template< typename C > uint64_t getCompId( const ecs::Entity& entity )
+        {
+            return _entity_manager.getCompId<C>( entity );
+        }
+
+        /**
+         */
         template< typename C > inline void remove( ecs::Entity& entity )
         {
             return _entity_manager.remove<C>( entity );

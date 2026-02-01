@@ -24,6 +24,26 @@ namespace kege{
     {
     public:
 
+        template< typename Item > bool loadLibrary( const std::string& filename )
+        {
+            return this->getAssetCacheTable< Item >()->loadLibrary( filename );
+        }
+
+        template< typename Item > void setLibrary( Ref< AssetLibrary< Item > > library )
+        {
+            this->getAssetCacheTable< Item >()->setLibrary( library );
+        }
+
+        template< typename Item > const Item* getByGUID( uint64_t guid )const
+        {
+            return this->getAssetCacheTable< Item >()->getByGUID( guid );
+        }
+
+        template< typename Item > Item* getByGUID( uint64_t guid )
+        {
+            return this->getAssetCacheTable< Item >()->getByGUID( guid );
+        }
+
         template< typename Item > uint64_t add( const std::string& name, Item res )
         {
             return this->getAssetCacheTable< Item >()->add( name, res );
@@ -101,11 +121,9 @@ namespace kege{
             return loader;
         }
 
-        template< typename Item > uint64_t load( const std::string& filename )
+        template< typename Item > uint64_t load( const std::string& name, const std::string& filename )
         {
             std::filesystem::path p = filename;
-            std::string name = p.stem().string();
-
             uint64_t handle = this->getId< Item >( name );
             if( handle != 0 ) return handle;
 
@@ -116,6 +134,13 @@ namespace kege{
             Item asset = (*loader)->load( filename );
             if( asset == nullptr ) return 0;
             return add< Item >( name, asset );
+        }
+
+        template< typename Item > uint64_t load( const std::string& filename )
+        {
+            std::filesystem::path p = filename;
+            std::string name = p.stem().string();
+            return load< Item >( name, filename );
         }
 
         void shutdown();

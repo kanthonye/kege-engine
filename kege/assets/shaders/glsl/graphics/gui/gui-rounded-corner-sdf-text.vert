@@ -46,11 +46,6 @@ vec4 unpackRGBA8(uint packed)
     color.b = float((packed >> 8) & 0xFF);
     color.a = float(packed & 0xFF);
 
-
-//    color.r = float(packed & 0xFFu);
-//    color.g = float((packed >> 8)  & 0xFFu);
-//    color.b = float((packed >> 16) & 0xFFu);
-//    color.a = float((packed >> 24) & 0xFFu);
     return color / 255.0;
 }
 

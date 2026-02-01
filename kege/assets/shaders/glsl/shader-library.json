@@ -1,0 +1,444 @@
+{
+    "asset": {
+        "generator": "KEGE",
+        "version": "1.0",
+        "name": "shader-library",
+        "date_created": "10/29/2025"
+    },
+    "rasterizer_states": [
+        {
+            "cull_mode": "back",
+            "front_face": "ccw",
+            "polygon_mode": "fill",
+            "rasterizer_disable": "false"
+        }
+    ],
+    "depth_stencil_states": [
+        {
+            "depth_test": "false",
+            "depth_write": "true",
+            "depth_compare_op": "less"
+        }
+    ],
+    "color_blend_states": [
+        {
+            "logic_op": "copy",
+            "logic_op_enable": "false",
+            "color_blend_attachments": [
+                {
+                    "blend_enable": "true",
+                    "color_blend_op": "add",
+                    "src_color_blend_factor": "src_alpha",
+                    "dst_color_blend_factor": "one_minus_src_alpha",
+                    "alpha_blend_op": "add",
+                    "src_alpha_blend_factor": "one",
+                    "dst_alpha_blend_factor": "zero"
+                }
+            ]
+        }
+    ],
+    "attributes": [
+        {
+            "attributes": [
+                {
+                    "binding": 0,
+                    "location": 0,
+                    "format": "vec3",
+                    "input_rate": "vertex",
+                    "name": "position"
+                },
+                {
+                    "binding": 0,
+                    "location": 1,
+                    "format": "vec3",
+                    "input_rate": "vertex",
+                    "name": "normal"
+                },
+                {
+                    "binding": 0,
+                    "location": 2,
+                    "format": "vec2",
+                    "input_rate": "vertex",
+                    "name": "texcoord"
+                },
+                {
+                    "binding": 0,
+                    "location": 3,
+                    "format": "vec3",
+                    "input_rate": "vertex",
+                    "name": "tangent"
+                },
+                {
+                    "binding": 0,
+                    "location": 4,
+                    "format": "vec3",
+                    "input_rate": "vertex",
+                    "name": "bitangent"
+                }
+            ],
+            "bindings": [
+                {
+                    "binding": 0,
+                    "stride": 56
+                }
+            ]
+        }
+    ],
+    "shaders": [
+        {
+            "uri": "shaders/glsl/objects/object-pbr.vert",
+            "name": "object-pbr.vert",
+            "entry-point": "main",
+            "type": "vertex"
+        },
+        {
+            "uri": "shaders/glsl/objects/object-pbr.frag",
+            "name": "object-pbr.frag",
+            "entry-point": "main",
+            "type": "fragment"
+        },
+        {
+            "uri": "shaders/glsl/gui/gui-rounded-corner-sdf-text.vert",
+            "name": "gui-rounded-corner-sdf-text.vert",
+            "entry-point": "main",
+            "type": "vertex"
+        },
+        {
+            "uri": "shaders/glsl/gui/gui-rounded-corner-sdf-text.frag",
+            "name": "gui-rounded-corner-sdf-text.frag",
+            "entry-point": "main",
+            "type": "fragment"
+        }
+    ],
+    "structs": [
+        {
+            "type": "struct",
+            "name": "DrawElem",
+            "fields": [
+                {
+                    "name": "rect",
+                    "type": "vec4",
+                    "count": 1
+                },
+                {
+                    "name": "texel",
+                    "type": "vec4",
+                    "count": 1
+                },
+                {
+                    "name": "border",
+                    "type": "ivec4",
+                    "count": 1
+                },
+                {
+                    "name": "clip_rect",
+                    "type": "vec4",
+                    "count": 1
+                },
+                {
+                    "name": "combo",
+                    "type": "ivec4",
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "type": "struct",
+            "name": "Light",
+            "fields": [
+                {
+                    "name": "color",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "color",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "position",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "point_range",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "direction",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "type",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "spot_cutoff",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "spot_exponent",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "linear_attenuation",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "quadratic_attenuation",
+                    "type": "float",
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "uniforms": [
+        {
+            "name": "Camera",
+            "fields": [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "transform",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "position",
+                    "type": "vec3",
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "name": "Light",
+            "fields": [
+                {
+                    "name": "light_count",
+                    "type": "uint",
+                    "count": 1
+                },
+                {
+                    "name": "lights",
+                    "type": "Light",
+                    "count": 100
+                }
+            ]
+        },
+        {
+            "name": "Material",
+            "fields": [
+                {
+                    "name": "diffuse_color",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "opacity",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "metallic",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "roughness",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "ambient_occlusion",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "emissive_intensity",
+                    "type": "float",
+                    "count": 1
+                },
+                {
+                    "name": "diffuse_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "normal_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "metallic_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "roughness_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "emissive_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "ambient_occlusion_map",
+                    "type": "int",
+                    "count": 1
+                },
+                {
+                    "name": "opacity_map",
+                    "type": "int",
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "storages": [
+        {
+            "name": "UIViewBuffer",
+            "fields": [
+                {
+                    "type": "DrawElem",
+                    "name": "instances",
+                    "instance": 0,
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "push_constants": [
+        {
+            "size": 256,
+            "offset": 0,
+            "count": 1,
+            "name": "Camera2D",
+            "stages": [
+                "all"
+            ],
+            "fields": [
+                {
+                    "name": "projection",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "resolution",
+                    "type": "vec4",
+                    "count": 1
+                }
+            ]
+        },
+        {
+            "size": 256,
+            "offset": 0,
+            "count": 1,
+            "name": "ObjectMatrices",
+            "stages": [
+                "all"
+            ],
+            "fields": [
+                {
+                    "name": "transform",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "rotation",
+                    "type": "mat3",
+                    "count": 1
+                }
+            ]
+        }
+    ],
+    "pipeline_layouts": [
+        {
+            "push_constants": [
+                {
+                    "push_constant": 1,
+                    "name": "_model",
+                    "count": 1
+                }
+            ],
+            "uniform_layouts": [
+                {
+                    "set": 0,
+                    "bindings": [
+                        {
+                            "binding": 0,
+                            "uniform_buffer": {"index":0, "target": "uniform_buffer"},
+                            "name": "_camera",
+                            "count": 1,
+                            "stages": [
+                                "vs"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "set": 1,
+                    "bindings": [
+                        {
+                            "binding": 0,
+                            "uniform_buffer": 1,
+                            "count": 1,
+                            "stages": [
+                                "fs"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "set": 2,
+                    "bindings": [
+                        {
+                            "binding": 0,
+                            "uniform_buffer": 2,
+                            "name": "material",
+                            "count": 1,
+                            "stages": [
+                                "fs"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "location": 0,
+            "format": "bgra_u8_norm",
+            "semantic": "COLOR",
+            "name": "final_color"
+        }
+    ],
+    "pipelines": [
+        {
+            "type": "Graphics",
+            "name": "pbr-lit-texr-pipeline",
+            "topology": "triangles",
+            "rasterizer": 0,
+            "depth_stencil": 0,
+            "color_blend": 0,
+            "pipeline_layout": 0,
+            "stages": [
+                0,
+                1
+            ],
+            "outputs": [0]
+        }
+    ]
+}

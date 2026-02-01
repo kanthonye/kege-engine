@@ -11,6 +11,7 @@
 #include "asset-manager.hpp"
 #include "../utils/communication.hpp"
 #include "../graphics/render/pipeline/shader-pipeline.hpp"
+#include "../graphics/render/pipeline/shader-library.hpp"
 
 namespace kege{
 

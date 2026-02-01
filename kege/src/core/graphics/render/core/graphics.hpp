@@ -13,6 +13,7 @@
 #include "device.hpp"
 #include "swapchain.hpp"
 #include "../pipeline/shader-layout.hpp"
+#include "../pipeline/shader-library.hpp"
 #include "command-encoder.hpp"
 #include "command-buffer.hpp"
 #include "instance.hpp"

@@ -171,8 +171,8 @@ namespace kege::vk{
         }
 
         // rotate CPU-frame index (frames-in-flight)
-        _curr_frame_index = (_curr_frame_index + 1) % _frame_syncs.size();
-        VkSemaphore image_available_semaphore = _frame_syncs[_curr_frame_index].image_available_semaphore->vk()->handle;
+        VkSemaphore image_available_semaphore = _frame_syncs[ _frame_syncs_index ].image_available_semaphore->vk()->handle;
+        _frame_syncs_index = (_frame_syncs_index + 1) % _frame_syncs.size();
 
         VkResult result = vkAcquireNextImageKHR
         (
@@ -212,44 +212,6 @@ namespace kege::vk{
         // success: valid _image_index in [0, _image_count-1]
         return _image_index;
     }
-
-//    int32_t Swapchain::acquireNextImage()
-//    {
-//        _curr_frame_index = (_curr_frame_index + 1) % _frame_syncs.size();
-//        VkSemaphore image_available_semaphore = _frame_syncs[ _curr_frame_index ].image_available_semaphore->vk()->handle;
-//
-//        VkResult result = vkAcquireNextImageKHR
-//        (
-//            _device->_device,
-//            _swapchain,
-//            UINT64_MAX, // Timeout (no timeout)
-//            image_available_semaphore, // The Semaphore to signal when the image is ready for use
-//            VK_NULL_HANDLE, // kege::Fence (not using fence here)
-//            &_image_index
-//        );
-//
-//        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-//        {
-//            kege::Log::debug << "Swapchain out of date during acquire. Needs recreation." <<Log::nl;
-//            _needs_recreation = true;
-//            return -1;
-//        }
-//
-//        else if (result == VK_SUBOPTIMAL_KHR)
-//        {
-//            kege::Log::debug << "Warning: Swapchain suboptimal during acquire. Needs recreation soon." <<Log::nl;
-//            _needs_recreation = true;
-//            return -1;
-//        }
-//        
-//        else if (result != VK_SUCCESS)
-//        {
-//            kege::Log::error << "Failed to acquire swap chain image!" << Log::nl;
-//            return -1;
-//        }
-//
-//        return _image_index;
-//    }
 
     vk::FrameData& Swapchain::getFrame( uint32_t curr_frame )
     {
@@ -299,48 +261,37 @@ namespace kege::vk{
     {
         _device->waitIdle();
 
-        VkSwapchainKHR new_swapchain;
-        VkResult result = createSwapchain( &new_swapchain );
+        // CRITICAL: Reset indices after recreation
+        _image_index = 0;       // ← Add this!
+        _frame_syncs_index = 0;
 
-        if ( result != VK_SUCCESS )
+
+        VkSwapchainKHR old_swapchain = _swapchain;
+        if ( createSwapchain() != VK_SUCCESS )
         {
-            kege::Log::error << vkResultToString( result );
+            //kege::Log::error << vkResultToString( result );
             return kege::Result::FAILED_CREATING_OBJECT;
         }
 
-        destroy();
+        destroySwapchain(old_swapchain);
+        destroyFrameSync();
+        destroyFrames();
 
-        _swapchain = new_swapchain;
-        _frames = createFrames( _image_count );
-        if ( _frames.empty() )
+        if ( createFrameSync() != kege::Result::SUCCESS)
         {
-            destroy();
             return kege::Result::FAILED_CREATING_OBJECT;
         }
 
-        _frame_syncs.resize( _image_count );
-        for (int i=0; i<_frame_syncs.size(); ++i)
+        if ( createFrames( _image_count )!= kege::Result::SUCCESS )
         {
-            _frame_syncs[i].image_available_semaphore = _device->createSemaphore();
-            if( _frame_syncs[i].image_available_semaphore == VK_NULL_HANDLE )
-            {
-                destroy();
-                return kege::Result::FAILED_CREATING_OBJECT;
-            }
-
-            _frame_syncs[i].render_complete_semaphore = _device->createSemaphore();
-            if( _frame_syncs[i].render_complete_semaphore == VK_NULL_HANDLE )
-            {
-                destroy();
-                return kege::Result::FAILED_CREATING_OBJECT;
-            }
+            return kege::Result::FAILED_CREATING_OBJECT;
         }
 
-        _device->_frame_index = 0;
+        _needs_recreation = false;
         return kege::Result::SUCCESS;
     }
 
-    VkResult Swapchain::createSwapchain( VkSwapchainKHR* swapchain )
+    VkResult Swapchain::createSwapchain()
     {
         vk::PhysicalDevice* physical_device = _device->getVkPhysicalDevice();
 
@@ -404,23 +355,34 @@ namespace kege::vk{
             create_info.pQueueFamilyIndices = nullptr; // Optional
         }
 
-        // 5. Create the Vulkan Swapchai
-        return _device->_manager.createSwapchain( &create_info, nullptr, swapchain );
+        // 5. Create the Vulkan Swapchain
+
+        return _device->_manager.createSwapchain( &create_info, nullptr, &_swapchain );
     }
 
-    std::vector< vk::FrameData > Swapchain::createFrames( uint32_t image_count )
+    void Swapchain::destroySwapchain(VkSwapchainKHR& swapchain)
+    {
+        // Destroy Swapchain
+        if ( swapchain != VK_NULL_HANDLE)
+        {
+            vkDestroySwapchainKHR( _device->_device, swapchain, nullptr );
+            swapchain = VK_NULL_HANDLE;
+        }
+    }
+
+    kege::Result Swapchain::createFrames( uint32_t image_count )
     {
         // 6. Get Swapchain Images
         vkGetSwapchainImagesKHR( _device->handle(), _swapchain, &image_count, nullptr ); // Get actual count
         std::vector< VkImage > images( image_count );
         vkGetSwapchainImagesKHR( _device->handle(), _swapchain, &image_count, images.data());
 
-        std::vector< vk::FrameData > frames( image_count );
+        _frames.resize(image_count);
         // 7. Create Image Views and Abstract Handles
         for (uint32_t i = 0; i < image_count; ++i)
         {
-            frames[i].color = _device->_images.insert( new vk::Image );
-            frames[i].color->operator()(kege::Image::Desc{
+            _frames[i].color = _device->_images.insert( new vk::Image );
+            _frames[i].color->operator()(kege::Image::Desc{
                 .usage          = ImageUsage::Color | ImageUsage::Present | ImageUsage::Present,
                 .format         = convertVkFormat( _surface_format.format ),
                 .memory_usage   = MemoryUsage::GpuOnly,
@@ -431,13 +393,13 @@ namespace kege::vk{
                 .extent.depth   = 1,
                 .mip_levels     = 1,
             });
-            frames[i].color->_image = images[i];
-            frames[i].color->_swapchain_owned = true;
-            frames[i].color->_vkformat = _surface_format.format;
-            frames[i].color->_current_layout = VK_IMAGE_LAYOUT_UNDEFINED; // Swapchain images start as undefined
-            frames[i].color->_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+            _frames[i].color->_image = images[i];
+            _frames[i].color->_swapchain_owned = true;
+            _frames[i].color->_vkformat = _surface_format.format;
+            _frames[i].color->_current_layout = VK_IMAGE_LAYOUT_UNDEFINED; // Swapchain images start as undefined
+            _frames[i].color->_aspect = VK_IMAGE_ASPECT_COLOR_BIT;
 
-            frames[i].color->_view = _device->_manager.createImageView
+            _frames[i].color->_view = _device->_manager.createImageView
             (
                 images[i],
                 VK_IMAGE_VIEW_TYPE_2D,
@@ -446,15 +408,15 @@ namespace kege::vk{
                 vkFormatToVkImageAspect( _surface_format.format )
             );
 
-            if ( frames[i].color->_view == VK_NULL_HANDLE )
+            if ( _frames[i].color->_view == VK_NULL_HANDLE )
             {
                 kege::Log::error << "Failed to create swapchain image view " << i << "!" <<Log::nl;
                 // Cleanup already created views, swapchain, surface
                 for (uint32_t j = 0; j < i; ++j)
                 {
-                    _device->_manager.destroyImageView( frames[i].color->_view );
+                    _device->_manager.destroyImageView( _frames[i].color->_view );
                 }
-                return {};
+                return kege::Result::FAILED_CREATING_OBJECT;
             }
 
             if ( _depth_format != VkFormat::VK_FORMAT_UNDEFINED )
@@ -470,11 +432,53 @@ namespace kege::vk{
                 depth_info.usage = ImageUsage::DepthStencil | ImageUsage::Present | ImageUsage::Present;;
                 depth_info.memory_usage = MemoryUsage::GpuOnly;
                 depth_info.debug_name = "swapchain-depth-image-" + std::to_string(i);
-                frames[i].depth = _device->_images.insert( new vk::Image( _device, depth_info ) );
+                _frames[i].depth = _device->_images.insert( new vk::Image( _device, depth_info ) );
             }
         }
 
-        return frames;
+        return kege::Result::SUCCESS;
+    }
+
+    void Swapchain::destroyFrames()
+    {
+        for (int i=0; i<_frames.size(); ++i)
+        {
+            _device->destroyImage(_frames[i].color->vk());
+            _device->destroyImage(_frames[i].depth->vk());
+        }
+        _frames.clear();
+    }
+
+    kege::Result Swapchain::createFrameSync()
+    {
+        _frame_syncs.resize( _image_count );
+        for (int i=0; i<_frame_syncs.size(); ++i)
+        {
+            _frame_syncs[i].image_available_semaphore = _device->createSemaphore();
+            if( _frame_syncs[i].image_available_semaphore == VK_NULL_HANDLE )
+            {
+                destroy();
+                return kege::Result::FAILED_CREATING_OBJECT;
+            }
+
+            _frame_syncs[i].render_complete_semaphore = _device->createSemaphore();
+            if( _frame_syncs[i].render_complete_semaphore == VK_NULL_HANDLE )
+            {
+                destroy();
+                return kege::Result::FAILED_CREATING_OBJECT;
+            }
+        }
+        return kege::Result::SUCCESS;
+    }
+
+    void Swapchain::destroyFrameSync()
+    {
+        for (int i=0; i<_frame_syncs.size(); ++i)
+        {
+            _device->destroySemaphore(_frame_syncs[i].image_available_semaphore->vk());
+            _device->destroySemaphore(_frame_syncs[i].render_complete_semaphore->vk());
+        }
+        _frame_syncs.clear();
     }
 
     void Swapchain::destroy()
@@ -483,16 +487,10 @@ namespace kege::vk{
         {
             // Wait for device to be idle before destroying swapchain resources
             _device->waitIdle(); // Simplest synchronization
-            
-            _frames.clear();
-            _frame_syncs.clear();
 
-            // Destroy Swapchain
-            if ( _swapchain != VK_NULL_HANDLE)
-            {
-                vkDestroySwapchainKHR( _device->_device, _swapchain, nullptr );
-                _swapchain = VK_NULL_HANDLE;
-            }
+            destroyFrames();
+            destroyFrameSync();
+            destroySwapchain(_swapchain);
         }
     }
 
@@ -514,10 +512,10 @@ namespace kege::vk{
     Swapchain::Swapchain( Device* device )
     :   _device( device )
     ,   _swapchain( VK_NULL_HANDLE )
-    ,   _curr_frame_index( -1 )
     ,   _image_count( 0 )
     ,   _image_index( 0 )
     ,   _needs_recreation( false )
+    ,   _frame_syncs_index( 0 )
     {}
 
     Swapchain::~ Swapchain()

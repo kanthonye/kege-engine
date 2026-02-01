@@ -44,12 +44,16 @@ namespace kege{
         _layers.clear();
     }
 
-    void AppLayerStack::update()
+    bool AppLayerStack::update()
     {
-        for (size_t i = 0; i < _layers.size(); ++i )
+        for (int64_t i = _layers.size() - 1; 0 <= i; --i )
         {
-            _layers[ i ]->update();
+            if( !_layers[ i ]->update() )
+            {
+                return false;
+            }
         }
+        return true;
     }
 
     AppLayerStack::~AppLayerStack()

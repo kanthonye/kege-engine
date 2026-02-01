@@ -8,8 +8,8 @@
 #ifndef ui_cursor_hpp
 #define ui_cursor_hpp
 
+#include "../../input/input-manager.hpp"
 #include "../font/font.hpp"
-#include "ui-input.hpp"
 #include "ui-core.hpp"
 #include "ui-aligner.hpp"
 #include "ui-style-manager.hpp"
@@ -18,91 +18,143 @@ namespace kege::ui{
 
     class Cursor
     {
-    private:
-
-        float getClickToCursorOffset( const UID& elem, const ref::Font& font, int font_size, const char* str, size_t& size );
-        bool onInput(Input::Type type, const ref::Font& font, int font_size, const kege::Input& input, char* str, size_t& size );
-        void deleteSelection( int font_size, const ref::Font& font, char* str, size_t& size );
-        void handleDeletion( int font_size, const ref::Font& font, char* str, size_t& size );
-
     public:
 
-        bool onInput(Input::Type type, const UID& elem, const ref::Font& font, char* str, size_t& size);
-        void update( double dms, ui::Input* input );
-        Cursor( ui::Layout* layout );
+        enum class InputType
+        {
+            Any,      // Accept any characters
+            Numeric,  // Only numbers, decimal point, minus sign
+            Integer,  // Only numbers and minus sign
+            Alpha,    // Only letters
+            Custom    // Custom validation
+        };
 
-        void insertChar( char* str, size_t& length, size_t pos, size_t count, char ch );
-        void eraseChar( char* str, size_t& length, size_t begin, size_t end );
+        struct EditingState
+        {
+            const UID* uid = nullptr;
+
+            char* buffer = nullptr;
+            size_t* buffer_size = nullptr;
+            size_t buffer_capacity = 0;
+
+            InputType type;
+
+            bool active = false;
+        };
+
+
+
+        void startEditing(InputType type, const UID& uid, char* buffer, size_t& buffer_size, size_t buffer_capacity);
+        void selectAll(const char* str, size_t size);
+        void computeCursorPosition();
+        void stopEditing();
+        bool update();
+
+        Cursor( ui::Layout* layout );
+        
+    private:
+
+
+        void handleKeyInput
+        (
+            const kege::Key& key,
+            InputType type,
+            char*& buffer, size_t& buffer_size, size_t& buffer_capacity,
+            const ref::Font& font,
+            int font_size
+        );
+
+        void insertCharacter
+        (
+            char*& buffer,
+            size_t& buffer_size,
+            size_t& buffer_capacity,
+            char ch,
+            const ref::Font& font,
+            int font_size
+        );
+        
+        int insertString
+        (
+            char*& buffer,
+            size_t& buffer_size,
+            size_t& buffer_capacity,
+            size_t pos,
+            const char* chars,
+            size_t count
+        );
+
+        struct PositionFromClick
+        {
+            size_t pos;
+            float length;
+        };
+
+        void handleClickAndSelection(Widget* widget);
+        void processKeyboardInputs(int font_size);
+
+        void deleteSelection(char*& str, size_t& size, const ref::Font& font, int font_size);
+        void eraseRange(char*& str, size_t& size, size_t begin, size_t end);
+        bool validateCharacter(InputType type, int ch, const char* str, size_t pos) const;
+
+
+
+        PositionFromClick getPositionFromClick(float click_x, const ref::Font& font, int font_size, const char* str, size_t size) const;
+
+        void updateBlinker();
 
     private:
+
+        const kege::Keyboard* _keyboard;
+        const kege::Mouse* _mouse;
+
+        EditingState _current_edit;
+
+        ui::Rect _rect_selection;
+        ui::Rect _rect_cursor;
+
+        uint32_t _color_selection;
+        uint32_t _color_cursor;
 
         /**
          * @var _layout: The Layout this cursor is associated with.
          */
         ui::Layout* _layout;
 
-        /**
-         * @var _input: The Input object this cursor reads from.
-         */
-        ui::Input* _input;
+        Cursor::PositionFromClick _click;
 
         /**
          * @var _position: The character position/index with in the string.
          */
         size_t _position;
-        size_t _anchor;
 
-        float _selection_start;
+        size_t _selection_anchor;
+
         float _selection_end;
-
-        /**
-         * @var _offset: The x position offset of the cursor.
-         */
-        double _offset;
 
         /**
          * @var _timer: The blink timer of the cursor.
          */
         double _timer;
 
-        /**
-         * @var _x: The x position of the cursor.
-         */
-        double _x;
-
-        /**
-         * @var _y: The y position of the cursor.
-         */
-        double _y;
-
-        /**
-         * @var _height: The height of the cursor.
-         */
-        float _height;
-
-        /**
-         * @var _width: The width of the cursor.
-         */
-        float _width;
-
+        bool _selection_active;
+        bool _blink_enabled;
+        
         /**
          * @var _visible: Indicate whether the cursor should be drawn or not. This
          * allows the implementation for blinking.
          */
         bool _visible;
 
-        /**
-         * @var _reading_input: Indicate whether this object is processing inputs.
-         */
-        bool _reading_input;
 
-        /**
-         * @var _editing: Indicate that this cursor is currently modifying a string.
-         */
-        bool _editing;
+        bool _initial_click_processed;
 
-        bool _initial_click;
-        bool _selection;
+        bool _control;
+        bool _caplock;
+        bool _shift;
+        bool _super;
+        bool _alt;
+        bool _tab;
 
         friend ui::Layout;
         friend ui::Viewer;

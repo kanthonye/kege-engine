@@ -11,12 +11,13 @@
 #include <filesystem>
 #include "../resource/asset-manager.hpp"
 #include "../scene/scene-manager.hpp"
+#include "../graphics/render/graph/render-graph.hpp"
 
 namespace kege{
 
     struct Project : public kege::RefCounter
     {
-        Project( const std::string& name, ref::ECS& ecs );
+        Project( const std::string& name, ref::ECS& ecs, ref::RenderGraph rg );
         ~Project();
 
         ref::AssetManager asset_manager;

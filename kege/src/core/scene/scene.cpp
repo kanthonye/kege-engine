@@ -35,6 +35,16 @@ namespace kege{
         return {};
     }
 
+    kege::AssetManager* Scene::getAssetManager()
+    {
+        return _asset_manager;
+    }
+
+    kege::RenderGraph* Scene::getRenderGraph()
+    {
+        return _render_graph;
+    }
+
     void Scene::setCameraEntity( const ecs::Entity& entity )
     {
         _camera = entity;
@@ -162,12 +172,13 @@ namespace kege{
         shutdown();
     }
 
-    Scene::Scene( const std::string& name, ecs::EntityManager &ecs )
+    Scene::Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am, kege::RenderGraph* rg )
     :   kege::ecs::EntityRegistry( ecs )
+    ,   _asset_manager( am )
+    ,   _render_graph( rg )
     ,   _name( name )
     ,   _ready( false )
     {
         _root = _ecs.create();
-        *_ecs.add< Tag >(_root) = "world";
     }
 }

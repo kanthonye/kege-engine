@@ -22,14 +22,23 @@ namespace kege::ecs{
 
     struct Entity
     {
-        constexpr operator bool()const{return index != INVALID_INDEX_U32;}
-        uint32_t index = INVALID_INDEX_U32;
-        uint32_t version = 0;
+        constexpr operator bool()const{return id != 0;}
+        union
+        {
+            struct
+            {
+                uint32_t index;
+                uint32_t version;
+            };
+            uint64_t id = 0L;
+        };
     };
+
     inline uint64_t to_uint64(ecs::Entity& e)
     {
         return (static_cast<uint64_t>(e.version) << 32) | e.index;
     }
+    
     inline Entity from_uint64(uint64_t value)
     {
         return Entity
@@ -133,6 +142,8 @@ namespace kege::ecs{
          * @return A pointer to the component, or nullptr if not found.
          */
         template< typename C > C* get( const Entity& entity );
+
+        template< typename C > uint64_t getCompId( const Entity& entity );
 
         template< typename... C > EntityKind* defnArchetype(uint32_t element_count);
 
@@ -254,7 +265,7 @@ namespace kege::ecs{
 
     private:
 
-        void detach(ecs::Entity& child, ecs::Parent* p, ecs::Child* c);
+        void detach(ecs::Entity& child, ecs::Parent& p, ecs::Child& c);
 
     private:
 
@@ -403,6 +414,18 @@ namespace kege::ecs{
         EntityEntry& entry = _entities[ entity.index ];
         return (C*) _archetypes[ entry.type ]->getComponent( entry.handle, Component::type<C>() );
     }
+
+   template< typename C > uint64_t EntityManager::getCompId( const Entity& entity )
+   {
+       if ( !valid( entity ) ) return 0;
+       EntityEntry& entry = _entities[ entity.index ];
+
+       //uint64_t component_id;
+       uint32_t eid = entry.handle;
+       uint32_t typ = Component::type<C>();
+
+       return (uint64_t(eid) << 32) | typ;
+   }
 
     template< typename... C > EntityKind* EntityManager::defnArchetype(uint32_t element_count)
     {

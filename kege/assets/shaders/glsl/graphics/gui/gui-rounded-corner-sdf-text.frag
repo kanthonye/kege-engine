@@ -70,65 +70,6 @@ vec4 sampleTexture(int texr_id)
     return vec4(1.0);
 }
 
-
-
-
-//void main()
-//{
-//    // Normalize fragment coordinates
-//    vec2 frag_coord = gl_FragCoord.xy * resolution.z;
-//
-//    // Clip rectangle check
-//    if
-//    (
-//        frag_coord.x < clip_rect.x || frag_coord.x > clip_rect.x + clip_rect.z ||
-//        frag_coord.y < clip_rect.y || frag_coord.y > clip_rect.y + clip_rect.w
-//    )
-//    {
-//        discard;
-//    }
-//
-//    frag_coord = frag_coord / resolution.xy;
-//
-//    // Existing rectangle SDF calculation
-//    // Compute pixel position in rectangle space
-//    vec2 half_size = rect.zw * 0.5;
-//    vec2 center = rect.xy + half_size;
-//    vec2 rect_space = frag_coord * resolution.xy - center;
-//    float sdf = sdRoundedRect(rect_space, abs(half_size), border_radius);
-//    float alpha = smoothstep(0.0, 1.0, -sdf);
-//
-//
-//    int texr_id = text_info.x;
-//
-//    vec4 texr = sampleTexture( texr_id );
-//
-//    vec4 final;
-//    if ( texr_id >= 0 && texr_id <= 15 )
-//    {
-//        // Could use texture arrays or switch-case for multiple textures
-//        final = color * texr;
-//    }
-//    else
-//    {
-//        final = color;
-//    }
-//
-//    if ( texr_id == 1 )
-//    {
-//        float width = 0.05;
-//        float edge  = 0.07;
-//
-//        // Text rendering: Sample from the SDF font texture
-//        float text_alpha = 1 - texr.r;
-//
-//        // Apply smoothstep for anti-aliased text
-//        alpha = 1 - smoothstep(width, width + edge, text_alpha);
-//    }
-//
-//    final_color = vec4( final.rgb, final.a * alpha );
-//}
-
 void main()
 {
     vec2 frag = gl_FragCoord.xy * resolution.z;
@@ -144,6 +85,7 @@ void main()
     {
         discard;
     }
+
     frag = frag / resolution.xy;
 
     // -----------------------------
@@ -187,19 +129,20 @@ void main()
     // -----------------------------
     int texr_id = text_info.x;
 
+    vec4 texr_color = sampleTexture(texr_id);
     if (texr_id == 1) // font
     {
         float width = 0.05;
         float edge  = 0.07;
 
-        float text_alpha = 1.0 - texture(_font, text_uv).r;
+        float text_alpha = 1.0 - texr_color.r;
         text_alpha = 1.0 - smoothstep(width, width + edge, text_alpha);
 
         fill_alpha *= text_alpha;
     }
-    else if (texr_id >= 0)
+    else// if (texr_id >= 0)
     {
-        rgb *= sampleTexture(texr_id).rgb;
+        rgb *= texr_color.rgb;
     }
 
     fill_alpha *= color.a;

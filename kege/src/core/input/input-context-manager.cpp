@@ -20,63 +20,63 @@ namespace kege{
         return false;
     }
 
-    void InputContextManager::process( const std::vector< Input >& inputs )
-    {
-        _mapped_inputs.clear();
-        for (const kege::Input& input : inputs )
-        {
-            kege::Coord2d d;
-            if ( input.type == kege::Input::POINTER )
-            {
-                d.x = input.coord.x - _mapped_inputs._pointer.x;
-                d.y = input.coord.y - _mapped_inputs._pointer.y;
-                _mapped_inputs._pointer.x = input.coord.x;
-                _mapped_inputs._pointer.y = input.coord.y;
-
-                if ( d.x > 0 )
-                {
-                    update( POINTER_X_POSITIVE, d.x );
-                }
-                else if ( d.x < 0 )
-                {
-                    update( POINTER_X_NEGATIVE, d.x );
-                }
-
-                if ( d.y > 0 )
-                {
-                    update( POINTER_Y_POSITIVE, d.y );
-                }
-                else if ( d.y < 0 )
-                {
-                    update( POINTER_Y_NEGATIVE, d.y );
-                }
-            }
-            else if ( input.type == kege::Input::SCROLL )
-            {
-                if ( input.coord.x > 0 )
-                {
-                    update( SCROLL_X_POSITIVE, input.coord.x );
-                }
-                else if ( input.coord.x < 0 )
-                {
-                    update( SCROLL_X_NEGATIVE, input.coord.x );
-                }
-
-                if ( input.coord.y > 0 )
-                {
-                    update( SCROLL_Y_POSITIVE, input.coord.y );
-                }
-                else if ( input.coord.y < 0 )
-                {
-                    update( SCROLL_Y_NEGATIVE, input.coord.y );
-                }
-            }
-            else if ( input.type == Input::KEYBOARD || input.type == Input::MOUSEKEY )
-            {
-                update( input.key.code, input.key.state != 0 );
-            }
-        }
-    }
+//    void InputContextManager::process( const std::vector< Input >& inputs )
+//    {
+//        _mapped_inputs.clear();
+//        for (const kege::Input& input : inputs )
+//        {
+//            kege::Coord2d d;
+//            if ( input.type == kege::Input::POINTER )
+//            {
+//                d.x = input.coord.x - _mapped_inputs._pointer.x;
+//                d.y = input.coord.y - _mapped_inputs._pointer.y;
+//                _mapped_inputs._pointer.x = input.coord.x;
+//                _mapped_inputs._pointer.y = input.coord.y;
+//
+//                if ( d.x > 0 )
+//                {
+//                    update( POINTER_X_POSITIVE, d.x );
+//                }
+//                else if ( d.x < 0 )
+//                {
+//                    update( POINTER_X_NEGATIVE, d.x );
+//                }
+//
+//                if ( d.y > 0 )
+//                {
+//                    update( POINTER_Y_POSITIVE, d.y );
+//                }
+//                else if ( d.y < 0 )
+//                {
+//                    update( POINTER_Y_NEGATIVE, d.y );
+//                }
+//            }
+//            else if ( input.type == kege::Input::SCROLL )
+//            {
+//                if ( input.coord.x > 0 )
+//                {
+//                    update( SCROLL_X_POSITIVE, input.coord.x );
+//                }
+//                else if ( input.coord.x < 0 )
+//                {
+//                    update( SCROLL_X_NEGATIVE, input.coord.x );
+//                }
+//
+//                if ( input.coord.y > 0 )
+//                {
+//                    update( SCROLL_Y_POSITIVE, input.coord.y );
+//                }
+//                else if ( input.coord.y < 0 )
+//                {
+//                    update( SCROLL_Y_NEGATIVE, input.coord.y );
+//                }
+//            }
+//            else if ( input.type == Input::KEYBOARD || input.type == Input::MOUSEKEY )
+//            {
+//                update( input.key.code, input.key.state != 0 );
+//            }
+//        }
+//    }
 
     void InputContextManager::update( uint16_t keycode, double value )
     {
@@ -92,9 +92,9 @@ namespace kege{
         }
     }
 
-    bool InputContextManager::initialize( AppWindow* window )
+    bool InputContextManager::initialize()
     {
-        return _user_input_receiver.initialize( window );
+        return 0;
     }
 
     void InputContextManager::shutdown()
@@ -104,23 +104,72 @@ namespace kege{
         _active_contexts.clear();
     }
 
-    std::vector< kege::Input >& InputContextManager::getCurrentInputs()
-    {
-        return _current_inputs;
-    }
-
     MappedInputs& InputContextManager::getMappedInputs()
     {
         return _mapped_inputs;
     }
 
-    void InputContextManager::updateCurrentInputs()
+    void InputContextManager::update()
     {
-        _current_inputs.clear();
-        _user_input_receiver.getInputs( _current_inputs );
-        process( _current_inputs );
+        const Mouse* mouse = _input_manager->getMouse();
+        Mouse::Position delta = mouse->getDelta();
+        Mouse::Position scroll = mouse->getScrollDelta();
+
+        if ( delta.x > 0 )
+        {
+            update( POINTER_X_POSITIVE, delta.x );
+        }
+        else if ( delta.x < 0 )
+        {
+            update( POINTER_X_NEGATIVE, delta.x );
+        }
+
+        if ( delta.y > 0 )
+        {
+            update( POINTER_Y_POSITIVE, delta.y );
+        }
+        else if ( delta.y < 0 )
+        {
+            update( POINTER_Y_NEGATIVE, delta.y );
+        }
+
+        if ( scroll.x > 0 )
+        {
+            update( SCROLL_X_POSITIVE, scroll.x );
+        }
+        else if ( scroll.x < 0 )
+        {
+            update( SCROLL_X_NEGATIVE, scroll.x );
+        }
+
+        if ( scroll.y > 0 )
+        {
+            update( SCROLL_Y_POSITIVE, scroll.y );
+        }
+        else if ( scroll.y < 0 )
+        {
+            update( SCROLL_Y_NEGATIVE, scroll.y );
+        }
+
+        const MouseButtonState* const* button_states = mouse->getAllActiveButtonState();
+        uint32_t count = mouse->getActiveButtonStateCount();
+        for(uint32_t i = 0; i<count; ++i)
+        {
+            const MouseButtonState* state = button_states[i];
+
+            update( (int)state->input.button, state->input.action != kege::ButtonAction::Release );
+        }
+
+        const kege::Keyboard* keyboard = _input_manager->getKeyboard();
+        kege::Key const* active_keys = keyboard->getActiveKeys();
+        count = keyboard->getActiveKeyCount();
+        for(uint32_t i = 0; i<count; ++i)
+        {
+            const kege::Key& key = active_keys[i];
+            update( key.code, key.action != kege::KeyState::Release );
+        }
     }
 
-    InputContextManager::InputContextManager()
+    InputContextManager::InputContextManager(kege::InputManager* input_manager)
     {}
 }

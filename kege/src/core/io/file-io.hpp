@@ -99,7 +99,7 @@ namespace kege
         friend kege::Ref< kege::FileIO >;
     };
 
-    bool loadTextSourse( std::vector< char >& source, const char* filename );
+    bool loadTextFile( std::vector< char >& source, const char* filename );
 }
 
 #endif /* kege_file_io_hpp */

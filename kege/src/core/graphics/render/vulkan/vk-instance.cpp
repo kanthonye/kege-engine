@@ -41,7 +41,7 @@ namespace kege::vk{
 
     GraphicsDevice* Instance::createDevice( kege::PhysicalDevice* physical_device )
     {
-        vk::PhysicalDevice* vk_physical_device = static_cast< PhysicalDevice* >( physical_device );
+        //vk::PhysicalDevice* vk_physical_device = static_cast< PhysicalDevice* >( physical_device );
         vk::Device* device = _devices.insert( new vk::Device );
         if ( !device->initialize( physical_device->vk() ) )
         {
@@ -88,7 +88,7 @@ namespace kege::vk{
             }
             std::vector< VkPhysicalDevice > devices( device_count );
             vkEnumeratePhysicalDevices( _instance, &device_count, devices.data() );
-            KEGE_LOG_INFO << "Found " << device_count << " Vulkan capable device(s):" <<Log::nl;
+            //KEGE_LOG_INFO << "Found " << device_count << " Vulkan capable device(s):" <<Log::nl;
 
             _physical_devices.resize( device_count );
             for ( int i=0; i<device_count; ++i )
@@ -129,11 +129,11 @@ namespace kege::vk{
             uint32_t preference_score = 0;
             device._surface = _surface;
 
-            KEGE_LOG_INFO << "Evaluating: " << device._device_properties.deviceName;
-            KEGE_LOG_INFO << " (API: " << VK_API_VERSION_MAJOR( device._device_properties.apiVersion ) << "."
-                     << VK_API_VERSION_MINOR( device._device_properties.apiVersion ) << "."
-                     << VK_API_VERSION_PATCH( device._device_properties.apiVersion )
-                     << ", Type: " << device._device_properties.deviceType << ")" <<Log::nl;
+            //KEGE_LOG_INFO << "Evaluating: " << device._device_properties.deviceName;
+            //KEGE_LOG_INFO << " (API: " << VK_API_VERSION_MAJOR( device._device_properties.apiVersion ) << "."
+            //         << VK_API_VERSION_MINOR( device._device_properties.apiVersion ) << "."
+            //         << VK_API_VERSION_PATCH( device._device_properties.apiVersion )
+            //         << ", Type: " << device._device_properties.deviceType << ")" <<Log::nl;
 
             // --- 1. Minimum Requirements & Feature Checks ---
 
@@ -141,13 +141,13 @@ namespace kege::vk{
             // Example: Must support dynamic rendering
             if ( !device._features.dynamic_rendering )
             {
-                KEGE_LOG_INFO <<"    - Reason: Does not support required Dynamic Rendering feature.\n";
+                //KEGE_LOG_INFO <<"    - Reason: Does not support required Dynamic Rendering feature.\n";
                 return nullptr;
             }
 
             if ( !device._features.sampler_anisotropy )
             {
-                KEGE_LOG_INFO << "    - Reason: Does not support required Sampler Anisotropy feature.\n";
+                //KEGE_LOG_INFO << "    - Reason: Does not support required Sampler Anisotropy feature.\n";
                 return nullptr;
             }
 
@@ -155,26 +155,26 @@ namespace kege::vk{
             QueueFamilyIndices queue_family_indices = findQueueFamilies( device.getHandle(), _surface );
             if ( !queue_family_indices.isComplete() )
             {
-                KEGE_LOG_INFO << "    - Skipping: Missing required queue families.\n";
+                //KEGE_LOG_INFO << "    - Skipping: Missing required queue families.\n";
                  return nullptr;
             }
 
             // Required Core Features Check
             if ( info.require_shader_float64 && !device._device_features.shaderFloat64 )
             {
-                KEGE_LOG_INFO << "    - Skipping: Missing required feature: shaderFloat64\n";
+                //KEGE_LOG_INFO << "    - Skipping: Missing required feature: shaderFloat64\n";
                 return nullptr;
             }
 
             if ( info.require_geometry_shader && !device._device_features.geometryShader )
             {
-                KEGE_LOG_INFO << "    - Skipping: Missing required feature: geometryShader\n";
+                //KEGE_LOG_INFO << "    - Skipping: Missing required feature: geometryShader\n";
                 return nullptr;
             }
 
             if (info.require_tessellation_shader && !device._device_features.tessellationShader)
             {
-                KEGE_LOG_INFO << "    - Skipping: Missing required feature: tessellationShader\n";
+                //KEGE_LOG_INFO << "    - Skipping: Missing required feature: tessellationShader\n";
                 return nullptr;
             }
 
@@ -192,16 +192,17 @@ namespace kege::vk{
 
                 if ( !checkDeviceExtensionSupport( device._physical_device ) )
                 {
-                    KEGE_LOG_INFO << "    - Skipping: Missing required ray tracing extensions.\n";
+                    //KEGE_LOG_INFO << "    - Skipping: Missing required ray tracing extensions.\n";
                     return nullptr;
                 }
 
                 if ( !checkRayTracingSupport( device._physical_device ) )
-                { // Checks actual features
-                    KEGE_LOG_INFO << "    - Skipping: Missing required ray tracing features.\n";
+                {
+                    // Checks actual features
+                    //KEGE_LOG_INFO << "    - Skipping: Missing required ray tracing features.\n";
                     return nullptr;
                 }
-                KEGE_LOG_INFO << "    - Ray Tracing Supported (Required).\n";
+                //KEGE_LOG_INFO << "    - Ray Tracing Supported (Required).\n";
             }
 
             // Minimum Dedicated VRAM Check
@@ -219,12 +220,12 @@ namespace kege::vk{
             uint32_t dedicated_vram_gb = static_cast<uint32_t>( device._dedicated_video_memory_mb / (1000 * 1000 * 1000) );
             if ( info.min_dedicated_video_memory > 0 && dedicated_vram_gb < info.min_dedicated_video_memory )
             {
-                KEGE_LOG_INFO << "    - Skipping: Insufficient dedicated VRAM ("
-                         << dedicated_vram_gb << "MB available, "
-                         << info.min_dedicated_video_memory << "-GB required).\n";
+//                KEGE_LOG_INFO << "    - Skipping: Insufficient dedicated VRAM ("
+//                         << dedicated_vram_gb << "MB available, "
+//                         << info.min_dedicated_video_memory << "-GB required).\n";
                 return nullptr;
             }
-            KEGE_LOG_INFO << "    - Dedicated VRAM: " << dedicated_vram_gb << "-GB\n";
+            //KEGE_LOG_INFO << "    - Dedicated VRAM: " << dedicated_vram_gb << "-GB\n";
 
             // --- 2. Scoring Based on Preferences ---
             preference_score = 0;
@@ -235,13 +236,13 @@ namespace kege::vk{
                 if ( device._device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU )
                 {
                     preference_score += SCORE_WEIGHT_DISCRETE_GPU;
-                    KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_DISCRETE_GPU << " (Discrete GPU preferred and found)\n";
+                    //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_DISCRETE_GPU << " (Discrete GPU preferred and found)\n";
                 }
                 else if ( device._device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU )
                 {
                      // Give integrated GPU a lower base score if discrete is preferred but not found
                     preference_score += SCORE_WEIGHT_INTEGRATED_GPU / 2;
-                    KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_INTEGRATED_GPU / 2 << " (Integrated GPU, Discrete preferred)\n";
+                    //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_INTEGRATED_GPU / 2 << " (Integrated GPU, Discrete preferred)\n";
                 }
             }
             else
@@ -250,11 +251,11 @@ namespace kege::vk{
                  if ( device._device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU )
                  {
                      preference_score += SCORE_WEIGHT_DISCRETE_GPU / 2; // Lower score if not explicitly preferred
-                     KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_DISCRETE_GPU / 2 << " (Discrete GPU)\n";
+                     //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_DISCRETE_GPU / 2 << " (Discrete GPU)\n";
                  } else if ( device._device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU )
                  {
                      preference_score += SCORE_WEIGHT_INTEGRATED_GPU;
-                     KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_INTEGRATED_GPU << " (Integrated GPU)\n";
+                     //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_INTEGRATED_GPU << " (Integrated GPU)\n";
                  }
             }
 
@@ -264,26 +265,26 @@ namespace kege::vk{
             {
                 int vram_score = dedicated_vram_gb * SCORE_WEIGHT_PER_GB_VRAM;
                 preference_score += vram_score;
-                KEGE_LOG_INFO << "    - Score +" << vram_score << " (VRAM Preference: " << dedicated_vram_gb << " MB)\n";
+                //KEGE_LOG_INFO << "    - Score +" << vram_score << " (VRAM Preference: " << dedicated_vram_gb << " MB)\n";
             }
 
             // Preferred Features Score
             if ( info.prefer_shader_float64 && device._device_features.shaderFloat64 )
             {
                 preference_score += SCORE_WEIGHT_SHADER_FLOAT64;
-                KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_SHADER_FLOAT64 << " (Preferred feature: shaderFloat64)\n";
+                //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_SHADER_FLOAT64 << " (Preferred feature: shaderFloat64)\n";
             }
 
             if ( info.prefer_geometry_shader && device._device_features.geometryShader )
             {
                 preference_score += SCORE_WEIGHT_GEOMETRY_SHADER;
-                KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_GEOMETRY_SHADER << " (Preferred feature: geometryShader)\n";
+                //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_GEOMETRY_SHADER << " (Preferred feature: geometryShader)\n";
             }
 
             if ( info.prefer_tessellation_shader && device._device_features.tessellationShader )
             {
                 preference_score += SCORE_WEIGHT_TESSELLATION_SHADER;
-                KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_TESSELLATION_SHADER << " (Preferred feature: tessellationShader)\n";
+                //KEGE_LOG_INFO << "    - Score +" << SCORE_WEIGHT_TESSELLATION_SHADER << " (Preferred feature: tessellationShader)\n";
             }
 
             // Add scoring for other preferred features...
@@ -293,8 +294,8 @@ namespace kege::vk{
                 // Using maxComputeWorkGroupInvocations as a proxy
                 int compute_score = ( device._device_properties.limits.maxComputeWorkGroupInvocations / 128 ) * SCORE_WEIGHT_COMPUTE_INVOCATIONS;
                 preference_score += compute_score;
-                KEGE_LOG_INFO << "    - Score +" << compute_score << " (Compute Limit Preference: "
-                         << device._device_properties.limits.maxComputeWorkGroupInvocations << " max invocations)\n";
+                //KEGE_LOG_INFO << "    - Score +" << compute_score << " (Compute Limit Preference: "
+                //         << device._device_properties.limits.maxComputeWorkGroupInvocations << " max invocations)\n";
                 // Could also add scoring based on maxComputeWorkGroupSize[0] etc.
             }
 
@@ -305,11 +306,11 @@ namespace kege::vk{
                                 VK_API_VERSION_MINOR( device._device_properties.apiVersion ) * SCORE_WEIGHT_API_VERSION_MINOR;
                 preference_score += api_score;
 
-                KEGE_LOG_INFO << "    - Score +" << api_score << " (API Version Preference: "
-                         << VK_API_VERSION_MAJOR( device._device_properties.apiVersion ) << "."
-                         << VK_API_VERSION_MINOR( device._device_properties.apiVersion ) << ")\n";
+                //KEGE_LOG_INFO << "    - Score +" << api_score << " (API Version Preference: "
+                //         << VK_API_VERSION_MAJOR( device._device_properties.apiVersion ) << "."
+                //         << VK_API_VERSION_MINOR( device._device_properties.apiVersion ) << ")\n";
             }
-            KEGE_LOG_INFO << "    - total score: " << preference_score <<Log::nl;
+            //KEGE_LOG_INFO << "    - total score: " << preference_score <<Log::nl;
 
             if (best_preference_score < preference_score)
             {
@@ -448,7 +449,7 @@ namespace kege::vk{
             // This flag MUST be set on macOS for MoltenVK >= 1.3.216 if portability is used
             // Handle VK_KHR_portability_enumeration (needed for MoltenVK on macOS/iOS)
             create_info.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-            KEGE_LOG_INFO << "Enabling Portability Enumeration for macOS.\n";
+            //KEGE_LOG_INFO << "Enabling Portability Enumeration for macOS.\n";
         #endif
 
         VkDebugUtilsMessengerCreateInfoEXT general_messenger_info{};
@@ -458,7 +459,7 @@ namespace kege::vk{
         {
             // --- Add Debug Utils Extension IF validation is enabled ---
             required_extensions.push_back( VK_EXT_DEBUG_UTILS_EXTENSION_NAME );
-            KEGE_LOG_INFO << "Enabling VK_EXT_debug_utils extension for validation.\n";
+            //KEGE_LOG_INFO << "Enabling VK_EXT_debug_utils extension for validation.\n";
 
             create_info.enabledLayerCount = static_cast<uint32_t>( _validation_layers.size() );
             create_info.ppEnabledLayerNames = _validation_layers.data();

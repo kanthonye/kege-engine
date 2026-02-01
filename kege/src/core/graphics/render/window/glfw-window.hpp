@@ -41,8 +41,7 @@ namespace kege{
         void setFullscreen(bool fullscreen) override;
         void setVSync(bool enabled) override;
 
-        uint32_t getWidth() const override;
-        uint32_t getHeight() const override;
+        Extent2D getSize() const override;
         //ivec2 getPosition() const override;
         bool isVisible() const override;
         bool isResizable() const override;

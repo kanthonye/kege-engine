@@ -21,8 +21,19 @@ namespace kege{
         _render_graph.clear();
     }
 
-    int RenderLayer::render( kege::Swapchain* swapchain )
+    bool RenderLayer::update()
     {
+        if (!_project_manager) return false;
+
+        kege::Graphics* graphics = _render_graph->getGraphics();
+        kege::Swapchain* swapchain = graphics->getSwapchain();
+
+        if ( !graphics->beginFrame() )
+        {
+            KEGE_LOG_ERROR << "Failed to begin Frame\n";
+            return false;
+        }
+
         int image_index = swapchain->acquireNextImage();
         if (image_index < 0)
         {
@@ -33,18 +44,15 @@ namespace kege{
                     kege::Log::error << "Swapchain recreate failed in render()." << Log::nl;
                     return -1;
                 }
-
-                // Try acquire again once
-                image_index = swapchain->acquireNextImage();
-                if (image_index < 0)
-                {
-                    // Give up this frame
-                    return -1;
-                }
+                
+                // Important: do NOT try to acquire again immediately in most cases
+                // Just skip this frame — next frame will (hopefully) succeed
+                graphics->endFrame();
+                return true;   // ← still "success" (we handled resize)
             }
             else
             {
-                return -1;
+                return true;
             }
         }
 
@@ -52,29 +60,6 @@ namespace kege{
         ref::Semaphore image_available = swapchain->getImageAvailableSemaphore(image_index);
         ref::Semaphore render_complete = swapchain->getRenderFinishSemaphore(image_index);
         _render_graph->execute(image_available, render_complete);
-        return image_index;
-    }
-
-
-    void RenderLayer::update()
-    {
-        if (!_project_manager) return;
-
-        kege::Graphics* graphics = _render_graph->getGraphics();
-        if ( !graphics->beginFrame() )
-        {
-            KEGE_LOG_ERROR << "Failed to begin Frame\n";
-            return;
-        }
-
-        kege::Swapchain* swapchain = graphics->getSwapchain();
-        int image_index = render( swapchain );
-        if (image_index < 0)
-        {
-            // acquireNextImage failed after attempting recreate → skip frame
-            graphics->endFrame();
-            return;
-        }
 
         graphics->endFrame();
 
@@ -83,8 +68,14 @@ namespace kege{
         // If present returned OUT_OF_DATE → flag for next frame
         if (!ok || swapchain->shouldRecreate())
         {
-            recreate( swapchain );
+            // SUBOPTIMAL_KHR is **not** an error — you can still use the swapchain
+            // but most people recreate anyway to get crisp scaling
+            if(!recreate( swapchain ))
+            {
+                return false;
+            }
         }
+        return true;
     }
 
     bool RenderLayer::recreate( kege::Swapchain* swapchain )

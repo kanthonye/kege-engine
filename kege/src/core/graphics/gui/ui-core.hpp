@@ -214,6 +214,12 @@ namespace kege::ui{
         float height = 0.f;
     };
 
+   struct alignas(4) Gap
+   {
+       uint16_t width = 0;
+       uint16_t height = 0;
+   };
+
     /**
      * Rect structure defines a rectangle with position and size.
      */
@@ -294,48 +300,14 @@ namespace kege::ui{
 
     struct alignas(8) Text // 34 bytes
     {
-        Text(const char* text, bool modified = false)
-        :   ptr( text )
-        ,   width(0.f)
-        ,   height(0.f)
-        ,   x(0.f)
-        ,   y(0.f)
-        ,   color(0xFFFFFFFF)
-        ,   size( 20 )
-        ,   align( AlignText::Left )
-        ,   modified( modified )
-        {}
-
-        Text()
-        :   ptr( nullptr )
-        ,   width(0.f)
-        ,   height(0.f)
-        ,   x(0.f)
-        ,   y(0.f)
-        ,   color(0xFFFFFFFF)
-        ,   size( 20 )
-        ,   align( AlignText::Left )
-        ,   modified( false )
-        {}
-
-        const char* ptr;   // 8 bytes
-        size_t length; // 8 bytes
-
-        struct // 8 bytes
-        {
-            float width = 0.f;
-            float height = 0.f;
-            float x = 0.f;
-            float y = 0.f;
-        };
-
-        struct // 8 bytes
-        {
-            uint32_t color;
-            uint16_t size;
-            AlignText align;
-            bool modified;
-        };
+        const char* ptr = nullptr;   // 8 bytes
+        float width = 0.f;
+        float height = 20.f;
+        float x = 0.f;
+        float y = 0.f;
+        uint32_t color = 0xFFFFFFFF;
+        uint16_t font_size = 20;
+        AlignText align = AlignText::Left;
     };
 
 
@@ -355,11 +327,11 @@ namespace kege::ui{
 
         Border      border;
 
-        Alignment   align;
+        Alignment   alignment;
         AlignText   align_text;
 
         Padding     padding;
-        Extent      gap;
+        Gap      gap;
 
         Positioning position = Positioning::Relative;
 
@@ -416,15 +388,20 @@ namespace kege::ui{
          */
         uint32_t color; // 4 byte
 
+
+        ui::Rect texel;
+
         /**
          * texr_info hold the texture information for this ui element
          */
         TexrInfo texr_info; // 2 short = 4 bytes
 
+        Gap gap;
+        
         /**
          * layer: hold the layer of this ui element
          */
-        uint16_t layer = 0;
+        int16_t layer = -1;
 
         /**
          * single_click: hold the single click trigger type
@@ -440,20 +417,60 @@ namespace kege::ui{
          * position: hold the positioning type of the widget
          */
         Positioning position = Positioning::Relative;
-        
+
         /**
          * enabled: hold the enabled state of the widget
          */
-        bool enabled = true;
+        bool inactive = false;
+
+        /**
+         * enabled: hold the enabled state of the widget
+         */
+        bool mouseover = true;
 
         /**
          * visible: hold the visible state of the widget
          */
         bool visible = true;
 
-
-        //ui::Rect offset;
+        /**
+         * clip_overflow: hold the clip overflow state of the widget
+         */
+        bool clip_overflow = false;
     };
+
+
+
+
+
+    struct Root
+    {
+        int32_t head        = 0;
+        int32_t tail        = 0;
+        int32_t count       = 0;
+
+        int32_t curr_parent = 0;
+        int32_t id = 0;
+    };
+
+    struct LayerNode
+    {
+        int32_t next        = 0;
+        int32_t prev        = 0;
+
+        /**
+         * layer: hold the layer of this ui element
+         */
+        uint32_t layer = 0;  // 4 byte
+    };
+
+    struct Layer
+    {
+        int32_t head        = 0;
+        int32_t tail        = 0;
+        int32_t count       = 0;
+    };
+
 
 
     /**
@@ -465,7 +482,8 @@ namespace kege::ui{
         /**
          * id: The unique identifier for this widget.
          */
-        ui::EID id; // 16 bytes
+        ui::Id id;
+        uint32_t index;
 
         /**
          * rect: hold the position and size of the ui element
@@ -513,15 +531,13 @@ namespace kege::ui{
          */
         TexrInfo texr_info; // 2 short = 4 bytes
 
-        /**
-         * layer: hold the layer of this ui element
-         */
-        //uint32_t version = 0;
+
+        Gap gap;
         
         /**
          * layer: hold the layer of this ui element
          */
-        uint32_t layer = 0;  // 4 byte
+        LayerNode layer;
 
         /**
          * doubly linked list pointers and parent/child relationship
@@ -572,11 +588,16 @@ namespace kege::ui{
          * position: hold the positioning type of the widget
          */
         Positioning position = Positioning::Relative;
-        
+
         /**
-         * enabled: hold the enabled state of the widget
+         * inactive: hold the inactive state of the widget
          */
-        bool enabled = true;
+        bool inactive = false;
+
+        /**
+         * enabled: hold the mouseover state of the widget
+         */
+        bool mouseover = true;
 
         /**
          * visible: hold the visible state of the widget
@@ -588,45 +609,6 @@ namespace kege::ui{
          */
         bool clip_overflow = false;
     };
-
-
-
-//
-//    // Widget contains the widget specific data that specific to a widget
-//    struct Widget
-//    {
-//        Id id;
-//        Id elem_id;
-//
-//        Color color = {};
-//        Rect rect = {};
-//        Rect offset = {};
-//
-//        Style* style = nullptr;
-//
-//        bool enabled = true;
-//        bool visible = true;
-//
-//        ClickTrigger single_click = ui::ClickTrigger::Disable;
-//        ClickTrigger double_click = ui::ClickTrigger::Disable;
-//
-//        /**
-//         * text is the xy position of a text and the width and height that text span
-//         */
-//        mutable Text text = {};
-//
-//        int16_t layer = 0;
-//        
-//        TexrID texr = {};
-//
-//        uint32_t version    = 0;
-//        int32_t parent      = 0;
-//
-//        int32_t head        = 0;
-//        int32_t tail        = 0;
-//        int32_t next        = 0;
-//        int32_t count       = 0;
-//    };
 
 
 
@@ -647,27 +629,13 @@ namespace kege::ui{
 
     struct HitRecord
     {
-        Id hot     = {};
         Id active  = {};
-        Id focus  = {};
+        Id focus   = {};
+        Id hot     = {};
 
         uint8_t  clicks     = 0;
-        bool     release    = false;
     };
 
-    struct AllocParam
-    {
-        size_t index;
-        size_t size;
-    };
-
-    struct DeferredOp
-    {
-        typedef void (*Fn)(Layout* layout, const ui::UID& id, void* data);
-        DeferredOp::Fn fn;
-        AllocParam alloc;
-        const ui::UID* id;
-    };
 }
 
 #endif /* ui_primitives_hpp */

@@ -9,54 +9,247 @@
 
 namespace kege::ui
 {
-    bool rigidbody( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
+    bool rigidbody( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
     {
-        kege::Rigidbody* body = ecs->get< kege::Rigidbody >( entity );
-        ui::TreeNode& node = tree[ body ];
-//
-//        if ( node.elements.empty() )
+        kege::Rigidbody* rigidbody = ecs->get< kege::Rigidbody >( entity );
+        uint64_t component_id = ecs->getCompId< kege::Rigidbody >( entity );
+
+        ui::Text main_label
+        {
+            .ptr = "Rigidbody",
+            .width = 64,
+            .font_size = 20,
+            .height = 15,
+            .color = 0xFFFFFFFF
+        };
+
+        gui->push({ .layer = layer, .style = &gui->_theme.card });
+        switch (gui->removableHeader(layer, component_id, main_label))
+        {
+            case 1:
+            {
+                gui->push({.layer = layer, .style = &gui->_theme.padded_list});
+                ui::Text label_friction
+                {
+                    .ptr = "Friction:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                ui::Text label_restitution
+                {
+                    .ptr = "Restitution:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                ui::Text label_linear_damping
+                {
+                    .ptr = "Linear Damping:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                ui::Text label_angular_damping
+                {
+                    .ptr = "Angular Damping:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                ui::Text label_linear_velocity
+                {
+                    .ptr = "Linear Velocity:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+                ui::Text label_angular_velocity
+                {
+                    .ptr = "Angular Velocity:",
+                    .width = 100,
+                    .font_size = 20,
+                    .height = 15,
+                    .color = 0xFFFFFFFF
+                };
+
+                gui->scrubber
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->friction),
+                    label_friction,
+                    rigidbody->friction
+                );
+
+                gui->scrubber
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->cor),
+                    label_restitution,
+                    rigidbody->cor
+                );
+
+                gui->scrubber3
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->linear.velocity),
+                    label_linear_velocity,
+                    rigidbody->linear.velocity.x,
+                    rigidbody->linear.velocity.y,
+                    rigidbody->linear.velocity.z
+                );
+
+                gui->scrubber
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->linear.damping),
+                    label_linear_damping,
+                    rigidbody->linear.damping
+                );
+
+                gui->scrubber3
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->linear.velocity),
+                    label_angular_velocity,
+                    rigidbody->angular.velocity.x,
+                    rigidbody->angular.velocity.y,
+                    rigidbody->angular.velocity.z
+                );
+
+                gui->scrubber
+                (
+                    layer,
+                    gui->getAddressAsInt(rigidbody->angular.damping),
+                    label_angular_damping,
+                    rigidbody->angular.damping
+                );
+                gui->pop();
+            }
+            break;
+
+            case 2:
+            {
+                ecs->remove< kege::Rigidbody >( entity );
+            }
+            break;
+
+            default: break;
+        }
+        gui->pop();
+
+//        gui->push({.layer = layer, .style = &gui->_theme.card});
+//        if ( gui->removableHeader(layer, component_id, main_label) )
 //        {
-//            node.elements.reserve(4);
-//            setupDroplist( layout, node, "Rigidbody" );
-//            node.children.resize(8);
-//        }
-//
-//        layout.push( node.elements[0] );
-//        {
-//            layout.push( node.elements[1] );
+//            gui->push({.layer = layer, .style = &gui->_theme.padded_list});
+//            ui::Text label_friction
 //            {
-//                layout.put( node.elements[2] );
-//            }
-//            layout.pop();
-//
-//            if ( droplistOpen( layout, node ) )
+//                .ptr = "Friction:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            ui::Text label_restitution
 //            {
-//                layout.push( node.elements[3] );
-//                {
-//                    float mass = 1.0 / body->linear.invmass;
-//                    numeric( layout, node.children[0], mass, "Mass" );
-//                    body->linear.invmass = 1.0 / mass;
+//                .ptr = "Restitution:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            ui::Text label_linear_damping
+//            {
+//                .ptr = "Linear Damping:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            ui::Text label_angular_damping
+//            {
+//                .ptr = "Angular Damping:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            ui::Text label_linear_velocity
+//            {
+//                .ptr = "Linear Velocity:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
+//            ui::Text label_angular_velocity
+//            {
+//                .ptr = "Angular Velocity:",
+//                .width = 100,
+//                .font_size = 20,
+//                .height = 15,
+//                .color = 0xFFFFFFFF
+//            };
 //
-//                    numeric( layout, node.children[1], body->friction, "Friction" );
-//                    numeric( layout, node.children[2], body->cor, "Restitution" );
-//                    numeric( layout, node.children[3], body->linear.damping, "Linear Damping" );
-//                    numeric( layout, node.children[4], body->angular.damping, "Angular Damping" );
-//                    numeric3
-//                    (
-//                        layout,
-//                        node.children[5],
-//                        body->linear.velocity.x,
-//                        body->linear.velocity.y,
-//                        body->linear.velocity.z,
-//                        "Velocity"
-//                    );
-//                    //numeric3( layout, node.children[6], body->center.x, body->center.y, body->center.z, "Position" );
-//                    //rotation( layout, node.children[7], body->orientation.x, body->orientation.y, body->orientation.z, body->orientation.w, "Orientation" );
-//                }
-//                layout.pop();
-//            }
+//            gui->scrubber
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->friction),
+//                label_friction,
+//                rigidbody->friction
+//            );
+//
+//            gui->scrubber
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->cor),
+//                label_restitution,
+//                rigidbody->cor
+//            );
+//
+//            gui->scrubber3
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->linear.velocity),
+//                label_linear_velocity,
+//                rigidbody->linear.velocity.x,
+//                rigidbody->linear.velocity.y,
+//                rigidbody->linear.velocity.z
+//            );
+//
+//            gui->scrubber
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->linear.damping),
+//                label_linear_damping,
+//                rigidbody->linear.damping
+//            );
+//
+//            gui->scrubber3
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->linear.velocity),
+//                label_angular_velocity,
+//                rigidbody->angular.velocity.x,
+//                rigidbody->angular.velocity.y,
+//                rigidbody->angular.velocity.z
+//            );
+//
+//            gui->scrubber
+//            (
+//                layer,
+//                gui->getAddressAsInt(rigidbody->angular.damping),
+//                label_angular_damping,
+//                rigidbody->angular.damping
+//            );
+//            gui->pop();
 //        }
-//        layout.pop();
-        return node.state[1];
+//        gui->pop();
+        return false;
     }
 }

@@ -41,8 +41,6 @@ namespace kege{
 
     kege::DescriptorType convertDescriptorType( const std::string& type );
 
-    kege::ShaderStageFlag convertShaderStage( const std::string& type );
-
     kege::ShaderVarType convertVertexInputType( const std::string& type );
 
     kege::Filter stringToFilter( const std::string& name );

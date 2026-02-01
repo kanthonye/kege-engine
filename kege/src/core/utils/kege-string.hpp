@@ -17,7 +17,7 @@
 #include <string>
 #include <iostream>
 
-#ifdef DEBUG
+#ifdef KEGE_DEBUG
     #define ASSERT(cond, msg) \
         do { \
             if (!(cond)) { \

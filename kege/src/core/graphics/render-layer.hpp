@@ -21,14 +21,13 @@ namespace kege{
 
         bool initialize();
         void shutdown();
-        void update();
+        bool update();
 
         RenderLayer( kege::AssetManager* am, ref::RenderGraph& rg, kege::ProjectManager* pm );
         ~RenderLayer();
 
     private:
 
-        int render(kege::Swapchain* swapchain);
         bool recreate( kege::Swapchain* swapchain );
 
         kege::ProjectManager* _project_manager;

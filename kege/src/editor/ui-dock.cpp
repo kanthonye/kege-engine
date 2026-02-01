@@ -9,285 +9,82 @@
 
 namespace kege::ui{
 
-    Dock::Dock()
-    :   parent(nullptr)
-    ,   padding{0,0,0,0}
-    {
-    }
-
-    DockSplit::DockSplit(Dock& dock, float slit_ratio, ui::AlignDir direction)
-    :   slit_ratio( slit_ratio )
-    ,   direction( direction )
-    ,   gap( 6 )
-    {
-        nodes[0].parent = &dock;
-        nodes[1].parent = &dock;
-        if (this->direction == ui::AlignDir::VERTICAL)
-        {
-            float height = dock.rect.height - (gap + dock.padding.above + dock.padding.below);
-
-            nodes[0].rect.height = height * slit_ratio;
-            nodes[0].rect.width  = dock.rect.width - (dock.padding.left + dock.padding.above);
-            nodes[0].rect.x      = dock.rect.x + dock.padding.left;
-            nodes[0].rect.y      = dock.rect.y + dock.padding.above;
-
-            nodes[1].rect.height = height - nodes[0].rect.height;
-            nodes[1].rect.width  = nodes[0].rect.width;
-            nodes[1].rect.x      = nodes[0].rect.x;
-            nodes[1].rect.y      = nodes[0].rect.y + nodes[0].rect.height + gap;
-
-            updateVerticalDragRect();
-        }
-        else
-        {
-            float width = dock.rect.width - (gap + dock.padding.left + dock.padding.right);
-
-            nodes[0].rect.width  = width * slit_ratio;
-            nodes[0].rect.height = dock.rect.height - (dock.padding.above + dock.padding.below);
-            nodes[0].rect.x      = dock.rect.x + dock.padding.left;
-            nodes[0].rect.y      = dock.rect.y + dock.padding.above;
-
-            nodes[1].rect.width  = width - nodes[0].rect.width;
-            nodes[1].rect.height = nodes[0].rect.height;
-            nodes[1].rect.x      = nodes[0].rect.x + nodes[0].rect.width + gap;
-            nodes[1].rect.y      = nodes[0].rect.y;
-
-            updateHorizontalDragRect();
-        }
-    }
-
-    void DockSplit::updateHorizontalDragRect()
-    {
-        rect.x = nodes[0].rect.x + nodes[0].rect.width;
-        rect.y = nodes[0].rect.y;
-        rect.width = nodes[1].rect.x - rect.x;
-        rect.height = nodes[0].rect.height;
-    }
-
-    void DockSplit::updateVerticalDragRect()
-    {
-        rect.y = nodes[0].rect.y + nodes[0].rect.height;
-        rect.x = nodes[0].rect.x;
-        rect.width = nodes[0].rect.width;
-        rect.height = nodes[1].rect.y - rect.y;
-    }
-
-    void DockSplit::onResizeGrandChild(ui::AlignDir align_direction, const Rect& drag_rect, Dock& dock)
-    {
-        float closest_1, closest_2, length;
-
-        if (align_direction == ui::AlignDir::VERTICAL && direction == ui::AlignDir::VERTICAL)
-        {
-            closest_1 = drag_rect.y - nodes[0].rect.y;
-            closest_2 = drag_rect.y - nodes[1].rect.y;
-            if (closest_1 < closest_2)
-            {
-                nodes[0].rect.y = dock.rect.y + dock.padding.above;
-                nodes[0].rect.height = dock.rect.height - nodes[1].rect.height - gap - dock.padding.above;
-                length = nodes[1].rect.height;
-
-                if ( nodes[0].split ) nodes[0].split->onResize(align_direction, drag_rect, nodes[0]);
-            }
-            else
-            {
-                nodes[1].rect.y = nodes[0].rect.y + gap + nodes[0].rect.height;
-                nodes[1].rect.height = dock.rect.height - nodes[0].rect.height - gap - dock.padding.below;
-                length = nodes[0].rect.height;
-
-                if ( nodes[1].split ) nodes[1].split->onResize(align_direction, drag_rect, nodes[1]);
-            }
-            slit_ratio = length / (dock.rect.height - dock.padding.above - dock.padding.below - gap);
-        }
-
-        else if (align_direction == ui::AlignDir::HORIZONTAL && direction == ui::AlignDir::HORIZONTAL)
-        {
-            closest_1 = drag_rect.x - nodes[0].rect.x;
-            closest_2 = drag_rect.x - nodes[1].rect.x;
-
-            if (closest_1 < closest_2)
-            {
-                nodes[0].rect.x = dock.rect.x + dock.padding.left;
-                nodes[0].rect.width = dock.rect.width - nodes[1].rect.width - gap - dock.padding.left;
-                length = nodes[1].rect.width;
-
-                if ( nodes[0].split ) nodes[0].split->onResize(align_direction, drag_rect, nodes[0]);
-            }
-            else
-            {
-                nodes[1].rect.x = nodes[0].rect.x + nodes[0].rect.width + gap;
-                nodes[1].rect.width = dock.rect.width - nodes[0].rect.width - gap - dock.padding.right;
-                length = nodes[0].rect.width;
-
-                if ( nodes[1].split ) nodes[1].split->onResize(align_direction, drag_rect, nodes[1]);
-            }
-            slit_ratio = length / (dock.rect.width - dock.padding.left - dock.padding.right - gap);
-        }
-
-        else
-        {
-            onResize(align_direction, drag_rect, dock);
-        }
-    }
-
-    void DockSplit::onResize(ui::AlignDir align_direction, const Rect& drag_rect, Dock& dock)
-    {
-        if (direction == ui::AlignDir::VERTICAL)
-        {
-            float height = dock.rect.height
-                         - gap
-                         - dock.padding.above
-                         - dock.padding.below;
-
-            float h0 = height * slit_ratio;
-            float h1 = height - h0;
-
-            nodes[0].rect = {
-                dock.rect.x + dock.padding.left,
-                dock.rect.y + dock.padding.above,
-                dock.rect.width - dock.padding.left - dock.padding.right,
-                h0
-            };
-
-            nodes[1].rect = {
-                nodes[0].rect.x,
-                nodes[0].rect.y + h0 + gap,
-                nodes[0].rect.width,
-                h1
-            };
-
-            updateVerticalDragRect();
-        }
-        else
-        {
-            float width = dock.rect.width
-                        - gap
-                        - dock.padding.left
-                        - dock.padding.right;
-
-            float w0 = width * slit_ratio;
-            float w1 = width - w0;
-
-            nodes[0].rect = {
-                dock.rect.x + dock.padding.left,
-                dock.rect.y + dock.padding.above,
-                w0,
-                dock.rect.height - dock.padding.above - dock.padding.below
-            };
-
-            nodes[1].rect = {
-                nodes[0].rect.x + w0 + gap,
-                nodes[0].rect.y,
-                w1,
-                nodes[0].rect.height
-            };
-
-            updateHorizontalDragRect();
-        }
-
-        if (nodes[0].split)
-        {
-            nodes[0].split->onResizeGrandChild(align_direction, drag_rect, nodes[0]);
-        }
-        if (nodes[1].split)
-        {
-            nodes[1].split->onResizeGrandChild(align_direction, drag_rect, nodes[1]);
-        }
-    }
-
-    bool DockSplit::update(GUI* gui, Dock& dock)
-    {
-        if (!gui->buttonDown())
-            drag_resize = gui->testPointVsRect(gui->pointer(), rect);
-
-        if (drag_resize)
-        {
-            if( gui->pointerDragging() )
-            {
-                float amount, available, delta_ratio;
-                if( direction == AlignDir::VERTICAL )
-                {
-                    amount = gui->deltaPointer().y;
-                    available = dock.rect.height - gap - dock.padding.above - dock.padding.below;
-                    delta_ratio = amount / available;
-                }
-                else
-                {
-                    amount = gui->deltaPointer().x;
-                    available = dock.rect.width - gap - dock.padding.left - dock.padding.right;
-                    delta_ratio = amount / available;
-                }
-                slit_ratio = clamp(slit_ratio + delta_ratio, 0.05f, 0.95f);
-
-                onResize(direction, rect, dock);
-            }
-        }
-        return drag_resize;
-    }
-}
-
-
-namespace kege::ui{
-
-    void DockManager::split(Dock& dock, ui::AlignDir dir, const std::vector< Ref< ui::Panel > >& a, const std::vector< Ref< ui::Panel > >& b)
+    DockSplit* Dock::split(ui::AlignDir dir, const std::vector< int >& a, const std::vector< int >& b)
     {
         // Can't split a non-leaf node into a different direction, without first merging
-        if (dock.split)
+        if (_split)
         {
-            return;
+            return nullptr;
         }
 
-        dock.split = new DockSplit(dock, 0.5, dir);
-        setDockPanels( dock.split->nodes[0], a );
-        setDockPanels( dock.split->nodes[1], b );
+        _split = new DockSplit(*this, 0.5, dir);
+        _split->nodes[0]._context = _context;
+        _split->nodes[1]._context = _context;
+        _split->nodes[0].setDockPanels( a );
+        _split->nodes[1].setDockPanels( b );
+        return _split.ref();
     }
 
-    void DockManager::merge(Dock& dock)
+
+    void Dock::onWindowResize(int width, int height)
     {
-        if ( dock.split )
+        if (_parent == nullptr)
         {
-            merge(dock.split->nodes[0]);
-            merge(dock.split->nodes[1]);
+            _rect.height = height;
+            _rect.width = width;
+            _split->onReshape();
+        }
+    }
+
+    void Dock::merge()
+    {
+        if ( _split )
+        {
+            _split->nodes[0].merge();
+            _split->nodes[1].merge();
             for (int c=0; c<2; ++c)
             {
-                for (int i=0; i<dock.split->nodes[c].tab.list.size(); ++i)
+                for (int i=0; i<_split->nodes[c]._tab.list.size(); ++i)
                 {
-                    dock.tab.list.push_back( dock.split->nodes[c].tab.list[i]) ;
-                    dock.tab.panels.push_back( dock.split->nodes[c].tab.panels[i] );
+                    _tab.list.push_back( _split->nodes[c]._tab.list[i]) ;
+                    _tab.panel_ids.push_back( _split->nodes[c]._tab.panel_ids[i] );
                 }
             }
-            dock.split = {};
+            _split = {};
         }
     }
 
-    void DockManager::setDockPanels(ui::Dock& node, const std::vector< Ref< ui::Panel > >& panels)
+    void Dock::setDockPanels(const std::vector< int >& panel_ids)
     {
-        node.tab.panels = panels;
-        for (int i=0; i<panels.size(); ++i)
+        _tab.panel_ids = panel_ids;
+        for (int i=0; i<panel_ids.size(); ++i)
         {
-            node.tab.list.push_back(TabElem({ .text = _gui->layout()->text(panels[i]->_name.c_str(), 20) }));
+            Ref<ui::Panel >& panel = _context->panels[ panel_ids[i] ];
+            _tab.list.push_back( TabElem({ .text = _context->gui->layout()->text( panel->_name.c_str(), 20 ) }));
         }
     }
 
-    void DockManager::addPanelToDock(ui::Dock& node, const Ref< ui::Panel >& panel)
+//    void Dock::addPanelToDock(const Ref< ui::Panel >& panel)
+//    {
+//        _tab.panel_ids.push_back( panel );
+//        _tab.list.push_back(TabElem({ .text = _context->gui->layout()->text(panel->_name.c_str(), 20) }));
+//    }
+
+    void swap(ui::Dock& a, ui::Dock& b)
     {
-        node.tab.panels.push_back( panel );
-        node.tab.list.push_back(TabElem({ .text = _gui->layout()->text(panel->_name.c_str(), 20) }));
+        Tab tab = a._tab;
+        a._tab = b._tab;
+        b._tab = tab;
     }
 
-    void DockManager::switchSpot(ui::Dock& a, ui::Dock& b)
-    {
-        Tab tab = a.tab;
-        a.tab = b.tab;
-        b.tab = tab;
-    }
-
-    void DockManager::ghostDraggingOp(ui::Layout* layout, const ui::UID& id, void* data)
+    void Dock::ghostDraggingOp(ui::Layout* layout, const ui::UID* id, void* data)
     {
         GhostParam* params = reinterpret_cast<GhostParam*>(data);
         if (!params->ghost->visible)
         {
-            Widget* target = layout->elem(*params->ghost->target);
-            Widget* ghost  = layout->elem(id);
+            const UID& elem = params->ghost->dock->_tab.list[ params->ghost->tab_selection ].uids[0];
+            Widget* target = layout->elem(elem);
+            Widget* ghost  = layout->elem(*id);
 
             params->ghost->visible = true;
             params->ghost->rect.x = target->rect.x;
@@ -295,558 +92,728 @@ namespace kege::ui{
             params->ghost->rect.width = ghost->rect.width;
             params->ghost->rect.height = ghost->rect.height;
         }
-        params->ghost->rect.x += layout->input()->deltaPosition().x;
-        params->ghost->rect.y += layout->input()->deltaPosition().y;
+        params->ghost->rect.x += layout->getPointerDelta().x;
+        params->ghost->rect.y += layout->getPointerDelta().y;
     }
 
-    void DockManager::ghostDropoffOp(ui::Layout* layout, const ui::UID& id, void* data)
+    void Dock::ghostDropoffOp(ui::Layout* layout, const ui::UID* id, void* data)
     {
         GhostDropoff* params = reinterpret_cast<GhostDropoff*>(data);
-        params->manager->handleDropOff(params->manager->_root);
+        params->dock->handleDropOff(*params->dock);
     }
 
-    void DockManager::updateTabs(ui::Dock& dock)
+    void Dock::updateTabs()
     {
-        _gui->push({.layer = 0, .style = &_styles[ PANEL ]});
+        _context->gui->push({.layer = 0, .style = &_context->style_dock});
         {
-            _gui->push
+            _context->gui->push
             ({
                 .layer = 0,
-                .uid = &dock.tab.uid,
-                .style = &_styles[ TAB_LIST ]
+                .uid = &_tab.uid,
+                .style = &_context->style_tab
             });
-            for (int i=0; i<dock.tab.list.size(); ++i)
+            for (int i=0; i<_tab.list.size(); ++i)
             {
-                _gui->push
+                TabElem& elem = _tab.list[i];
+
+                _context->gui->push
                 ({
                     .layer = 0,
-                    .style = &_styles[ TAB_ELEM ],
-                    .uid = &dock.tab.list[i].uids[0],
+                    .style = &_context->style_tab_elem,
+                    .uid = &elem.uids[0],
                     .single_click = ui::ClickTrigger::Continuous,
                     .border.corner_curves = {8,8,0,0},
                 });
-                _gui->put
+                _context->gui->put
                 ({
                     .layer = 0,
-                    .style = &_styles[ TAB_LABEL ],
-                    .uid = &dock.tab.list[i].uids[1],
-                    .text = dock.tab.list[i].text,
-                    .enabled = false,
+                    .style = &_context->style_tab_label,
+                    .uid = &elem.uids[1],
+                    .text = elem.text,
+                    .mouseover = false,
                 });
-                _gui->put
+                _context->gui->put
                 ({
                     .layer = 0,
-                    .uid = &dock.tab.list[i].uids[2],
-                    .text = _gui->layout()->text("x", 20),
+                    .uid = &elem.uids[2],
+                    .rect.height = 10,
+                    .rect.width = 10,
+                    .rect.y = 4,
+                    .color = _context->gui->mouseover( elem.uids[2] ) ? 0xEE2200FF : 0xEE220050,
                     .single_click = ui::ClickTrigger::OnRelease,
-                    .style = (!_gui->hot(dock.tab.list[i].uids[2])) ? &_styles[ CLOSE ]: &_styles[ CLOSE_HOT ],
+                    .double_click = ui::ClickTrigger::Immediate,
+                    .border.corner_curves = {8,8,8,8}
                 });
-                _gui->pop(0);
+                _context->gui->pop();
 
-                if( _gui->click( dock.tab.list[i].uids[0] ) )
+                if( _context->gui->click( elem.uids[0] ) )
                 {
-                    dock.tab.selection = i;
-                    if (!_ghost.dragging)
+                    _tab.selection = i;
+                    if (!_context->ghost.dragging && _context->gui->pointerDragging())
                     {
-                        _ghost.dragging = true;
-                        _ghost.dock = &dock;
-                        _ghost.text = dock.tab.list[i].text;
-                        _ghost.target = &dock.tab.list[i].uids[0];
+                        _context->ghost.dragging = true;
+                        _context->ghost.dock = this;
+                        _context->ghost.tab_selection = i;
                     }
                 }
             }
-            _gui->pop(0);
-            
-            dock.tab.panels[ dock.tab.selection ]->update();
+            _context->gui->pop();
+
+            _context->panels[ _tab.panel_ids[ _tab.selection ] ]->update();
         }
-        _gui->pop(0);
+        _context->gui->pop();
     }
 
-    void DockManager::update(ui::Dock& dock)
+    void Dock::updateContent()
     {
-        _gui->push
+        _context->gui->push
         ({
             .layer = 0,
-            .uid = &dock.uid,
-            .rect = dock.rect,
+            .uid = &_uid,
+            .rect = _rect,
             .position = ui::Positioning::Independent,
-            //.color = 0xFF44FF30,
-            .padding = dock.padding,
+            .color = 0xD2A84208,
+            .padding = _padding,
+            .clip_overflow = true,
         });
-        if ( dock.split )
+        if ( _split )
         {
-            if ( dock.split->update(_gui, dock) )
+            if ( _split->update(_context->gui) )
             {
-                _gui->put
+                _context->gui->layout()->putRoot
                 ({
                     .layer = 1,
-                    .rect = dock.split->rect,
-                    .color = 0xFF0000FF,
+                    .rect = _split->drag_rect,
+                    .color = 0xFFFFFF30,
                 });
             }
 
-            update(dock.split->nodes[0]);
-            update(dock.split->nodes[1]);
+            _split->nodes[0].updateContent();
+            _split->nodes[1].updateContent();
         }
-        else if( !dock.tab.panels.empty() )
+        else if( !_tab.panel_ids.empty() )
         {
-            updateTabs(dock);
+            updateTabs();
         }
-        _gui->pop(0);
+        _context->gui->pop();
+    }
+
+    void Dock::updateDragAndDrop()
+    {
+        if( _context->ghost.visible )
+        {
+            _context->gui->put
+            ({
+                .layer = 1,
+                .uid = &_uid,
+                .text = _context->ghost.dock->_tab.list[ _context->ghost.tab_selection ].text,
+                .rect.x = _context->ghost.rect.x,
+                .rect.y = _context->ghost.rect.y,
+                .border.corner_curves = {8,8,8,8},
+                .style = &_context->style_ghost,
+            });
+        }
+        if( _context->ghost.dragging )
+        {
+            if( !_context->gui->buttonDown() )
+            {
+                _context->ghost.visible = false;
+                _context->ghost.dragging = false;
+                _context->gui->pushDeferredOp< GhostDropoff >(&_uid, ghostDropoffOp, GhostDropoff{ &_context->ghost, this });
+            }
+            else if( _context->gui->pointerDragging() )
+            {
+                _context->gui->pushDeferredOp<GhostParam>(&_uid, ghostDraggingOp, GhostParam{ &_context->ghost });
+            }
+        }
     }
     
-    void DockManager::update()
+    void Dock::update()
     {
-        update(_root);
-        if( _ghost.dragging )
-        {
-            if( !_gui->buttonDown() )
-            {
-                _ghost.visible = false;
-                _ghost.dragging = false;
-                _gui->pushDeferredOp<GhostDropoff>(uid, ghostDropoffOp, GhostDropoff{ &_ghost, this });
-            }
-            else if( _gui->pointerDragging() )
-            {
-                _gui->pushDeferredOp<GhostParam>(uid, ghostDraggingOp, GhostParam{ &_ghost });
-                _gui->put
-                ({
-                    .layer = 1,
-                    .uid = &uid,
-                    .text = _ghost.text,
-                    .rect.x = _ghost.rect.x,
-                    .rect.y = _ghost.rect.y,
-                    .border.corner_curves = {8,8,8,8},
-                    .style = &_styles[ DOCK_PREVIEW ],
-                });
-            }
-        }
+        updateContent();
+        updateDragAndDrop();
     }
 
-    void DockManager::handleSiblingDropSpot(ui::Dock& node, float lr, float tb)
+    DropZone Dock::determineDropZone(Dock& target, const kege::dvec2& pointer)
     {
-//        if ( &node.parent->children->nodes[0] == _ghost.dock )
-//        {
-//            /**
-//             If the node is split horizontally then the nodes are aligned one on top, one on bottom,
-//             */
-//            if (node.parent->style.align.direction == ui::AlignDir::VERTICAL)
-//            {
-//                if (abs(tb) < abs(lr))
-//                {
-//                    node.parent->style.align.direction = AlignDir::HORIZONTAL;
-//                    if (0 < lr) // dropoff is on the RIGHT of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                        //split(node, ui::AlignDir::VERTICAL, node.panels, _ghost.dock->panels);
-//                    }
-//                }
-//                else
-//                {
-//                    if (0 < tb) // dropoff is on the Top of the node
-//                    {
-//                        // maintain the same order of alignment, no change is made
-//                        return;
-//                    }
-//                    else // dropoff is on the BOTTOM of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//            }
-//            /**
-//             If the node is split vertically then the nodes are aligned one on left, one on right,
-//             */
-//            else // if (node.parent->split_dir == SplitDirection::VERTICAL)
-//            {
-//                if (abs(tb) < abs(lr))
-//                {
-//                    if (0 < lr) // dropoff is on the RIGHT of the node
-//                    {
-//                        // maintain the same order of alignment, no change is made
-//                        return;
-//                    }
-//                    else  // dropoff is on the LEFT of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//                else
-//                {
-//                    node.parent->style.align.direction = AlignDir::VERTICAL;
-//                    if (0 > tb) // dropoff is on the Top of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//            }
-//        }
-//        else if ( &node.parent->children->nodes[1] == _ghost.dock )
-//        {
-//            /**
-//             If the node is split horizontally then the nodes are aligned one on top, one on bottom,
-//             */
-//            if (node.parent->style.align.direction == ui::AlignDir::VERTICAL)
-//            {
-//                if (abs(tb) < abs(lr))
-//                {
-//                    node.parent->style.align.direction = AlignDir::HORIZONTAL;
-//                    if (node.style.height.type == SizingType::SIZE_PERCENT)
-//                    {
-//                        node.style.height.type = SizingType::SIZE_EXTEND;
-//                    }
-//                    if (0 > lr) // dropoff is on the RIGHT of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//                else
-//                {
-//                    if (0 < tb) // dropoff is on the Top of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                    else // dropoff is on the BOTTOM of the node
-//                    {
-//                        // maintain the same order of alignment, no change is made
-//                        return;
-//                    }
-//                }
-//            }
-//            /**
-//             If the node is split vertically then the nodes are aligned one on left, one on right,
-//             */
-//            else // if (node.parent->split_dir == SplitDirection::VERTICAL)
-//            {
-//                if (abs(tb) < abs(lr))
-//                {
-//                    if (0 < lr) // dropoff is on the Right of the node
-//                    {
-//                        // maintain the same order of alignment, no change is made
-//                        return;
-//                    }
-//                    else // dropoff is on theLeft of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//                else
-//                {
-//                    node.parent->style.align.direction = AlignDir::VERTICAL;
-//                    if (0 < tb) // dropoff is on the Top of the node
-//                    {
-//                        switchSpot(node, *_ghost.dock);
-//                    }
-//                }
-//            }
-//        } Text{ Data{const char* str, int size, modified = false}* data; }
-    }
+        kege::dvec2 center;
+        center.x = target._rect.x + target._rect.width * 0.5f;
+        center.y = target._rect.y + target._rect.height * 0.5f;
 
-    bool DockManager::handleDropOff(ui::Dock& dock)
-    {
-        Widget* ui = _gui->get( dock.uid );
+        kege::dvec2 v = kege::normalize(dvec2{_context->gui->pointer().x - center.x,  center.y - _context->gui->pointer().y});
+        float tb = kege::dot(v, kege::dvec2(0.f,1.f));
+        float lr = kege::dot(v, kege::dvec2(1.f,0.f));
 
-        /**
-         test if the drop spot is the given node, if not return false, otherwise proceed
-         */
-        if (!textRect(ui->rect, _ghost.rect))
+        if (abs(lr) < abs(tb))
         {
-            return false;
-        }
-
-        /**
-         if the given node has children, one of the child nodes is the drop spot
-         */
-        if ( dock.split )
-        {
-            if( handleDropOff(dock.split->nodes[0]) ) return true;
-            if( handleDropOff(dock.split->nodes[1]) ) return true;
-            return false;
-        }
-
-        /**
-         * if the drop off spot is the same as the drag origin, then if there is more than one panel return true
-         */
-        if ( dock.uid.global == _ghost.dock->uid.global )
-        {
-            /**
-             * if tabs are greater than 1 then one of these tabs are the tab being dropped off,
-             * so need to split node with one tab in each.
-             */
-            if ( 2 <= _ghost.dock->tab.panels.size() )
+            if (0 < tb) // dropoff is on the RIGHT of the node
             {
-                kege::vec2 center;
-                center.x = dock.rect.x + dock.rect.width * 0.5f;
-                center.y = dock.rect.y + dock.rect.height * 0.5f;
-
-                kege::vec2 v = kege::normalize(kege::vec2(_gui->pointer().x,_gui->pointer().y) - center);
-                float tb = kege::dot(v, kege::vec2(0.f,1.f));
-                float lr = kege::dot(v, kege::vec2(1.f,0.f));
-
-                Ref< ui::Panel > panel = dock.tab.panels[ _ghost.dock->tab.selection ];
-                dock.tab.panels.erase(dock.tab.panels.begin() + _ghost.dock->tab.selection);
-
-                if (abs(lr) < abs(tb))
-                {
-                    if (0 < tb) // dropoff is on the RIGHT of the node
-                    {
-                        split(dock, ui::AlignDir::VERTICAL, dock.tab.panels, {panel});
-                    }
-                    else  // dropoff is on the LEFT of the node
-                    {
-                        split(dock, ui::AlignDir::VERTICAL, {panel}, dock.tab.panels);
-                    }
-                }
-                else
-                {
-                    if (0 < lr) // dropoff is on the Top of the node
-                    {
-                        split(dock, ui::AlignDir::HORIZONTAL, dock.tab.panels, {panel});
-                    }
-                    else // dropoff is on the BOTTOM of the node
-                    {
-                        split(dock, ui::AlignDir::HORIZONTAL, {panel}, dock.tab.panels);
-                    }
-                }
-
-                _ghost.dock->tab.panels.clear();
-                _ghost.dock->tab.list.clear();
-                _ghost.dock->tab.selection = 0;
-
-                dock.tab.panels.clear();
-                dock.tab.list.clear();
-                dock.tab.selection = 0.f;
+                return DropZone::TOP;
             }
-            return true;
-        }
-
-        /**
-         if the drop off spot is the tab area, then add the panel to the dropoff target tablist
-         */
-        Widget* widget_tab = _gui->get( dock.tab.uid );
-        if (textRect(widget_tab->rect, _ghost.rect))
-        {
-            /**
-             check if the drop spot already contain the panel being dropped off.
-             if it has that panel exit
-             */
-            size_t min_count = kege::min(dock.tab.panels.size(), _ghost.dock->tab.panels.size());
-            for(int i=0; i<min_count; ++i)
+            else  // dropoff is on the LEFT of the node
             {
-                if ( _ghost.dock->tab.panels[i]->getName() == dock.tab.panels[i]->getName() )
-                {
-                    return true;
-                }
-            }
-
-            /**
-             if the drop off target and the origin has the same parent merge them
-             */
-            if ( dock.parent == _ghost.dock->parent && dock.parent != nullptr && _ghost.dock->tab.panels.size() == 1 )
-            {
-                merge(*dock.parent);
-                return true;
-            }
-            /**
-             otherwise add panel to dropoff target tablist
-             */
-            dock.tab.list.push_back(TabElem({ .text = _ghost.text }));
-            dock.tab.panels.push_back( _ghost.dock->tab.panels[ _ghost.dock->tab.selection ] );
-            /**
-             remove panel from old tablist
-             */
-            _ghost.dock->tab.panels.erase( _ghost.dock->tab.panels.begin() + _ghost.dock->tab.selection );
-            _ghost.dock->tab.list.erase( _ghost.dock->tab.list.begin() + _ghost.dock->tab.selection );
-
-            /**
-             if old tablist is empty then old dock parent shold merge into one
-             */
-            if ( _ghost.dock->tab.list.empty() )
-            {
-                Dock* parent = _ghost.dock->parent;
-
-                Dock& survivor = (parent->split->nodes[0].tab.panels.empty() && !parent->split->nodes[0].split)
-                ? parent->split->nodes[1]
-                : parent->split->nodes[0];
-
-                Ref< DockSplit > split = survivor.split;
-
-                if (split)
-                {
-                    parent->split = split;
-                    parent->split->nodes[0].parent = parent;
-                    parent->split->nodes[1].parent = parent;
-                    split->onResize(split->direction, split->rect, *parent);
-                }
-                else
-                {
-                    parent->tab.panels = std::move( survivor.tab.panels );
-                    parent->tab.list = std::move( survivor.tab.list );
-                    parent->name = survivor.name;
-                    parent->split = {};
-                }
-            }
-            else
-            {
-                _ghost.dock->tab.selection = _ghost.dock->tab.selection % int(_ghost.dock->tab.list.size());
+                return DropZone::BOTTOM;
             }
         }
         else
         {
-//            kege::vec2 center;
-//            center.x = (dock->rect.x + dock->rect.width ) * 0.5f;
-//            center.y = (dock->rect.y + dock->rect.height) * 0.5f;
-//
-//            kege::vec2 v = kege::normalize(kege::vec2(_gui->pointer().x,_gui->pointer().y) - center);
-//            float tb = kege::dot(v, kege::vec2(0.f,-1.f));
-//            float lr = kege::dot(v, kege::vec2(1.f,0.f));
-//
-//            if ( node.parent != nullptr )
-//            {
-//                /**
-//                 if the node being drag is drop into its sibling the merge them into one node.
-//                 */
-//                if ( &node.parent->children->nodes[0] == _ghost.dock || &node.parent->children->nodes[1] == _ghost.dock )
-//                {
-//                    handleSiblingDropSpot( node, lr, tb );
-//                    return true;
-//                }
-//            }
-//
-////            if (abs(tb) < abs(lr))
-////            {
-////                if (0 < lr) // dropoff is on the RIGHT of the node
-////                {
-////                    split(node, ui::AlignDir::VERTICAL, node.panels, _ghost.dock->panels);
-////                }
-////                else  // dropoff is on the LEFT of the node
-////                {
-////                    split(node, ui::AlignDir::VERTICAL, _ghost.dock->panels, node.panels);
-////                }
-////            }
-////            else
-////            {
-////                if (0 < tb) // dropoff is on the Top of the node
-////                {
-////                    split(node, ui::AlignDir::HORIZONTAL, _ghost.dock->panels, node.panels);
-////                }
-////                else // dropoff is on the BOTTOM of the node
-////                {
-////                    split(node, ui::AlignDir::HORIZONTAL, node.panels, _ghost.dock->panels);
-////                }
-////            }
-////            node.panels.clear();
-////            node.tab.list.clear();
-////            node.tab.selection = 0.f;
-////
-////            _ghost.dock->panels.clear();
-////            _ghost.dock->tab.list.clear();
-////            _ghost.dock->tab.selection = 0;
-////
-////            if ( _ghost.dock->parent )
-////            {
-////                Ref< DockNode > children = node.parent->children;
-////                _ghost.dock->parent->style.align.direction = node.parent->style.align.direction;
-////                _ghost.dock->parent->children = children;
-////            }
+            if (0 < lr) // dropoff is on the Top of the node
+            {
+                return DropZone::RIGHT;
+            }
+            else // dropoff is on the BOTTOM of the node
+            {
+                return DropZone::LEFT;
+            }
         }
+    }
+
+    bool Dock::isSibling(const ui::Dock& a, const ui::Dock& b)
+    {
+        return a._parent && b._parent && a._parent == b._parent;
+    }
+
+    ui::Dock* Dock::findDropTarget(ui::Dock& dock)
+    {
+
+        if ( _context->gui->layout()->testPointVsRect(_context->gui->pointer(), dock._rect) )
+        {
+            if ( dock._split )
+            {
+                ui::Dock* target = findDropTarget(dock._split->nodes[0]);
+                if ( target == nullptr )
+                {
+                    target = findDropTarget(dock._split->nodes[1]);
+                }
+                return target;
+            }
+            return &dock;
+        }
+        return nullptr;
+    }
+
+    void Dock::resolveSiblingDropOff(ui::Dock* target)
+    {
+        DropZone drop_zone = determineDropZone( *target, _context->gui->pointer() );
+        ui::DockSplit* split = target->_parent->_split.ref();
+
+        if ( &split->nodes[0] == _context->ghost.dock )
+        {
+            if (split->direction == ui::AlignDir::VERTICAL)
+            {
+                switch (drop_zone)
+                {
+                    case DropZone::LEFT:
+                    case DropZone::RIGHT:
+                    {
+                        split->direction = AlignDir::HORIZONTAL;
+                        if (drop_zone == DropZone::RIGHT)
+                        {
+                            swap(*target, *_context->ghost.dock);
+                        }
+                        split->onReshape();
+                        break;
+                    }
+                    case DropZone::BOTTOM:
+                    {
+                        swap(*target, *_context->ghost.dock);
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            else // if (split->direction == AlignDir::HORIZONTAL)
+            {
+                switch (drop_zone)
+                {
+                    case DropZone::TOP:
+                    case DropZone::BOTTOM:
+                    {
+                        split->direction = AlignDir::VERTICAL;
+                        if (drop_zone == DropZone::BOTTOM)
+                        {
+                            swap(*target, *_context->ghost.dock);
+                        }
+                        split->onReshape();
+                        break;
+                    }
+                    case DropZone::RIGHT:
+                    {
+                        swap(*target, *_context->ghost.dock);
+                        break;
+                    }
+                    default: break;
+                }
+            }
+        }
+        else if ( &split->nodes[1] == _context->ghost.dock )
+        {
+            if (split->direction == ui::AlignDir::VERTICAL)
+            {
+                switch (drop_zone)
+                {
+                    case DropZone::LEFT:
+                    case DropZone::RIGHT:
+                    {
+                        split->direction = AlignDir::HORIZONTAL;
+                        if (drop_zone == DropZone::LEFT)
+                        {
+                            swap(*target, *_context->ghost.dock);
+                        }
+                        split->onReshape();
+                        //split->onReshape(*target);
+                        break;
+                    }
+                    case DropZone::TOP:
+                    {
+                        swap(*target, *_context->ghost.dock);
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            else // if (split->direction == AlignDir::HORIZONTAL)
+            {
+                switch (drop_zone)
+                {
+                    case DropZone::TOP:
+                    case DropZone::BOTTOM:
+                    {
+                        split->direction = AlignDir::VERTICAL;
+                        if (drop_zone == DropZone::TOP)
+                        {
+                            swap(*target, *_context->ghost.dock);
+                        }
+                        split->onReshape();
+                        break;
+                    }
+                    case DropZone::LEFT:
+                    {
+                        swap(*target, *_context->ghost.dock);
+                        break;
+                    }
+                    default: break;
+                }
+            }
+        }
+    }
+
+    void Dock::resolveSelfDropOff(ui::Dock* target)
+    {
+        if ( _context->ghost.dock->_tab.panel_ids.size() <= 1 )
+        {
+            return;
+        }
+
+        int pid = target->_tab.panel_ids[ _context->ghost.dock->_tab.selection ];
+        Ref< ui::Panel > panel = _context->panels[ pid ];
+        target->_tab.panel_ids.erase(target->_tab.panel_ids.begin() + _context->ghost.dock->_tab.selection);
+
+        DropZone drop_zone = determineDropZone( *target, _context->gui->pointer() );
+        switch (drop_zone)
+        {
+            case DropZone::TOP:    target->split(ui::AlignDir::VERTICAL,   target->_tab.panel_ids, {panel}); break;
+            case DropZone::BOTTOM: target->split(ui::AlignDir::VERTICAL,   {panel}, target->_tab.panel_ids); break;
+            case DropZone::LEFT:   target->split(ui::AlignDir::HORIZONTAL, {panel}, target->_tab.panel_ids); break;
+            case DropZone::RIGHT:  target->split(ui::AlignDir::HORIZONTAL, target->_tab.panel_ids, {panel}); break;
+            default: break;
+        }
+
+        _context->ghost.dock->_tab.panel_ids.clear();
+        _context->ghost.dock->_tab.list.clear();
+        _context->ghost.dock->_tab.selection = 0;
+
+        target->_tab.panel_ids.clear();
+        target->_tab.list.clear();
+        target->_tab.selection = 0.f;
+    }
+
+    void Dock::splitDropOffTarget(ui::Dock* target)
+    {
+        DropZone drop_zone = determineDropZone( *target, _context->gui->pointer() );
+        switch (drop_zone)
+        {
+            case DropZone::LEFT:   target->split(ui::AlignDir::HORIZONTAL, _context->ghost.dock->_tab.panel_ids, target->_tab.panel_ids); break;
+            case DropZone::RIGHT:  target->split(ui::AlignDir::HORIZONTAL, target->_tab.panel_ids, _context->ghost.dock->_tab.panel_ids); break;
+            case DropZone::TOP:    target->split(ui::AlignDir::VERTICAL,   target->_tab.panel_ids, _context->ghost.dock->_tab.panel_ids); break;
+            case DropZone::BOTTOM: target->split(ui::AlignDir::VERTICAL,   _context->ghost.dock->_tab.panel_ids, target->_tab.panel_ids); break;
+            default: break;
+        }
+
+        Dock* parent = _context->ghost.dock->_parent;
+        Dock& survivor = (_context->ghost.dock == &parent->_split->nodes[0])
+        ? parent->_split->nodes[1]
+        : parent->_split->nodes[0];
+
+        Ref< DockSplit > split = survivor._split;
+
+        if (split) // callapse
+        {
+            parent->_split = split;
+            parent->_split->nodes[0]._parent = parent;
+            parent->_split->nodes[1]._parent = parent;
+            parent->_split->owner = parent;
+            split->onReshape();
+        }
+
+        target->_tab.panel_ids.clear();
+        target->_tab.list.clear();
+        target->_tab.selection = 0.f;
+
+        _context->ghost.dock->_tab.panel_ids.clear();
+        _context->ghost.dock->_tab.list.clear();
+        _context->ghost.dock->_tab.selection = 0;
+    }
+
+    void Dock::resolveTabDropOff(ui::Dock* target)
+    {
+        /**
+         check if the drop spot already contain the panel being dropped off.
+         if it has that panel exit
+         */
+        size_t min_count = kege::min(target->_tab.panel_ids.size(), _context->ghost.dock->_tab.panel_ids.size());
+        for(int i=0; i<min_count; ++i)
+        {
+            Ref< Panel >& panel = _context->panels[ _context->ghost.dock->_tab.panel_ids[i] ];
+            if ( panel->getName() == _context->panels[ target->_tab.panel_ids[i] ]->getName() )
+            {
+                return;
+            }
+        }
+
+        /**
+         if the drop off target and the origin has the same parent merge them
+         */
+        if ( target->_parent == _context->ghost.dock->_parent && target->_parent != nullptr && _context->ghost.dock->_tab.panel_ids.size() == 1 )
+        {
+            target->_parent->merge();
+            return;
+        }
+        /**
+         otherwise add panel to dropoff target tablist
+         */
+        target->_tab.list.push_back(TabElem({ .text = _context->ghost.dock->_tab.list[ _context->ghost.tab_selection ].text }));
+        target->_tab.panel_ids.push_back( _context->ghost.dock->_tab.panel_ids[ _context->ghost.dock->_tab.selection ] );
+        /**
+         remove panel from old tablist
+         */
+        _context->ghost.dock->_tab.panel_ids.erase( _context->ghost.dock->_tab.panel_ids.begin() + _context->ghost.dock->_tab.selection );
+        _context->ghost.dock->_tab.list.erase( _context->ghost.dock->_tab.list.begin() + _context->ghost.dock->_tab.selection );
+
+        /**
+         if old tablist is empty then old dock parent shold merge into one
+         */
+        if ( _context->ghost.dock->_tab.list.empty() )
+        {
+            Dock* parent = _context->ghost.dock->_parent;
+
+            Dock& survivor = (_context->ghost.dock == &parent->_split->nodes[0])
+            ? parent->_split->nodes[1]
+            : parent->_split->nodes[0];
+
+            Ref< DockSplit > split = survivor._split;
+
+            if (split) // callapse
+            {
+                parent->_split = split;
+                parent->_split->nodes[0]._parent = parent;
+                parent->_split->nodes[1]._parent = parent;
+                parent->_split->owner = parent;
+                split->onReshape();
+            }
+            else
+            {
+                parent->_tab.panel_ids = std::move( survivor._tab.panel_ids );
+                parent->_tab.list = std::move( survivor._tab.list );
+                parent->_name = survivor._name;
+                parent->_split = {};
+            }
+        }
+        else
+        {
+            _context->ghost.dock->_tab.selection = _context->ghost.dock->_tab.selection % int(_context->ghost.dock->_tab.list.size());
+        }
+    }
+
+    bool Dock::handleDropOff(ui::Dock& dock)
+    {
+        ui::Dock* target = findDropTarget( dock );
+        if ( target == nullptr ) {
+            return false;
+        }
+
+        if ( target == _context->ghost.dock )
+        {
+            resolveSelfDropOff(target);
+            return true;
+        }
+
+        const Rect& tab_area = _context->gui->get( target->_tab.uid )->rect;
+        if ( _context->gui->layout()->testPointVsRect(_context->gui->pointer(), tab_area) )
+        {
+            resolveTabDropOff( target );
+            return true;
+        }
+
+        if ( isSibling( *target, *_context->ghost.dock ) )
+        {
+            resolveSiblingDropOff( target );
+            return true;
+        }
+
+        splitDropOffTarget(target);
         return true;
     }
 
-    bool DockManager::textRect(const Rect& m, const Rect& n)
+    Dock::Dock(ui::DockContext* context, int width, int height)
+    :   _context( context )
     {
-        return
-        (
-            m.x < n.x + n.width &&  // rect1 left edge is left of rect2 right edge
-            m.x + m.width > n.x &&  // rect1 right edge is right of rect2 left edge
-            m.y < n.y + n.height && // rect1 top edge is above rect2 bottom edge
-            m.y + m.height > n.y    // rect1 bottom edge is below rect2 top edge
-        );
+        _padding = {6,6,6,6};
+        _parent = nullptr;
+        _rect.height = height;
+        _rect.width = width;
+        _rect.x = 0.f;
+        _rect.y = 0.f;
     }
 
-    ui::Dock& DockManager::getRoot()
+    Dock::Dock()
+    :   _parent(nullptr)
+    ,   _padding{0,0,0,0}
+    {}
+
+    Dock::~Dock()
     {
-        return _root;
+        _split.clear();
+    }
+}
+
+
+
+
+
+
+
+
+namespace kege::ui{
+
+    DockSplit::DockSplit(Dock& dock, float slit_ratio, ui::AlignDir direction)
+    :   slit_ratio( slit_ratio )
+    ,   direction( direction )
+    ,   gap( 6 )
+    ,   owner(&dock)
+    {
+        nodes[0]._parent = &dock;
+        nodes[1]._parent = &dock;
+        onReshape();
     }
 
-    DockManager::DockManager(kege::GUI* gui, int width, int height)
-    :   _gui( gui )
+    void DockSplit::updateHorizontalDragRect()
     {
-        _root.padding = {10,10,10,10};
-        _root.parent = nullptr;
-        _root.rect.height = height;
-        _root.rect.width = width;
-        _root.rect.x = 0.f;
-        _root.rect.y = 0.f;
-        _root.name = "root";
+        drag_rect.x = nodes[0]._rect.x + nodes[0]._rect.width;
+        drag_rect.y = nodes[0]._rect.y;
+        drag_rect.width = nodes[1]._rect.x - drag_rect.x;
+        drag_rect.height = nodes[0]._rect.height;
+    }
 
-        _styles[PANEL].width = ui::extend();
-        _styles[PANEL].height = ui::extend();
-        _styles[PANEL].padding = {};
-        _styles[PANEL].background = ui::Background(0x0b090fFF);
-        _styles[PANEL].align.direction = ui::AlignDir::VERTICAL;
-        _styles[PANEL].align.flow = {ui::AlignDirX::WTE, ui::AlignDirY::NTS};
-        _styles[PANEL].align.origin = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP};
-        _styles[PANEL].align.content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP};
+    void DockSplit::updateVerticalDragRect()
+    {
+        drag_rect.y = nodes[0]._rect.y + nodes[0]._rect.height;
+        drag_rect.x = nodes[0]._rect.x;
+        drag_rect.width = nodes[0]._rect.width;
+        drag_rect.height = nodes[1]._rect.y - drag_rect.y;
+    }
 
-        _styles[TAB_LIST] = kege::ui::Style{
-            .background = ui::Background(0x0B090F00),
-            .height = ui::flexible(),
-            .width = ui::extend(),
-            .gap = {4,0},
-            .align =
+    void DockSplit::onReshape()
+    {
+        if (this->direction == ui::AlignDir::VERTICAL)
+        {
+            float height = owner->_rect.height - (gap + owner->_padding.above + owner->_padding.below);
+
+            nodes[0]._rect.height = height * slit_ratio;
+            nodes[0]._rect.width  = owner->_rect.width - (owner->_padding.left + owner->_padding.above);
+            nodes[0]._rect.x      = owner->_rect.x + owner->_padding.left;
+            nodes[0]._rect.y      = owner->_rect.y + owner->_padding.above;
+
+            nodes[1]._rect.height = height - nodes[0]._rect.height;
+            nodes[1]._rect.width  = nodes[0]._rect.width;
+            nodes[1]._rect.x      = nodes[0]._rect.x;
+            nodes[1]._rect.y      = nodes[0]._rect.y + nodes[0]._rect.height + gap;
+
+            updateVerticalDragRect();
+        }
+        else
+        {
+            float width = owner->_rect.width - (gap + owner->_padding.left + owner->_padding.right);
+
+            nodes[0]._rect.width  = width * slit_ratio;
+            nodes[0]._rect.height = owner->_rect.height - (owner->_padding.above + owner->_padding.below);
+            nodes[0]._rect.x      = owner->_rect.x + owner->_padding.left;
+            nodes[0]._rect.y      = owner->_rect.y + owner->_padding.above;
+
+            nodes[1]._rect.width  = width - nodes[0]._rect.width;
+            nodes[1]._rect.height = nodes[0]._rect.height;
+            nodes[1]._rect.x      = nodes[0]._rect.x + nodes[0]._rect.width + gap;
+            nodes[1]._rect.y      = nodes[0]._rect.y;
+
+            updateHorizontalDragRect();
+        }
+        if ( nodes[0]._split ) nodes[0]._split->onReshape();
+        if ( nodes[1]._split ) nodes[1]._split->onReshape();
+    }
+
+    void DockSplit::onResizeGrandChild(ui::AlignDir align_direction, const Rect& drag_rect_resizer)
+    {
+        float closest_1, closest_2, length;
+
+        if (align_direction == ui::AlignDir::VERTICAL && direction == ui::AlignDir::VERTICAL)
+        {
+            closest_1 = drag_rect_resizer.y - nodes[0]._rect.y;
+            closest_2 = drag_rect_resizer.y - nodes[1]._rect.y;
+            if (closest_1 < closest_2)
             {
-                .flow = {ui::AlignDirX::WTE, ui::AlignDirY::NTS},
-                .origin = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
-                .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
-                .direction = ui::AlignDir::HORIZONTAL
-            }
-        };
-        _styles[ TAB_ELEM ] = kege::ui::Style{
-            .height = ui::flexible(),
-            .width = ui::flexible(),
-            .background = ui::Background(0x171420FF),
-            .align_text =  ui::AlignText::Center,
-            .padding = {10,4,4,4},
-            .gap = {20,0}
-        };
-        _styles[ TAB_LABEL ] = kege::ui::Style{
-            .height = ui::fixed(20),
-            .width = ui::flexible(),
-            .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Left,
-            .text_color = 0xBBA0FFFF,
-            .font_size = 20,
-        };
-        _styles[ CLOSE ] = kege::ui::Style{
-            .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Center,
-            .text_color = 0xBBA0FFFF,
-            .height = ui::fixed(18),
-            .width = ui::fixed(18),
-            .font_size = 20,
-            .border.corner_curves = {2,2,2,2},
-        };
-        _styles[ CLOSE_HOT ] = kege::ui::Style{
-            .background = ui::Background(0xFFFFFF20),
-            .align_text = ui::AlignText::Center,
-            .text_color = 0xBBA0FFFF,
-            .height = ui::fixed(18),
-            .width = ui::fixed(18),
-            .font_size = 20,
-            .border.corner_curves = {4,4,4,4},
-        };
+                nodes[0]._rect.y = owner->_rect.y + owner->_padding.above;
+                nodes[0]._rect.height = owner->_rect.height - nodes[1]._rect.height - gap - owner->_padding.above;
+                length = nodes[1]._rect.height;
 
-        _styles[ DOCK_PREVIEW ] = kege::ui::Style{
-            .background = ui::Background(0xFFFFFF20),
-            .align_text =  ui::AlignText::Center,
-            .position = ui::Positioning::Absolute,
-            .text_color = 0xBBA0FFFF,
-            .height = ui::fixed(40),
-            .width = ui::fixed(100),
-            .font_size = 20,
-            .border.corner_curves = {8,8,8,8},
-        };
+                if ( nodes[0]._split ) nodes[0]._split->onResize(align_direction, drag_rect_resizer);
+            }
+            else
+            {
+                nodes[1]._rect.y = nodes[0]._rect.y + gap + nodes[0]._rect.height;
+                nodes[1]._rect.height = owner->_rect.height - nodes[0]._rect.height - gap - owner->_padding.below;
+                length = nodes[0]._rect.height;
+
+                if ( nodes[1]._split ) nodes[1]._split->onResize(align_direction, drag_rect_resizer);
+            }
+            slit_ratio = length / (owner->_rect.height - owner->_padding.above - owner->_padding.below - gap);
+        }
+
+        else if (align_direction == ui::AlignDir::HORIZONTAL && direction == ui::AlignDir::HORIZONTAL)
+        {
+            closest_1 = drag_rect_resizer.x - nodes[0]._rect.x;
+            closest_2 = drag_rect_resizer.x - nodes[1]._rect.x;
+
+            if (closest_1 < closest_2)
+            {
+                nodes[0]._rect.x = owner->_rect.x + owner->_padding.left;
+                nodes[0]._rect.width = owner->_rect.width - nodes[1]._rect.width - gap - owner->_padding.left;
+                length = nodes[1]._rect.width;
+
+                if ( nodes[0]._split ) nodes[0]._split->onResize(align_direction, drag_rect_resizer);
+            }
+            else
+            {
+                nodes[1]._rect.x = nodes[0]._rect.x + nodes[0]._rect.width + gap;
+                nodes[1]._rect.width = owner->_rect.width - nodes[0]._rect.width - gap - owner->_padding.right;
+                length = nodes[0]._rect.width;
+
+                if ( nodes[1]._split ) nodes[1]._split->onResize(align_direction, drag_rect_resizer);
+            }
+            slit_ratio = length / (owner->_rect.width - owner->_padding.left - owner->_padding.right - gap);
+        }
+
+        else
+        {
+            onResize(align_direction, drag_rect_resizer);
+        }
     }
 
+    void DockSplit::onResize(ui::AlignDir align_direction, const Rect& drag_rect)
+    {
+        if (direction == ui::AlignDir::VERTICAL)
+        {
+            float height = owner->_rect.height
+                         - gap
+                         - owner->_padding.above
+                         - owner->_padding.below;
+
+            float h0 = height * slit_ratio;
+            float h1 = height - h0;
+
+            nodes[0]._rect = {
+                owner->_rect.x + owner->_padding.left,
+                owner->_rect.y + owner->_padding.above,
+                owner->_rect.width - owner->_padding.left - owner->_padding.right,
+                h0
+            };
+
+            nodes[1]._rect = {
+                nodes[0]._rect.x,
+                nodes[0]._rect.y + h0 + gap,
+                nodes[0]._rect.width,
+                h1
+            };
+
+            updateVerticalDragRect();
+        }
+        else
+        {
+            float width = owner->_rect.width
+                        - gap
+                        - owner->_padding.left
+                        - owner->_padding.right;
+
+            float w0 = width * slit_ratio;
+            float w1 = width - w0;
+
+            nodes[0]._rect = {
+                owner->_rect.x + owner->_padding.left,
+                owner->_rect.y + owner->_padding.above,
+                w0,
+                owner->_rect.height - owner->_padding.above - owner->_padding.below
+            };
+
+            nodes[1]._rect = {
+                nodes[0]._rect.x + w0 + gap,
+                nodes[0]._rect.y,
+                w1,
+                nodes[0]._rect.height
+            };
+
+            updateHorizontalDragRect();
+        }
+
+        if (nodes[0]._split)
+        {
+            nodes[0]._split->onResizeGrandChild(align_direction, drag_rect);
+        }
+        if (nodes[1]._split)
+        {
+            nodes[1]._split->onResizeGrandChild(align_direction, drag_rect);
+        }
+    }
+
+    bool DockSplit::update(GUI* gui)
+    {
+        if (!gui->buttonDown())
+            drag_resize = gui->testPointVsRect(gui->pointer(), drag_rect);
+
+        else if (drag_resize)
+        {
+            if( gui->pointerDragging() )
+            {
+                float amount, available, delta_ratio;
+                if( direction == AlignDir::VERTICAL )
+                {
+                    amount = gui->deltaPointer().y;
+                    available = owner->_rect.height - gap - owner->_padding.above - owner->_padding.below;
+                    delta_ratio = amount / available;
+                }
+                else
+                {
+                    amount = gui->deltaPointer().x;
+                    available = owner->_rect.width - gap - owner->_padding.left - owner->_padding.right;
+                    delta_ratio = amount / available;
+                }
+                slit_ratio = clamp(slit_ratio + delta_ratio, 0.05f, 0.95f);
+
+                onResize(direction, drag_rect);
+            }
+        }
+        return drag_resize;
+    }
+
+    DockSplit::~DockSplit()
+    {
+    }
 }

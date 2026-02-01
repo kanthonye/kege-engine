@@ -54,7 +54,7 @@ namespace kege::ui{
         Extent max;
     };
 
-    Boundary computeInnerBoundaries( Layout& layout, uint32_t pid, const Alignment& alignment, const Extent& gap, const Rect& outer_boundary )
+    Boundary computeInnerBoundaries( Layout& layout, uint32_t pid, const Alignment& alignment, const Gap& gap, const Rect& outer_boundary )
     {
         Boundary boundary;
         boundary.max = {};
@@ -135,11 +135,9 @@ namespace kege::ui{
     {
         const Widget* p = layout[ pid ];
 
-        Extent gap = (p->style != nullptr)? p->style->gap : Extent{};
-        const Padding& padding = (p->style != nullptr) ? p->style->padding : p->padding;
-        Boundary boundaries = computeInnerBoundaries( layout, pid, alignment, gap, p->rect );
+        Boundary boundaries = computeInnerBoundaries( layout, pid, alignment, p->gap, p->rect );
 
-        vec2 min = calcPos( alignment, padding, p->rect, boundaries.max);
+        vec2 min = calcPos( alignment, p->padding, p->rect, boundaries.max);
         vec2 start = calcPos( alignment, min, boundaries.max );
         vec2 pos = start;
 
@@ -193,7 +191,7 @@ namespace kege::ui{
                     }
                     e->rect.x += pos.x;// + e->offset.x;
                     e->rect.y += pos.y;// + e->offset.y;
-                    pos.y += e->rect.height + gap.height;
+                    pos.y += e->rect.height + p->gap.height;
                 }
                 else //p->style->align_y == AlignDirY::SouthToNorth
                 {
@@ -202,13 +200,13 @@ namespace kege::ui{
                     {
                         if (alignment.flow.x == AlignDirX::ETW)
                         {
-                            pos.x -= rect->width + gap.width;
+                            pos.x -= rect->width + p->gap.width;
                         }
                         else
                         {
-                            pos.x += rect->width + gap.width;
+                            pos.x += rect->width + p->gap.width;
                         }
-                        pos.y = start.y - e->rect.height - gap.height;
+                        pos.y = start.y - e->rect.height - p->gap.height;
 
                         if (count + 1 < boundaries.rects.size())
                         {
@@ -218,7 +216,7 @@ namespace kege::ui{
                     }
                     e->rect.x += pos.x;// + e->offset.x;
                     e->rect.y += pos.y;// + e->offset.y;
-                    pos.y -= gap.height;
+                    pos.y -= p->gap.height;
                 }
             }
         }
@@ -228,11 +226,9 @@ namespace kege::ui{
     {
         const Widget* p = layout[ pid ];
 
-        Extent gap = (p->style != nullptr)? p->style->gap : Extent{};
-        const Padding& padding = (p->style != nullptr) ? p->style->padding : p->padding;
-        Boundary boundaries = computeInnerBoundaries( layout, pid, alignment, gap, p->rect );
+        Boundary boundaries = computeInnerBoundaries( layout, pid, alignment, p->gap, p->rect );
 
-        vec2 min = calcPos( alignment, padding, p->rect, boundaries.max);
+        vec2 min = calcPos( alignment, p->padding, p->rect, boundaries.max);
         vec2 start = calcPos( alignment, min, boundaries.max );
         vec2 pos = start;
 
@@ -270,11 +266,11 @@ namespace kege::ui{
                     {
                         if (alignment.flow.y == AlignDirY::STN)
                         {
-                            pos.y -= rect->height + gap.height;
+                            pos.y -= rect->height + p->gap.height;
                         }
                         else
                         {
-                            pos.y += rect->height + gap.height;
+                            pos.y += rect->height + p->gap.height;
                         }
                         pos.x = start.x;
 
@@ -286,7 +282,7 @@ namespace kege::ui{
                     }
                     e->rect.x += pos.x;// + e->offset.x;
                     e->rect.y += pos.y;// + e->offset.y;
-                    pos.x += e->rect.width + gap.width;
+                    pos.x += e->rect.width + p->gap.width;
                 }
                 else //p->style->align_y == AlignDirY::SouthToNorth
                 {
@@ -311,16 +307,16 @@ namespace kege::ui{
                     }
                     e->rect.x += pos.x;// + e->offset.x;
                     e->rect.y += pos.y;// + e->offset.y;
-                    pos.x -= gap.width;
+                    pos.x -= p->gap.width;
                 }
             }
         }
     }
 
-    void alignChildren( Layout& layout, uint32_t pid )
+    void Aligner::align( Layout& layout, uint32_t pid )
     {
         Widget* p = layout[ pid ];
-        Alignment alignment = getAlignment(p);
+        Alignment alignment = p->alignment;
 
         switch ( alignment.direction )
         {
@@ -342,36 +338,11 @@ namespace kege::ui{
 
         for (uint32_t eid = layout.head( pid ); eid != 0 ; eid = layout.next( eid ) )
         {
-            alignChildren( layout, eid );
-        }
-    }
-
-    void Aligner::align( Layout& layout, uint32_t pid )
-    {
-        Widget* p = layout[ pid ];
-        Alignment alignment = getAlignment(p);
-
-        if( p->style != nullptr )
-        {
-            switch ( p->style->align.direction )
+            if (layout[eid]->count != 0)
             {
-                case AlignDir::HORIZONTAL:
-                {
-                    alignHorizontally( layout, pid, alignment );
-                    break;
-                }
-                case AlignDir::VERTICAL:
-                {
-                    alignVertically( layout, pid, alignment );
-                    break;
-                }
-                default:
-                {
-                    break;
-                }
+                align( layout, eid );
             }
         }
-        alignChildren( layout, pid );
     }
 
 }

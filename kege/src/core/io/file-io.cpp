@@ -13,7 +13,7 @@
 
 namespace kege{
 
-    bool loadTextSourse( std::vector< char >& source, const char* filename )
+    bool loadTextFile( std::vector< char >& source, const char* filename )
     {
         FILE* file = fopen( filename, "rb" );
         if ( file )

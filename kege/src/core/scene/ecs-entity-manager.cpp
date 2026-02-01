@@ -19,12 +19,14 @@ namespace kege::ecs{
 
     void EntityManager::destroy( const Entity& entity )
     {
+        if ( entity.id == 0 ) return;
+
         for (ecs::Entity child = begin( entity ); valid(child); child = next( entity ) )
         {
             destroy( child );
         }
         
-        if ( _freed.head >= INVALID_INDEX_U32 )
+        if ( _freed.count == 0 )
         {
             _freed.tail = _freed.head = entity.index;
         }
@@ -55,12 +57,12 @@ namespace kege::ecs{
         EntityEntry* entry;
         if ( _freed.count != 0 )
         {
-            index = _freed.head;
-            entry = &_entities[ index ];
             _freed.count -= 1;
-
+            index = _freed.head;
             _freed.head = _entities[ _freed.head ].next;
-            if ( _freed.head >= _freed.count ) _freed.tail = INVALID_INDEX_U32;
+            if ( _freed.count == 0 ) _freed.head = _freed.tail = 0;
+
+            entry = &_entities[ index ];
         }
         else
         {
@@ -133,9 +135,9 @@ namespace kege::ecs{
             c = add< ecs::Child >( child );
         }
 
-        c->prev.index = INVALID_INDEX_U32;
-        c->next.index = INVALID_INDEX_U32;
         c->parent = parent;
+        c->prev = {};
+        c->next = {};
 
         if ( p->count == 0 )
         {
@@ -151,51 +153,42 @@ namespace kege::ecs{
         p->count += 1;
     }
 
-    void EntityManager::detach(ecs::Entity& child, ecs::Parent* p, ecs::Child* c)
+    void EntityManager::detach(ecs::Entity& entity, ecs::Parent& parent, ecs::Child& child)
     {
-        if( p == nullptr || c == nullptr )
+        if ( parent.head.id == entity.id )
         {
-            return;
+            ecs::Child* head = get< ecs::Child >( parent.head );
+            if ( valid( head->next ) )
+            {
+                parent.head = head->next;
+                get< ecs::Child >( head->next )->prev.id = 0;
+            }
+            else parent.head.id = parent.tail.id = 0;
         }
-
-        if ( p->head.version == child.version )
+        else if ( parent.tail.id == entity.id )
         {
-            if ( p->head.index == child.index )
+            ecs::Child* tail = get< ecs::Child >( parent.tail );
+            if ( valid( tail->prev ) )
             {
-                ecs::Child* c = get< ecs::Child >( p->head );
-                p->head = c->next;
-                if ( valid( p->head ) )
-                {
-                    get< ecs::Child >( p->head )->prev.index = INVALID_INDEX_U32;
-                }
-                else p->tail.index = INVALID_INDEX_U32;
+                parent.tail = tail->prev;
+                get< ecs::Child >( tail->prev )->next.id = 0;
             }
-            else if ( p->tail.index == child.index )
-            {
-                ecs::Child* c = get< ecs::Child >( p->tail );
-                p->tail = c->prev;
-                if ( valid( p->tail ) )
-                {
-                    get< ecs::Child >( p->tail )->next.index = INVALID_INDEX_U32;
-                }
-                else p->head.index = INVALID_INDEX_U32;
-            }
-            else
-            {
-
-                ecs::Child* c = get< ecs::Child >( child );
-                ecs::Child* p = get< ecs::Child >( c->prev );
-                ecs::Child* n = get< ecs::Child >( c->next );
-                p->next = c->next;
-                n->prev = c->prev;
-            }
-            p->count -= 1;
+            else parent.tail.id = parent.head.id = 0;
         }
+        else
+        {
+
+            ecs::Child* p = get< ecs::Child >( child.prev );
+            ecs::Child* n = get< ecs::Child >( child.next );
+            p->next = child.next;
+            n->prev = child.prev;
+        }
+        parent.count -= 1;
     }
 
-    void EntityManager::detach(ecs::Entity& child)
+    void EntityManager::detach(ecs::Entity& entity)
     {
-        ecs::Child* c = get< ecs::Child >( child );
+        ecs::Child* c = get< ecs::Child >( entity );
         if( c == nullptr )
         {
             return;
@@ -205,7 +198,8 @@ namespace kege::ecs{
         {
             return;
         }
-        detach( child, p, c );
+        if ( p->head.version == entity.version )
+            detach( entity, *p, *c );
     }
 
     ecs::Entity EntityManager::getParent( const ecs::Entity& entity )const

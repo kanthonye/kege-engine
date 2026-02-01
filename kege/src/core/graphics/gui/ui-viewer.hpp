@@ -66,6 +66,9 @@ namespace kege::ui{
     {
     public:
 
+        void onWindowFrameBufferResize(int width, int height);
+        void onWindowResize(int width, int height);
+
         UIDrawInstance& nextInstance();
 
         void push( const ui::UIDrawInstance& instance );
@@ -183,7 +186,8 @@ namespace kege::ui{
         kege::Graphics* _graphics;
 
         PushConstantBlock _push_constant;
-        Extent2D _fbo_size;
+        ui::Extent _fbo_size;
+        ui::Extent _window_size;
 
         kege::ref::ShaderData _shader_data;
         kege::ref::Mesh _meshs[2];
@@ -191,7 +195,6 @@ namespace kege::ui{
         kege::BufferBindings _buffer_bindings[2];
         ui::Rect _clip_rect;
 
-        const int _max_render_instances;
         uint64_t _pipeline;
 
         uint32_t _curr_buffer_index;

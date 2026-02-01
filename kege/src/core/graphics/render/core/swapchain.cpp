@@ -6,3 +6,22 @@
 //
 
 #include "swapchain.hpp"
+
+namespace kege{
+
+//    void Swapchain::operator()(const kege::WindowSizeEvent& event)
+//    {
+//        _needs_recreation = true;
+//    }
+//
+//    Swapchain:: ~Swapchain()
+//    {
+//        kege::Communication::remove<const kege::WindowSizeEvent&, Swapchain>(this);
+//    }
+//
+//    Swapchain::Swapchain()
+//    {
+//        kege::Communication::add<const kege::WindowSizeEvent&, Swapchain>(this);
+//    }
+
+}

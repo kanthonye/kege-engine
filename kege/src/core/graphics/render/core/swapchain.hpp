@@ -9,6 +9,7 @@
 #define kege_swapchain_hpp
 
 #include "image.hpp"
+#include "../window/glfw-window.hpp"
 
 namespace kege{
 
@@ -157,7 +158,11 @@ namespace kege{
         virtual const vk::Swapchain* vk()const{ return nullptr; }
         virtual vk::Swapchain* vk(){ return nullptr; }
 
+
+        //void operator()(const kege::WindowSizeEvent& event);
+
         virtual ~Swapchain(){}
+        //Swapchain();
 
     protected:
 

@@ -12,6 +12,7 @@ namespace kege{
 
     ref::ShaderPipeline ShaderPipelineLoader::load( const std::string& filename )
     {
+        // retrieve Graphics before loading
         if (_graphics == nullptr)
         {
             CallbackRequest< kege::Graphics > request(this, &ShaderPipelineLoader::operator() );
@@ -23,20 +24,34 @@ namespace kege{
             }
         }
         
-        Json shader_pipeline_library = JsonParser::load( filename.data() );
-        if ( !shader_pipeline_library )
+        kege::LibraryContext context;
+        if ( !loadLibraryContext(context, filename) )
         {
-            kege::Log::error << "FILE_LOAD_FAILED -> " << filename << Log::nl;
+            kege::Log::error << "LOAD_FAILED -> loadLibraryContext(" << filename <<")" << Log::nl;
             return {};
         }
 
-        std::filesystem::path path = filename;
-        
-        glsl::LibraryContext context;
-        if( parseShaderPipelineLib( shader_pipeline_library, path.parent_path(), _graphics, &context ) )
-        {
-            return createShaderPipeline( _graphics, context, 0 );
-        }
+        std::vector< kege::ref::ShaderStructBlock > shader_struct_blocks;
+        ref::ShaderPipeline pipeline = createShaderPipeline
+        (
+            _graphics, shader_struct_blocks, context, 0
+        );
+        return pipeline;
+//
+//        Json shader_pipeline_library = JsonParser::load( filename.data() );
+//        if ( !shader_pipeline_library )
+//        {
+//            kege::Log::error << "FILE_LOAD_FAILED -> " << filename << Log::nl;
+//            return {};
+//        }
+//
+//        std::filesystem::path path = filename;
+//        
+//        glsl::LibraryContext context;
+//        if( parseShaderPipelineLib( shader_pipeline_library, path.parent_path(), _graphics, &context ) )
+//        {
+//            return createShaderPipeline( _graphics, context, 0 );
+//        }
         return {};
     }
 

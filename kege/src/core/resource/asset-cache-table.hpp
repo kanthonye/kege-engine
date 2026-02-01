@@ -44,6 +44,26 @@ namespace kege{
 
 namespace kege{
 
+    template< typename Item > class AssetCacheTable;
+
+    template< typename Asset > class AssetLibrary : public kege::RefCounter
+    {
+    public:
+
+        void operator()(kege::AssetCacheTable<Asset>* manager){ _manager = manager; }
+        virtual bool load( const std::string& filename ) = 0;
+        virtual Asset* find( uint32_t guid ) = 0;
+        virtual ~ AssetLibrary(){}
+
+    protected:
+
+        kege::AssetCacheTable<Asset>* _manager;
+    };
+}
+
+
+namespace kege{
+
     /**
      * @brief Template class for managing resources of a specific type.
      *
@@ -62,6 +82,11 @@ namespace kege{
             std::string name;
             Item item;
         };
+
+        void setLibrary( Ref< AssetLibrary< Item > > library );
+        bool loadLibrary( const std::string& filename );
+        const Item* getByGUID( uint64_t guid )const;
+        Item* getByGUID( uint64_t guid );
 
         uint64_t add( const std::string& name, Item item );
         uint64_t getId( const std::string& name )const;
@@ -91,6 +116,7 @@ namespace kege{
 
     private:
 
+        Ref< AssetLibrary< Item > > _library;
         AssetCache< Asset > _items;
         static uint32_t _type;
         friend AssetManager;
@@ -102,6 +128,29 @@ namespace kege{
 namespace kege{
 
     template< typename Item > uint32_t AssetCacheTable< Item >::_type = AssetTable::getType();
+
+    template< typename Item > bool AssetCacheTable< Item >::loadLibrary( const std::string& filename )
+    {
+        return _library->load( filename );
+    }
+    
+    template< typename Item > void AssetCacheTable< Item >::setLibrary( Ref< AssetLibrary< Item > > library )
+    {
+        _library = library;
+        _library->operator()( this );
+    }
+
+    template< typename Item > const Item* AssetCacheTable< Item >::getByGUID( uint64_t guid )const
+    {
+        if( !_library ) return nullptr;
+        return _library->find( guid );
+    }
+
+    template< typename Item > Item* AssetCacheTable< Item >::getByGUID( uint64_t guid )
+    {
+        if( !_library ) return nullptr;
+        return _library->find( guid );
+    }
 
     template< typename Item > uint64_t AssetCacheTable< Item >::add( const std::string& name, Item item )
     {

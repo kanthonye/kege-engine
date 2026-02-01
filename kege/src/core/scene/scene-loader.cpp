@@ -52,7 +52,7 @@ namespace kege{
         return entity;
     }
 
-    kege::Ref< kege::Scene > SceneLoader::load( kege::ECS& ecs, const std::string& filename )
+    kege::Ref< kege::Scene > SceneLoader::load( kege::ECS& ecs, kege::RenderGraph* rg, kege::AssetManager* am, const std::string& filename )
     {
         kege::Json json = kege::JsonParser::load( filename.data() );
         if ( !json )
@@ -61,7 +61,7 @@ namespace kege{
             return {};
         }
 
-        kege::Ref< kege::Scene > scene = new kege::Scene( "", *ecs.getEntityManager() );
+        kege::Ref< kege::Scene > scene = new kege::Scene( "", *ecs.getEntityManager(), am, rg );
 
         Params params;
 //        params.scene = scene.ref();

@@ -7,6 +7,7 @@
 
 #include "editor-layer.hpp"
 #include "render-graph.hpp"
+#include "shader-library.hpp"
 #include "bench.h"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -27,60 +28,17 @@ double bench_repeat(const char *name, size_t iterations, std::function<void()> f
 
 namespace kege{
 
-    float v[5] = {0,0.2,0.2,0,0};
-    ui::UID id;
-    ui::UID slider[2];
-    ui::UID slider1[2];
-    ui::UID slider2[2];
-    ui::UID scrubber[2];
-    ui::UID numeric[3];
-    ui::UID tex[2];
-    kege::string text;
-    int selection = -1;
-    bool state = false;
-    int mode[5];
-    char num[32];
-    ui::Style style2 = {
-        .background = ui::Background(0xFFFFFF20),
-        .height = ui::fixed(200),
-        .width = ui::percent(25),
-    };
-    ui::Style style = {
-        .background = ui::Background(0xFFFFFF20),
-        .height = ui::fixed(200),
-        .width = ui::fixed(200),
-    };
-    ui::Style style_main = kege::ui::Style{
-        .background = ui::Background(0x220022FF),
-        .align_text =  ui::AlignText::Right,
-        .height = ui::flexible(),
-        .width = ui::extend(),
-        .padding = {100,100,100,100},
-        .font_size = 20,
-        .gap = {4,4},
-        .align =
-        {
-            .flow.x = ui::AlignDirX::WTE,
-            .flow.y = ui::AlignDirY::NTS,
-            .origin = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
-            .content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP},
-            .direction = ui::AlignDir::HORIZONTAL,
-            .wrap_around = true,
-        },
-    };
-    std::vector<std::pair< ui::UID, std::string >> fruits_list = {
-        {ui::UID{},"blueberries"},
-        {ui::UID{},"raspberries"},
-        {ui::UID{},"strawberries"},
-        {ui::UID{},"mangos"},
-        {ui::UID{},"apples"},
-        {ui::UID{},"grapes"},
-    };
+    void EditorLayer::operator()(const kege::WindowFrameBufferSizeEvent& event)
+    {
+        _viewer.onWindowFrameBufferResize(event.width, event.height);
+    }
 
-    char fps_text[32];
-    double sum = 0.f;
-    int count = 0;
-
+    void EditorLayer::operator()(const kege::WindowSizeEvent& event)
+    {
+        _viewer.onWindowResize(event.width, event.height);
+        _layout->onWindowResize(event.width, event.height);
+        _dock.onWindowResize(event.width, event.height);
+    }
 
     void EditorLayer::addPanel( Ref< ui::Panel > panel )
     {
@@ -88,77 +46,27 @@ namespace kege{
         _panels.push_back( panel );
     }
 
-    void EditorLayer::update()
+    bool EditorLayer::update()
     {
-        _input.update( _input_context_manager->getCurrentInputs() );
-        _layout->begin( 0.016, &_input );
-        //_root->update( this );
-
-        //_dock_mngr->update(_dock_mngr->getRoot()->child[0]);
-//        auto begin = Clock::now();
-        _dock_mngr->update();
-//        auto end = Clock::now();
-
-//        auto begin = Clock::now();
-//        {
-//            _gui.push({.style = &style_main});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.put({.style = &style});
-//            _gui.pop(0);
-//        }
-//        auto end = Clock::now();
-//
-//        double ms = std::chrono::duration<double, std::milli>(end - begin).count();
-//        sum += ms;
-//        count += 1;
-//        if (count  >= 60)
-//        {
-//            sum /= double(count);
-//            snprintf(fps_text, 31, "%f ms", sum);
-//            sum = 0.0;
-//            count = 0;
-//        }
-//        std::cout << name << ": " << ms << " ms\n";
-
-//        _gui.push({.layer = 0, .style = &style_main});
-//        _gui.tab(0, fruits_list, selection );
-//        _gui.textField(0,tex, mode[0], text );
-//        _gui.scrubber(0,scrubber, mode[2], v[4] );
-//        _gui.slider(0,slider, &v[0], 0, 2);
-//        _gui.slidebar(0,slider1, &v[1], 0, 2);
-//        _gui.numSlideBar(0,slider2, &v[2], 0, 2);
-//        _gui.numeric(0,numeric, mode[1], v[3] );
-//        _gui.pop(0);
-
-
-        _layout->end();
+        _gui.begin( 0.016 );
+        _dock.update();
+        _gui.end();
 
         _viewer.begin();
         _viewer.render( *_layout );
         //_viewer.drawText({0.f,0.f}, 200, 20, 0xFFFFFFFF, true, fps_text, {0,0,1000,400});
         _viewer.end(_render_graph->getRenderExecutor().ref());
+        return true;
     }
 
     bool EditorLayer::initialize()
     {
+        kege::Graphics* graphics = _render_graph->getGraphics();
+
         _project_manager->createProject("");
         _project_manager->getSceneManager()->createScene("scene");
         _project_manager->getSceneManager()->changeScene("scene");
 
-        kege::Graphics* graphics = _render_graph->getGraphics();
         ref::Font font = kege::FontCreator::create( graphics, 8, 16, vfs( "assets/fonts/monaco.tga" ).c_str() );
         if( !font )
         {
@@ -171,38 +79,41 @@ namespace kege{
             return false;
         }
 
-        _layout = new ui::Layout( graphics->getWindow()->getWidth(), graphics->getWindow()->getHeight(), 200 );
+        _color_image_defn = _render_graph->getImageDefn( "color" );
+        _sampler = *_asset_manager->fetch< ref::Sampler >( "default" );
+        for (int frame=0; frame<1/*defn->physical_handle.size()*/; ++frame)
+        {
+            kege::ImageBindInfo info;
+            info.image = _color_image_defn->physical_handle[frame];
+            info.layout = ImageLayout::ShaderRead;
+            info.sampler = _sampler;
+            _viewer.setViewportImage(info, frame);
+        }
+
+        Extent2D window_size = graphics->getWindow()->getSize();
+        _layout = new ui::Layout( _input_manager, window_size.width, window_size.height, 5000 );
         _layout->createLayers(5);
 
-        if( !_layout->loadStyles( kege::vfs( "config/style.json" ).c_str() ) )
-        {
-            kege::Log::error << "Failed to load ui style.json" << Log::nl;
-            return false;
-        }
         _layout->setFont( font );
-
         _gui.initialize(_layout);
 
-        _dock_mngr = new ui::DockManager( &_gui, graphics->getWindow()->getWidth(), graphics->getWindow()->getHeight() );
-        _dock_mngr->split
-        (
-            _dock_mngr->getRoot(), ui::AlignDir::HORIZONTAL,
-            {},
-            {new ViewportPanel( _project_manager, &_gui, _ecs )}
-        );
-        _dock_mngr->split
-        (
-            _dock_mngr->getRoot().split->nodes[0], ui::AlignDir::VERTICAL,
-            {new HierarchyPanel( _project_manager, &_gui, _ecs )},
-            {new InspectorPanel( _project_manager, &_gui, _ecs )}
-        );
 
-        _dock_mngr->getRoot().name = "root";
-        _dock_mngr->getRoot().split->nodes[1].name = "dock-viewport";
-        _dock_mngr->getRoot().split->nodes[0].split->nodes[0].name = "dock-hierarchy";
-        _dock_mngr->getRoot().split->nodes[0].split->nodes[1].name = "dock-inspector";
-        //hp = new HierarchyPanel( _project_manager, &_gui, _ecs );
-        //std::cout << sizeof(ui::Callback)<<" style:"<< sizeof(ui::Style) <<" widgit:"<< sizeof(ui::Widget) <<" sum:" << sizeof(ui::Style) + sizeof(ui::Widget) <<"\n";
+        _context = new ui::DockContext( _project_manager, &_gui, _ecs );
+        _dock = ui::Dock(_context.ref(), window_size.width, window_size.height);
+
+        ui::DockSplit* split[2];
+
+        split[0] = _dock.split( ui::AlignDir::HORIZONTAL, {}, {} );
+        split[0]->nodes[0].split( ui::AlignDir::VERTICAL, {0}, {1} );
+        split[1] = split[0]->nodes[1].split( ui::AlignDir::VERTICAL, {2}, {3,4,5} );
+
+        split[0]->slit_ratio = 0.25;
+        split[0]->onReshape();
+
+        split[1]->slit_ratio = 0.70;
+        split[1]->onReshape();
+
+        // TODO: SettingPanel, ConsolePanel
         return true;
     }
 
@@ -211,19 +122,28 @@ namespace kege{
         _panel_name_index_map.clear();
         _panels.clear();
 
-        _dock_mngr.clear();
+        //_dock_mngr.clear();
         _viewer.shutdown();
         _layout.clear();
     }
 
-    EditorLayer::EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputContextManager* icm, kege::ECS* ecs )
+    EditorLayer::EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputManager* im, kege::ECS* ecs )
     :   kege::AppLayer( "EditorLayer" )
-    ,   _input_context_manager( icm )
+    ,   _input_manager( im )
     ,   _asset_manager( am )
     ,   _project_manager( pm )
     ,   _render_graph( rg )
     ,   _paused( false )
     ,   _ecs( ecs )
     {
+        Communication::add<const kege::WindowFrameBufferSizeEvent&, EditorLayer>(this);
+        Communication::add<const kege::WindowSizeEvent&, EditorLayer>(this);
     }
+
+    EditorLayer::~EditorLayer()
+    {
+        Communication::remove<const kege::WindowFrameBufferSizeEvent&, EditorLayer>(this);
+        Communication::remove<const kege::WindowSizeEvent&, EditorLayer>(this);
+    }
+
 }

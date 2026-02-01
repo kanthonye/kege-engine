@@ -11,7 +11,7 @@
 #include <string>
 #include "../memory/ref.hpp"
 #include "../utils/log.hpp"
-#include "../input/input-context-manager.hpp"
+#include "../input/input-manager.hpp"
 #include "../resource/asset-manager.hpp"
 
 namespace kege{
@@ -24,7 +24,7 @@ namespace kege{
 
         virtual bool initialize() = 0;
         virtual void shutdown() = 0;
-        virtual void update() = 0;
+        virtual bool update() = 0;
 
         AppLayer( const std::string& n ): _name( n ) {}
         virtual ~AppLayer() = default;

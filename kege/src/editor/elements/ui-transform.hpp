@@ -8,11 +8,10 @@
 #ifndef ui_transform_hpp
 #define ui_transform_hpp
 
-#include "ui-numeric.hpp"
+#include "ui-tree-node.hpp"
 
 namespace kege::ui
 {
-    bool rotation( ui::Layout& layout, TreeNode& tree, float& x, float& y, float& z, float& w, const char* text );
-    bool transform( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity );
+    bool transform( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* ui_transform_hpp */

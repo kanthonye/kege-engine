@@ -11,48 +11,55 @@
 
 namespace kege{
 
-    static GlfwWindow* global_window_ptr;
-
     void keyCallback( GLFWwindow* window, int key, int scancode, int action, int mods )
     {
-        if ( global_window_ptr == nullptr ) return;
-        global_window_ptr->onKeyboard( key, scancode, action, mods );
+        kege::Communication::broadcast<const KeyboardEvent&>({window, key, scancode, action, mods});
     }
 
     void cursorPositionCallback( GLFWwindow* window, double xpos, double ypos )
     {
-        if ( global_window_ptr == nullptr ) return;
-        global_window_ptr->onCursorPosition( xpos, ypos );
+        kege::Communication::broadcast<const PointerEvent&>({window, xpos, ypos});
     }
 
     void mouseButtonCallback( GLFWwindow* window, int button, int action, int mods )
     {
-        if ( global_window_ptr == nullptr ) return;
-        global_window_ptr->onMouseButton( button, action, mods );
+        kege::Communication::broadcast<const ButtonEvent&>({window, button, action, mods});
     }
 
     void scrollCallback( GLFWwindow* window, double xoffset, double yoffset )
     {
-        if ( global_window_ptr == nullptr ) return;
-        global_window_ptr->onScroll( xoffset, yoffset );
+        kege::Communication::broadcast<const ScrollEvent&>({window, xoffset, yoffset});
     }
 
-//    GraphicsSurface GlfwWindow::createSurface( GraphicsInstance* instance )
-//    {
-//        switch ( instance->getGraphicsAPI() )
-//        {
-//            case GraphicsAPI::Vulkan:
-//            {
-//                VkSurfaceKHR surface;
-//                vk::Instance* vk_instance = static_cast< vk::Instance* >( instance );
-//                glfwCreateWindowSurface( vk_instance->getHandle(), _window, nullptr, &surface );
-//                return surface;
-//            }
-//
-//            default: break;
-//        }
-//        return nullptr;
-//    }
+    void windowSizeCallback(GLFWwindow* window, int width, int height)
+    {
+        kege::Communication::broadcast<const WindowSizeEvent&>({window, width, height});
+    }
+
+    void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+    {
+        kege::Communication::broadcast<const WindowFrameBufferSizeEvent&>({window, width, height});
+    }
+    void windowContentScaleCallback(GLFWwindow* window, float xscale, float yscale)
+    {
+        kege::Communication::broadcast<const WindowContentScaleEvent&>({window, xscale, yscale});
+    }
+    void windowPosCallback(GLFWwindow* window, int xpos, int ypos)
+    {
+        kege::Communication::broadcast<const WindowPositionEvent&>({window, xpos, ypos});
+    }
+    void windowMaximizeCallback(GLFWwindow* window, int maximized)
+    {
+        kege::Communication::broadcast<const WindowMaximizeEvent&>({window, maximized});
+    }
+    void windowFocusCallback(GLFWwindow* window, int focused)
+    {
+        kege::Communication::broadcast<const WindowFocusEvent&>({window, focused});
+    }
+    void windowRefreshCallback(GLFWwindow* window)
+    {
+        kege::Communication::broadcast<const WindowRefreshEvent&>({window});
+    }
 
     std::vector< const char* > GlfwWindow::getRequiredInstanceExtensions()
     {
@@ -83,12 +90,21 @@ namespace kege{
 
         setVSync( info.vsync );
 
+        //float xscale, yscale;
+        //glfwGetWindowContentScale(_window, &xscale, &yscale);
+        //glfwGetWindowContentScale(_window, &xscale, &yscale);
+
         glfwSetKeyCallback( _window, keyCallback );
         glfwSetCursorPosCallback( _window, cursorPositionCallback );
         glfwSetMouseButtonCallback( _window, mouseButtonCallback );
         glfwSetScrollCallback( _window, scrollCallback );
+        glfwSetWindowSizeCallback(_window, windowSizeCallback);
+        glfwSetFramebufferSizeCallback(_window, framebufferSizeCallback);
+        glfwSetWindowFocusCallback(_window, windowFocusCallback);
+        glfwSetWindowRefreshCallback(_window, windowRefreshCallback);
+        glfwSetWindowPosCallback(_window, windowPosCallback);
+        glfwSetWindowMaximizeCallback(_window, windowMaximizeCallback);
 
-        global_window_ptr = this;
         return true;
     }
 
@@ -132,14 +148,11 @@ namespace kege{
     {
     }
 
-    uint32_t GlfwWindow::getWidth() const
+    Extent2D GlfwWindow::getSize() const
     {
-        return _create_info.width;
-    }
-
-    uint32_t GlfwWindow::getHeight() const
-    {
-        return _create_info.height;
+        int w,h;
+        glfwGetWindowSize( _window, &w, &h );
+        return Extent2D{ uint32_t(w), uint32_t(h) };
     }
 
     bool GlfwWindow::isVisible() const
@@ -165,16 +178,16 @@ namespace kege{
 
     Extent2D GlfwWindow::getFramebufferSize() const
     {
-        int width; int height;
-        glfwGetFramebufferSize( _window, &width, &height );
-        return Extent2D{uint32_t(width), uint32_t(height)};
+        int w,h;
+        glfwGetFramebufferSize( _window, &w, &h );
+        return Extent2D{ uint32_t(w), uint32_t(h) };
     }
 
     vec2 GlfwWindow::getContentScale() const
     {
-        float xscale,yscale;
-        glfwGetWindowContentScale( _window, &xscale, &yscale );
-        return {xscale, yscale};
+        vec2 scale;
+        glfwGetWindowContentScale( _window, &scale.x, &scale.y );
+        return scale;
     }
 
     bool GlfwWindow::shouldClose() const

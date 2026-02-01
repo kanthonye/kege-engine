@@ -134,8 +134,7 @@ namespace kege::vk{
         (
             new vk::ShaderLayout
             (
-                this, description.name,
-                indexed_set_layouts, description.push_block_layout
+                this, description.name, indexed_set_layouts, description.push_block_layout
             )
         );
 
@@ -495,6 +494,7 @@ namespace kege::vk{
                 _manager.destroySemaphore( semaphore->handle );
                 semaphore->device = nullptr;
             }
+            _semaphores.remove(semaphore);
         }
     }
 
@@ -519,6 +519,7 @@ namespace kege::vk{
                 _manager.destroyFence( fence->handle );
                 fence->device = nullptr;
             }
+            _fences.remove(fence);
         }
     }
 

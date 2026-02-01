@@ -42,6 +42,7 @@ namespace kege{
 
         const ref::ShaderPipeline& getShaderPipeline()const;
         kege::RenderPassType getPass()const;
+        
         Material
         (
             kege::RenderPassType pass,

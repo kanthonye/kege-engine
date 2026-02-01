@@ -76,9 +76,15 @@ namespace kege::vk{
 
     private:
 
-        std::vector< vk::FrameData > createFrames( uint32_t image_count );
-        VkResult createSwapchain( VkSwapchainKHR* swapchain );
+        kege::Result createFrames( uint32_t image_count );
+        void destroyFrames();
 
+        VkResult createSwapchain();
+        void destroySwapchain(VkSwapchainKHR& swapchain);
+
+        kege::Result createFrameSync();
+        void destroyFrameSync();
+        
         vk::FrameData& getFrame( uint32_t frame_index );
 
         const vk::Swapchain* vk()const{ return this; }
@@ -108,7 +114,7 @@ namespace kege::vk{
         /** @brief Index of the currently acquired image */
         uint32_t _image_index;
         uint32_t _image_count;
-        int32_t _curr_frame_index;
+        uint32_t _frame_syncs_index;
 
         /** @brief Flag indicating if the swapchain needs recreation (e.g., after resize) */
         bool _needs_recreation;

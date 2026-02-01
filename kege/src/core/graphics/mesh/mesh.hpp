@@ -244,7 +244,7 @@ namespace kege{
         uint32_t first_index = 0;
         uint32_t index_count = 0;
 
-        int material_index = -1;
+        uint64_t material_index = -1;
     };
     typedef kege::Ref< kege::Mesh > MeshSourceRef;
 
@@ -252,10 +252,10 @@ namespace kege{
 namespace kege::ref{
     typedef kege::Ref< kege::Mesh > Mesh;
 }
+
 namespace kege::sref{
     typedef kege::Ref< const kege::Mesh > Mesh;
 }
-
 
 namespace kege{
     using MeshSet = kege::array< ref::Mesh >;
@@ -293,6 +293,7 @@ namespace kege{
     {
         return a = a & b;
     }
+    
     enum struct ShaderInput : char
     {
         NONE,
@@ -307,14 +308,34 @@ namespace kege{
         Matrix rotation = Matrix::ROTATION;
     };
 
-    struct Geometry
-    {
-        Ref< Mesh > mesh;
-        Ref< MaterialSet > material_set;
-        Procedure object_transform;
-    };
+//    struct Geometry
+//    {
+//        Ref< Mesh > mesh;
+//        Ref< MaterialSet > material_set;
+//        Procedure object_transform;
+//    };
 
     void computeTangentBitangent( std::vector< kege::Vertex >& vertices, const std::vector< uint32_t >& indices );
+
+}
+
+
+
+namespace kege{
+
+    struct Renderable
+    {
+        uint64_t mesh_handle;
+        uint64_t material_handle;
+        uint32_t render_pass;
+        uint32_t render_layer       : 4;
+        bool is_visible         : 1;
+        bool is_static          : 1;
+        bool casts_shadows      : 1;
+
+        char fname[64] = {0};
+        size_t size = 0;
+    };
 };
 
 #endif /* mesh_hpp */

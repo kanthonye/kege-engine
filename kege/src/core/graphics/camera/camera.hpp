@@ -52,10 +52,10 @@ namespace kege{
 
         Perspective()
         :   Projection( PERSPECTIVE )
-        ,   aspect_ratio( 0.0 )
-        ,   fov( 0.0 )
-        ,   znear( 0.0 )
-        ,   zfar( 0.0 )
+        ,   aspect_ratio( 1.0 )
+        ,   fov( 45.0 )
+        ,   znear( 0.1 )
+        ,   zfar( 1000.0 )
         {}
 
         double      aspect_ratio;

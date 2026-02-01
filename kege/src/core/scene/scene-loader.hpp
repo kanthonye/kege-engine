@@ -107,7 +107,13 @@ namespace kege{
 
 
         static ecs::Entity parseEntity( kege::ECS& ecs, kege::Json& entities, kege::Json& components, int entity_index );
-        static kege::Ref< kege::Scene > load( kege::ECS& ecs, const std::string& filename );
+        static kege::Ref< kege::Scene > load
+        (
+            kege::ECS& ecs,
+            kege::RenderGraph* rg,
+            kege::AssetManager* am,
+            const std::string& filename
+        );
         SceneLoader();
 
     private:

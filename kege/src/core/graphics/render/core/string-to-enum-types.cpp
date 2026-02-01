@@ -30,6 +30,9 @@ namespace kege{
             table[ "uvec2" ] = kege::ShaderVarType::Vec2U;
             table[ "uvec3" ] = kege::ShaderVarType::Vec3U;
             table[ "uvec4" ] = kege::ShaderVarType::Vec4U;
+            table[ "mat2" ] = kege::ShaderVarType::Mat2;
+            table[ "mat3" ] = kege::ShaderVarType::Mat3;
+            table[ "mat4" ] = kege::ShaderVarType::Mat4;
         }
         auto m = table.find( str );
         if ( m != table.end() )
@@ -278,6 +281,7 @@ namespace kege{
             table[ "line-list" ] = kege::PrimitiveTopology::LineList;
             table[ "line-strip" ] = kege::PrimitiveTopology::LineStrip;
             table[ "triangle-fan" ] = kege::PrimitiveTopology::TriangleList;
+            table[ "triangles" ] = kege::PrimitiveTopology::TriangleList;
             table[ "triangle-list" ] = kege::PrimitiveTopology::TriangleList;
             table[ "triangle-strip" ] = kege::PrimitiveTopology::TriangleStrip;
             table[ "line-list-with-adjacency" ] = kege::PrimitiveTopology::LineListAdjacency;
@@ -317,25 +321,6 @@ namespace kege{
         }
         kege::Log::error << "invalid DescriptorType -> " << type <<" in convertDescriptorType()" <<Log::nl;
         return kege::DescriptorType::Invalid;
-    }
-
-    kege::ShaderStageFlag convertShaderStage( const std::string& type )
-    {
-        static std::map< std::string, kege::ShaderStageFlag > table;
-        if( table.empty() )
-        {
-            table[ "vertex"          ] = kege::ShaderStageFlag::Vertex;
-            table[ "fragment"        ] = kege::ShaderStageFlag::Fragment;
-            table[ "tess-control"    ] = kege::ShaderStageFlag::TessellationControl;
-            table[ "tess-evaliation" ] = kege::ShaderStageFlag::TessellationEvaluation;
-            table[ "geometry"        ] = kege::ShaderStageFlag::Geometry;
-        }
-        auto m = table.find( type );
-        if ( m != table.end() )
-        {
-            return m->second;
-        }
-        return kege::ShaderStageFlag::Invalid;
     }
 
     kege::ShaderVarType convertVertexInputType( const std::string& type )
@@ -528,7 +513,7 @@ namespace kege{
 
         if ( types.empty() )
         {
-            types[ "Invalid" ] = ShaderStageFlag::Invalid;
+            types[ "invalid" ] = ShaderStageFlag::Invalid;
             types[ "vertex" ] = ShaderStageFlag::Vertex;
             types[ "fragment" ] = ShaderStageFlag::Fragment;
             types[ "compute" ] = ShaderStageFlag::Compute;
@@ -550,7 +535,7 @@ namespace kege{
             return m->second;
         }
         kege::Log::error << "unsupported ShaderStageFlag -> " <<name <<kege::Log::nl;
-        return {};
+        return ShaderStageFlag::Invalid;
     }
 
     kege::PipelineType stringToPipelineType( const std::string& name )

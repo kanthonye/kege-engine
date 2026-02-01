@@ -11,25 +11,6 @@
 
 namespace kege{
 
-    bool loadTextFile( std::vector< char >& source, const char* filename )
-    {
-        FILE* file = fopen( filename, "rb" );
-        if ( file )
-        {
-            fseek( file, 0, SEEK_END );
-            uint64_t size = ftell( file );
-            rewind( file );
-
-            source.resize( size + 1 );
-            fread( source.data(), sizeof( char ), size, file );
-            fclose( file );
-
-            source[ size ] = 0;
-            return true;
-        }
-        return false;
-    }
-
     std::string getFilePath( const std::string& filename )
     {
         std::string path = filename;
@@ -47,7 +28,7 @@ namespace kege{
         kege::ShaderStageFlag stages = kege::ShaderStageFlag::Invalid;
         for (int i = 0; i < json.count(); ++i)
         {
-            stages |= convertShaderStage( json[i].toStr() );
+            stages |= stringToShaderStageFlag( json[i].toStr() );
         }
         return stages;
     }

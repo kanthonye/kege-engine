@@ -25,7 +25,7 @@ namespace kege{
                 _asset_manager.ref(),
                 _render_graph.ref(),
                 _project_manager.ref(),
-                _input_context_manager.ref(),
+                _input_manager.ref(),
                 _ecs.ref()
             );
             _running = _app_layer_stack->push( ui_app_layer );
@@ -37,38 +37,4 @@ namespace kege{
     {
         return new TestEditor;
     }
-
-}
-
-
-
-
-struct SizingStyle
-{
-};
-struct SpacingStyle
-{
-    //Padding padding;
-    //Gap gap;
-};
-struct Style
-{
-//    Rect rect;
-//    Color color;
-    SizingStyle* visual;
-    SpacingStyle* spacing;
-//    VisualStyle* visual;
-//    AlignmentStyle* alignment;
-//    ButtonConfig button_config; style.flag = WIDTH | HEIGH | GAP | PADDING | ALIGNMENT;
-};
-
-
-
-//.text_str = ""
-//.text_rect = layout->coverage("string");
-
-kege::ui::Layout* layout = 0;
-void vmain(){
-    layout->put({.text = layout->text("label", 20)});
-    layout->put({.text = "label"});
 }

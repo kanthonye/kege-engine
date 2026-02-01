@@ -9,6 +9,18 @@
 #include "ui-viewer.hpp"
 namespace kege::ui{
 
+    void Viewer::onWindowFrameBufferResize(int width, int height)
+    {
+        _fbo_size.width = width;
+        _fbo_size.height = height;
+    }
+    
+    void Viewer::onWindowResize(int width, int height)
+    {
+        _window_size.width = width;
+        _window_size.height = height;
+    }
+
     void Viewer::push( const ui::UIDrawInstance& instance )
     {
         memcpy(&_drawbuffer[ _draw_count ], &instance, sizeof(instance));
@@ -70,6 +82,7 @@ namespace kege::ui{
         //float sum_w = 0;
         float length;
 
+        float end_x = start.x + width;
 
         //ui::Rect rect;
         //ui::Border border = {};
@@ -92,11 +105,15 @@ namespace kege::ui{
             max_h = kege::max<float>( max_h, instance.rect.height );
 
             length = cursor.x + instance.rect.width;
-            if ( wrap_around && length > width )
+            if ((wrap_around && length > end_x ) || *c == '\n' )
             {
                 cursor.x = start.x; // Reset X to start of the row
                 cursor.y += max_h;  // Move Y to the next row
-                //max_h = 0;          // Reset max row height
+                extent.width = 0;
+                if ( *c == '\n' )
+                {
+                    continue;
+                }
             }
 
             /**
@@ -135,21 +152,25 @@ namespace kege::ui{
         if ( !widget.visible )
             return;
 
-        UIDrawInstance& instance = nextInstance();
-
-        instance.rect       = widget.rect;
-        instance.color      = widget.color;
-        instance.border     = widget.border;
-        instance.texel      = widget.texel;
-        instance.texr_info  = widget.texr_info;
-        instance.clip_rect  = clip_rect;
+        float a = (widget.color & 0xFF) / 255.0;
+        if ( a > 0.001f )
+        {
+            UIDrawInstance& instance = nextInstance();
+            instance.rect       = widget.rect;
+            instance.color      = widget.color;
+            instance.border     = widget.border;
+            instance.texel      = widget.texel;
+            instance.texr_info  = widget.texr_info;
+            instance.clip_rect  = clip_rect;
+        };
 
         if ( widget.text.ptr && _font )
         {
             kege::vec2 start = { widget.rect.x, widget.rect.y };
-            if ( widget.style )
+            const Padding& padding = ((widget.style) ? widget.style->padding : widget.padding);
+            //if ( widget.style )
             {
-                switch ( widget.style->align_text )
+                switch ( ((widget.style) ? widget.style->align_text : widget.text.align) )
                 {
                     case AlignText::Center:
                     {
@@ -162,11 +183,11 @@ namespace kege::ui{
                     {
                         if ( widget.text.width != 0 )
                         {
-                            start.x += ( widget.rect.width - widget.text.width - widget.style->padding.right);
+                            start.x += ( widget.rect.width - widget.text.width - padding.right);
                         }
                         if ( widget.text.height != 0 )
                         {
-                            start.y +=  widget.text.y + widget.style->padding.above;
+                            start.y +=  widget.text.y + padding.above;
                         }
                         break;
                     }
@@ -176,11 +197,11 @@ namespace kege::ui{
                     {
                         if ( widget.text.width != 0 )
                         {
-                            start.x += widget.text.x + widget.style->padding.left;
+                            start.x += widget.text.x + padding.left;
                         }
                         if ( widget.text.height != 0 )
                         {
-                            start.y += widget.text.y + widget.style->padding.above;
+                            start.y += widget.text.y + padding.above;
                         }
                         break;
                     };
@@ -203,10 +224,10 @@ namespace kege::ui{
             drawText
             (
                 start,
-                widget.rect.width,
-                widget.text.size,
+                widget.rect.width - padding.left - padding.right,
+                widget.text.font_size,
                 widget.text.color,
-                (widget.style)?widget.style->align.wrap_around: false,
+                widget.alignment.wrap_around,
                 widget.text.ptr,
                 clip_rect
             );
@@ -215,135 +236,63 @@ namespace kege::ui{
 
     void Viewer::draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect )
     {
-        draw( *layout[ pid ], clip_rect );
-        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+        Widget* widget = layout[ pid ];
+        draw( *widget, clip_rect );
+
+        if ( widget->clip_overflow )
         {
-            draw( layout, eid, clip_rect );
+            ui::Rect clip_rect = widget->rect;
+
+            clip_rect.x += widget->padding.left;
+            clip_rect.y += widget->padding.above;
+            clip_rect.width -= widget->padding.left + widget->padding.right;
+            clip_rect.height -= widget->padding.above + widget->padding.below;
+            if ( clip_rect.width > 0 && clip_rect.height > 0 )
+            {
+                for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+                {
+                    draw( layout, eid, clip_rect );
+                }
+            }
         }
-
-
-//        Widget* widget = layout[ pid ];
-//        draw( *widget, clip_rect );
-//
-//        if ( widget->clip_overflow )
-//        {
-//            ui::Rect clip_rect = widget->rect;
-//            if ( widget->style )
-//            {
-//                clip_rect.x += widget->style->padding.left;
-//                clip_rect.y += widget->style->padding.above;
-//                clip_rect.width -= widget->style->padding.left + widget->style->padding.right;
-//                clip_rect.height -= widget->style->padding.above + widget->style->padding.below;
-//            }
-//            if ( clip_rect.width > 0 && clip_rect.height > 0 )
-//            {
-//                for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-//                {
-//                    draw( layout, eid, clip_rect );
-//                }
-//            }
-//        }
-//        else
-//        {
-//            for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-//            {
-//                draw( layout, eid, clip_rect );
-//            }
-//        }
+        else
+        {
+            for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
+            {
+                draw( layout, eid, clip_rect );
+            }
+        }
     }
-
-//    void Viewer::linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& contents, int& count )
-//    {
-//        if( count >= contents.size() ) return;
-//        contents[count++] = { zindex, layout[pid] };
-//        for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-//        {
-//            linearize( layout, eid, layout[eid]->style->zindex + layout[pid]->style->zindex, contents, count );
-//        }
-//    }
-//
-//    void Viewer::insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr)
-//    {
-//        int n = (int)arr.size();
-//        for (int i = 1; i < n; i++)
-//        {
-//            auto key = arr[i]; // store the pair
-//            int j = i - 1;
-//
-//            // Compare using the first element of the pair
-//            while (j >= 0 && arr[j].first > key.first)
-//            {
-//                arr[j + 1] = arr[j];
-//                j--;
-//            }
-//
-//            arr[j + 1] = key;
-//        }
-//    }
-//
-//    void Viewer::drawsort( ui::Layout& layout, int pid )
-//    {
-//        std::vector< std::pair< int, ui::Widget* > > contents( layout._widgets[pid].count );
-//        int count = 0;
-//
-//        linearize( layout, pid, layout[pid]->style->zindex, contents, count );
-//        insertionSort( contents );
-//
-//        std::vector< ui::Rect > clip_rect_stack;
-//        ui::Rect clip_rect = contents[0].second->rect;
-//        for ( int i = 0; i < contents.size(); ++i  )
-//        {
-//            ui::Widget* content = contents[i].second;
-//            if( content == nullptr ) continue;
-//            
-//            draw( *content, clip_rect );
-//            if ( content->style->clip_overflow )
-//            {
-//                clip_rect = content->rect;
-//                clip_rect.x += content->style->padding.left;
-//                clip_rect.y += content->style->padding.above;
-//                clip_rect.width -= content->style->padding.left + content->style->padding.right;
-//                clip_rect.height -= content->style->padding.above + content->style->padding.below;
-//                if ( clip_rect.width <= 0 || clip_rect.height <= 0 )
-//                {
-//                    continue;
-//                }
-//            }
-//        }
-//    }
 
     void Viewer::render( ui::Layout& layout )
     {
-        const Cursor& cursor = layout._cursor;
-        if ( cursor._visible && cursor._editing )
+        for (int layer_index = 0; layer_index < layout._layers.size(); ++layer_index)
         {
-            float width = cursor._width;
-            Color color = ui::Color(1,1,1,1);
-            if( cursor._selection )
+            for( uint32_t root = layout._layers[ layer_index ].head; root != 0; root = layout._widgets[ root ].layer.next )
             {
-                width = cursor._selection_end - cursor._offset;
-                color = ui::Color(1,1,1,0.2);
+                draw( layout, root, _clip_rect );
             }
-
+        }
+        const Cursor& cursor = layout._cursor;
+        if ( cursor._visible )
+        {
             UIDrawInstance& instance = nextInstance();
 
-            instance.color = ui::packRGBA8(color);
-            instance.rect.x = float(cursor._x + cursor._offset);
-            instance.rect.y = float(cursor._y);
-            instance.rect.width = width;
-            instance.rect.height = cursor._height;
+            if( cursor._selection_active )
+            {
+                instance.color = cursor._color_selection;
+                instance.rect = cursor._rect_selection;
+            }
+            else
+            {
+                instance.color = cursor._color_cursor;
+                instance.rect = cursor._rect_cursor;
+            }
+
             instance.clip_rect = {0.f,0.f, float(layout.getWidth()),float(layout.getHeight())};
             instance.border = {};
             instance.texel = {};
             instance.texr_info = {};
-        }
-
-        for (int layer=0; layer<layout._layers.size(); ++layer)
-        {
-            for( uint32_t root = layout.head( layout._layers[ layer ].root ); root != 0; root = layout.next( root ))
-            {
-                draw( layout, root, _clip_rect );
-            }
         }
     }
 
@@ -359,6 +308,22 @@ namespace kege::ui{
         {
             flush();
         }
+        _shader_data->update();
+
+        kege::mat44* matrices = reinterpret_cast< kege::mat44* >( _push_constant.data );
+        matrices[0] = kege::orthoproj< float >
+        (
+            0, _window_size.width,
+            0,-_window_size.height,
+            -200.0, 200.0
+        );
+        matrices[1][0] = vec4
+        (
+            _window_size.width,
+            _window_size.height,
+            float( _window_size.width ) / float( _fbo_size.width ),
+            0.f
+        );
         manager->submit( RenderPassType::UI, _meshs[ _graphics->getFrameIndex() ], _shader_data, _push_constant );
     }
 
@@ -374,7 +339,7 @@ namespace kege::ui{
 
     BufferBindInfo Viewer::createBuffer()
     {
-        size_t size = _max_render_instances * sizeof( UIDrawInstance );
+        size_t size = _drawbuffer.size() * sizeof( UIDrawInstance );
         return BufferBindInfo
         {
             .range = size,
@@ -409,6 +374,7 @@ namespace kege::ui{
         _meshs[ _graphics->getFrameIndex() ]->instance_count = _draw_count;
         _meshs[ _graphics->getFrameIndex() ]->first_instance = 0;
         _curr_buffer_index += 1;
+        _draw_count = 0;
     }
 
     bool Viewer::initialize( kege::Graphics* graphics, kege::AssetManager* asset_manager, ref::Font font )
@@ -417,10 +383,19 @@ namespace kege::ui{
         _graphics = graphics;
         _font = font;
 
-        Extent2D extent = _graphics->getWindow()->getFramebufferSize();
+        Extent2D extent;
+
+        extent = _graphics->getWindow()->getSize();
+        _window_size.width = float( extent.width );
+        _window_size.height = float( extent.height );
+
+        extent = _graphics->getWindow()->getFramebufferSize();
+        _fbo_size.width = float( extent.width );
+        _fbo_size.height = float( extent.height );
+
         _clip_rect.x = _clip_rect.y = 0;
-        _clip_rect.height = extent.height;
-        _clip_rect.width = extent.width;
+        _clip_rect.height = _fbo_size.height;
+        _clip_rect.width = _fbo_size.width;
 
         kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
         _pipeline = _asset_manager->load< ref::ShaderPipeline >( shader_file.c_str() );
@@ -431,6 +406,7 @@ namespace kege::ui{
         }
         _shader_pipeline = *_asset_manager->get< ref::ShaderPipeline >( _pipeline );
 
+        _drawbuffer.resize(65536);
         _buffer_bindings[0] = { createBuffer() };
         _buffer_bindings[1] = { createBuffer() };
         _meshs[0] = new kege::Mesh({}, new kege::ShaderData( _shader_pipeline,{ "UIViewBuffer" }));
@@ -443,34 +419,30 @@ namespace kege::ui{
         ref::Image* image = asset_manager->fetch< ref::Image >( "default" );
         ref::Sampler* sampler = asset_manager->fetch< ref::Sampler >( "default" );
 
-        _shader_data = new kege::ShaderData( _shader_pipeline,{ "_scene","_theme","_font" });
+        _shader_data = new kege::ShaderData( _shader_pipeline,{ "_theme", "_font", "_scene" });
         setViewportImage({ .image = *image, .sampler = *sampler, .layout = ImageLayout::ShaderRead }, 0);
         setThemeImage({ .image = *image, .sampler = *sampler, .layout = ImageLayout::ShaderRead }, 0);
         setFontImage(font->getImageBindInfo(), 0);
 
         _shader_data->update();
 
-        _drawbuffer.resize(500);
-
         kege::mat44* matrices = reinterpret_cast< kege::mat44* >( _push_constant.data );
-        _fbo_size = _graphics->getWindow()->getFramebufferSize();
         _push_constant.size = sizeof(kege::mat44) + sizeof(kege::vec4);
         _push_constant.stages = ShaderStageFlag::All;
         _push_constant.offset = 0;
         matrices[0] = kege::orthoproj< float >
         (
-            0, float( _graphics->getWindow()->getWidth() ),
-            0,-float( _graphics->getWindow()->getHeight() ),
+            0, _window_size.width,
+            0,-_window_size.height,
             -200.0, 200.0
         );
         matrices[1][0] = vec4
         (
-            _graphics->getWindow()->getWidth(),
-            _graphics->getWindow()->getHeight(),
-            float( _graphics->getWindow()->getWidth() ) / float( _fbo_size.width ),
+            _window_size.width,
+            _window_size.height,
+            float( _window_size.width ) / float( _fbo_size.width ),
             0.f
         );
-
         return true;
     }
 
@@ -509,10 +481,10 @@ namespace kege::ui{
     }
 
     Viewer::Viewer()
-    :   _max_render_instances( 500 )
-    ,   _graphics( nullptr )
+    :   _graphics( nullptr )
     ,   _curr_buffer_index( 0 )
     ,   _draw_count( 0 )
-    {}
+    {
+    }
 
 }

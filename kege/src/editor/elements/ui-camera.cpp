@@ -9,83 +9,65 @@
 
 namespace kege::ui
 {
-    bool orthographic( ui::Layout& layout, TreeNode& tree, Orthographic* orthographic )
-    {
-        if ( tree.elements.empty() )
-        {
-            tree.elements.reserve(4);
-            setupDroplist( layout, tree, "Orthographic" );
-            tree.children.resize(4);
-        }
-        bool active = false;
-        if( numericD( layout, tree.children[0], orthographic->left, "Left" ) ) active = true;
-        if( numericD( layout, tree.children[1], orthographic->right, "Right" ) ) active = true;
-        if( numericD( layout, tree.children[2], orthographic->above, "Above" ) ) active = true;
-        if( numericD( layout, tree.children[3], orthographic->below, "Below" ) ) active = true;
-        if( numericD( layout, tree.children[4], orthographic->znear, "Z Near" ) ) active = true;
-        if( numericD( layout, tree.children[5], orthographic->zfar, "Z Far" ) ) active = true;
-        return active;
-    }
 
-    bool perspective( ui::Layout& layout, TreeNode& tree, Perspective* perspective )
-    {
-        if ( tree.elements.empty() )
-        {
-            tree.elements.reserve(4);
-            setupDroplist( layout, tree, "Perspective" );
-            tree.children.resize(4);
-        }
-        bool active = false;
-        if( numericD( layout, tree.children[0], perspective->aspect_ratio, "Aspect Ratio" ) ) active = true;
-        if( numericD( layout, tree.children[1], perspective->fov, "Field Of View" ) ) active = true;
-        if( numericD( layout, tree.children[2], perspective->znear, "Z Near" ) ) active = true;
-        if( numericD( layout, tree.children[3], perspective->zfar, "Z Far" ) ) active = true;
-        return active;
-    }
-
-    bool camera( kege::ECS* ecs, ui::Layout& layout, ui::Tree& tree, ecs::Entity& entity )
+    bool camera( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
     {
         kege::Camera* camera = ecs->get< kege::Camera >( entity );
-        ui::TreeNode& node = tree[ camera ];
+        uint64_t component_id = ecs->getCompId< kege::Camera >( entity );
 
-        if ( node.elements.empty() )
+        ui::Text main_label
         {
-            node.elements.reserve(4);
-            ui::setupDroplist( layout, node, "Camera" );
-            node.children.resize(3);
-        }
+            .ptr = "Camera",
+            .width = 64,
+            .font_size = 20,
+            .height = 15,
+            .color = 0xFFFFFFFF
+        };
 
-        layout.push({ .uid = &node.elements[0] });
+        gui->push({ .layer = layer, .style = &gui->_theme.card });
+        switch (gui->removableHeader(layer, component_id, main_label))
         {
-            layout.push({ .uid = &node.elements[1] });
+            case 1:
             {
-                layout.put({ .uid = &node.elements[2] });
-            }
-            layout.pop(0);
-
-            if ( ui::droplistOpen( layout, node ) )
-            {
-                layout.push({ .uid = &node.elements[3] });
+                gui->push({.layer = layer, .style = &gui->_theme.padded_list});
                 if ( camera->projection->type == Projection::PERSPECTIVE )
                 {
                     Perspective* projection = (Perspective*) camera->projection.ref();
-                    if( perspective( layout, node.children[0], projection ) )
-                    {
-                        camera->modified = true;
-                    }
+                    ui::Text text;
+                    text.ptr = "Field Of View";
+                    text.width = 100;
+                    if( gui->sliderUI(layer, text, gui->getAddressAsInt(projection->fov), &projection->fov, 10.0, 160.0)) camera->modified = true;
+
+                    ui::Text label_znear{ .ptr = "Near Clip:", .width = 60, .font_size = 20, .height = 15, .color = 0xFFFFFFFF };
+                    if( gui->scrubber(layer, gui->getAddressAsInt(projection->znear), label_znear, projection->znear) ) camera->modified = true;
+
+                    ui::Text label_zfar{ .ptr = "Far Clip:", .width = 60, .font_size = 20, .height = 15, .color = 0xFFFFFFFF };
+                    if( gui->scrubber(layer, gui->getAddressAsInt(projection->zfar), label_zfar, projection->zfar) ) camera->modified = true;
                 }
                 else if ( camera->projection->type == Projection::ORTHOGRAPHIC )
                 {
                     Orthographic* projection = (Orthographic*) camera->projection.ref();
-                    if( orthographic( layout, node.children[0], projection ) )
-                    {
-                        camera->modified = true;
-                    }
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->left), projection->left)) camera->modified = true;
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->right), projection->right)) camera->modified = true;
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->above), projection->above)) camera->modified = true;
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->below), projection->below)) camera->modified = true;
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->znear), projection->znear)) camera->modified = true;
+                    if( gui->numeric(layer, gui->getAddressAsInt(projection->zfar), projection->zfar)) camera->modified = true;
                 }
-                layout.pop(0);
+                gui->pop();
             }
+            break;
+
+            case 2:
+            {
+                ecs->remove< kege::Camera >( entity );
+            }
+            break;
+
+            default: break;
         }
-        layout.pop(0);
-        return node.state[1];
+        gui->pop();
+        return false;
     }
+
 }

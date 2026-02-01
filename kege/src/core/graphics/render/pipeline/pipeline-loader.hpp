@@ -100,5 +100,6 @@ namespace kege{
         glsl::LibraryContext& context,
         int pipeline_index
     );
+    bool loadTextFile( std::vector< char >& source, const char* filename );
 }
 #endif /* pipeline_loader_hpp */
