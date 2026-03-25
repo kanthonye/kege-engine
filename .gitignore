@@ -28,4 +28,5 @@ venv/
 env/
 
 # Ignore node modules (if using JavaScript/Node.js, optional)
-node_modules/
+node_modules/.cache/
+.cache/
