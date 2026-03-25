@@ -8,7 +8,7 @@
 #ifndef render_manager_hpp
 #define render_manager_hpp
 
-#include "camera.hpp"
+#include "../../camera/camera.hpp"
 #include "render-queue.hpp"
 #include "../pipeline/shader-pipeline.hpp"
 

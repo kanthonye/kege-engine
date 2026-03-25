@@ -14,9 +14,10 @@ namespace kege{
 
     std::vector< uint32_t > Graphics::compileGlslToSpv
     (
-        const char* shader_name,
         ShaderStageFlag shader_stage,
-        const std::vector< char >& source
+        const char* shader_name,
+        const char* source,
+        size_t source_size
     )
     {
         shaderc::Compiler compiler;
@@ -63,8 +64,8 @@ namespace kege{
         }
         shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv
         (
-            source.data(),
-            source.size() - 1,
+            source,
+            source_size - 1,
             shaderc_shader_type,
             shader_name,
             options
@@ -127,7 +128,7 @@ namespace kege{
         return _device->createShaderLayout( desc );
     }
 
-    ref::ShaderPipeline Graphics::createShaderPipeline(const PipelineCreateInfo& desc)
+    ref::ShaderPipeline Graphics::createShaderPipeline(const kege::ShaderPipelineDesc& desc)
     {
         return _device->createShaderPipeline( desc );
     }

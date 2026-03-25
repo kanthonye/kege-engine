@@ -12,9 +12,9 @@ namespace kege::ui{
 
     bool Cursor::update()
     {
-        if (!_current_edit.uid) return false;
+        if (!_current_edit.widget_id.id) return false;
 
-        Widget* widget = _layout->elem(*_current_edit.uid);
+        Widget* widget = _layout->elem(_current_edit.widget_id);
         if (!widget) return false;
 
         updateBlinker();
@@ -430,7 +430,7 @@ namespace kege::ui{
         return Cursor::PositionFromClick{std::min(pos, size), accumulated_width};
     }
 
-//    float Cursor::getClickToCursorOffset( const UID& uid, const ref::Font& font, int font_size, const char* str, size_t& size )
+//    float Cursor::getClickToCursorOffset( const WidgetHandle& uid, const ref::Font& font, int font_size, const char* str, size_t& size )
 //    {
 //        if ( size == 0 ) return 0;
 //        float length = 0;
@@ -488,16 +488,16 @@ namespace kege::ui{
         }
     }
 
-    void Cursor::startEditing(InputType type, const UID& uid, char* buffer, size_t& buffer_size, size_t buffer_capacity)
+    void Cursor::startEditing(const UserId user_id, const WidgetId& widget_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity)
     {
-        Widget* widget = _layout->elem(uid);
+        Widget* widget = _layout->elem(widget_id);
         if (!widget) return;
 
         if (widget->rect.height > 0) _rect_cursor.height = widget->rect.height;
         _rect_cursor.x = widget->rect.x;
         _rect_cursor.y = widget->rect.y;
 
-        _current_edit.uid = &uid;
+        _current_edit.user_id = user_id;
         _current_edit.buffer_capacity = buffer_capacity;
         _current_edit.buffer_size = &buffer_size;
         _current_edit.buffer = buffer;
@@ -522,7 +522,7 @@ namespace kege::ui{
         _selection_active = true;
         _visible = true;
 
-        Widget* widget = _layout->elem(*_current_edit.uid);
+        Widget* widget = _layout->elem(_current_edit.widget_id);
         if (widget)
         {
             Cursor::PositionFromClick result = getPositionFromClick(widget->rect.x + widget->rect.width, _layout->_font, widget->text.font_size, str, size);
@@ -535,7 +535,7 @@ namespace kege::ui{
 
     void Cursor::computeCursorPosition()
     {
-        Widget* widget = _layout->elem(*_current_edit.uid);
+        Widget* widget = _layout->elem(_current_edit.widget_id);
         if (!widget) return;
 
         float click_x = _mouse->getPosition().x - widget->rect.x;

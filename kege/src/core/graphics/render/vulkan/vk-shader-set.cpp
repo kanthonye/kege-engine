@@ -18,7 +18,7 @@ namespace kege::vk{
         slot.modifled = true;
         _modified = true;
 
-        assert(slot.info->type == kege::BindingType::Buffer);
+        assert(slot.info->type == kege::BindType::Buffer);
         assert(buffers.size() <= slot.info->count);
 
         for (size_t i = 0; i < buffers.size(); ++i)
@@ -37,7 +37,7 @@ namespace kege::vk{
         slot.modifled = true;
         _modified = true;
 
-        assert(slot.info->type == kege::BindingType::Image);
+        assert(slot.info->type == kege::BindType::Image);
         assert(images.size() <= slot.info->count);
 
         for (size_t i = 0; i < images.size(); ++i)
@@ -86,11 +86,11 @@ namespace kege::vk{
 
             switch ( slot.info->type )
             {
-                case kege::BindingType::Buffer:
+                case kege::BindType::Buffer:
                     write.pBufferInfo = &_flat_buffers[  frame  ][ slot.offset ];
                     break;
 
-                case kege::BindingType::Image:
+                case kege::BindType::Image:
                     write.pImageInfo = &_flat_images[  frame  ][ slot.offset ];
                     break;
 
@@ -130,12 +130,12 @@ namespace kege::vk{
                 slot.info = layout->getBinding(i);
                 slot.modifled = true;
 
-                if (slot.info->type == kege::BindingType::Buffer)
+                if (slot.info->type == kege::BindType::Buffer)
                 {
                     slot.offset = buffer_offset;
                     buffer_offset += slot.info->count;
                 }
-                else if (slot.info->type == kege::BindingType::Image)
+                else if (slot.info->type == kege::BindType::Image)
                 {
                     slot.offset = image_offset;
                     image_offset += slot.info->count;

@@ -1,104 +1,39 @@
 {
-    "asset": {
-        "generator": "KEGE",
-        "version": "1.0",
-        "name": "shader-library",
-        "date_created": "10/29/2025"
-    },
-    "rasterizer_states": [
+    "features":[],
+    "rasterizer_states":[],
+    "depth_states":[],
+    "blend_states":[],
+    "vertex_layout":[
         {
-            "cull_mode": "back",
-            "front_face": "ccw",
-            "polygon_mode": "fill",
-            "rasterizer_disable": "false"
-        }
-    ],
-    "depth_stencil_states": [
-        {
-            "depth_test": "false",
-            "depth_write": "true",
-            "depth_compare_op": "less"
-        }
-    ],
-    "color_blend_states": [
-        {
-            "logic_op": "copy",
-            "logic_op_enable": "false",
-            "color_blend_attachments": [
+            "vertex_inputs":
+            [
                 {
-                    "blend_enable": "true",
-                    "color_blend_op": "add",
-                    "src_color_blend_factor": "src_alpha",
-                    "dst_color_blend_factor": "one_minus_src_alpha",
-                    "alpha_blend_op": "add",
-                    "src_alpha_blend_factor": "one",
-                    "dst_alpha_blend_factor": "zero"
-                }
-            ]
-        }
-    ],
-    "attributes": [
-        {
-            "attributes": [
-                {
-                    "binding": 0,
+                    "semantic": "POSITION",
+                    "name": "position",
                     "location": 0,
-                    "format": "vec3",
-                    "input_rate": "vertex",
-                    "name": "position"
+                    "binding": 0,
+                    "type": "vec3"
                 }
             ],
-            "bindings": [
+            "vertex_bindings":
+            [
                 {
-                    "binding": 0,
+                    "input_rate": "vertex",
                     "stride": 12
                 }
             ]
         }
     ],
-    "shaders": [
+    "blocks":
+    [
         {
-            "uri": "error.vert",
-            "name": "error.vert",
-            "entry-point": "main",
-            "type": "vertex"
-        },
-        {
-            "uri": "error.frag",
-            "name": "error.frag",
-            "entry-point": "main",
-            "type": "fragment"
-        },
-    ],
-    "structs": [],
-    "uniforms": [
-        {
-            "name": "CameraBlock",
-            "fields": [
-                {
-                    "name": "projection",
-                    "type": "mat4",
-                    "count": 1
-                },
-                {
-                    "name": "view",
-                    "type": "mat4",
-                    "count": 1
-                }
-            ]
-        }
-    ],
-    "storages": [],
-    "push_constants": [
-        {
+            "id": "ObjectMatrices",
+            "name": "object",
+            "stages": ["vertex"],
             "size": 64,
-            "offset": 0,
             "count": 1,
-            "name": "ObjectMatrices",
-            "stages": [
-                "all"
-            ],
-            "fields": [
+            "fields":
+            [
                 {
                     "name": "model",
                     "type": "mat4",
@@ -107,61 +42,80 @@
             ]
         }
     ],
-    "pipeline_layouts": [
+    "sets":
+    [
         {
-            "push_constants": [
+            "set": "0",
+            "bindings":
+            [
                 {
-                    "push_constant": 0,
-                    "name": "model",
-                    "count": 1
-                }
-            ],
-            "uniform_layouts": [
-                {
-                    "set": 0,
-                    "bindings": [
+                    "id": "CameraBlock",
+                    "name": "camera",
+                    "stages": ["vertex"],
+                    "usage": "uniform_buffer",
+                    "binding": "0",
+                    "count": 1,
+                    "fields":
+                    [
                         {
-                            "binding": 0,
-                            "name": "camera",
-                            "count": 1,
-                            "block":
-                            {
-                                "usage": "uniform_buffer",
-                                "index":0,
-                                "target": "uniforms"
-                            },
-                            "stages": [
-                                "vs"
-                            ]
+                            "name": "projection",
+                            "type": "mat4",
+                            "count": 1
+                        },
+                        {
+                            "name": "view",
+                            "type": "mat4",
+                            "count": 1
                         }
                     ]
                 }
             ]
         }
     ],
-    "outputs": [
+    "shaders":
+    [
         {
-            "location": 0,
-            "format": "bgra_u8_norm",
-            "semantic": "COLOR",
-            "name": "out_color"
+            "name": "error.vert",
+            "entry-point": "main",
+            "type": "vertex",
+            "uri": "error.vert"
+        },
+        {
+            "name": "error.frag",
+            "entry-point": "main",
+            "type": "fragment",
+            "uri": "error.frag"
         }
     ],
-    "pipelines": [
+    "pipeline_layouts":
+    [
+        {
+            "blocks": [0],
+            "sets": [0]
+        }
+    ],
+    "pipeline_outputs":
+    [
+        {
+            "color_attachments": ["bgra_u8_norm"],
+            "depth_attachment": "depth_32",
+            "stencil_attachment": "undefined",
+            "sample_count": 1
+        }
+    ],
+    "pipelines":
+    [
         {
             "type": "Graphics",
-            "name": "pbr-lit-texr-pipeline",
-            "topology": "triangles",
-            "attributes": 0,
-            "rasterizer": 0,
-            "depth_stencil": 0,
-            "color_blend": 0,
+            "name": "gui-pipeline",
+            "topology": "triangle-strip",
+            "pipeline_output": 0,
             "pipeline_layout": 0,
-            "stages": [
-                0,
-                1
-            ],
-            "outputs": [0]
+            "raster_state": 0,
+            "depth_state": 0,
+            "blend_state": 0,
+            "attributes": 0,
+            "stages": [0, 1]
         }
     ]
 }

@@ -11,7 +11,7 @@
 
 namespace kege::vk{
 
-    bool CommandEncoder::bind( const kege::IndexedSet& indexed_set )
+    bool CommandEncoder::bind( const kege::BindSet& indexed_set )
     {
         return bind( indexed_set.index, indexed_set.set->vk() );
     }
@@ -64,10 +64,10 @@ namespace kege::vk{
 
         vkCmdBindPipeline( _handle, VK_PIPELINE_BIND_POINT_GRAPHICS, _curr_bind_pipeline->handle() );
 
-        if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Graphics ) {
+        if ( _curr_bind_pipeline->getType() == kege::PipelineType::Graphics ) {
             _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         }
-        else if ( _curr_bind_pipeline->getPipelineType() == kege::PipelineType::Compute ) {
+        else if ( _curr_bind_pipeline->getType() == kege::PipelineType::Compute ) {
             _current_pipeline_bindpoint = VK_PIPELINE_BIND_POINT_COMPUTE;
         }
         _curr_pipeline_layout = _curr_bind_pipeline->getShaderLayout()->vk();

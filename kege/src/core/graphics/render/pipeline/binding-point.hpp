@@ -10,6 +10,7 @@
 
 #include "shader-io.hpp"
 #include "../core/image.hpp"
+#include "../core/sampler.hpp"
 #include "../core/buffer.hpp"
 
 namespace kege{

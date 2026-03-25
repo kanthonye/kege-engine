@@ -16,7 +16,7 @@ namespace kege::vk{
     {
     public:
 
-        SetLayout( vk::Device* device, const LayoutBindings& bindings );
+        SetLayout( vk::Device* device, const BindPointDescs& bindings );
         ~SetLayout();
 
         virtual const vk::SetLayout* vk() const override { return this; }

@@ -13,6 +13,45 @@
 namespace kege{
 
     /**
+     * @brief Describes a buffer memory barrier.
+     *
+     * Contains all the information needed to synchronize access to a buffer resource
+     * between different pipeline stages, access types, and/or queue families.
+     *
+     * Buffer barriers are used to ensure proper memory visibility and execution
+     * ordering when buffers are accessed in different ways throughout a frame.
+     */
+    struct BufferMemoryBarrier
+    {
+        std::string resource_name;  ///< Name of the buffer in the RenderGraph (for debugging/tracking)
+
+        /// @name Access Synchronization
+        /// @{
+        AccessFlags src_access;     ///< Access type before the barrier (e.g., what operations were done)
+        AccessFlags dst_access;     ///< Access type after the barrier (e.g., what operations will be done)
+        /// @}
+
+        /// @name Pipeline Synchronization
+        /// @{
+        PipelineStageFlag src_stage;   ///< Pipeline stage where previous accesses completed
+        PipelineStageFlag dst_stage;   ///< Pipeline stage where subsequent accesses will begin
+        /// @}
+
+        /// @name Queue Family Ownership
+        /// @{
+        QueueType src_queue = QueueType::Graphics; ///< Queue family that previously owned the buffer
+        QueueType dst_queue = QueueType::Graphics; ///< Queue family that will own the buffer
+        /// @}
+
+        /// @name Buffer Region Specification
+        /// @{
+        size_t offset = 0;        ///< Starting byte offset of the affected buffer region
+        size_t size = ~0ull;      ///< Size of the affected region in bytes (~0ull means entire buffer)
+        kege::ref::Buffer buffer;
+        /// @}
+    };
+    
+    /**
      * @brief Bitmask flags specifying buffer usage capabilities.
      *
      * These flags determine how a buffer can be used and what operations

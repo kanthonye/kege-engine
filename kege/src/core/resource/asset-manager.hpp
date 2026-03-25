@@ -10,6 +10,7 @@
 
 #include "asset-cache-table.hpp"
 #include "asset-loader.hpp"
+#include "../io/virtual-directory.hpp"
 
 namespace kege{
 
@@ -123,7 +124,7 @@ namespace kege{
 
         template< typename Item > uint64_t load( const std::string& name, const std::string& filename )
         {
-            std::filesystem::path p = filename;
+            std::filesystem::path p = kege::vfs( filename.c_str() ).c_str();
             uint64_t handle = this->getId< Item >( name );
             if( handle != 0 ) return handle;
 
@@ -131,8 +132,12 @@ namespace kege{
             Ref< AssetLoaderT< Item > >* loader = this->fetch< Ref< AssetLoaderT< Item > > >( ext );
             if( loader == nullptr ) return 0;
 
-            Item asset = (*loader)->load( filename );
-            if( asset == nullptr ) return 0;
+            Item asset = (*loader)->load( p.string() );
+            if( asset == nullptr )
+            {
+                kege::Log::error << "LOAD_FAILED -> AssetManager::load -> ("<< filename.c_str() <<")" << Log::nl;
+                return 0;
+            }
             return add< Item >( name, asset );
         }
 

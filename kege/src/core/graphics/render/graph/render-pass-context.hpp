@@ -26,7 +26,7 @@ namespace kege{
         ShadowMap,           // Shadow mapping pass
         Geometry,            // G-buffer generation (deferred)
         Lighting,            // G-buffer generation (deferred)
-        ForwardOpaque,       // Forward rendering for opaque objects
+        Forward,       // Forward rendering for opaque objects
         ForwardTransparent,  // Forward rendering for transparent objects
         PostProcess,         // Full-screen post-processing effects
         UI,                  // User interface rendering

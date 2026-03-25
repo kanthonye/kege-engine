@@ -40,28 +40,28 @@ namespace kege{
          * @param name The name of the set binding point.
          * @return Pointer to the ShaderBindingPointSet if found, nullptr otherwise.
          */
-        const kege::LayoutBinding* getBinding( const std::string& name )const;
+        const kege::BindPointDesc* getBinding( const std::string& name )const;
 
         /**
          * @brief Retrieves a set binding point by name.
          * @param name The name of the set binding point.
          * @return Pointer to the ShaderBindingPointSet if found, nullptr otherwise.
          */
-        kege::LayoutBinding* getBinding( const std::string& name );
+        kege::BindPointDesc* getBinding( const std::string& name );
 
         /**
          * @brief Retrieves a set binding point by index.
          * @param binding_index The index of the set binding point.
          * @return Pointer to the ShaderBindingPointSet.
          */
-        const kege::LayoutBinding* getBinding( int binding_index )const;
+        const kege::BindPointDesc* getBinding( int binding_index )const;
 
         /**
          * @brief Retrieves a set binding point by index.
          * @param binding_index The index of the set binding point.
          * @return Pointer to the ShaderBindingPointSet.
          */
-        kege::LayoutBinding* getBinding( int binding_index );
+        kege::BindPointDesc* getBinding( int binding_index );
 
         /**
          * @brief Retrieves the name of this object.
@@ -88,12 +88,12 @@ namespace kege{
 
     protected:
 
-        SetLayout( const kege::LayoutBindings& bindings );
+        SetLayout( const kege::BindPointDescs& bindings );
 
     protected:
 
         std::unordered_map< std::string, uint32_t > _binding_set_lookup;
-        kege::LayoutBindings _bindings;
+        kege::BindPointDescs _bindings;
         std::string _name;
         int _total_buffers;
         int _total_images;

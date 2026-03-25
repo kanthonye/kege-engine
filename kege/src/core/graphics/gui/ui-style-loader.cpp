@@ -152,10 +152,10 @@ namespace kege::ui{
     Alignment parseAlignment( kege::Json json )
     {
         Alignment alignment;
-        alignment.content = {ui::AlignPosX::LEFT, ui::AlignPosY::TOP};
-        alignment.direction = AlignDir::HORIZONTAL;
+        alignment.content = {ui::AlignX::LEFT, ui::AlignY::TOP};
+        alignment.direction = AlignDir::RIGHT;
 
-        static std::map< std::string, AlignPosX > origins;
+        static std::map< std::string, AlignX > origins;
         if ( json )
         {
             kege::Json direction = json[ "direction" ];
@@ -163,15 +163,15 @@ namespace kege::ui{
             {
                 if ( strcmp( direction.value(), "right to left" ) == 0)
                 {
-                    alignment.direction = AlignDir::HORIZONTAL;
+                    alignment.direction = AlignDir::LEFT;
                 }
                 else if ( strcmp( direction.value(), "top to bottom" ) == 0)
                 {
-                    alignment.direction = AlignDir::VERTICAL;
+                    alignment.direction = AlignDir::DOWN;
                 }
                 else if ( strcmp( direction.value(), "bottom to top" ) == 0)
                 {
-                    alignment.direction = AlignDir::VERTICAL;
+                    alignment.direction = AlignDir::UP;
                 }
             }
             kege::Json origin = json[ "origin" ];

@@ -10,74 +10,87 @@
 
 #include "shader.hpp"
 #include "shader-data.hpp"
+#include "pipeline-key.hpp"
 
 namespace kege{
 
     /**
      * @brief Describes the output configuration of a graphics pipeline.
      */
-    struct PipelineOutputs
+    struct PipelineRendering
     {
-        std::vector< Format > color_attachment_formats;
-        Format depth_attachment_format = Format::depth_32;
-        Format stencil_attachment_format = Format::undefined;
-        SampleCount render_sample_count = SampleCount::Count1;
+        std::vector< Format > color_attachment_formats;         // → pColorAttachmentFormats
+        Format depth_attachment_format = Format::depth_32;      // → depthAttachmentFormat
+        Format stencil_attachment_format = Format::undefined;   // → stencilAttachmentFormat
+        SampleCount sample_count = SampleCount::Count1;  // → rasterizationSamples
     };
 
 }
 
 namespace kege{
 
-    struct PipelineSupport
+    struct ShaderSource
     {
-        enum Flag{ Camera, Lighting, Material, ObjectPushConst };
-        constexpr friend PipelineSupport& operator <<( PipelineSupport& flags, uint32_t mask )
-        {
-            flags.state = flags.state | mask;
-            return flags;
-        }
-        constexpr friend PipelineSupport operator |=( PipelineSupport& flags, uint32_t mask )
-        {
-            uint32_t s = flags.state | mask;
-            return PipelineSupport{s};
-        }
-        constexpr friend PipelineSupport operator &=( PipelineSupport& flags, uint32_t mask )
-        {
-            uint32_t s = flags.state & mask;
-            return PipelineSupport{s};
-        }
-        constexpr bool operator[]( uint32_t mask )const{ return (state & mask) == mask; }
-        uint32_t state;
+        std::string source;
+        std::string entry;
+        std::string name;
+        ShaderStageFlag stage = ShaderStageFlag::Vertex;
     };
+    typedef std::vector< ShaderSource > ShaderSources;
+
+    
+//    struct PipelineSupport
+//    {
+//        enum Flag{ Camera, Lighting, Material, ObjectPushConst };
+//        constexpr friend PipelineSupport& operator <<( PipelineSupport& flags, uint32_t mask )
+//        {
+//            flags.state = flags.state | mask;
+//            return flags;
+//        }
+//        constexpr friend PipelineSupport operator |=( PipelineSupport& flags, uint32_t mask )
+//        {
+//            uint32_t s = flags.state | mask;
+//            return PipelineSupport{s};
+//        }
+//        constexpr friend PipelineSupport operator &=( PipelineSupport& flags, uint32_t mask )
+//        {
+//            uint32_t s = flags.state & mask;
+//            return PipelineSupport{s};
+//        }
+//        constexpr bool operator[]( uint32_t mask )const{ return (state & mask) == mask; }
+//        uint32_t state;
+//    };
 
     struct PipelineLayoutInfo
     {
         std::string name;
-        kege::PipelineSetLayoutBindings layouts;
-        kege::PushBlockLayout push_constants;
+        kege::BindSetDescs layouts;
+        kege::PushBlockDescs push_constants;
     };
 
     /**
      * @brief Describes a complete graphics or compute pipeline.
      */
-    struct PipelineCreateInfo
+    struct ShaderPipelineDesc
     {
-        std::string name = "";
-        kege::PipelineType pipeline_type;
-        kege::ShaderLayoutDesc shader_layout;
-        kege::VertexBufferLayout vertex_input;
-        kege::InputAssemblyStateDesc input_assembly;
-        kege::RasterizationStateDesc rasterization;
-        kege::DepthStencilStateDesc depth_stencil;
-        kege::ColorBlendStateDesc color_blend;
-        kege::MultisampleStateDesc multisample;
-        kege::PipelineOutputs outputs;
-        kege::PipelineSupport support;
+        std::string                 name;
+        kege::PipelineType          pipeline_type;
+        kege::ShaderLayoutDesc      shader_layout;
 
-        std::vector< std::string > global_resources;
-        std::vector< std::pair<int,int> > specialization_constants;
+        kege::VertexLayout          vertex_layout;
 
-        std::vector< ref::Shader > shaders;
+        kege::PipelineRendering     pipeline_rendering;
+        // Fixed-function states (CRITICAL for pipeline caching!)
+        kege::InputAssembly         input_assembly;
+        kege::DepthStencil          depth_stencil;
+        kege::RasterizerState       rasterizer;
+        kege::ColorBlendState       color_blend;
+        kege::Multisample           multisample;
+        kege::DynamicState          dynamic_states;
+
+        kege::FeaturesBitmask       features;
+
+        std::vector< ref::Shader >  shaders;
     };
 
 }
@@ -94,47 +107,58 @@ namespace kege{
         virtual const vk::ShaderPipeline* vk() const { return nullptr; }
         virtual vk::ShaderPipeline* vk() { return nullptr; }
 
-        const kege::InputAssemblyStateDesc& getInputAssemblyState()const;
-        const kege::RasterizationStateDesc& getRasterizationState()const;
-        const kege::DepthStencilStateDesc& getDepthStencilStateDesc()const;
-        const kege::ColorBlendStateDesc& getColorBlendStateDesc()const;;
-        const kege::MultisampleStateDesc& getMultisampleStateDesc()const;
-        const kege::VertexBufferLayout& getVertexBufferLayout()const;
-        const kege::PipelineOutputs& getPipelineOutputs()const;
-        const kege::ref::ShaderLayout& getShaderLayout()const;
-        const std::vector< std::string > getGlobalBinds()const;
-        const std::string& getName()const;
+        const kege::PipelineRendering& getPipelineRendering()const;
+        const kege::VertexLayout& getVertexLayout()const;
 
+        const kege::DepthStencil& getDepthStencil()const;
+        const kege::RasterizerState& getRasterizerState()const;
+        const kege::ColorBlendState& getColorBlendState()const;
+
+        // Additional render states
+        const kege::PrimitiveTopology getTopology()const; // TriangleList, TriangleStrip, LineList, etc.
+
+        //const kege::ShadingModel getShadingModel()const;
+        //const kege::RendererType getRendererType()const;
+        const kege::FeaturesBitmask getFeatures()const;
+
+        const kege::ref::ShaderLayout& getShaderLayout()const;
         kege::ref::ShaderLayout getShaderLayout();
 
-        kege::PipelineType getPipelineType()const;
-        bool checkSupport( uint32_t mask )const;
+        bool checkFeature( kege::FeatureFlag feature )const;
+        kege::PipelineType getType()const;
+        const std::string& getName()const;
 
         virtual ~ShaderPipeline(){}
         
     protected:
 
-        ShaderPipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout );
+        ShaderPipeline( const kege::ShaderPipelineDesc& desc, const ref::ShaderLayout& shader_layout );
 
     protected:
 
-        kege::VertexBufferLayout _vertex_input;
-        kege::InputAssemblyStateDesc _input_assembly;
-        kege::RasterizationStateDesc _rasterization;
-        kege::DepthStencilStateDesc _depth_stencil;
-        kege::ColorBlendStateDesc _color_blend;
-        kege::MultisampleStateDesc _multisample;
-        kege::PipelineOutputs _outputs;
-        kege::PipelineSupport _support;
+        kege::ref::ShaderLayout     _shader_layout;
+        kege::VertexLayout          _vertex_layout;
+        kege::PipelineType          _type;
+        std::string                 _name;
 
-        std::vector< std::string > _global_resources;
-        std::vector< std::pair<int,int> > _specialization_constants;
+        kege::PipelineRendering     _pipeline_rendering;
 
-        kege::ref::ShaderLayout _shader_layout;
+        // Fixed-function states (CRITICAL for pipeline caching!)
+        kege::DepthStencil          _depth_state;
+        kege::RasterizerState       _raster_state;
+        kege::ColorBlendState       _color_blend_state;
+        kege::DynamicState          _dynamic_states;
 
-        kege::PipelineType _pipeline_type;
-        std::string _name;
+        // Additional render states
+        kege::PrimitiveTopology     _topology; // TriangleList, TriangleStrip, LineList, etc.
 
+        kege::FeaturesBitmask       _features;
+
+        // Shader selection
+        //kege::ShadingModel          _shading_model;
+        //kege::RendererType          _renderer_type;
+
+        //bool _alpha_to_coverage_enable;  // For foliage transparency
         friend ref::ShaderPipeline;
     };
     

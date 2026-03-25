@@ -8,59 +8,147 @@
 #include "string-to-enum-types.hpp"
 
 namespace kege{
-    
-    ShaderVarType stringToShaderVarType( const std::string& str )
+
+    int sizeOf( ShaderVar t )
     {
-        static std::map< std::string, kege::ShaderVarType > table;
+        switch ( t )
+        {
+            case ShaderVar::Bool:    return 1;
+
+            case ShaderVar::Sint:
+            case ShaderVar::Uint:
+            case ShaderVar::Float:   return 4;
+
+            case ShaderVar::Vec2:
+            case ShaderVar::Double:
+            case ShaderVar::Vec2U:
+            case ShaderVar::Vec2I:   return 8;
+
+            case ShaderVar::Vec3:
+            case ShaderVar::Vec3I:
+            case ShaderVar::Vec3U:   ;
+            case ShaderVar::Mat2:    return 12;
+
+            case ShaderVar::Vec4:
+            case ShaderVar::Vec4I:
+            case ShaderVar::Vec4U:   ;
+            case ShaderVar::Vec2D:   return 16;
+
+            case ShaderVar::Vec3D:   return 24;
+            case ShaderVar::Vec4D:   return 32;
+
+            case ShaderVar::Mat3:    return 36;
+            case ShaderVar::Mat4:    return 64;
+
+            default: break;
+        }
+        return 0;
+    }
+
+    DynamicState stringToDynamicState( const std::string& str )
+    {
+        static std::map< std::string, DynamicState > table;
         if( table.empty() )
         {
-            table[ "sint" ] = kege::ShaderVarType::Sint;
-            table[ "uint" ] = kege::ShaderVarType::Uint;
-            table[ "float" ] = kege::ShaderVarType::Float;
-            table[ "double" ] = kege::ShaderVarType::Double;
-            table[ "vec2" ] = kege::ShaderVarType::Vec2;
-            table[ "vec3" ] = kege::ShaderVarType::Vec3;
-            table[ "vec4" ] = kege::ShaderVarType::Vec4;
-            table[ "dvec2" ] = kege::ShaderVarType::Vec2D;
-            table[ "dvec3" ] = kege::ShaderVarType::Vec3D;
-            table[ "dvec4" ] = kege::ShaderVarType::Vec4D;
-            table[ "ivec2" ] = kege::ShaderVarType::Vec2I;
-            table[ "ivec3" ] = kege::ShaderVarType::Vec3I;
-            table[ "ivec4" ] = kege::ShaderVarType::Vec4I;
-            table[ "uvec2" ] = kege::ShaderVarType::Vec2U;
-            table[ "uvec3" ] = kege::ShaderVarType::Vec3U;
-            table[ "uvec4" ] = kege::ShaderVarType::Vec4U;
-            table[ "mat2" ] = kege::ShaderVarType::Mat2;
-            table[ "mat3" ] = kege::ShaderVarType::Mat3;
-            table[ "mat4" ] = kege::ShaderVarType::Mat4;
+            table[ "NULL" ] = kege::DynamicState::Null;
+            table[ "VIEWPORT" ] = kege::DynamicState::Viewport;
+            table[ "SCISSOR" ] = kege::DynamicState::Scissor;
+            table[ "LINE_WIDTH" ] = kege::DynamicState::LineWidth;
+            table[ "DEPTH_BIAS" ] = kege::DynamicState::DepthBias;
+            table[ "BLEND_CONSTANTS" ] = kege::DynamicState::BlendConstants;
+            table[ "DEPTH_BOUNDS" ] = kege::DynamicState::BlendBounds;
+            table[ "STENCIL_COMPARE_MASK" ] = kege::DynamicState::StencilCompareMask;
+            table[ "STENCIL_WRITE_MASK" ] = kege::DynamicState::StencilWriteMask;
+            table[ "STENCIL_REFERENCE" ] = kege::DynamicState::StencilReference;
         }
         auto m = table.find( str );
         if ( m != table.end() )
         {
             return m->second;
         }
-        return kege::ShaderVarType::Unknown;
+        return kege::DynamicState::Null;
     }
 
-//    UsageTarget stringToUsageTarget( const char* str )
-//    {
-//        static std::map< std::string, kege::UsageTarget > table;
-//        if( table.empty() )
-//        {
-//            table[ "Object" ] = kege::UsageTarget::Object;
-//            table[ "Material" ] = kege::UsageTarget::Material;
-//            table[ "Camera" ] = kege::UsageTarget::Camera;
-//            table[ "Light" ] = kege::UsageTarget::Light;
-//            table[ "Mesh" ] = kege::UsageTarget::Mesh;
-//        }
-//        auto m = table.find( str );
-//        if ( m != table.end() )
-//        {
-//            return m->second;
-//        }
-//        Log::error << "invalid UsageTarget -> " << str <<Log::nl;
-//        return kege::UsageTarget::Camera;
-//    }
+    std::string shaderVarToString( ShaderVar t )
+    {
+        switch ( t )
+        {
+            case ShaderVar::Bool:      return "bool";
+            case ShaderVar::Sint:      return "int";
+            case ShaderVar::Uint:      return "uint";
+            case ShaderVar::Float:     return "float";
+            case ShaderVar::Double:    return "double";
+            case ShaderVar::Vec2:      return "vec2";
+            case ShaderVar::Vec3:      return "vec3";
+            case ShaderVar::Vec4:      return "vec4";
+            case ShaderVar::Vec2I:     return "ivec2";
+            case ShaderVar::Vec3I:     return "ivec3";
+            case ShaderVar::Vec4I:     return "ivec4";
+            case ShaderVar::Vec2U:     return "uvec2";
+            case ShaderVar::Vec3U:     return "uvec3";
+            case ShaderVar::Vec4U:     return "uvec4";
+            case ShaderVar::Vec2D:     return "dvec2";
+            case ShaderVar::Vec3D:     return "dvec3";
+            case ShaderVar::Vec4D:     return "dvec4";
+            case ShaderVar::Mat2:      return "mat2";
+            case ShaderVar::Mat3:      return "mat3";
+            case ShaderVar::Mat4:      return "mat4";
+            default: break;
+        }
+        return "";
+    }
+
+    kege::ShaderVar stringToShaderVarType( const std::string& str )
+    {
+        static std::map< std::string, kege::ShaderVar > table;
+        if( table.empty() )
+        {
+            table[ "sint" ] = kege::ShaderVar::Sint;
+            table[ "uint" ] = kege::ShaderVar::Uint;
+            table[ "float" ] = kege::ShaderVar::Float;
+            table[ "double" ] = kege::ShaderVar::Double;
+            table[ "vec2" ] = kege::ShaderVar::Vec2;
+            table[ "vec3" ] = kege::ShaderVar::Vec3;
+            table[ "vec4" ] = kege::ShaderVar::Vec4;
+            table[ "dvec2" ] = kege::ShaderVar::Vec2D;
+            table[ "dvec3" ] = kege::ShaderVar::Vec3D;
+            table[ "dvec4" ] = kege::ShaderVar::Vec4D;
+            table[ "ivec2" ] = kege::ShaderVar::Vec2I;
+            table[ "ivec3" ] = kege::ShaderVar::Vec3I;
+            table[ "ivec4" ] = kege::ShaderVar::Vec4I;
+            table[ "uvec2" ] = kege::ShaderVar::Vec2U;
+            table[ "uvec3" ] = kege::ShaderVar::Vec3U;
+            table[ "uvec4" ] = kege::ShaderVar::Vec4U;
+            table[ "mat2" ] = kege::ShaderVar::Mat2;
+            table[ "mat3" ] = kege::ShaderVar::Mat3;
+            table[ "mat4" ] = kege::ShaderVar::Mat4;
+        }
+        auto m = table.find( str );
+        if ( m != table.end() )
+        {
+            return m->second;
+        }
+        return kege::ShaderVar::Unknown;
+    }
+
+    VertexInputRate stringToVertexInputRate( const std::string& str )
+    {
+        static std::map< std::string, kege::VertexInputRate > table;
+        if( table.empty() )
+        {
+            table[ "vertex" ] = kege::VertexInputRate::Vertex;
+            table[ "instance" ] = kege::VertexInputRate::Instance;
+            table[ "VERTEX" ] = kege::VertexInputRate::Vertex;
+            table[ "INSTANCE" ] = kege::VertexInputRate::Instance;
+        }
+        auto m = table.find( str );
+        if ( m != table.end() )
+        {
+            return m->second;
+        }
+        Log::warning << "invalid VertexInputRate -> " << str <<Log::nl;
+        return kege::VertexInputRate::Vertex;
+    }
 
 //    UsageSource stringToUsageSource( const char* str )
 //    {
@@ -92,19 +180,28 @@ namespace kege{
 //        return kege::UsageSource::Scale;
 //    }
 
-    kege::CompareOp stringToCompareOp( const std::string& type )
+    kege::ComparisonFunc stringToCompareOp( const std::string& type )
     {
-        static std::map< std::string, kege::CompareOp > table;
+        static std::map< std::string, kege::ComparisonFunc > table;
         if( table.empty() )
         {
-            table[ "never" ] = kege::CompareOp::Never;
-            table[ "less" ] = kege::CompareOp::Less;
-            table[ "equal" ] = kege::CompareOp::Equal;
-            table[ "less_equal" ] = kege::CompareOp::LessEqual;
-            table[ "greater" ] = kege::CompareOp::Greater;
-            table[ "not_equal" ] = kege::CompareOp::NotEqual;
-            table[ "greater_equal" ] = kege::CompareOp::GreaterEqual;
-            table[ "always" ] = kege::CompareOp::Always;
+            table[ "never" ] = kege::ComparisonFunc::Never;
+            table[ "less" ] = kege::ComparisonFunc::Less;
+            table[ "equal" ] = kege::ComparisonFunc::Equal;
+            table[ "less_equal" ] = kege::ComparisonFunc::LessEqual;
+            table[ "greater" ] = kege::ComparisonFunc::Greater;
+            table[ "not_equal" ] = kege::ComparisonFunc::NotEqual;
+            table[ "greater_equal" ] = kege::ComparisonFunc::GreaterEqual;
+            table[ "always" ] = kege::ComparisonFunc::Always;
+
+            table[ "NEVER" ] = kege::ComparisonFunc::Never;
+            table[ "LESS" ] = kege::ComparisonFunc::Less;
+            table[ "EQUAL" ] = kege::ComparisonFunc::Equal;
+            table[ "LESS_OR_EQUAL" ] = kege::ComparisonFunc::LessEqual;
+            table[ "GREATER" ] = kege::ComparisonFunc::Greater;
+            table[ "NOT_EQUAL" ] = kege::ComparisonFunc::NotEqual;
+            table[ "GREATER_OR_EQUAL" ] = kege::ComparisonFunc::GreaterEqual;
+            table[ "ALWAYS" ] = kege::ComparisonFunc::Always;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -112,7 +209,7 @@ namespace kege{
             return m->second;
         }
         kege::Log::error << "invalid CompareOp -> " << type <<Log::nl;
-        return kege::CompareOp::Always;
+        return kege::ComparisonFunc::Always;
     }
 
     StencilOp stringToStencilOp( const std::string& type )
@@ -128,6 +225,15 @@ namespace kege{
             table[ "invert" ] = kege::StencilOp::Invert;
             table[ "increment_and_wrap" ] = kege::StencilOp::IncrementAndWrap;
             table[ "decrement_and_wrap" ] = kege::StencilOp::DecrementAndWrap;
+            
+            table[ "KEEP" ] = kege::StencilOp::Keep;
+            table[ "ZERO" ] = kege::StencilOp::Zero;
+            table[ "REPLACE" ] = kege::StencilOp::Replace;
+            table[ "INCREMENt_AND_CLAMP" ] = kege::StencilOp::IncrementAndClamp;
+            table[ "DECREMENT_AND_CLAMP" ] = kege::StencilOp::DecrementAndClamp;
+            table[ "INVERT" ] = kege::StencilOp::Invert;
+            table[ "INCREMENt_AND_CLAMP" ] = kege::StencilOp::IncrementAndWrap;
+            table[ "DECREMENT_AND_CLAMP" ] = kege::StencilOp::DecrementAndWrap;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -159,6 +265,24 @@ namespace kege{
             table[ "or_inverted" ] = kege::ColorBlendLogicOp::OrInverted;
             table[ "nand" ] = kege::ColorBlendLogicOp::Nand;
             table[ "set" ] = kege::ColorBlendLogicOp::Set;
+            
+            table["CLEAR"] = kege::ColorBlendLogicOp::Clear;
+            table["AND"] = kege::ColorBlendLogicOp::And;
+            table["AND_REVERSE"] = kege::ColorBlendLogicOp::AndReverse;
+            table["COPY"] = kege::ColorBlendLogicOp::Copy;
+            table["AND_INVERTED"] = kege::ColorBlendLogicOp::AndInverted;
+            table["NO_OP"] = kege::ColorBlendLogicOp::NoOp;
+            table["XOR"] = kege::ColorBlendLogicOp::Xor;
+            table["OR"] = kege::ColorBlendLogicOp::Or;
+            table["NOR"] = kege::ColorBlendLogicOp::Nor;
+            table["EQUIV"] = kege::ColorBlendLogicOp::Equiv;
+            table["INVERT"] = kege::ColorBlendLogicOp::Invert;
+            table["OR_REVERSE"] = kege::ColorBlendLogicOp::OrReverse;
+            table["COPY_INVERTED"] = kege::ColorBlendLogicOp::CopyInverted;
+            table["OR_INVERTED"] = kege::ColorBlendLogicOp::OrInverted;
+            table["NAND"] = kege::ColorBlendLogicOp::Nand;
+            table["SET"] = kege::ColorBlendLogicOp::Set;
+
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -191,6 +315,25 @@ namespace kege{
             table[ "one_minus_constant_alpha" ] = kege::BlendFactor::OneMinusConstantAlpha;
             table[ "one_minus_src1_alpha" ] = kege::BlendFactor::OneMinusSrc1Alpha;
             table[ "src_alpha_saturate" ] = kege::BlendFactor::SrcAlphaSaturate;
+            
+            table["ZERO"] = kege::BlendFactor::Zero;
+            table["ONE"] = kege::BlendFactor::One;
+            table["SRC_COLOR"] = kege::BlendFactor::SrcColor;
+            table["SRC_ALPHA"] = kege::BlendFactor::SrcAlpha;
+            table["DST_COLOR"] = kege::BlendFactor::DstColor;
+            table["DST_ALPHA"] = kege::BlendFactor::DstAlpha;
+            table["SRC1_COLOR"] = kege::BlendFactor::Src1Color;
+            table["SRC1_ALPHA"] = kege::BlendFactor::Src1Alpha;
+            table["CONSTANT_COLOR"] = kege::BlendFactor::ConstantColor;
+            table["CONSTANT_ALPHA"] = kege::BlendFactor::ConstantAlpha;
+            table["ONE_MINUS_SRC_COLOR"] = kege::BlendFactor::OneMinusSrcColor;
+            table["ONE_MINUS_DST_COLOR"] = kege::BlendFactor::OneMinusDstColor;
+            table["ONE_MINUS_SRC_ALPHA"] = kege::BlendFactor::OneMinusSrcAlpha;
+            table["ONE_MINUS_CONSTANT_COLOR"] = kege::BlendFactor::OneMinusConstantColor;
+            table["ONE_MINUS_CONSTANT_ALPHA"] = kege::BlendFactor::OneMinusConstantAlpha;
+            table["ONE_MINUS_SRC1_ALPHA"] = kege::BlendFactor::OneMinusSrc1Alpha;
+            table["SRC_ALPHA_SATURATE"] = kege::BlendFactor::SrcAlphaSaturate;
+
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -211,6 +354,12 @@ namespace kege{
             table[ "reverse_subtract" ] = kege::BlendOp::ReverseSubtract;
             table[ "min" ] = kege::BlendOp::Min;
             table[ "max" ] = kege::BlendOp::Max;
+
+            table[ "ADD" ] = kege::BlendOp::Add;
+            table[ "SUBTRACT" ] = kege::BlendOp::Subtract;
+            table[ "REVERSE_SUBTRACT" ] = kege::BlendOp::ReverseSubtract;
+            table[ "MIN" ] = kege::BlendOp::Min;
+            table[ "MAX" ] = kege::BlendOp::Max;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -237,21 +386,21 @@ namespace kege{
         return kege::FrontFace::CounterClockwise;
     }
 
-    kege::PolygonMode stringToPolygonMode( const std::string& type )
+    kege::FillMode stringToPolygonMode( const std::string& type )
     {
-        static std::map< std::string, kege::PolygonMode > table;
+        static std::map< std::string, kege::FillMode > table;
         if( table.empty() )
         {
-            table[ "point" ] = kege::PolygonMode::Point;
-            table[ "line" ] = kege::PolygonMode::Line;
-            table[ "fill" ] = kege::PolygonMode::Fill;
+            table[ "point" ] = kege::FillMode::Point;
+            table[ "line" ] = kege::FillMode::Line;
+            table[ "fill" ] = kege::FillMode::Fill;
         }
         auto m = table.find( type );
         if ( m != table.end() )
         {
             return m->second;
         }
-        return kege::PolygonMode::Invalid;
+        return kege::FillMode::Fill;
     }
 
     kege::CullMode stringToCullMode( const std::string& type )
@@ -262,7 +411,7 @@ namespace kege{
             table[ "back" ] = kege::CullMode::Back;
             table[ "front" ] = kege::CullMode::Front;
             table[ "front_back" ] = kege::CullMode::FrontAndBack;
-            table[ "cull_none" ] = kege::CullMode::None;
+            table[ "none" ] = kege::CullMode::None;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -289,6 +438,20 @@ namespace kege{
             table[ "triangle-list-with-adjacency" ] = kege::PrimitiveTopology::TriangleListAdjacency;
             table[ "triangle-strip-with-adjacency" ] = kege::PrimitiveTopology::TriangleStripAdjacency;
             table[ "patch-list" ] = kege::PrimitiveTopology::PatchList;
+
+            table["POINT_LIST"] = kege::PrimitiveTopology::PointList;
+            table["LINE_LIST"] = kege::PrimitiveTopology::LineList;
+            table["LINE_STRIP"] = kege::PrimitiveTopology::LineStrip;
+            table["TRIANGLE_FAN"] = kege::PrimitiveTopology::TriangleList;
+            table["TRIANGLES"] = kege::PrimitiveTopology::TriangleList;
+            table["TRIANGLE_LIST"] = kege::PrimitiveTopology::TriangleList;
+            table["TRIANGLE_STRIP"] = kege::PrimitiveTopology::TriangleStrip;
+            table["LINE_LIST_WITH_ADJACENCY"] = kege::PrimitiveTopology::LineListAdjacency;
+            table["LINE_STRIP_WITH_ADJACENCY"] = kege::PrimitiveTopology::LineStripAdjacency;
+            table["TRIANGLE_LIST_WITH_ADJACENCY"] = kege::PrimitiveTopology::TriangleListAdjacency;
+            table["TRIANGLE_STRIP_WITH_ADJACENCY"] = kege::PrimitiveTopology::TriangleStripAdjacency;
+            table["PATCH_LIST"] = kege::PrimitiveTopology::PatchList;
+
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -298,55 +461,30 @@ namespace kege{
         return kege::PrimitiveTopology::Invalid;
     }
 
-    kege::DescriptorType convertDescriptorType( const std::string& type )
+    kege::ShaderVar convertVertexInputType( const std::string& type )
     {
-        static std::map< std::string, kege::DescriptorType > table;
+        static std::map< std::string, kege::ShaderVar > table;
         if( table.empty() )
         {
-            table[ "sampler"                ] = kege::DescriptorType::Sampler;
-            table[ "sampled-image"          ] = kege::DescriptorType::SampledImage;
-            table[ "combined-image-sampler" ] = kege::DescriptorType::CombinedImageSampler;
-            table[ "storage-buffer"         ] = kege::DescriptorType::StorageBuffer;
-            table[ "storage-image"          ] = kege::DescriptorType::StorageImage;
-            table[ "storage-buffer-dynamic" ] = kege::DescriptorType::StorageBufferDynamic;
-            table[ "storage-texel-buffer"   ] = kege::DescriptorType::StorageTexelBuffer;
-            table[ "uniform-buffer"         ] = kege::DescriptorType::UniformBuffer;
-            table[ "uniform-buffer-dynamic" ] = kege::DescriptorType::UniformBufferDynamic;
-            table[ "uniform-texel-buffer"   ] = kege::DescriptorType::UniformTexelBuffer;
-        }
-        auto m = table.find( type );
-        if ( m != table.end() )
-        {
-            return m->second;
-        }
-        kege::Log::error << "invalid DescriptorType -> " << type <<" in convertDescriptorType()" <<Log::nl;
-        return kege::DescriptorType::Invalid;
-    }
+            table[ "int" ] = kege::ShaderVar::Sint;
+            table[ "uint" ] = kege::ShaderVar::Uint;
+            table[ "float" ] = kege::ShaderVar::Float;
+            table[ "double" ] = kege::ShaderVar::Double;
 
-    kege::ShaderVarType convertVertexInputType( const std::string& type )
-    {
-        static std::map< std::string, kege::ShaderVarType > table;
-        if( table.empty() )
-        {
-            table[ "int" ] = kege::ShaderVarType::Sint;
-            table[ "uint" ] = kege::ShaderVarType::Uint;
-            table[ "float" ] = kege::ShaderVarType::Float;
-            table[ "double" ] = kege::ShaderVarType::Double;
+            table[ "vec2"  ] = kege::ShaderVar::Vec2;
+            table[ "dvec2" ] = kege::ShaderVar::Vec2D;
+            table[ "ivec2" ] = kege::ShaderVar::Vec2I;
+            table[ "uvec2" ] = kege::ShaderVar::Vec2U;
 
-            table[ "vec2"  ] = kege::ShaderVarType::Vec2;
-            table[ "dvec2" ] = kege::ShaderVarType::Vec2D;
-            table[ "ivec2" ] = kege::ShaderVarType::Vec2I;
-            table[ "uvec2" ] = kege::ShaderVarType::Vec2U;
+            table[ "vec3"  ] = kege::ShaderVar::Vec3;
+            table[ "dvec3" ] = kege::ShaderVar::Vec3D;
+            table[ "ivec3" ] = kege::ShaderVar::Vec3I;
+            table[ "uvec3" ] = kege::ShaderVar::Vec3U;
 
-            table[ "vec3"  ] = kege::ShaderVarType::Vec3;
-            table[ "dvec3" ] = kege::ShaderVarType::Vec3D;
-            table[ "ivec3" ] = kege::ShaderVarType::Vec3I;
-            table[ "uvec3" ] = kege::ShaderVarType::Vec3U;
-
-            table[ "vec4"  ] = kege::ShaderVarType::Vec4;
-            table[ "dvec4" ] = kege::ShaderVarType::Vec4D;
-            table[ "ivec4" ] = kege::ShaderVarType::Vec4I;
-            table[ "uvec4" ] = kege::ShaderVarType::Vec4U;
+            table[ "vec4"  ] = kege::ShaderVar::Vec4;
+            table[ "dvec4" ] = kege::ShaderVar::Vec4D;
+            table[ "ivec4" ] = kege::ShaderVar::Vec4I;
+            table[ "uvec4" ] = kege::ShaderVar::Vec4U;
         }
         auto m = table.find( type );
         if ( m != table.end() )
@@ -497,6 +635,28 @@ namespace kege{
             types[ "uniform_buffer_dynamic" ] = kege::BindingUsage::UniformBufferDynamic;
             types[ "storage_buffer_dynamic" ] = kege::BindingUsage::StorageBufferDynamic;
             types[ "input_attachment" ] = kege::BindingUsage::InputAttachment;
+            
+            types[ "sampler"                ] = kege::BindingUsage::Sampler;
+            types[ "sampled-image"          ] = kege::BindingUsage::SampledImage;
+            types[ "combined-image-sampler" ] = kege::BindingUsage::CombinedImageSampler;
+            types[ "storage-buffer"         ] = kege::BindingUsage::StorageBuffer;
+            types[ "storage-image"          ] = kege::BindingUsage::StorageImage;
+            types[ "storage-buffer-dynamic" ] = kege::BindingUsage::StorageBufferDynamic;
+            types[ "storage-texel-buffer"   ] = kege::BindingUsage::StorageTexelBuffer;
+            types[ "uniform-buffer"         ] = kege::BindingUsage::UniformBuffer;
+            types[ "uniform-buffer-dynamic" ] = kege::BindingUsage::UniformBufferDynamic;
+            types[ "uniform-texel-buffer"   ] = kege::BindingUsage::UniformTexelBuffer;
+
+            types[ "SAMPLER"                ] = kege::BindingUsage::Sampler;
+            types[ "SAMPLED_IMAGE"          ] = kege::BindingUsage::SampledImage;
+            types[ "COMBINED_IMAGE_SAMPLER" ] = kege::BindingUsage::CombinedImageSampler;
+            types[ "STORAGE_BUFFER"         ] = kege::BindingUsage::StorageBuffer;
+            types[ "STROAGE_IMAGE"          ] = kege::BindingUsage::StorageImage;
+            types[ "STORAGE_BUFFER_DYNAMIC" ] = kege::BindingUsage::StorageBufferDynamic;
+            types[ "STORAGE_TEXEL_BUFFER"   ] = kege::BindingUsage::StorageTexelBuffer;
+            types[ "UNIFORM_BUFFER"         ] = kege::BindingUsage::UniformBuffer;
+            types[ "UNIFORM_BUFFER_DYNAMIC" ] = kege::BindingUsage::UniformBufferDynamic;
+            types[ "UNIFORM_TEXEL_BUFFER"   ] = kege::BindingUsage::UniformTexelBuffer;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -505,6 +665,42 @@ namespace kege{
         }
         kege::Log::error << "unsupported BindingUsage -> " <<name <<kege::Log::nl;
         return {};
+    }
+
+    kege::DescriptorType convertDescriptorType( const std::string& type )
+    {
+        static std::map< std::string, kege::DescriptorType > table;
+        if( table.empty() )
+        {
+            table[ "sampler"                ] = kege::DescriptorType::Sampler;
+            table[ "sampled-image"          ] = kege::DescriptorType::SampledImage;
+            table[ "combined-image-sampler" ] = kege::DescriptorType::CombinedImageSampler;
+            table[ "storage-buffer"         ] = kege::DescriptorType::StorageBuffer;
+            table[ "storage-image"          ] = kege::DescriptorType::StorageImage;
+            table[ "storage-buffer-dynamic" ] = kege::DescriptorType::StorageBufferDynamic;
+            table[ "storage-texel-buffer"   ] = kege::DescriptorType::StorageTexelBuffer;
+            table[ "uniform-buffer"         ] = kege::DescriptorType::UniformBuffer;
+            table[ "uniform-buffer-dynamic" ] = kege::DescriptorType::UniformBufferDynamic;
+            table[ "uniform-texel-buffer"   ] = kege::DescriptorType::UniformTexelBuffer;
+
+            table[ "SAMPLER"                ] = kege::DescriptorType::Sampler;
+            table[ "SAMPLED_IMAGE"          ] = kege::DescriptorType::SampledImage;
+            table[ "COMBINED_IMAGE_SAMPLER" ] = kege::DescriptorType::CombinedImageSampler;
+            table[ "STORAGE_BUFFER"         ] = kege::DescriptorType::StorageBuffer;
+            table[ "STROAGE_IMAGE"          ] = kege::DescriptorType::StorageImage;
+            table[ "STORAGE_BUFFER_DYNAMIC" ] = kege::DescriptorType::StorageBufferDynamic;
+            table[ "STORAGE_TEXEL_BUFFER"   ] = kege::DescriptorType::StorageTexelBuffer;
+            table[ "UNIFORM_BUFFER"         ] = kege::DescriptorType::UniformBuffer;
+            table[ "UNIFORM_BUFFER_DYNAMIC" ] = kege::DescriptorType::UniformBufferDynamic;
+            table[ "UNIFORM_TEXEL_BUFFER"   ] = kege::DescriptorType::UniformTexelBuffer;
+        }
+        auto m = table.find( type );
+        if ( m != table.end() )
+        {
+            return m->second;
+        }
+        kege::Log::error << "invalid DescriptorType -> " << type <<" in convertDescriptorType()" <<Log::nl;
+        return kege::DescriptorType::Invalid;
     }
 
     ShaderStageFlag stringToShaderStageFlag( const std::string& name )
@@ -520,14 +716,30 @@ namespace kege{
             types[ "geometry" ] = ShaderStageFlag::Geometry;
             types[ "tessellation-control" ] = ShaderStageFlag::TessellationControl;
             types[ "tessellation-evaluation" ] = ShaderStageFlag::TessellationEvaluation;
-            types[ "all-graphics" ] = ShaderStageFlag::AllGraphics;
-            types[ "all" ] = ShaderStageFlag::All;
+
+            types[ "vert" ] = ShaderStageFlag::Vertex;
+            types[ "frag" ] = ShaderStageFlag::Fragment;
+            types[ "comp" ] = ShaderStageFlag::Compute;
+            types[ "geom" ] = ShaderStageFlag::Geometry;
+            types[ "tesc" ] = ShaderStageFlag::TessellationControl;
+            types[ "tese" ] = ShaderStageFlag::TessellationEvaluation;
+
+            types[ "VERT" ] = ShaderStageFlag::Vertex;
+            types[ "FRAG" ] = ShaderStageFlag::Fragment;
+            types[ "COMP" ] = ShaderStageFlag::Compute;
+            types[ "GEOM" ] = ShaderStageFlag::Geometry;
+            types[ "TESC" ] = ShaderStageFlag::TessellationControl;
+            types[ "TESE" ] = ShaderStageFlag::TessellationEvaluation;
+
             types[ "vs" ] = ShaderStageFlag::Vertex;
             types[ "fs" ] = ShaderStageFlag::Fragment;
             types[ "cs" ] = ShaderStageFlag::Compute;
             types[ "gs" ] = ShaderStageFlag::Geometry;
             types[ "tcs" ] = ShaderStageFlag::TessellationControl;
             types[ "tes" ] = ShaderStageFlag::TessellationEvaluation;
+
+            types[ "all-graphics" ] = ShaderStageFlag::AllGraphics;
+            types[ "all" ] = ShaderStageFlag::All;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -545,8 +757,12 @@ namespace kege{
         if ( types.empty() )
         {
             types[ "Graphics" ] = kege::PipelineType::Graphics;
-            types[ "Compute" ] = kege::PipelineType::Graphics;
-            types[ "RayTracing" ] = kege::PipelineType::Graphics;
+            types[ "Compute" ] = kege::PipelineType::Compute;
+            types[ "RayTracing" ] = kege::PipelineType::RayTracing;
+
+            types[ "GRAPHICS" ] = kege::PipelineType::Graphics;
+            types[ "COMPUTE" ] = kege::PipelineType::Compute;
+            types[ "RAY_TRACING" ] = kege::PipelineType::RayTracing;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -779,6 +995,7 @@ namespace kege{
             types[ "depth_24_stencil_8" ] = kege::Format::depth_24_stencil_8;
             types[ "depth_32_stencil_8" ] = kege::Format::depth_32_stencil_8;
             types[ "stencil_u8" ] = kege::Format::stencil_u8;
+            types[ "undefined" ] = kege::Format::undefined;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -786,6 +1003,6 @@ namespace kege{
             return m->second;
         }
         kege::Log::error << "unsupported Format -> " <<name <<kege::Log::nl;
-        return {};
+        return Format::undefined;
     }
 }

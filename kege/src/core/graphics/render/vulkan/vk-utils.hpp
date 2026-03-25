@@ -368,7 +368,7 @@ namespace kege::vk{
      */
     VkFormat convertFormat( Format format );
 
-    VkFormat convertShaderVarTypeToVkFormat( kege::ShaderVarType format );
+    VkFormat convertShaderVarTypeToVkFormat( kege::ShaderVar format );
 
     /**
      * @brief Translate VkFormat to engine Format type
@@ -501,7 +501,7 @@ namespace kege::vk{
      * @param compare Engine compare operation
      * @return Corresponding VkCompareOp value
      */
-    VkCompareOp convertCompareOp(CompareOp compare);
+    VkCompareOp convertCompareOp(ComparisonFunc compare);
 
     /**
      * @brief Translate engine border color to Vulkan border color
@@ -575,13 +575,13 @@ namespace kege::vk{
     /**
      * @brief Translate engine color component flags to Vulkan color component flags
      *
-     * Maps ColorComponentFlags bitfield to the appropriate VkColorComponentFlags.
+     * Maps ColorWriteMask bitfield to the appropriate VkColorComponentFlags.
      * Each bit in the input maps to a specific Vulkan color component flag.
      *
      * @param flags Engine color component flags
      * @return Corresponding VkColorComponentFlags
      */
-    VkColorComponentFlags convertColorComponentMask( ColorComponentFlags flags );
+    VkColorComponentFlags convertColorComponentMask( ColorWriteMask flags );
 
     /**
      * @brief Translate engine blend factor to Vulkan blend factor
@@ -602,16 +602,6 @@ namespace kege::vk{
      * @return Corresponding VkBlendOp value
      */
     VkBlendOp convertBlendOp( BlendOp op );
-
-    /**
-     * @brief Translate engine compare operation to Vulkan compare operation
-     *
-     * Maps CompareOp enum to the appropriate VkCompareOp value.
-     *
-     * @param compare Engine compare operation
-     * @return Corresponding VkCompareOp value
-     */
-    VkCompareOp convertCompareOp(CompareOp compare);
 
 
     VkLogicOp convertLogicOp( ColorBlendLogicOp op );
@@ -654,7 +644,7 @@ namespace kege::vk{
      * @param mode Engine polygon mode
      * @return Corresponding VkPolygonMode value
      */
-    VkPolygonMode convertPolygonMode( PolygonMode mode );
+    VkPolygonMode convertPolygonMode( FillMode mode );
 
     /**
      * @brief Translate engine vertex input rate to Vulkan vertex input rate

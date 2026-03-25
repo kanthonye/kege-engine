@@ -1,0 +1,192 @@
+// ============================================================
+//  VPPL - Vulkan Pipeline Definition Language
+//  v1.0
+//  VPDL is a high-level, human-friendly language for defining Vulkan pipelines. 
+//  It abstracts away the boilerplate and complexity of Vulkan's pipeline creation, 
+//  allowing developers to focus on the core aspects of their rendering logic.
+// ============================================================
+
+@metadata
+{
+    pipeline:   GRAPHICS
+    version:    1.0 
+    name:       "error"
+}
+
+// ============================================================
+//  SHADERS
+//  Inline GLSL lives in @vert / @frag / @comp blocks.
+//  No escaping. No quoting. Just code.
+// ============================================================
+
+@vert(version: 450, entry: main)
+    #extension GL_ARB_separate_shader_objects : enable
+    layout(location = 0) in vec3 in_position;
+    layout(set = 0, binding = 0) uniform CameraBlock
+    {
+        mat4 projection;
+        mat4 view;
+    }
+    camera;
+    layout(push_constant) uniform ObjectMatrices
+    {
+        mat4 model;
+    }
+    object;
+    void main()
+    {
+        gl_Position = camera.projection * camera.view * object.model * vec4(in_position, 1.0);
+    }
+@end
+
+@frag(version: 450, entry: main)
+    #extension GL_ARB_separate_shader_objects : enable
+    layout(location = 0) out vec4 out_color;
+    void main() 
+    {
+        bool checker = bool((int(gl_FragCoord.x) / 10 + int(gl_FragCoord.y) / 10) % 2);
+        vec3 color1 = vec3(1.0, 0.0, 1.0); // Magenta
+        vec3 color2 = vec3(1.0, 0.0, 0.0); // Black
+        out_color = vec4(checker ? color1 : color2, 1.0);
+    }
+@end
+
+// ============================================================
+//  VERTEX INPUT
+//  stride is in bytes. offset is byte offset within binding.
+// ============================================================
+
+@vertex_layout
+{
+    @binding(0){ stride: 12  rate: VERTEX }
+    @attrib(0) // position
+    { 
+        type: vec3 
+        binding: 0    
+        offset: 0  
+    }
+}
+
+/*============================================================
+ * DESCRIPTOR SETS
+ *===========================================================*/
+@sets
+{
+    @set(0) "camera" {
+        @binding(0)
+        {
+            usage:  UNIFORM_BUFFER       
+            stages: [VERT]
+            count:  1
+        } 
+    }
+}
+
+/*============================================================
+ * PUSH CONSTANTS
+ *===========================================================*/
+
+@push_blocks {
+    @range "model" {
+        stages: [VERT, FRAG]
+        offset: 0  
+        size:   128
+    }
+}
+
+/*============================================================
+ * PIPELINE STAGES
+ *===========================================================*/
+
+@input_assembly {
+    topology: TRIANGLE_LIST
+    primitive_restart:  on
+}
+
+@rasterization {
+    polygon_mode:   FILL
+    cull_mode:      BACK
+    front_face:     CCW
+    depth_clamp:    off
+    discard:        off
+    line_width:     1.0
+
+    @depth_bias {
+        enabled:         off
+        constant_factor: 0.0
+        clamp:           0.0
+        slope_factor:    0.0
+    }
+}
+
+@multisample {
+    samples:            1
+    sample_shading:     off
+    alpha_to_coverage:  off
+    alpha_to_one:       off
+}
+
+@depth_stencil {
+    @depth {
+        enable:         on
+        write:          on
+        compare_op:     LESS_OR_EQUAL
+        bounds_test:    off
+        bounds:         [0.0, 1.0]
+    }
+
+    @stencil {
+        enable:   off
+        reference:     0
+
+        @front {
+            fail_op:       KEEP
+            pass_op:       KEEP
+            depth_fail_op: KEEP
+            compare_op:    ALWAYS
+            compare_mask:  0xFF
+            write_mask:    0xFF
+        }
+
+        @back {
+            fail_op:       KEEP
+            pass_op:       KEEP
+            depth_fail_op: KEEP
+            compare_op:    ALWAYS
+            compare_mask:  0xFF
+            write_mask:    0xFF
+        }
+    }
+}
+
+@color_blend {
+    logic_op: COPY
+    blend_constants: [0.0, 0.0, 0.0, 0.0]
+    @attachment(0) {
+        enable: on
+        color_op: ADD
+        src_color: SRC_ALPHA
+        dst_color: ONE_MINUS_SRC_ALPHA
+        alpha_op: ADD
+        src_alpha: ONE
+        dst_alpha: ZERO
+    }
+}
+
+/*============================================================
+ * DYNAMIC STATES : These are set at draw time — not baked into the pipeline.
+ *===========================================================*/
+@dynamic_states {
+    VIEWPORT
+    SCISSOR
+}
+
+/*============================================================
+ * RENDER PASS
+ *===========================================================*/
+@dynamic_rendering {
+    color_attachments: [ bgra_u8_norm ]
+    depth_attachment: depth_32
+    stencil_attachment: undefined
+    pass: "forward"
+}

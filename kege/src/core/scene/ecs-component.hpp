@@ -13,7 +13,7 @@
 #include <memory>
 #include <typeindex>
 #include <cstring>
-#include "array.hpp"
+#include "../utils/array.hpp"
 
 namespace kege::ecs{
 
@@ -45,7 +45,7 @@ namespace kege::ecs{
         protected:
 
             // Use std::atomic for thread safety
-            static inline std::atomic<uint32_t> type_count{0};
+            static std::atomic<uint32_t> type_count;
             friend Component;
         };
 
@@ -147,7 +147,6 @@ namespace kege::ecs{
         }
     };
 
-    //uint32_t Component::Attribute::type_count = 0;
     template<typename T> uint32_t Component::InfoT<T>::_type = Component::Info::type_count++;
 }
 #endif /* component_hpp */

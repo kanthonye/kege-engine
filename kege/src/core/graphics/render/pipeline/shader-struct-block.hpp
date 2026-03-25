@@ -34,7 +34,7 @@ namespace kege{
     {
         std::string name;
 
-        //ShaderVarType type;
+        //ShaderVar type;
         std::string type;
 
         uint32_t offset;

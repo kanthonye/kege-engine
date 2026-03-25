@@ -8,21 +8,6 @@
 #ifndef file_browser_hpp
 #define file_browser_hpp
 
-#include <filesystem>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <chrono>
-#include <algorithm>
-#include <memory>
-
-#include "../../core/scene/ecs.hpp"
-#include "../../core/scene/scene.hpp"
-#include "../../core/app/project-manager.hpp"
-#include "../../core/scene/ecs.hpp"
-#include "../../core/graphics/gui/ui-layout.hpp"
-#include "../../core/graphics/gui/ui-viewer.hpp"
-#include "../gui.hpp"
 #include "ui-panel.hpp"
 
 namespace kege::ui{
@@ -37,12 +22,12 @@ namespace kege::ui{
 
         struct FileEntry
         {
-            ui::UID uid;
-            ui::UID icon_uid;
-            ui::UID label_uid;
+            ui::WidgetId wid;
+            ui::WidgetHandle icon_uid;
+            ui::WidgetHandle label_uid;
             
             ui::Text name_text;
-            //ui::UID uid;
+            //ui::WidgetHandle uid;
             fs::path path;
             std::string name;
             std::string display_name;
@@ -98,7 +83,7 @@ namespace kege::ui{
 
     public:
 
-        FileBrowser(kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs, const std::string& path);
+        FileBrowser(kege::EditorLayer* editor, ui::UserId uid_main, const std::string& path);
         void update() override;
 
     private:
@@ -147,13 +132,15 @@ namespace kege::ui{
         std::string _current_path_str;
 
         // UI element IDs (persistent across frames)
-        ui::UID _uid_main;
-        ui::UID _up_button_uid;
-        ui::UID _back_button_uid;
-        ui::UID _forward_button_uid;
-        ui::UID _refresh_button_uid;
-        ui::UID _new_folder_button_uid;
-        ui::UID _tool_tip_button_uid;
+        ui::UserId _uid_main;
+        ui::WidgetId _id_main_widget;
+
+        ui::WidgetHandle _up_button_uid;
+        ui::WidgetHandle _back_button_uid;
+        ui::WidgetHandle _forward_button_uid;
+        ui::WidgetHandle _refresh_button_uid;
+        ui::WidgetHandle _new_folder_button_uid;
+        ui::WidgetHandle _tool_tip_button_uid;
         uint64_t _scroll_container_id;
         uint64_t _path_field_id;
 

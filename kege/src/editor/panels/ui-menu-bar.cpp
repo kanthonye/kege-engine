@@ -5,12 +5,13 @@
 //  Created by Kenneth Esdaile on 8/18/25.
 //
 
+#include "../editor-layer.hpp"
 #include "ui-menu-bar.hpp"
 
 namespace kege::ui{
 
-    MenuBar::MenuBar( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
-    :   kege::ui::Panel( "MenuBar", pm, gui, e )
+    MenuBar::MenuBar( kege::EditorLayer* editor )
+    :   kege::ui::Panel( "MenuBar", editor )
     {
 //        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }

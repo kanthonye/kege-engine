@@ -9,76 +9,90 @@
 
 namespace kege{
 
+    const kege::PipelineRendering& ShaderPipeline::getPipelineRendering()const
+    {
+        return _pipeline_rendering;
+    }
+    
+    const kege::VertexLayout& ShaderPipeline::getVertexLayout()const
+    {
+        return _vertex_layout;
+    }
 
-    const kege::InputAssemblyStateDesc& ShaderPipeline::getInputAssemblyState()const
+    const kege::DepthStencil& ShaderPipeline::getDepthStencil()const
     {
-        return _input_assembly;
+        return _depth_state;
     }
-    const kege::RasterizationStateDesc& ShaderPipeline::getRasterizationState()const
+
+    const kege::RasterizerState& ShaderPipeline::getRasterizerState()const
     {
-        return _rasterization;
+        return _raster_state;
     }
-    const kege::DepthStencilStateDesc& ShaderPipeline::getDepthStencilStateDesc()const
+
+    const kege::ColorBlendState& ShaderPipeline::getColorBlendState()const
     {
-        return _depth_stencil;
+        return _color_blend_state;
     }
-    const kege::ColorBlendStateDesc& ShaderPipeline::getColorBlendStateDesc()const
+
+    // Additional render states
+    const kege::PrimitiveTopology ShaderPipeline::getTopology()const
     {
-        return _color_blend;
+        return _topology;
     }
-    const kege::MultisampleStateDesc& ShaderPipeline::getMultisampleStateDesc()const
+
+//    const kege::ShadingModel ShaderPipeline::getShadingModel()const
+//    {
+//        return _shading_model;
+//    }
+//
+//    const kege::RendererType ShaderPipeline::getRendererType()const
+//    {
+//        return _renderer_type;
+//    }
+
+    const kege::FeaturesBitmask ShaderPipeline::getFeatures()const
     {
-        return _multisample;
+        return _features;
     }
-    const kege::VertexBufferLayout& ShaderPipeline::getVertexBufferLayout()const
-    {
-        return _vertex_input;
-    }
-    const kege::PipelineOutputs& ShaderPipeline::getPipelineOutputs()const
-    {
-        return _outputs;
-    }
+
     const kege::ref::ShaderLayout& ShaderPipeline::getShaderLayout()const
     {
         return _shader_layout;
-    }
-    const std::vector< std::string > ShaderPipeline::getGlobalBinds()const
-    {
-        return _global_resources;
-    }
-    const std::string& ShaderPipeline::getName()const
-    {
-        return _name;
     }
 
     kege::ref::ShaderLayout ShaderPipeline::getShaderLayout()
     {
         return _shader_layout;
     }
-    
-    kege::PipelineType ShaderPipeline::getPipelineType()const
+
+    bool ShaderPipeline::checkFeature( kege::FeatureFlag feature )const
     {
-        return _pipeline_type;
+        return _features & feature;
     }
 
-    bool ShaderPipeline::checkSupport( uint32_t mask )const
+    kege::PipelineType ShaderPipeline::getType()const
     {
-        return _support[ mask ];
+        return _type;
     }
-    
-    ShaderPipeline::ShaderPipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout )
+
+    const std::string& ShaderPipeline::getName()const
+    {
+        return _name;
+    }
+
+    ShaderPipeline::ShaderPipeline( const kege::ShaderPipelineDesc& info, const ref::ShaderLayout& shader_layout )
     :   _shader_layout( shader_layout )
+    ,   _vertex_layout( info.vertex_layout )
     ,   _name( info.name )
-    ,   _vertex_input( info.vertex_input )
-    ,   _input_assembly( info.input_assembly )
-    ,   _rasterization( info.rasterization )
-    ,   _depth_stencil( info.depth_stencil )
-    ,   _color_blend( info.color_blend )
-    ,   _multisample( info.multisample )
-    ,   _outputs( info.outputs )
-    ,   _support( info.support )
-    ,   _global_resources( info.global_resources )
-    ,   _specialization_constants( info.specialization_constants )
-    ,   _pipeline_type( info.pipeline_type )
+    ,   _type( info.pipeline_type )
+    ,   _pipeline_rendering( info.pipeline_rendering )
+    ,   _depth_state( info.depth_stencil )
+    ,   _raster_state( info.rasterizer )
+    ,   _color_blend_state( info.color_blend )
+    ,   _topology( info.input_assembly.topology )
+    ,   _features( info.features )
+//    ,   _shading_model( info.shading_model )
+//    ,   _renderer_type( info.renderer_type )
+//    ,   _alpha_to_coverage_enable( info.alpha_to_coverage_enable )
     {}
 }

@@ -26,7 +26,7 @@ namespace kege::vk{
             vk::Device* device,
             const std::string& name,
             const kege::IndexedSetLayouts& indexed_set_layouts,
-            const kege::PushBlockLayout& push_block_layout
+            const kege::PushBlockDescs& push_blocks
         );
 
         ~ShaderLayout();

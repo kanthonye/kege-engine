@@ -114,7 +114,7 @@ namespace kege{
          * @brief Retrieves the associated shader set.
          * @return Handle to the shader set.
          */
-        const kege::IndexedSet& getShaderSet() const;
+        const kege::BindSet& getShaderSet() const;
 
         /** 
          * @brief Constructor for InstanceDrawBuffer.
@@ -124,7 +124,7 @@ namespace kege{
 
     private:
 
-        kege::IndexedSet _shader_set;
+        kege::BindSet _shader_set;
     };
 
 }
@@ -323,15 +323,107 @@ namespace kege{
 
 namespace kege{
 
+    enum struct Feature : uint64_t
+    {
+        UNDEFINED               = 0,
+        VERTEX_POSITION         = 1ull << 0,
+        VERTEX_NORMAL           = 1ull << 1,
+        VERTEX_TEXCOORD         = 1ull << 2,
+        VERTEX_TANGENT          = 1ull << 3,
+        VERTEX_BITANGENT        = 1ull << 4,
+        VERTEX_COLOR            = 1ull << 5,
+
+        /**
+         * @include -> vertex joints
+         * @include -> vertex weights
+         * @include -> skeletal transform buffer
+         */
+        VERTEX_SKINNING         = 1ull << 6,
+
+        /**
+         * @include -> material uniform
+         */
+        MATERIAL                = 1ull << 7,
+
+        /**
+         * @include -> noraml mapping texture
+         */
+        NORMAL_MAPPING          = 1ull << 8,
+
+        /**
+         * @integrate -> parallax mapping calculation
+         * @requires -> vertex tangent and bitangent
+         */
+        PARALLAX_MAPPING        = 1ull << 9,
+
+        /**
+         * @include -> lighting function
+         */
+        LIT                     = 1ull << 10,
+
+        /**
+         * @integrate -> point lights
+         */
+        LIGHT_POINT             = 1ull << 11,
+
+        /**
+         * @integrate -> spot lights
+         */
+        LIGHT_SPOT              = 1ull << 12,
+        LIGHT_AREA              = 1ull << 13,
+
+        /**
+         * @integrate -> image base lighting calculation
+         */
+        IIMAGE_BASE_LIGHTING    = 1ull << 14,
+        INSTANCE_RENDERING      = 1ull << 15,
+        ANISOTROPIC             = 1ull << 16,
+        CAST_SHADOW             = 1ull << 17,
+        RECIEVE_SHADOW          = 1ull << 18,
+    };
+
+    typedef Feature FeatureMask;
+
+    inline constexpr FeatureMask operator|(const Feature& a, const Feature& b)
+    {
+        return static_cast<FeatureMask>(static_cast<uint64_t>(a) | static_cast<uint64_t>(b));
+    }
+
+    inline constexpr FeatureMask operator&(Feature a, Feature b)
+    {
+        return static_cast<FeatureMask>(static_cast<uint64_t>(a) & static_cast<uint64_t>(b));
+    }
+
+    inline constexpr FeatureMask& operator|=(Feature& a, Feature b)
+    {
+        a = a | b;
+        return a;
+    }
+
+    inline constexpr FeatureMask& operator&=(Feature& a, Feature b)
+    {
+        a = a & b;
+        return a;
+    }
+
+    inline constexpr bool contain(const FeatureMask& a, const Feature& b)
+    {
+        return (a & b) == b;
+    }
+
     struct Renderable
     {
-        uint64_t mesh_handle;
-        uint64_t material_handle;
-        uint32_t render_pass;
-        uint32_t render_layer       : 4;
-        bool is_visible         : 1;
-        bool is_static          : 1;
-        bool casts_shadows      : 1;
+        FeatureMask feature;
+
+        uint64_t mesh_handle     = 0;
+        uint64_t material_handle = 0;
+        uint64_t pipeline_handle = 0;
+
+        uint32_t render_layer = 0;
+        uint32_t render_pass = 0;
+
+        bool is_visible         = true;
+        bool is_static          = true;
 
         char fname[64] = {0};
         size_t size = 0;

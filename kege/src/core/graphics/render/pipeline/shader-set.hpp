@@ -47,7 +47,7 @@ namespace kege::ref{
 
 namespace kege{
 
-    struct IndexedSet
+    struct BindSet
     {
         /**
          * @var index

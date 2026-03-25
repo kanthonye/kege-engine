@@ -16,12 +16,12 @@ namespace kege::ui{
     {
     public:
 
-        MenuBar( kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* ecs );
+        MenuBar( kege::EditorLayer* editor );
         void update();
 
     public:
 
-        ui::UID _main;
+        ui::WidgetHandle _main;
     };
 }
 

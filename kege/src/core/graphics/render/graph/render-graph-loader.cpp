@@ -20,7 +20,7 @@ namespace kege{
             types[ "DepthPrePass" ] = RenderPassType::DepthPrePass;
             types[ "Geometry" ] = RenderPassType::Geometry;
             types[ "Lighting" ] = RenderPassType::Lighting;
-            types[ "ForwardOpaque" ] = RenderPassType::ForwardOpaque;
+            types[ "Forward" ] = RenderPassType::Forward;
             types[ "ForwardTransparent" ] = RenderPassType::ForwardTransparent;
             types[ "PostProcess" ] = RenderPassType::PostProcess;
             types[ "BarrierTransition" ] = RenderPassType::BarrierTransition;

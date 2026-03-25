@@ -8,11 +8,12 @@
 #ifndef shader_binding_set_layout_desc_h
 #define shader_binding_set_layout_desc_h
 
+#include "shader.hpp"
 #include "shader-struct-block.hpp"
 
 namespace kege{
 
-   enum struct BindingType
+   enum struct BindType
    {
        Invalid, Buffer, Image,
    };
@@ -47,17 +48,17 @@ namespace kege{
     };
 
     /**
-     * @struct kege::LayoutBinding
+     * @struct kege::BindPointDesc
      * @brief Describes a single shader binding entry within a descriptor set layout.
      *
-     * Each LayoutBinding object represents one binding point in a descriptor set.
+     * Each BindPointDesc object represents one binding point in a descriptor set.
      * It defines how the resource is used, which shader stages access it, and
      * optionally includes reflected structure metadata for structured bindings.
      *
      * @see kege::ResrcUsage
      * @see kege::SetConfigInfo
      */
-    struct LayoutBinding
+    struct BindPointDesc
     {
         /**
          * @var count
@@ -109,10 +110,9 @@ namespace kege{
          * @var type
          * @brief Describes how the binding resource type.
          *
-         * See @ref kege::BindingType for all possible binding type.
+         * See @ref kege::BindType for all possible binding type.
          */
-        kege::BindingType type;
-        std::string instance_name;
+        kege::BindType type;
     };
 
     /**
@@ -122,49 +122,51 @@ namespace kege{
      * It can be shared across multiple pipeline layouts, allowing reusability of common
      * descriptor configurations between different shaders or render passes.
      *
-     * @see kege::LayoutBinding
+     * @see kege::BindPointDesc
      * @see kege::IndexedSetInfo
      */
-    using LayoutBindings = std::vector< kege::LayoutBinding >;
+    using BindPointDescs = std::vector< kege::BindPointDesc >;
 
 
     /**
-     * @struct kege::SetLayoutBindings
+     * @struct kege::BindSetDesc
      * @brief Associates a set index with a set of layout bindings.
      *
-     * Multiple shader pipelines may reuse the same LayoutBindings configuration at
+     * Multiple shader pipelines may reuse the same BindPointDescs configuration at
      * different indices. This structure allows the same configuration to be assigned
      * to different set indices in various shader layouts.
      *
      * @see kege::SetConfigInfo
      * @see kege::IndexedSetLayouts
      */
-    struct SetLayoutBindings
+    struct BindSetDesc
     {
+        std::string name;
+
         /**
          * @var index
          * @brief Descriptor set index within the pipeline layout.
          */
-        uint32_t set_index;
+        uint32_t index;
 
         /**
          * @var set
          * @brief Descriptor set configuration assigned to this index.
          */
-        LayoutBindings bindings;
+        BindPointDescs bindings;
     };
 
     /**
-     * @typedef kege::PipelineSetLayoutBindings
+     * @typedef kege::BindSetDescs
      * @brief Describes the descriptor set layout configuration for a shader layout.
      *
      * A IndexedSetLayouts defines the complete descriptor set layout for a shader or pipeline.
      * It consists of a list of indexed set configurations that specify how each set
      * is arranged and what bindings it contains.
      *
-     * @see kege::SetLayoutBindings PipelineSetLayoutBindings
+     * @see kege::BindSetDesc BindSetDescs
      */
-    using PipelineSetLayoutBindings = std::vector< SetLayoutBindings >;
+    using BindSetDescs = std::vector< BindSetDesc >;
 }
 
 
@@ -177,15 +179,15 @@ namespace kege{
      * They are not bound like buffers or images, and their lifetime is limited to
      * the command buffer they are recorded in.
      */
-    struct PushBlock
+    struct PushBlockDesc
     {
+        uint32_t offset;         ///< Byte offset within the push constant range.
+        uint32_t size;           ///< Size in bytes of the push constant range.
+        uint32_t count;          ///< Count for total array elements
+        std::string id;
         std::string name;           ///< Name of the push constant block in the shader.
-        uint32_t    offset;         ///< Byte offset within the push constant range.
-        uint32_t    size;           ///< Size in bytes of the push constant range.
-        uint32_t    count;          ///< Count for total array elements
         kege::ShaderStageFlag stages; ///< Shader stages that can access this push constant.
         kege::ref::ShaderStructBlock block; ///< Structured layout of the constant data.
-        std::string instance_name;
     };
 
     /**
@@ -196,14 +198,14 @@ namespace kege{
      *
      * @see kege::PushBlockInfo
      */
-    typedef std::vector< PushBlock > PushBlockLayout;
+    typedef std::vector< PushBlockDesc > PushBlockDescs;
 
 
     struct ShaderLayoutDesc
     {
         std::string name;
-        PipelineSetLayoutBindings set_layout_bindings;
-        PushBlockLayout push_block_layout;
+        BindSetDescs bind_sets;
+        PushBlockDescs push_blocks;
     };
     
 }
@@ -215,7 +217,7 @@ namespace kege{
 
     struct BindingInfoHash
     {
-        std::size_t operator()(const LayoutBinding& b) const noexcept
+        std::size_t operator()(const BindPointDesc& b) const noexcept
         {
             std::size_t h = 0;
 
@@ -241,7 +243,7 @@ namespace kege{
 
     struct SetBindingsHash
     {
-        std::size_t operator()(const LayoutBindings& bindings) const noexcept
+        std::size_t operator()(const BindPointDescs& bindings) const noexcept
         {
             std::size_t h = 0;
             BindingInfoHash bindingHasher;
@@ -250,7 +252,7 @@ namespace kege{
                 h ^= v + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
             };
 
-            for (const LayoutBinding& b : bindings)
+            for (const BindPointDesc& b : bindings)
             {
                 combine(bindingHasher(b));
             }
@@ -261,7 +263,7 @@ namespace kege{
 
     struct BindingInfoEqual
     {
-        bool operator()(const LayoutBinding& a, const LayoutBinding& b) const noexcept
+        bool operator()(const BindPointDesc& a, const BindPointDesc& b) const noexcept
         {
             return a.count   == b.count &&
                    a.index   == b.index &&
@@ -275,7 +277,7 @@ namespace kege{
 
     struct SetBindingsEqual
     {
-        bool operator()(const LayoutBindings& A, const LayoutBindings& B) const noexcept
+        bool operator()(const BindPointDescs& A, const BindPointDescs& B) const noexcept
         {
             if (A.size() != B.size()) return false;
             for (size_t i = 0; i < A.size(); i++)

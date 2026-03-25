@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "json-parser.hpp"
-#include "string-to-enum-types.hpp"
+#include "../../../utils/json-parser.hpp"
+#include "../core/string-to-enum-types.hpp"
 
 namespace kege{
 

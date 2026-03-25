@@ -8,11 +8,8 @@
 #ifndef flat_terrain_renderer_hpp
 #define flat_terrain_renderer_hpp
 
-#include "../../../io/virtual-directory.hpp"
-#include "../../mesh/mesh.hpp"
+#include "../common/all.hpp"
 #include "flat-terrain-node.hpp"
-#include "../terrain/terrain-renderer.hpp"
-#include "../terrain/image-layer-manager.hpp"
 
 namespace kege{
 

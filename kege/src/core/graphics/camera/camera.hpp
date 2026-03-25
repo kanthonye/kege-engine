@@ -23,7 +23,7 @@ namespace kege{
         Type type;
     };
 
-    struct Perspective : public Projection
+    struct Perspective// : public Projection
     {
         kege::mat44 get()const
         {
@@ -43,16 +43,14 @@ namespace kege{
             double      znear,
             double      zfar
         )
-        :   Projection( PERSPECTIVE )
-        ,   aspect_ratio( aspect_ratio )
+        :   aspect_ratio( aspect_ratio )
         ,   fov( fov )
         ,   znear( znear )
         ,   zfar( zfar )
         {}
 
         Perspective()
-        :   Projection( PERSPECTIVE )
-        ,   aspect_ratio( 1.0 )
+        :   aspect_ratio( 1.0 )
         ,   fov( 45.0 )
         ,   znear( 0.1 )
         ,   zfar( 1000.0 )
@@ -64,7 +62,7 @@ namespace kege{
         double      zfar;
     };
 
-    struct Orthographic : public Projection
+    struct Orthographic// : public Projection
     {
         kege::mat44 get()const
         {
@@ -88,8 +86,7 @@ namespace kege{
             double znear,
             double zfar
         )
-        :   Projection( ORTHOGRAPHIC )
-        ,   left( left )
+        :   left( left )
         ,   right( right )
         ,   above( above )
         ,   below( below )
@@ -98,8 +95,7 @@ namespace kege{
         {}
 
         Orthographic()
-        :   Projection( ORTHOGRAPHIC )
-        ,   left( 0.0 )
+        :   left( 0.0 )
         ,   right( 0.0 )
         ,   above( 0.0 )
         ,   below( 0.0 )
@@ -124,7 +120,6 @@ namespace kege{
 
     struct Camera
     {
-        kege::Ref< Projection > projection;
         CameraData matrices;
         bool modified = true;
     };

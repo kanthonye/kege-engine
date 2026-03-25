@@ -149,6 +149,7 @@ namespace kege::ecs{
 
         template< typename... C > Entity createWith();
 
+        void remove( int32_t comp_type, Entity& entity );
 
         inline const Component::Layout& getLayout(const Entity& entity)const
         {
@@ -349,44 +350,7 @@ namespace kege::ecs{
 
     template< typename C > void EntityManager::remove( Entity& entity )
     {
-        const ComponentType comp_type = Component::type<C>();
-        EntityEntry& entry = _entities[ entity.index ];
-        EntityKind* current = _archetypes[ entry.type ].ref();
-        EntityKind::Edge& edge = current->_edges[ comp_type ];
-        if (edge.remove == nullptr)
-        {
-            Signature signature = current->signature();
-            signature.clear( comp_type );
-
-            // check if archetype exist in archetype map, if not create the new archetype
-            auto src = _archetypemap.find( signature );
-            if (src == _archetypemap.end())
-            {
-                _archetypes[_archetype_count] = current->dupWithout( _archetype_count, comp_type );
-                edge.remove = _archetypes[ _archetype_count ].ref();
-                _archetypemap[ signature ] = edge.add;
-                _archetype_count += 1;
-            }
-            else
-            {
-                edge.remove = src->second;
-            }
-        }
-
-        if ( entry.registration.registry )
-        {
-            entry.registration.registry->remove( entity );
-        }
-
-        uint32_t src_index = entry.handle;
-        entry.handle = edge.remove->move(current, src_index);
-        entry.type = edge.remove->type();
-        current->erase(src_index);
-
-        if ( entry.registration.registry )
-        {
-            entry.registration.registry->insert( entity );
-        }
+        remove( Component::type<C>(), entity );
     }
 
     /**

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaShader Editor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #ccc;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .toolbar {
+            background: #252526;
+            padding: 10px 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        button:hover { background: #1177bb; }
+        button:active { background: #0c5a8a; }
+        
+        button.secondary {
+            background: #3c3c3c;
+            color: #ccc;
+        }
+        
+        button.secondary:hover { background: #484848; }
+        
+        .filename-input {
+            background: #3c3c3c;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 6px 10px;
+            border-radius: 2px;
+            font-size: 13px;
+            width: 200px;
+        }
+        
+        .status-bar {
+            background: #007acc;
+            color: white;
+            padding: 4px 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        #editor-container {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="toolbar">
+            <button onclick="saveFile()" title="Save to browser storage">
+                💾 Save
+            </button>
+            <button onclick="downloadFile()" title="Download as .msh file">
+                ⬇️ Download
+            </button>
+            <button onclick="loadFile()" title="Load from browser storage" class="secondary">
+                📂 Load
+            </button>
+            <button onclick="newFile()" title="Create new shader" class="secondary">
+                📄 New
+            </button>
+            
+            <div style="flex: 1;"></div>
+            
+            <input type="text" id="filename" class="filename-input" 
+                   placeholder="shader.msh" value="shader.msh">
+        </div>
+        
+        <div id="editor-container"></div>
+        
+        <div class="status-bar">
+            <span id="status">Ready</span>
+            <span id="line-info">Line 1, Column 1</span>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+
+    <script src="https://unpkg.com/monaco-editor@0.34.0/min/vs/loader.js"></script>
+    <script>
+        // Configuration
+        require.config({ 
+            paths: { 
+                vs: 'https://unpkg.com/monaco-editor@0.34.0/min/vs',
+                'vs/language/typescript': 'https://unpkg.com/monaco-editor@0.34.0/min/vs/language/typescript'
+            }
+        });
+        
+        // Default shader template
+        const DEFAULT_SHADER = `// MetaShader - Single Source of Truth
+@vertex_format {
+    @attribute(name = "position", type = VEC3, location = 0, vbo = 0)
+    @attribute(name = "normal",   type = VEC3, location = 1, vbo = 0)
+    @attribute(name = "texcoord", type = VEC2, location = 2, vbo = 1)
+    
+    @vbo(index = 0, stride = 24, rate = PER_VERTEX)
+    @vbo(index = 1, stride = 8,  rate = PER_VERTEX)
+}
+
+@resources {
+    @uniform_buffer(set = 0, binding = 0, name = "Camera") {
+        mat4 projection;
+        mat4 view;
+        vec3 position;
+        float pad;
+    }
+    
+    @sampler2d(set = 1, binding = 0, name = "albedo_map")
+    @sampler2d(set = 1, binding = 1, name = "normal_map")
+    @sampler2d(set = 1, binding = 2, name = "roughness_map")
+}
+
+@push_constants {
+    mat4 model;
+    vec4 material_color;
+    float roughness;
+    float metallic;
+}
+
+@pipeline {
+    @rasterization {
+        polygon_mode = FILL;
+        cull_mode = BACK;
+        front_face = COUNTER_CLOCKWISE;
+    }
+    
+    @depth_stencil {
+        depth_test_enable = true;
+        depth_write_enable = true;
+        depth_compare_op = LESS_OR_EQUAL;
+    }
+}
+
+@vertex {
+    void main() {
+        gl_Position = Camera.projection * Camera.view * model * vec4(position, 1.0);
+        v_normal = normal;
+        v_texcoord = texcoord;
+    }
+}
+
+@fragment {
+    layout(location = 0) out vec4 out_color;
+    
+    void main() {
+        vec3 albedo = texture(albedo_map, v_texcoord).rgb;
+        vec3 normal = texture(normal_map, v_texcoord).rgb * 2.0 - 1.0;
+        
+        // Simple lighting
+        vec3 light_dir = normalize(vec3(1.0, 1.0, 1.0));
+        float diff = max(dot(normalize(v_normal + normal), light_dir), 0.2);
+        
+        out_color = vec4(albedo * diff, 1.0);
+    }
+}`;
+
+        let editor = null;
+        let currentFilename = 'shader.msh';
+        
+        // Toast notification
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+        
+        // Update status bar
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        // Update line/col info
+        function updateLineInfo() {
+            if (!editor) return;
+            const pos = editor.getPosition();
+            document.getElementById('line-info').textContent = 
+                `Line ${pos.lineNumber}, Column ${pos.column}`;
+        }
+        
+        // Save to localStorage
+        function saveFile() {
+            const content = editor.getValue();
+            const filename = document.getElementById('filename').value || 'shader.msh';
+            
+            try {
+                // Save to localStorage
+                localStorage.setItem('metashader_current', filename);
+                localStorage.setItem(`metashader_${filename}`, content);
+                
+                // Also save to list of files
+                let files = JSON.parse(localStorage.getItem('metashader_files') || '[]');
+                if (!files.includes(filename)) {
+                    files.push(filename);
+                    localStorage.setItem('metashader_files', JSON.stringify(files));
+                }
+                
+                showToast(`Saved: ${filename}`);
+                updateStatus(`Saved ${filename}`);
+            } catch (e) {
+                showToast(`Error saving: ${e.message}`, 5000);
+                updateStatus('Save failed');
+            }
+        }
+        
+        // Download as .msh file
+        function downloadFile() {
+            const content = editor.getValue();
+            const filename = document.getElementById('filename').value || 'shader.msh';
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename.endsWith('.msh') ? filename : `${filename}.msh`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(`Downloaded: ${filename}`);
+            updateStatus(`Downloaded ${filename}`);
+        }
+        
+        // Load from localStorage
+        function loadFile() {
+            const filename = prompt('Enter filename to load:', 
+                localStorage.getItem('metashader_current') || 'shader.msh');
+            
+            if (!filename) return;
+            
+            const content = localStorage.getItem(`metashader_${filename}`);
+            if (content) {
+                editor.setValue(content);
+                document.getElementById('filename').value = filename;
+                showToast(`Loaded: ${filename}`);
+                updateStatus(`Loaded ${filename}`);
+            } else {
+                // Show list of available files
+                const files = JSON.parse(localStorage.getItem('metashader_files') || '[]');
+                if (files.length > 0) {
+                    const fileList = files.map(f => `• ${f}`).join('\n');
+                    if (confirm(`File not found. Available files:\n${fileList}\n\nCreate new file?`)) {
+                        editor.setValue(DEFAULT_SHADER);
+                        document.getElementById('filename').value = filename;
+                    }
+                } else {
+                    if (confirm('No saved files found. Create new file?')) {
+                        editor.setValue(DEFAULT_SHADER);
+                        document.getElementById('filename').value = filename;
+                    }
+                }
+            }
+        }
+        
+        // Create new file
+        function newFile() {
+            const filename = prompt('Enter new filename:', 'new_shader.msh');
+            if (!filename) return;
+            
+            editor.setValue(DEFAULT_SHADER);
+            document.getElementById('filename').value = filename;
+            showToast(`New file: ${filename}`);
+            updateStatus(`Editing ${filename}`);
+        }
+        
+        // Initialize Monaco Editor
+        require(['vs/editor/editor.main'], function() {
+            // Define MetaShader language
+            monaco.languages.register({ id: 'metashader' });
+            
+            // Tokenizer for syntax highlighting
+            monaco.languages.setMonarchTokensProvider('metashader', {
+                defaultToken: '',
+                tokenPostfix: '.msh',
+                
+                keywords: [
+                    'vertex_format', 'resources', 'pipeline_state', 'push_constants',
+                    'vertex', 'fragment', 'geometry', 'compute', 'tessellation_control',
+                    'tessellation_evaluation', 'attribute', 'uniform_buffer', 'storage_buffer', 'vertex_buffer', 'sampler2d',
+                    'sampler3d', 'storage_buffer', 'import', 'extends', 'template', 'vbo',
+                    'rasterization', 'depth_stencil', 'color_blend', 'multisample', 'true', 'false'
+                ],
+                
+                typeKeywords: [
+                    'mat2', 'mat3', 'mat4', 'vec2', 'vec3', 'vec4', 'float', 'int', 'bool',
+                    'VEC2', 'VEC3', 'VEC4', 'MAT3', 'MAT4', 'sampler2D', 'sampler3D'
+                ],
+                
+                constants: [
+                    'PER_VERTEX', 'PER_INSTANCE', 'FILL', 'LINE', 'POINT',
+                    'NONE', 'FRONT', 'BACK', 'FRONT_AND_BACK', 'VERTEX', 'FRAGMENT',
+                    'CLOCKWISE', 'COUNTER_CLOCKWISE', 'LESS', 'LESS_OR_EQUAL',
+                    'SRC_ALPHA', 'ONE_MINUS_SRC_ALPHA', 'ADD', 'ONE', 'ZERO', 'RGBA', 'VIEWPORT', 'SCISSOR', 
+                    'GREATER', 'GREATER_OR_EQUAL', 'EQUAL', 'NOT_EQUAL', 'ALWAYS', 'NEVER'
+                ],
+                
+                operators: ['=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=', '&&', '||', '+', '-', '*', '/'],
+                
+                symbols: /[=><!~?:&|+\-*\/\^%]+/,
+                
+                escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+                
+                tokenizer: {
+                    root: [
+                        // Annotations starting with @
+                        [/@[a-zA-Z_]\w*/, {
+                            cases: {
+                                '@keywords': 'keyword.annotation',
+                                '@default': 'annotation'
+                            }
+                        }],
+                        
+                        // Types
+                        [/\b(VEC[234]|MAT[34]|mat[234]|vec[234]|sampler[23]D)\b/, 'type'],
+                        
+                        // Constants
+                        [/\b(PER_VERTEX|PER_INSTANCE|FILL|LINE|BACK|FRONT|LESS_OR_EQUAL)\b/, 'constant'],
+                        
+                        // Numbers
+                        [/\d+\.\d+([eE][\-+]?\d+)?[fF]?/, 'number.float'],
+                        [/\d+/, 'number'],
+                        
+                        // Strings
+                        [/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
+                        
+                        // Comments
+                        [/\/\/.*$/, 'comment'],
+                        [/\/\*/, { token: 'comment.quote', next: '@comment' }],
+                        
+                        // GLSL keywords in shader blocks
+                        [/\b(layout|in|out|uniform|void|return|if|else|for|while|break|continue)\b/, 'keyword'],
+                        
+                        // Identifiers
+                        [/[a-zA-Z_]\w*/, {
+                            cases: {
+                                '@typeKeywords': 'type',
+                                '@constants': 'constant',
+                                '@default': 'identifier'
+                            }
+                        }],
+                    ],
+                    
+                    string: [
+                        [/[^\\"]+/, 'string'],
+                        [/@escapes/, 'string.escape'],
+                        [/\\./, 'string.escape.invalid'],
+                        [/"/, { token: 'string.quote', bracket: '@close', next: '@pop' }]
+                    ],
+                    
+                    comment: [
+                        [/[^\/*]+/, 'comment'],
+                        [/\/\*/, 'comment', '@push'],
+                        ["\\*/", 'comment', '@pop'],
+                        [/[\/*]/, 'comment']
+                    ],
+                }
+            });
+            
+            // Define theme
+            monaco.editor.defineTheme('metashader-dark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'keyword.annotation', foreground: 'C586C0', fontStyle: 'bold' },
+                    { token: 'annotation', foreground: '569CD6' },
+                    { token: 'keyword', foreground: '569CD6' },
+                    { token: 'type', foreground: '4EC9B0' },
+                    { token: 'constant', foreground: 'ffd500' },
+                    { token: 'number', foreground: 'B5CEA8' },
+                    { token: 'number.float', foreground: 'B5CEA8' },
+                    { token: 'string', foreground: 'CE9178' },
+                    { token: 'comment', foreground: '6A9955' },
+                    { token: 'identifier', foreground: 'D4D4D4' },
+                ],
+                colors: {
+                    'editor.background': '#1E1E1E',
+                    'editorLineNumber.foreground': '#858585',
+                    'editorLineNumber.activeForeground': '#C6C6C6',
+                    'editor.selectionBackground': '#264F78',
+                    'editorCursor.foreground': '#AEAFAD',
+                }
+            });
+            
+            // Create editor
+            editor = monaco.editor.create(document.getElementById('editor-container'), {
+                value: DEFAULT_SHADER,
+                language: 'metashader',
+                theme: 'metashader-dark',
+                fontSize: 14,
+                lineNumbers: 'on',
+                roundedSelection: false,
+                scrollBeyondLastLine: false,
+                readOnly: false,
+                automaticLayout: true,
+                minimap: { enabled: true },
+                wordWrap: 'off',
+                wrappingIndent: 'same',
+                renderLineHighlight: 'all',
+                scrollbar: {
+                    vertical: 'visible',
+                    horizontal: 'visible',
+                    useShadows: false
+                },
+                suggestOnTriggerCharacters: true,
+                tabSize: 4,
+                insertSpaces: true,
+            });
+            
+            // Update line info on cursor move
+            editor.onDidChangeCursorPosition(() => {
+                updateLineInfo();
+            });
+            
+            // Auto-save every 30 seconds
+            setInterval(() => {
+                const autosave = localStorage.getItem('metashader_autosave');
+                if (autosave !== 'false') {
+                    saveFile();
+                }
+            }, 30000);
+            
+            // Load last opened file
+            const lastFile = localStorage.getItem('metashader_current');
+            if (lastFile) {
+                const content = localStorage.getItem(`metashader_${lastFile}`);
+                if (content) {
+                    editor.setValue(content);
+                    document.getElementById('filename').value = lastFile;
+                    updateStatus(`Loaded ${lastFile}`);
+                }
+            }
+            
+            updateLineInfo();
+            updateStatus('Ready - MetaShader Editor');
+            
+            // Keyboard shortcuts
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+                saveFile();
+            });
+            
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyS, () => {
+                downloadFile();
+            });
+        });
+        
+        // Handle browser beforeunload
+        window.addEventListener('beforeunload', (e) => {
+            // Optional: Warn about unsaved changes
+            // e.preventDefault();
+            // e.returnValue = '';
+        });
+    </script>
+</body>
+</html>

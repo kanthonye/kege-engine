@@ -91,7 +91,7 @@ namespace kege::vk{
          * @param bindings Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        ref::SetLayout createSetLayout( const LayoutBindings& bindings ) override;
+        ref::SetLayout createSetLayout( const BindPointDescs& bindings ) override;
 
         /**
          * @brief Destroys a shader binding set layout.
@@ -130,7 +130,7 @@ namespace kege::vk{
          * @param desc Description of the shader pipeline to create
          * @return Handle to the newly created shader pipeline
          */
-        ref::ShaderPipeline createShaderPipeline( const PipelineCreateInfo& desc ) override;
+        ref::ShaderPipeline createShaderPipeline( const kege::ShaderPipelineDesc& desc ) override;
 
         /**
          * @brief Destroy a shader pipeline
@@ -477,7 +477,7 @@ namespace kege::vk{
 
         std::unordered_map
         <
-            kege::LayoutBindings,
+            kege::BindPointDescs,
             kege::Ref< vk::SetLayout >,
             kege::SetBindingsHash,
             kege::SetBindingsEqual

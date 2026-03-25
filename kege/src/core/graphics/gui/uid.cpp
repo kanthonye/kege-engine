@@ -10,120 +10,109 @@
 
 namespace kege::ui{
 
-    static int32_t global_head = -1;
-    static int32_t global_tail = -1;
-    static uint32_t global_enumerator = 0;
-    static std::vector<ui::Id> global_availables;
-
-//    int32_t UID::_head = -1;
-//    int32_t UID::_tail = -1;
-//    uint32_t UID::_enumerator = 0;
-//    std::vector<ui::Id> UID::_availables;
-
-    UID& UID::operator=(const UID& other)
+    UID::Value* UID::Recycler::create()
     {
-        id = other.id;
-        duplicates = other.duplicates;
-
-        if(duplicates) *duplicates += 1;
+        Value* value;
+        if (_recycler.head != nullptr)
+        {
+            value = _recycler.head;
+            _recycler.head = _recycler.head->next;
+            value->duplicates = 0;
+        }
         else
         {
-            duplicates = other.duplicates = new int(2);
+            value = new UID::Value{ UID::_id_counter++, 0, nullptr };
         }
+        return value;
+    }
+    UID::Recycler::~Recycler()
+    {
+        while (head != nullptr)
+        {
+            UID::Value* h = head;
+            head = head->next;
+            delete h;
+        }
+        tail = nullptr;
+    }
+    UID::Recycler::Recycler()
+    :   head(nullptr)
+    ,   tail(nullptr)
+    {}
+
+
+    UID::Recycler UID::_recycler;
+    uint32_t UID::_id_counter = 1;
+
+
+    void UID::clear()
+    {
+        if(_value)
+        {
+            _value->duplicates -= 1;
+            if(_value->duplicates <= 0 )
+            {
+                _value->next = nullptr;
+                if (_recycler.head == nullptr)
+                {
+                    _recycler.tail = _recycler.head = _value;
+                }
+                else
+                {
+                    _recycler.tail->next = _value;
+                    _recycler.tail = _value;
+                }
+                _value = nullptr;
+            }
+        }
+    }
+
+    UID::operator uint32_t()const
+    {
+        if (_value) return _value->value;
+        return 0;
+    }
+
+    UID& UID::operator=( const UID& other )
+    {
+        if (this == &other || _value == other._value) return *this;
+        clear();
+        _value = other._value;
+        if(_value != nullptr) _value->duplicates += 1;
         return *this;
     }
 
-    UID& UID::operator=( UID&& uid)
+    UID& UID::operator=( UID&& other )
     {
-        id = uid.id;
-        duplicates = uid.duplicates;
-
-        uid.id.num = 0;
-        uid.duplicates = nullptr;
-
+        _value = other._value;
+        other._value = nullptr;
         return *this;
     }
 
-    void UID::recycle()
+    UID::UID(const UID& other )
+    :   _value(nullptr)
     {
-        if ( id.num == 0 ) return;
-
-        if (global_availables.size() == 0)
-        {
-            global_availables.resize(64);
-        }
-        else if (global_tail >= static_cast<int32_t>(global_availables.size()))
-        {
-            global_availables.resize(global_availables.size() * 2);
-        }
-
-        if (global_head < 0)
-        {
-            global_head = global_tail = 0;
-        }
-
-        id.version += 1;
-        global_availables[global_tail] = id;
-        global_tail += 1;
-
-        id.num = 0;
+        *this = other;
     }
 
-    UID::UID(const UID& other)
-    :   id(other.id)
-    ,   duplicates( other.duplicates )
+    UID::UID( UID&& other )
     {
-        if(duplicates) *duplicates += 1;
-        else
-        {
-            duplicates = other.duplicates = new int(2);
-        }
-    }
-
-    UID::UID( UID&& uid)
-    :   id(uid.id)
-    ,   duplicates( uid.duplicates )
-    {
-        uid.id.num = 0;
-        uid.duplicates = nullptr;
+        _value = other._value;
+        other._value = nullptr;
     }
 
     UID::~UID()
     {
-        if(duplicates)
-        {
-            *duplicates -= 1;
-            if(*duplicates <= 0)
-            {
-                delete duplicates;
-                duplicates = nullptr;
-                recycle();
-            }
-        }
-        else
-        {
-            recycle();
-        }
+        clear();
     }
-    
+
+    UID::UID( Value* value )
+    :   _value( value )
+    {}
+
     UID::UID()
-    :   duplicates( nullptr )
+    :   _value( nullptr )
     {
-        if (global_head != -1)
-        {
-            id = global_availables[global_head];
-            global_head += 1;
-
-            if (global_head >= global_tail)
-            {
-                global_head = global_tail = -1;
-            }
-            return;
-        }
-
-        id.version = 1;
-        id.index = global_enumerator;
-        global_enumerator += 1;
     }
 
 }

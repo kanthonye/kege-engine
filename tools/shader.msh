@@ -1,0 +1,66 @@
+// MetaShader - Single Source of Truth
+@vertex_format {
+    @attribute(name = "position", type = VEC3, location = 0, vbo = 0)
+    @attribute(name = "normal",   type = VEC3, location = 1, vbo = 0)
+    @attribute(name = "texcoord", type = VEC2, location = 2, vbo = 1)
+    
+    @vbo(index = 0, stride = 24, rate = PER_VERTEX)
+    @vbo(index = 1, stride = 8,  rate = PER_VERTEX)
+}
+
+@resources {
+    @uniform_buffer(set = 0, binding = 0, name = "Camera") {
+        mat4 projection;
+        mat4 view;
+        vec3 position;
+        float pad;
+    }
+    
+    @sampler2d(set = 1, binding = 0, name = "albedo_map")
+    @sampler2d(set = 1, binding = 1, name = "normal_map")
+    @sampler2d(set = 1, binding = 2, name = "roughness_map")
+}
+
+@push_constants {
+    mat4 model;
+    vec4 material_color;
+    float roughness;
+    float metallic;
+}
+
+@pipeline {
+    @rasterization {
+        polygon_mode = FILL;
+        cull_mode = BACK;
+        front_face = COUNTER_CLOCKWISE;
+    }
+    
+    @depth_stencil {
+        depth_test_enable = true;
+        depth_write_enable = true;
+        depth_compare_op = LESS_OR_EQUAL;
+    }
+}
+
+@vertex {
+    void main() {
+        gl_Position = Camera.projection * Camera.view * model * vec4(position, 1.0);
+        v_normal = normal;
+        v_texcoord = texcoord;
+    }
+}
+
+@fragment {
+    layout(location = 0) out vec4 out_color;
+    
+    void main() {
+        vec3 albedo = texture(albedo_map, v_texcoord).rgb;
+        vec3 normal = texture(normal_map, v_texcoord).rgb * 2.0 - 1.0;
+        
+        // Simple lighting
+        vec3 light_dir = normalize(vec3(1.0, 1.0, 1.0));
+        float diff = max(dot(normalize(v_normal + normal), light_dir), 0.2);
+        
+        out_color = vec4(albedo * diff, 1.0);
+    }
+}

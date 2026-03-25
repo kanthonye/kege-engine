@@ -37,72 +37,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/ecs-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/ecs-layer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/ecs-layer.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/ecs-layer.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system-manager.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system-manager.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp",
-  "output": "CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/atmosphere/atmosphere.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/atmosphere/atmosphere.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/atmosphere/atmosphere.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/atmosphere/atmosphere.cpp.o"
@@ -163,12 +97,6 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o"
@@ -187,21 +115,21 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-elem.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-elem.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-post-layout-ops.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-post-layout-ops.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-post-layout-ops.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-post-layout-ops.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-resizer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-resizer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-resizer.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-resizer.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -223,9 +151,9 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-widget-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-widget-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-widget-manager.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-widget-manager.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/uid.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/uid.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/uid.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/gui/uid.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -529,9 +457,21 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/rendering-info.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/rendering-info.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/rendering-info.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/rendering-info.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/resource-recycler.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/resource-recycler.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/sampler.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/sampler.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/sampler.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/sampler.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -550,6 +490,12 @@
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/swapchain.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/swapchain.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/vertex-format.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/vertex-format.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/vertex-format.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/vertex-format.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -631,15 +577,21 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/feature-flags.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/feature-flags.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/feature-flags.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/feature-flags.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/set-layout.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/set-layout.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-compiler.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-compiler.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-compiler.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-compiler.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -817,6 +769,120 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/json-shader-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/json-shader-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/json-shader-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/json-shader-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-parser.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-parser.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-parser.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-parser.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/pipeline-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/pipeline-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/pipeline-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/pipeline-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-library.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-library.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-library.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-library.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/settings.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/settings.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/settings.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/settings.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp",
   "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o"
@@ -841,147 +907,69 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/height-map-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/height-map-generator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/height-map-generator.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/height-map-generator.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-material.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-material.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-material.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-material.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-system.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-system.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-system.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain.cpp",
-  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp",
+  "output": "CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -1009,15 +997,27 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-layer.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-layer.cpp",
-  "output": "CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/input.dir/kege/src/core/input/input-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-manager.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/input-manager.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp",
   "output": "CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/input.dir/kege/src/core/input/keyboard.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/keyboard.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/keyboard.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/keyboard.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/input.dir/kege/src/core/input/mouse.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/mouse.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/mouse.cpp",
+  "output": "CMakeFiles/input.dir/kege/src/core/input/mouse.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -1561,15 +1561,57 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/shader-pipeline-loader.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/shader-pipeline-loader.cpp",
-  "output": "CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-component.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-component.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-component.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-component.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp",
-  "output": "CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-kind.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-kind.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-kind.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-kind.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-manager.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-registry.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-registry.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-registry.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-registry.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-layer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-layer.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-layer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-system-factory.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system-factory.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system-factory.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-system-factory.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-system.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-system.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs-view.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-view.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-view.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs-view.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/scene.dir/kege/src/core/scene/ecs.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs.cpp",
+  "output": "CMakeFiles/scene.dir/kege/src/core/scene/ecs.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -1639,87 +1681,51 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/common/gui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/gui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/gui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/common/gui.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/common/ui-description.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-description.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-description.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/common/ui-description.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/common/ui-schema.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-schema.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-schema.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/common/ui-schema.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-loader.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-loader.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-loader.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-loader.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-split.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-split.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-split.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-split.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/drag-drop-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/drag-drop-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/drag-drop-manager.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/drag-drop-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
   "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor-layer.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor-layer.cpp",
   "output": "CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/droplist.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/droplist.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/droplist.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/droplist.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-button.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-button.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-button.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-button.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-camera.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-camera.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-camera.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-camera.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-dock-node.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-dock-node.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-dock-node.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-dock-node.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-menu.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-menu.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-menu.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-menu.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-numeric.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-numeric.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-options.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-options.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-panel.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-panel.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-panel.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-rigidbody.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-rigidbody.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-rigidbody.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-rigidbody.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tab.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tab.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-text-field.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-text-field.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-transform.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-transform.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-transform.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-transform.cpp.o"
-},
-{
-  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/elements/ui-tree-node.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tree-node.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tree-node.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/elements/ui-tree-node.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
@@ -1729,31 +1735,169 @@
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/pannels/hierarchy-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/hierarchy-panel.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/hierarchy-panel.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/pannels/hierarchy-panel.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/pannels/inspector-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/inspector-panel.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/inspector-panel.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/pannels/inspector-panel.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/pannels/navbar-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/navbar-panel.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/navbar-panel.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/pannels/navbar-panel.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/viewport-panel.cpp",
-  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/viewport-panel.cpp",
-  "output": "CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o"
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp.o"
 },
 {
   "directory": "/Users/kae/Developer/vscode/kege-engine/build",
-  "command": "/usr/bin/clang++ -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/app -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/3d -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor -g -std=gnu++17 -o CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-camera.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-camera.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-camera.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-camera.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-light.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-light.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-light.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-light.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-mesh.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-mesh.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-mesh.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-mesh.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-transform.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-transform.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-transform.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-transform.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/inspector-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/inspector-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/inspector-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/inspector/inspector-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/ui-console.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-console.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-console.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/ui-console.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/ui-file-browser.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-file-browser.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-file-browser.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/ui-file-browser.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/ui-menu-bar.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-menu-bar.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-menu-bar.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/ui-menu-bar.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/ui-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/ui-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/ui-settings.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-settings.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-settings.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/ui-settings.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -g -std=gnu++17 -o CMakeFiles/editor.dir/kege/src/editor/panels/viewport/viewport-panel.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/viewport/viewport-panel.cpp",
+  "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/viewport/viewport-panel.cpp",
+  "output": "CMakeFiles/editor.dir/kege/src/editor/panels/viewport/viewport-panel.cpp.o"
+},
+{
+  "directory": "/Users/kae/Developer/vscode/kege-engine/build",
+  "command": "/usr/bin/clang++ -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/app -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/3d -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor -g -std=gnu++17 -o CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o -c /Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp",
   "file": "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp",
   "output": "CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o"
 }

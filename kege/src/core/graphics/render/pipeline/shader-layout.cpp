@@ -15,25 +15,25 @@ namespace kege{
         if ( i == _quick_lookup.end() )
         {
             kege::Log::warning << "A SetLayout -> " << _name;
-            kege::Log::warning << " does not contains a PushBlock with name -> [ "<<name <<" ]." << kege::Log::nl;
+            kege::Log::warning << " does not contains a PushBlockDesc with name -> [ "<<name <<" ]." << kege::Log::nl;
             return nullptr;
         }
         return &_set_bindings[ i->second.set_binding_index ];
     }
 
-    const kege::PushBlock* ShaderLayout::getPushBlock( const std::string& name )const
+    const kege::PushBlockDesc* ShaderLayout::getPushBlock( const std::string& name )const
     {
         auto i = _quick_lookup.find( name );
         if ( i == _quick_lookup.end() )
         {
             kege::Log::warning << "A SetLayout -> " << _name;
-            kege::Log::warning << " does not contains a PushBlock with name -> [ "<<name <<" ]." << kege::Log::nl;
+            kege::Log::warning << " does not contains a PushBlockDesc with name -> [ "<<name <<" ]." << kege::Log::nl;
             return nullptr;
         }
         return &_push_block_layout[ i->second.set_binding_index ];
     }
     
-    const kege::PushBlock* ShaderLayout::getPushBlock( int index )const
+    const kege::PushBlockDesc* ShaderLayout::getPushBlock( int index )const
     {
         return &_push_block_layout[ index ];
     }
@@ -84,21 +84,21 @@ namespace kege{
         return _indexed_set_layouts[ set_index ];
     }
 
-    kege::IndexedSet ShaderLayout::allocateSet( const std::string& name )
+    kege::BindSet ShaderLayout::allocateSet( const std::string& name )
     {
         auto i = _quick_lookup.find( name );
         if ( i == _quick_lookup.end() )
         {
             kege::Log::warning << "A SetLayout -> " << _name;
-            kege::Log::warning << " does not contains a PushBlock with name -> [ "<<name <<" ]." << kege::Log::nl;
+            kege::Log::warning << " does not contains a Set with name -> [ "<<name <<" ]." << kege::Log::nl;
             return {};
         }
         return allocateSet( i->second.set_layout_index );
     }
 
-    kege::IndexedSet ShaderLayout::allocateSet( int set_index )
+    kege::BindSet ShaderLayout::allocateSet( int set_index )
     {
-        return kege::IndexedSet
+        return kege::BindSet
         {
             .set = _indexed_set_layouts[ set_index ].set->allocateSet(),
             .index = _indexed_set_layouts[ set_index ].index
@@ -121,10 +121,10 @@ namespace kege{
     (
         const std::string& name,
         const kege::IndexedSetLayouts& indexed_set_layouts,
-        const kege::PushBlockLayout& push_block_layout
+        const kege::PushBlockDescs& push_blocks
     )
     :   _indexed_set_layouts( indexed_set_layouts )
-    ,   _push_block_layout( push_block_layout )
+    ,   _push_block_layout( push_blocks )
     ,   _name( name )
     ,   _set_layout_bind_signature( 0 )
     {
@@ -132,7 +132,7 @@ namespace kege{
         {
             for (int j=0; j<_indexed_set_layouts[i].set->_bindings.size(); ++j)
             {
-                const LayoutBinding& binding = _indexed_set_layouts[i].set->_bindings[j];
+                const BindPointDesc& binding = _indexed_set_layouts[i].set->_bindings[j];
                 Entry& entry = _quick_lookup[ binding.name ];
 
                 entry.set_binding_index = static_cast< int >( _set_bindings.size() );
@@ -149,9 +149,9 @@ namespace kege{
             _set_layout_bind_signature |= (1ULL << _indexed_set_layouts[i].index);
         }
 
-        for (uint32_t i=0; i<push_block_layout.size(); ++i)
+        for (uint32_t i=0; i<push_blocks.size(); ++i)
         {
-            const kege::PushBlock& block = push_block_layout[i];
+            const kege::PushBlockDesc& block = push_blocks[i];
             Entry& entry = _quick_lookup[ block.name ];
 
             entry.set_binding_index = -1;

@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 8/5/25.
 //
 
-#include "render-executor.hpp"
+#include "../render/graph/render-executor.hpp"
 #include "ui-viewer.hpp"
 namespace kege::ui{
 
@@ -227,7 +227,7 @@ namespace kege::ui{
                 widget.rect.width - padding.left - padding.right,
                 widget.text.font_size,
                 widget.text.color,
-                widget.alignment.wrap_around,
+                widget.alignment.wrap.enable,
                 widget.text.ptr,
                 clip_rect
             );
@@ -397,7 +397,7 @@ namespace kege::ui{
         _clip_rect.height = _fbo_size.height;
         _clip_rect.width = _fbo_size.width;
 
-        kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui-rounded-corner-sdf-text.json" );
+        kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui.kmsl" );
         _pipeline = _asset_manager->load< ref::ShaderPipeline >( shader_file.c_str() );
         if( _pipeline == 0 )
         {
@@ -409,26 +409,28 @@ namespace kege::ui{
         _drawbuffer.resize(65536);
         _buffer_bindings[0] = { createBuffer() };
         _buffer_bindings[1] = { createBuffer() };
-        _meshs[0] = new kege::Mesh({}, new kege::ShaderData( _shader_pipeline,{ "UIViewBuffer" }));
-        _meshs[0]->getInstanceShaderData()->setBuffers("UIViewBuffer", _buffer_bindings[0]);
-        _meshs[1] = new kege::Mesh({}, new kege::ShaderData( _shader_pipeline,{ "UIViewBuffer" }));
-        _meshs[1]->getInstanceShaderData()->setBuffers("UIViewBuffer", _buffer_bindings[1]);
-        _meshs[0]->getInstanceShaderData()->update();
+        _meshs[0] = new kege::Mesh({}, new kege::ShaderData( _shader_pipeline, { 0 }));
+        if(_meshs[0]->getInstanceShaderData()->setBuffers(0, 0, _buffer_bindings[0]))
+        {
+            _meshs[0]->getInstanceShaderData()->update();
+        }
+        _meshs[1] = new kege::Mesh({}, new kege::ShaderData( _shader_pipeline,{ 0 }));
+        _meshs[1]->getInstanceShaderData()->setBuffers(0, 0, _buffer_bindings[1]);
         _meshs[1]->getInstanceShaderData()->update();
 
         ref::Image* image = asset_manager->fetch< ref::Image >( "default" );
         ref::Sampler* sampler = asset_manager->fetch< ref::Sampler >( "default" );
 
-        _shader_data = new kege::ShaderData( _shader_pipeline,{ "_theme", "_font", "_scene" });
+        // create BindSet
+        _shader_data = new kege::ShaderData( _shader_pipeline,{ "theme", "font", "scene" });
         setViewportImage({ .image = *image, .sampler = *sampler, .layout = ImageLayout::ShaderRead }, 0);
         setThemeImage({ .image = *image, .sampler = *sampler, .layout = ImageLayout::ShaderRead }, 0);
         setFontImage(font->getImageBindInfo(), 0);
-
         _shader_data->update();
 
         kege::mat44* matrices = reinterpret_cast< kege::mat44* >( _push_constant.data );
         _push_constant.size = sizeof(kege::mat44) + sizeof(kege::vec4);
-        _push_constant.stages = ShaderStageFlag::All;
+        _push_constant.stages = ShaderStageFlag::Vertex | ShaderStageFlag::Fragment;
         _push_constant.offset = 0;
         matrices[0] = kege::orthoproj< float >
         (
@@ -448,17 +450,17 @@ namespace kege::ui{
 
     void Viewer::setViewportImage( const kege::ImageBindInfo& info, int frame )
     {
-        _shader_data->setImages( "_scene", kege::ImageBindings{info}, frame );
+        _shader_data->setImages( "scene", kege::ImageBindings{info}, frame );
     }
 
     void Viewer::setThemeImage( const kege::ImageBindInfo& info, int frame )
     {
-        _shader_data->setImages( "_theme", kege::ImageBindings{info}, frame  );
+        _shader_data->setImages( "theme", kege::ImageBindings{info}, frame  );
     }
 
     void Viewer::setFontImage( const kege::ImageBindInfo& info, int frame )
     {
-        _shader_data->setImages( "_font", kege::ImageBindings{info}, frame  );
+        _shader_data->setImages( "font", kege::ImageBindings{info}, frame  );
     }
 
     void Viewer::shutdown()

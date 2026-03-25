@@ -108,108 +108,6 @@ build libapp.a: CXX_STATIC_LIBRARY_LINKER__app_Debug CMakeFiles/app.dir/kege/src
   TARGET_PDB = app.a.dbg
 
 # =============================================================================
-# Object build statements for STATIC_LIBRARY target ecs
-
-
-#############################################
-# Order-only phony target for ecs
-
-build cmake_object_order_depends_target_ecs: phony || .
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-cache.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/component-manager.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/ecs-layer.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/ecs-layer.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/ecs-layer.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-iterator.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-manager.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-registry.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system-manager.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system-manager.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system-manager.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-system.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity-view.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/entity.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-build CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o: CXX_COMPILER__ecs_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/system.cpp || cmake_object_order_depends_target_ecs
-  DEP_FILE = CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  OBJECT_FILE_DIR = CMakeFiles/ecs.dir/kege/src/core/ecs
-
-
-# =============================================================================
-# Link build statements for STATIC_LIBRARY target ecs
-
-
-#############################################
-# Link the static library libecs.a
-
-build libecs.a: CXX_STATIC_LIBRARY_LINKER__ecs_Debug CMakeFiles/ecs.dir/kege/src/core/ecs/component-cache.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/component-manager.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/ecs-layer.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-iterator.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-manager.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-registry.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system-manager.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-system.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity-view.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/entity.cpp.o CMakeFiles/ecs.dir/kege/src/core/ecs/system.cpp.o
-  LANGUAGE_COMPILE_FLAGS = -g
-  OBJECT_DIR = CMakeFiles/ecs.dir
-  POST_BUILD = :
-  PRE_LINK = :
-  TARGET_FILE = libecs.a
-  TARGET_PDB = ecs.a.dbg
-
-# =============================================================================
 # Object build statements for STATIC_LIBRARY target graphics
 
 
@@ -288,13 +186,6 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/font/font.cpp.o: CXX_COMPIL
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/font
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/id-manager.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
-
 build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o.d
   FLAGS = -g -std=gnu++17
@@ -316,22 +207,22 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-cursor.cpp.o: CXX_CO
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-elem.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-input.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
-
 build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-post-layout-ops.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-post-layout-ops.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-post-layout-ops.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-resizer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-resizer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-resizer.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -358,8 +249,8 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o: CXX_CO
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/gui
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-widget-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-widget-manager.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-widget-manager.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/gui/uid.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/uid.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/gui/uid.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -715,8 +606,22 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/physical-device
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core
 
+build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/rendering-info.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/rendering-info.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/rendering-info.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core
+
 build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/resource-recycler.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/sampler.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/sampler.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/sampler.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -738,6 +643,13 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/string-to-enum-
 
 build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/swapchain.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/vertex-format.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/vertex-format.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/vertex-format.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -834,8 +746,8 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/binding-poi
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/feature-flags.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/feature-flags.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/feature-flags.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -843,6 +755,13 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-lo
 
 build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/set-layout.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-compiler.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-compiler.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-compiler.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
@@ -1051,6 +970,139 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/render/window/glfw-window.c
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/render/window
 
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/json-shader-loader.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/json-shader-loader.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/json-shader-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-parser.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-parser.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-parser.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/pipeline-loader.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/pipeline-loader.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/pipeline-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-library.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-library.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-library.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/settings.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/settings.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/settings.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain
+
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/graphics.dir
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain
+
 build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp || cmake_object_order_depends_target_graphics
   DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o.d
   FLAGS = -g -std=gnu++17
@@ -1079,173 +1131,82 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain.c
   OBJECT_DIR = CMakeFiles/graphics.dir
   OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/height-map-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/height-map-generator.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/height-map-generator.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp.o.d
+build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp || cmake_object_order_depends_target_graphics
+  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-material.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-material.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-material.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-system.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-system.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-system.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
-
-build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp.o: CXX_COMPILER__graphics_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain.cpp || cmake_object_order_depends_target_graphics
-  DEP_FILE = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/graphics.dir
-  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain
+  OBJECT_FILE_DIR = CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical
 
 
 # =============================================================================
@@ -1255,7 +1216,7 @@ build CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp
 #############################################
 # Link the static library libgraphics.a
 
-build libgraphics.a: CXX_STATIC_LIBRARY_LINKER__graphics_Debug CMakeFiles/graphics.dir/kege/src/core/graphics/atmosphere/atmosphere.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/camera-controller.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/camera.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/follow-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/frustum.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/lookat-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/movement-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/update-scene-camera.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-creator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/id-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-core.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-cursor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-elem.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-input.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-style-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-style-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-widget-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/light/light.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/loader/glft-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/material/material-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/material/material.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-capsule.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-circle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cone.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cuboid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cylinder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-grid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-icosahedron.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rect.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rendering-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/air-resistance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/color-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/gravity-behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/size-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/velocity-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/wind-behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/billboard-particle-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-effect-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-effect.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-emission-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/update-decay-over-time.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-circle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cone.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cube.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cylinder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-line.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-plane.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-pyrimid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-sphere.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-triangle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render-layer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/command-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/fence.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/graphics-core.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/graphics.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/image.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/semaphore.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/string-to-enum-types.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-lexer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-parser.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-preprocessor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-token-table.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-tokens.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-executor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph-compiler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-pass-context.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-queue.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-stage.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/binding-point.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-data.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-pipeline.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-set.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-struct-block.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/load-code.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/parser.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/tokenizer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-command-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-fence.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-image.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-queue-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-semaphore.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-set-allocator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-set-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-pipeline.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-set.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-swapchain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-utils.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/window/glfw-window.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-tile.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/height-map-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/generator/topographic-layer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/settings.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-material.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/terrain/terrain.cpp.o
+build libgraphics.a: CXX_STATIC_LIBRARY_LINKER__graphics_Debug CMakeFiles/graphics.dir/kege/src/core/graphics/atmosphere/atmosphere.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/camera-controller.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/camera.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/follow-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/frustum.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/lookat-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/movement-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/camera/update-scene-camera.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font-creator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/font/font.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-aligner.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-core.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-cursor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-post-layout-ops.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-resizer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-style-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-style-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/ui-viewer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/gui/uid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/light/light.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/loader/glft-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/material/material-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/material/material.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-capsule.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-circle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cone.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cuboid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-cylinder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-ellipsoid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-grid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-icosahedron.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rect.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh-rendering-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/mesh/mesh.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/air-resistance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/color-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/gravity-behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/size-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/velocity-over-lifetime.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/behaviors/wind-behavior.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/billboard-particle-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-effect-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-effect.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle-emission-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/particle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/effect/update-decay-over-time.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-circle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cone.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cube.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-cylinder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-line.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-plane.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-pyrimid.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-sphere.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter-triangle.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/particle/emitter/emitter.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render-layer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/command-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/fence.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/graphics-core.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/graphics.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/image.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/rendering-info.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/resource-recycler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/sampler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/semaphore.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/string-to-enum-types.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/swapchain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/core/vertex-format.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-lexer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-parser.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-preprocessor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-token-table.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/glsl-preprocessor/glsl-tokens.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-executor.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph-compiler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-graph.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-pass-context.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-queue.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/graph/render-stage.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/binding-point.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/feature-flags.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/set-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-compiler.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-data.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-pipeline.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-set.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader-struct-block.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/pipeline/shader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/load-code.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/parser.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/shader-parser/tokenizer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-command-buffer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-command-encoder.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-fence.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-image.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-instance.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-physical-device.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-queue-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-semaphore.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-set-allocator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-set-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-layout.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-pipeline.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader-set.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-shader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-swapchain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/vulkan/vk-utils.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/render/window/glfw-window.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/json-shader-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/meta-shader-parser.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/pipeline-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-library.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/settings.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/common/terrain/terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain-tile.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/flat/flat-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp.o CMakeFiles/graphics.dir/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/graphics.dir
   POST_BUILD = :
@@ -1300,8 +1261,8 @@ build CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o: CXX_COMPILER
   OBJECT_DIR = CMakeFiles/input.dir
   OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
 
-build CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-layer.cpp || cmake_object_order_depends_target_input
-  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o.d
+build CMakeFiles/input.dir/kege/src/core/input/input-manager.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-manager.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/input-manager.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/input.dir
@@ -1309,6 +1270,20 @@ build CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o: CXX_COMPILER__
 
 build CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/inputs.cpp || cmake_object_order_depends_target_input
   DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/keyboard.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/keyboard.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/keyboard.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir/kege/src/core/input
+
+build CMakeFiles/input.dir/kege/src/core/input/mouse.cpp.o: CXX_COMPILER__input_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/input/mouse.cpp || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/kege/src/core/input/mouse.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/input.dir
@@ -1336,7 +1311,7 @@ build CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o: CXX_CO
 #############################################
 # Link the static library libinput.a
 
-build libinput.a: CXX_STATIC_LIBRARY_LINKER__input_Debug CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-layer.cpp.o CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o
+build libinput.a: CXX_STATIC_LIBRARY_LINKER__input_Debug CMakeFiles/input.dir/kege/src/core/input/input-actions.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-commands.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context-manager.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-context.cpp.o CMakeFiles/input.dir/kege/src/core/input/input-manager.cpp.o CMakeFiles/input.dir/kege/src/core/input/inputs.cpp.o CMakeFiles/input.dir/kege/src/core/input/keyboard.cpp.o CMakeFiles/input.dir/kege/src/core/input/mouse.cpp.o CMakeFiles/input.dir/kege/src/core/input/thread-safe-vector.cpp.o CMakeFiles/input.dir/kege/src/core/input/user-input-receiver.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/input.dir
   POST_BUILD = :
@@ -2069,13 +2044,6 @@ build CMakeFiles/resource.dir/kege/src/core/resource/input-context-loader.cpp.o:
   OBJECT_DIR = CMakeFiles/resource.dir
   OBJECT_FILE_DIR = CMakeFiles/resource.dir/kege/src/core/resource
 
-build CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.o: CXX_COMPILER__resource_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/shader-pipeline-loader.cpp || cmake_object_order_depends_target_resource
-  DEP_FILE = CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/resource.dir
-  OBJECT_FILE_DIR = CMakeFiles/resource.dir/kege/src/core/resource
-
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target resource
@@ -2084,7 +2052,7 @@ build CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.
 #############################################
 # Link the static library libresource.a
 
-build libresource.a: CXX_STATIC_LIBRARY_LINKER__resource_Debug CMakeFiles/resource.dir/kege/src/core/resource/asset-cache-table.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/asset-cache.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/asset-manager.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/font-loader.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/image-loader.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/input-context-loader.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/shader-pipeline-loader.cpp.o
+build libresource.a: CXX_STATIC_LIBRARY_LINKER__resource_Debug CMakeFiles/resource.dir/kege/src/core/resource/asset-cache-table.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/asset-cache.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/asset-manager.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/font-loader.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/image-loader.cpp.o CMakeFiles/resource.dir/kege/src/core/resource/input-context-loader.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/resource.dir
   POST_BUILD = :
@@ -2101,8 +2069,64 @@ build libresource.a: CXX_STATIC_LIBRARY_LINKER__resource_Debug CMakeFiles/resour
 
 build cmake_object_order_depends_target_scene: phony || .
 
-build CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/entity-tag.cpp || cmake_object_order_depends_target_scene
-  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o.d
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-component.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-component.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-component.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-kind.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-kind.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-kind.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-manager.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-manager.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-registry.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-registry.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-registry.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-layer.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-layer.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-layer.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-system-factory.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system-factory.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-system-factory.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-system.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-system.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-system.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs-view.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-view.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs-view.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/scene.dir
+  OBJECT_FILE_DIR = CMakeFiles/scene.dir/kege/src/core/scene
+
+build CMakeFiles/scene.dir/kege/src/core/scene/ecs.cpp.o: CXX_COMPILER__scene_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs.cpp || cmake_object_order_depends_target_scene
+  DEP_FILE = CMakeFiles/scene.dir/kege/src/core/scene/ecs.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/scene.dir
@@ -2137,7 +2161,7 @@ build CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o: CXX_COMPILER__scene_
 #############################################
 # Link the static library libscene.a
 
-build libscene.a: CXX_STATIC_LIBRARY_LINKER__scene_Debug CMakeFiles/scene.dir/kege/src/core/scene/entity-tag.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene-manager.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o
+build libscene.a: CXX_STATIC_LIBRARY_LINKER__scene_Debug CMakeFiles/scene.dir/kege/src/core/scene/ecs-component.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-kind.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-manager.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-entity-registry.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-layer.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-system-factory.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-system.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs-view.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/ecs.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene-loader.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene-manager.cpp.o CMakeFiles/scene.dir/kege/src/core/scene/scene.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/scene.dir
   POST_BUILD = :
@@ -2235,103 +2259,61 @@ build libutils.a: CXX_STATIC_LIBRARY_LINKER__utils_Debug CMakeFiles/utils.dir/ke
 
 build cmake_object_order_depends_target_editor: phony || .
 
+build CMakeFiles/editor.dir/kege/src/editor/common/gui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/gui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/common/gui.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/common
+
+build CMakeFiles/editor.dir/kege/src/editor/common/ui-description.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-description.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/common/ui-description.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/common
+
+build CMakeFiles/editor.dir/kege/src/editor/common/ui-schema.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-schema.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/common/ui-schema.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/common
+
+build CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-loader.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-loader.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-loader.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/dock
+
+build CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-split.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-split.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-split.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/dock
+
+build CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/dock
+
+build CMakeFiles/editor.dir/kege/src/editor/drag-drop-manager.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/drag-drop-manager.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/drag-drop-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
+
 build CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor-layer.cpp || cmake_object_order_depends_target_editor
   DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/editor.dir
   OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/droplist.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/droplist.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/droplist.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-button.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-button.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-button.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-camera.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-camera.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-camera.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-dock-node.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-dock-node.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-dock-node.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-menu.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-menu.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-menu.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-numeric.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-options.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-panel.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-panel.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-rigidbody.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-rigidbody.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-rigidbody.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tab.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-text-field.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-transform.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-transform.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-transform.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
-
-build CMakeFiles/editor.dir/kege/src/editor/elements/ui-tree-node.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tree-node.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/elements/ui-tree-node.cpp.o.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include
-  OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/elements
 
 build CMakeFiles/editor.dir/kege/src/editor/main.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp || cmake_object_order_depends_target_editor
   DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/main.cpp.o.d
@@ -2340,33 +2322,194 @@ build CMakeFiles/editor.dir/kege/src/editor/main.cpp.o: CXX_COMPILER__editor_uns
   OBJECT_DIR = CMakeFiles/editor.dir
   OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor
 
-build CMakeFiles/editor.dir/kege/src/editor/pannels/hierarchy-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/hierarchy-panel.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/pannels/hierarchy-panel.cpp.o.d
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/pannels
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh
 
-build CMakeFiles/editor.dir/kege/src/editor/pannels/inspector-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/inspector-panel.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/pannels/inspector-panel.cpp.o.d
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/pannels
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh
 
-build CMakeFiles/editor.dir/kege/src/editor/pannels/navbar-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/navbar-panel.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/pannels/navbar-panel.cpp.o.d
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/pannels
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh
 
-build CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/pannels/viewport-panel.cpp || cmake_object_order_depends_target_editor
-  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o.d
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp.o.d
   FLAGS = -g -std=gnu++17
   INCLUDES = -I/usr/local/include
   OBJECT_DIR = CMakeFiles/editor.dir
-  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/pannels
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-camera.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-camera.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-camera.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-light.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-light.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-light.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-mesh.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-mesh.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-mesh.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-transform.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-transform.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-transform.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/inspector/inspector-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/inspector-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/inspector/inspector-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/inspector
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/ui-console.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-console.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/ui-console.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/ui-file-browser.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-file-browser.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/ui-file-browser.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/ui-menu-bar.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-menu-bar.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/ui-menu-bar.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/ui-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/ui-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/ui-settings.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-settings.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/ui-settings.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels
+
+build CMakeFiles/editor.dir/kege/src/editor/panels/viewport/viewport-panel.cpp.o: CXX_COMPILER__editor_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/viewport/viewport-panel.cpp || cmake_object_order_depends_target_editor
+  DEP_FILE = CMakeFiles/editor.dir/kege/src/editor/panels/viewport/viewport-panel.cpp.o.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -I/usr/local/include
+  OBJECT_DIR = CMakeFiles/editor.dir
+  OBJECT_FILE_DIR = CMakeFiles/editor.dir/kege/src/editor/panels/viewport
 
 
 # =============================================================================
@@ -2376,7 +2519,7 @@ build CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o: CXX_CO
 #############################################
 # Link the static library libeditor.a
 
-build libeditor.a: CXX_STATIC_LIBRARY_LINKER__editor_Debug CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/droplist.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-button.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-camera.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-dock-node.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-menu.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-numeric.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-options.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-rigidbody.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-tab.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-text-field.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-transform.cpp.o CMakeFiles/editor.dir/kege/src/editor/elements/ui-tree-node.cpp.o CMakeFiles/editor.dir/kege/src/editor/main.cpp.o CMakeFiles/editor.dir/kege/src/editor/pannels/hierarchy-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/pannels/inspector-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/pannels/navbar-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/pannels/viewport-panel.cpp.o
+build libeditor.a: CXX_STATIC_LIBRARY_LINKER__editor_Debug CMakeFiles/editor.dir/kege/src/editor/common/gui.cpp.o CMakeFiles/editor.dir/kege/src/editor/common/ui-description.cpp.o CMakeFiles/editor.dir/kege/src/editor/common/ui-schema.cpp.o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-loader.cpp.o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock-split.cpp.o CMakeFiles/editor.dir/kege/src/editor/dock/ui-dock.cpp.o CMakeFiles/editor.dir/kege/src/editor/drag-drop-manager.cpp.o CMakeFiles/editor.dir/kege/src/editor/editor-layer.cpp.o CMakeFiles/editor.dir/kege/src/editor/main.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-camera.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-light.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-mesh.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/elements/ui-transform.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/inspector/inspector-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/ui-console.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/ui-file-browser.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/ui-menu-bar.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/ui-panel.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/ui-settings.cpp.o CMakeFiles/editor.dir/kege/src/editor/panels/viewport/viewport-panel.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/editor.dir
   POST_BUILD = :
@@ -2391,12 +2534,12 @@ build libeditor.a: CXX_STATIC_LIBRARY_LINKER__editor_Debug CMakeFiles/editor.dir
 #############################################
 # Order-only phony target for kege-engine
 
-build cmake_object_order_depends_target_kege-engine: phony || cmake_object_order_depends_target_app cmake_object_order_depends_target_ecs cmake_object_order_depends_target_editor cmake_object_order_depends_target_graphics cmake_object_order_depends_target_input cmake_object_order_depends_target_io cmake_object_order_depends_target_memory cmake_object_order_depends_target_physics cmake_object_order_depends_target_resource cmake_object_order_depends_target_scene cmake_object_order_depends_target_utils
+build cmake_object_order_depends_target_kege-engine: phony || cmake_object_order_depends_target_app cmake_object_order_depends_target_editor cmake_object_order_depends_target_graphics cmake_object_order_depends_target_input cmake_object_order_depends_target_io cmake_object_order_depends_target_memory cmake_object_order_depends_target_physics cmake_object_order_depends_target_resource cmake_object_order_depends_target_scene cmake_object_order_depends_target_utils
 
 build CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o: CXX_COMPILER__kege-engine_unscanned_Debug /Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp || cmake_object_order_depends_target_kege-engine
   DEP_FILE = CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o.d
   FLAGS = -g -std=gnu++17
-  INCLUDES = -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/app -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/3d -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor
+  INCLUDES = -I/usr/local/include -I/usr/local/glfw/3.3.8/lib-x86_64/include -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/app -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/input -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/io -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/math -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/3d -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene -I/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils -I/Users/kae/Developer/vscode/kege-engine/kege/src/editor
   OBJECT_DIR = CMakeFiles/kege-engine.dir
   OBJECT_FILE_DIR = CMakeFiles/kege-engine.dir/kege/src/editor
 
@@ -2408,9 +2551,9 @@ build CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o: CXX_COMPILER__kege-
 #############################################
 # Link the executable kege-engine
 
-build kege-engine: CXX_EXECUTABLE_LINKER__kege-engine_Debug CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o | libapp.a libecs.a libgraphics.a libinput.a libio.a libmemory.a libphysics.a libresource.a libscene.a libutils.a libeditor.a /usr/local/lib/libvulkan.dylib /usr/local/lib/libshaderc_combined.a /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib || libapp.a libecs.a libeditor.a libgraphics.a libinput.a libio.a libmemory.a libphysics.a libresource.a libscene.a libutils.a
+build kege-engine: CXX_EXECUTABLE_LINKER__kege-engine_Debug CMakeFiles/kege-engine.dir/kege/src/editor/main.cpp.o | libapp.a libgraphics.a libinput.a libio.a libmemory.a libphysics.a libresource.a libscene.a libutils.a libeditor.a /usr/local/lib/libvulkan.dylib /usr/local/lib/libshaderc_combined.a /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib || libapp.a libeditor.a libgraphics.a libinput.a libio.a libmemory.a libphysics.a libresource.a libscene.a libutils.a
   FLAGS = -g
-  LINK_LIBRARIES = -Wl,-rpath,/usr/local/glfw/3.3.8/lib-x86_64 -Wl,-rpath,/usr/local/lib  libapp.a  libecs.a  libgraphics.a  libinput.a  libio.a  libmemory.a  libphysics.a  libresource.a  libscene.a  libutils.a  libeditor.a  /usr/local/lib/libvulkan.dylib  /usr/local/lib/libshaderc_combined.a  /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib  -framework CoreFoundation
+  LINK_LIBRARIES = -Wl,-rpath,/usr/local/glfw/3.3.8/lib-x86_64 -Wl,-rpath,/usr/local/lib  libapp.a  libgraphics.a  libinput.a  libio.a  libmemory.a  libphysics.a  libresource.a  libscene.a  libutils.a  libeditor.a  /usr/local/lib/libvulkan.dylib  /usr/local/lib/libshaderc_combined.a  /usr/local/glfw/3.3.8/lib-x86_64/libglfw.3.dylib  -framework CoreFoundation
   OBJECT_DIR = CMakeFiles/kege-engine.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -2446,8 +2589,6 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build app: phony libapp.a
 
-build ecs: phony libecs.a
-
 build editor: phony libeditor.a
 
 build graphics: phony libgraphics.a
@@ -2476,7 +2617,7 @@ build vector_math: phony libvector_math.a
 #############################################
 # Folder: /Users/kae/Developer/vscode/kege-engine/build
 
-build all: phony libapp.a libecs.a libgraphics.a libinput.a libio.a libvector_math.a libmemory.a libphysics.a libresource.a libscene.a libutils.a libeditor.a kege-engine
+build all: phony libapp.a libgraphics.a libinput.a libio.a libvector_math.a libmemory.a libphysics.a libresource.a libscene.a libutils.a libeditor.a kege-engine
 
 # =============================================================================
 # Built-in targets

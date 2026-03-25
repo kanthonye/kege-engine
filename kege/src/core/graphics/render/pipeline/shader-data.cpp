@@ -44,7 +44,7 @@ namespace kege{
         return setImages( set->index, set->binding.index, bindings, frame );
     }
 
-    const std::map< int, kege::IndexedSet >& ShaderData::getShaderSets()const
+    const std::map< int, kege::BindSet >& ShaderData::getShaderSets()const
     {
         return _sets;
     }
@@ -67,7 +67,7 @@ namespace kege{
     {
         for (const std::string& set_name : s )
         {
-            IndexedSet set = _pipeline->getShaderLayout()->allocateSet( set_name );
+            BindSet set = _pipeline->getShaderLayout()->allocateSet( set_name );
             _sets[ set.index ] = { .index = set.index, .set = set.set };
         }
     }

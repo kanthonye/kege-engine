@@ -78,7 +78,7 @@ namespace kege::vk{
     // SetLayout
     //-------------------------------------------------------------------------
 
-    ref::SetLayout Device::createSetLayout( const LayoutBindings& bindings )
+    ref::SetLayout Device::createSetLayout( const BindPointDescs& bindings )
     {
         auto i = _set_layout_library.find( bindings );
         if( i != _set_layout_library.end() ) return i->second.ref();
@@ -113,15 +113,15 @@ namespace kege::vk{
         if ( _device == VK_NULL_HANDLE ) return {};
 
         std::vector< VkDescriptorSetLayout > descriptor_set_layouts;
-        descriptor_set_layouts.reserve( description.set_layout_bindings.size() );
+        descriptor_set_layouts.reserve( description.bind_sets.size() );
 
         kege::IndexedSetLayouts indexed_set_layouts;
-        indexed_set_layouts.reserve( description.set_layout_bindings.size() );
-        for (const SetLayoutBindings& layout : description.set_layout_bindings )
+        indexed_set_layouts.reserve( description.bind_sets.size() );
+        for (const BindSetDesc& layout : description.bind_sets )
         {
             ref::SetLayout set_layout = createSetLayout( layout.bindings );
             descriptor_set_layouts.push_back( set_layout->vk()->handle() );
-            indexed_set_layouts.push_back({ .index = layout.set_index, .set = set_layout });
+            indexed_set_layouts.push_back({ .index = layout.index, .set = set_layout });
         }
 
         auto i = _shader_layout_lookup.find( descriptor_set_layouts );
@@ -134,7 +134,7 @@ namespace kege::vk{
         (
             new vk::ShaderLayout
             (
-                this, description.name, indexed_set_layouts, description.push_block_layout
+                this, description.name, indexed_set_layouts, description.push_blocks
             )
         );
 
@@ -166,7 +166,7 @@ namespace kege::vk{
     // ShaderPipeline
     //-------------------------------------------------------------------------
 
-    ref::ShaderPipeline Device::createShaderPipeline( const PipelineCreateInfo& desc )
+    ref::ShaderPipeline Device::createShaderPipeline( const kege::ShaderPipelineDesc& desc )
     {
         ref::ShaderLayout layout = createShaderLayout( desc.shader_layout );
         if ( !layout ) return {};

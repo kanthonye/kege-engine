@@ -21,6 +21,55 @@ namespace kege::ui{
 
     class Input;
 
+
+
+    struct Record
+    {
+        uint64_t user_id = 0;
+        uint32_t index = 0;
+    };
+
+    struct HitRecord
+    {
+        /**
+         * The "pressing" record represents the UI element that is currently being pressed on by 
+         * the user. It is used to track the element that is actively being interacted with, allowing 
+         * the system to respond to user input (e.g., processing click on release).
+         */
+        Record pressing;
+
+        /**
+         * The "focus" record represents the UI element that currently has focus, meaning it is the 
+         * active element that can receive input from the user. It is used to track which element is 
+         * currently selected or active, allowing the system to direct user input to the appropriate 
+         * element (e.g., keyboard input).
+         */
+        Record focus;
+
+        /**
+         * The "hit" record represents the UI element that is currently being interacted with, 
+         * such as the one that is clicked on. It is used to track the element that is currently 
+         * active or targeted by user input, allowing the system to respond accordingly 
+         * (e.g., highlighting, triggering events, etc.).
+         */
+        Record hit;
+
+        /**
+         * The "hot" record represents the UI element that is currently under the mouse cursor 
+         * or being interacted with. It is used to track which element is active or highlighted 
+         * based on user input, such as mouse movement or clicks.
+         */
+        Record hot;
+
+        /**
+         * The "clicks" field represents the number of clicks that have occurred on a UI element. 
+         * It is used to track the number of times a user has clicked on a specific element, allowing 
+         * the system to respond to single clicks, double clicks, or multiple clicks as needed 
+         * (e.g., triggering different actions based on the number of clicks).
+         */
+        uint8_t  clicks = 0;
+    };
+
     class Layout : public kege::RefCounter
     {
     private:
@@ -45,14 +94,14 @@ namespace kege::ui{
 
     public:
 
-        template<typename Params> void pushDeferredOp(const ui::UID* id, DeferredOperation fn, const Params& params)
+        template<typename Params> void pushDeferredOp(UserId user_id, WidgetId widget_index, DeferredOperation fn, const Params& params)
         {
-            _deferred_operations.push< Params >(id, fn, params);
+            _deferred_operations.push< Params >(user_id, widget_index, fn, params);
         }
 
-        template<typename Params> void pushDeferredOpPtr(const ui::UID* id, DeferredOperation fn, Params* params)
+        template<typename Params> void pushDeferredOpPtr(UserId user_id, WidgetId widget_index, DeferredOperation fn, Params* params)
         {
-            _deferred_operations.pushPtr< Params >(id, fn, params);
+            _deferred_operations.pushPtr< Params >(user_id, widget_index, fn, params);
         }
 
 
@@ -65,8 +114,8 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        kege::ui::Widget* pushRoot( const WidgetDesc& desc );
-        kege::ui::Widget* putRoot( const WidgetDesc& desc );
+        WidgetId pushRoot( const WidgetDesc& desc );
+        WidgetId putRoot( const WidgetDesc& desc );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -80,7 +129,7 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        kege::ui::Widget* push( const WidgetDesc& desc );
+        WidgetId push( const WidgetDesc& desc );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -96,12 +145,12 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        kege::ui::Widget* put( const WidgetDesc& desc );
+        WidgetId put( const WidgetDesc& desc );
 
 
         uint32_t computeExtent( int font_size, const char* text, float& width, float& height );
-        bool onNumericInput(const UID& elem, char* str, size_t& size);
-        bool onTextInput(const UID& elem, char* str, size_t& size);
+        bool onNumericInput(const WidgetId& widget_id, char* str, size_t& size);
+        bool onTextInput(const WidgetId& widget_id, char* str, size_t& size);
 
 
         /**
@@ -164,7 +213,7 @@ namespace kege::ui{
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool mouseover( const UID& uid ) const;
+        bool mouseover( const UserId& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was double clicked on.
@@ -173,7 +222,7 @@ namespace kege::ui{
          *
          * @return true if the element was double clicked on, false otherwise.
          */
-        bool doubleClick( const UID& uid ) const;
+        bool doubleClick( const UserId& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was single clicked on.
@@ -182,7 +231,7 @@ namespace kege::ui{
          *
          * @return true if the ui-element was single clicked on, false otherwise.
          */
-        bool click( const UID& uid ) const;
+        bool click( const UserId& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id has focus.
@@ -191,7 +240,7 @@ namespace kege::ui{
          *
          * @return true if the ui-element has focus, false otherwise.
          */
-        bool hasFocus( const UID& uid )const;
+        bool hasFocus( const UserId& uid )const;
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -200,7 +249,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* elem( const UID& uid ) const;
+        const kege::ui::Widget* elem( const WidgetId& uid ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
@@ -209,8 +258,8 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* elem( const UID& uid );
-        kege::ui::Widget* elemParent( const UID& uid );
+        kege::ui::Widget* elem( const WidgetId& uid );
+        kege::ui::Widget* elemParent( const WidgetId& uid );
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -278,7 +327,7 @@ namespace kege::ui{
          */
         void resize( uint32_t max_elements );
 
-        bool buttonDown()const;
+        bool leftClickDown()const;
 
         /**
          * Retrieves the input handler associated with the layout.
@@ -321,10 +370,10 @@ namespace kege::ui{
         void resolveParentChildRelation(uint32_t index);
         void addToDesignatedLayer(uint32_t index, const WidgetDesc& desc);
 
-        Id getHotElem(uint32_t root, bool button = false);
-        Id getHotElem(bool button = false);
-        uint32_t find(uint32_t node_index, const ui::Id& id);
-        uint32_t find(const ui::Id& id);
+        Record getHotElem(uint32_t root, bool button = false);
+        Record getHotElem(bool button = false);
+        uint32_t find(uint64_t user_id, uint32_t index);
+        uint32_t find(uint64_t user_id);
         void handleInputEvents();
 
     private:
@@ -350,23 +399,30 @@ namespace kege::ui{
 
         ref::Font _font;
 
-        HitRecord _hit_record;
 
-        mutable Id _active;
-        mutable Id _focus;
-        mutable Id _hot;
-        mutable Id _hit;
+
+        mutable HitRecord _curr;
+        mutable HitRecord _next;
+
+
+//        mutable WidgetId _active;
+//        mutable WidgetId _focus;
+//        mutable WidgetId _hot;
+//        mutable WidgetId _hit;
 
         double _dms;
         
         uint32_t _current_parent;
-        uint32_t _active_index;
-        uint32_t _hot_index;
+//        uint32_t _active_index;
+//        uint32_t _hot_index;
 
         uint32_t _height;
         uint32_t _width;
 
         bool _click_registered;
+        bool _left_click_down;
+        bool _left_click_state;
+        bool _butn_down;
 
         friend Layer;
         friend Resizer;

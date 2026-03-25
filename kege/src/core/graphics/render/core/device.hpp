@@ -210,7 +210,7 @@ namespace kege{
          * @param bindings Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        virtual ref::SetLayout createSetLayout( const LayoutBindings& bindings ) = 0;
+        virtual ref::SetLayout createSetLayout( const BindPointDescs& bindings ) = 0;
 
         /**
          * @brief Creates a shader layout based on a description.
@@ -231,7 +231,7 @@ namespace kege{
          * @param desc Compute pipeline description including shader and layout.
          * @return Handle to the created compute pipeline.
          */
-        virtual ref::ShaderPipeline createShaderPipeline( const kege::PipelineCreateInfo& desc ) = 0;
+        virtual ref::ShaderPipeline createShaderPipeline( const kege::ShaderPipelineDesc& desc ) = 0;
 
         /**
          * @brief Creates a texture resource.

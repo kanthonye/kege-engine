@@ -201,36 +201,36 @@ namespace kege::vk{
     }
 
 
-    VkFormat convertShaderVarTypeToVkFormat( kege::ShaderVarType format )
+    VkFormat convertShaderVarTypeToVkFormat( kege::ShaderVar format )
     {
         switch (format)
         {
             default:
-            case kege::ShaderVarType::Unknown:  return VK_FORMAT_UNDEFINED;
+            case kege::ShaderVar::Unknown:  return VK_FORMAT_UNDEFINED;
 
             // 32-bit unsigned
-            case kege::ShaderVarType::Sint:     return VK_FORMAT_R32_SINT;
-            case kege::ShaderVarType::Vec2I:    return VK_FORMAT_R32G32_SINT;
-            case kege::ShaderVarType::Vec3I:    return VK_FORMAT_R32G32B32_SINT;
-            case kege::ShaderVarType::Vec4I:    return VK_FORMAT_R32G32B32A32_SINT;
+            case kege::ShaderVar::Sint:     return VK_FORMAT_R32_SINT;
+            case kege::ShaderVar::Vec2I:    return VK_FORMAT_R32G32_SINT;
+            case kege::ShaderVar::Vec3I:    return VK_FORMAT_R32G32B32_SINT;
+            case kege::ShaderVar::Vec4I:    return VK_FORMAT_R32G32B32A32_SINT;
 
             // 32-bit unsigned
-            case kege::ShaderVarType::Uint:     return VK_FORMAT_R32_UINT;
-            case kege::ShaderVarType::Vec2U:    return VK_FORMAT_R32G32_UINT;
-            case kege::ShaderVarType::Vec3U:    return VK_FORMAT_R32G32B32_UINT;
-            case kege::ShaderVarType::Vec4U:    return VK_FORMAT_R32G32B32A32_UINT;
+            case kege::ShaderVar::Uint:     return VK_FORMAT_R32_UINT;
+            case kege::ShaderVar::Vec2U:    return VK_FORMAT_R32G32_UINT;
+            case kege::ShaderVar::Vec3U:    return VK_FORMAT_R32G32B32_UINT;
+            case kege::ShaderVar::Vec4U:    return VK_FORMAT_R32G32B32A32_UINT;
 
             // 32-bit unsigned
-            case kege::ShaderVarType::Float:    return VK_FORMAT_R32_SFLOAT;
-            case kege::ShaderVarType::Vec2:     return VK_FORMAT_R32G32_SFLOAT;
-            case kege::ShaderVarType::Vec3:     return VK_FORMAT_R32G32B32_SFLOAT;
-            case kege::ShaderVarType::Vec4:     return VK_FORMAT_R32G32B32A32_SFLOAT;
+            case kege::ShaderVar::Float:    return VK_FORMAT_R32_SFLOAT;
+            case kege::ShaderVar::Vec2:     return VK_FORMAT_R32G32_SFLOAT;
+            case kege::ShaderVar::Vec3:     return VK_FORMAT_R32G32B32_SFLOAT;
+            case kege::ShaderVar::Vec4:     return VK_FORMAT_R32G32B32A32_SFLOAT;
 
             // 32-bit unsigned
-            case kege::ShaderVarType::Double:   return VK_FORMAT_R64_UINT;
-            case kege::ShaderVarType::Vec2D:    return VK_FORMAT_R64G64_UINT;
-            case kege::ShaderVarType::Vec3D:    return VK_FORMAT_R64G64B64_UINT;
-            case kege::ShaderVarType::Vec4D:    return VK_FORMAT_R64G64B64A64_UINT;
+            case kege::ShaderVar::Double:   return VK_FORMAT_R64_UINT;
+            case kege::ShaderVar::Vec2D:    return VK_FORMAT_R64G64_UINT;
+            case kege::ShaderVar::Vec3D:    return VK_FORMAT_R64G64B64_UINT;
+            case kege::ShaderVar::Vec4D:    return VK_FORMAT_R64G64B64A64_UINT;
         }
     }
 
@@ -542,15 +542,15 @@ namespace kege::vk{
         }
     }
 
-    VkPolygonMode convertPolygonMode( PolygonMode mode )
+    VkPolygonMode convertPolygonMode( FillMode mode )
     {
         switch (mode)
         {
             default: kege::Log::error << "Unsupported PolygonMode in convertPolygonMode()" <<Log::nl;
 
-            case PolygonMode::Fill: return VK_POLYGON_MODE_FILL;
-            case PolygonMode::Point: return VK_POLYGON_MODE_POINT;
-            case PolygonMode::Line: return VK_POLYGON_MODE_LINE;
+            case FillMode::Fill: return VK_POLYGON_MODE_FILL;
+            case FillMode::Point: return VK_POLYGON_MODE_POINT;
+            case FillMode::Line: return VK_POLYGON_MODE_LINE;
         }
     }
 
@@ -909,29 +909,29 @@ namespace kege::vk{
         }
     }
 
-    VkColorComponentFlags convertColorComponentMask( ColorComponentFlags flags )
+    VkColorComponentFlags convertColorComponentMask( ColorWriteMask flags )
     {
         VkColorComponentFlags components = 0;
 
-        if ( flags == ColorComponentFlags::All )
+        if ( flags == ColorWriteMask::All )
         {
             components = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
         }
         else
         {
-            if (( flags & ColorComponentFlags::R ) == ColorComponentFlags::R )
+            if (( flags & ColorWriteMask::R ) == ColorWriteMask::R )
             {
                 components |= VK_COLOR_COMPONENT_R_BIT;
             }
-            if (( flags & ColorComponentFlags::G ) == ColorComponentFlags::G )
+            if (( flags & ColorWriteMask::G ) == ColorWriteMask::G )
             {
                 components |= VK_COLOR_COMPONENT_G_BIT;
             }
-            if (( flags & ColorComponentFlags::B ) == ColorComponentFlags::B )
+            if (( flags & ColorWriteMask::B ) == ColorWriteMask::B )
             {
                 components |= VK_COLOR_COMPONENT_B_BIT;
             }
-            if (( flags & ColorComponentFlags::A ) == ColorComponentFlags::A )
+            if (( flags & ColorWriteMask::A ) == ColorWriteMask::A )
             {
                 components |= VK_COLOR_COMPONENT_A_BIT;
             }
@@ -1009,29 +1009,29 @@ namespace kege::vk{
     }
 
 
-    VkCompareOp convertCompareOp(CompareOp compare)
+    VkCompareOp convertCompareOp(ComparisonFunc compare)
     {
         switch ( compare )
         {
-            case CompareOp::Never:
+            case ComparisonFunc::Never:
                 return VK_COMPARE_OP_NEVER;
 
-            case CompareOp::Less:
+            case ComparisonFunc::Less:
                 return VK_COMPARE_OP_LESS;
 
-            case CompareOp::Equal:
+            case ComparisonFunc::Equal:
                 return VK_COMPARE_OP_EQUAL;
 
-            case CompareOp::LessEqual:
+            case ComparisonFunc::LessEqual:
                 return VK_COMPARE_OP_LESS;
 
-            case CompareOp::NotEqual:
+            case ComparisonFunc::NotEqual:
                 return VK_COMPARE_OP_NOT_EQUAL;
 
-            case CompareOp::GreaterEqual:
+            case ComparisonFunc::GreaterEqual:
                 return VK_COMPARE_OP_GREATER_OR_EQUAL;
 
-            case CompareOp::Always:
+            case ComparisonFunc::Always:
                 return VK_COMPARE_OP_ALWAYS;
 
             default: kege::Log::error << "Unknown CompareOp in convertCompareOp()" <<Log::nl;

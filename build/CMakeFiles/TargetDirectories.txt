@@ -1,5 +1,4 @@
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/app.dir
-/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/ecs.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/graphics.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/input.dir
 /Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/io.dir

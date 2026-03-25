@@ -13,7 +13,7 @@
 
 namespace kege::vk{
 
-    SetLayout::SetLayout( vk::Device* device, const LayoutBindings& bindings )
+    SetLayout::SetLayout( vk::Device* device, const BindPointDescs& bindings )
     :   kege::SetLayout( bindings )
     ,   _handle( VK_NULL_HANDLE )
     ,   _allocator( nullptr )
@@ -25,7 +25,7 @@ namespace kege::vk{
          * Each binding corresponds to a resource in the shader and its properties.
          */
         std::vector< VkDescriptorSetLayoutBinding > descriptor_bindings;
-        for ( const kege::LayoutBinding& desc : bindings )
+        for ( const kege::BindPointDesc& desc : bindings )
         {
             VkDescriptorSetLayoutBinding dslb = {};
             dslb.binding = desc.index;
@@ -55,17 +55,25 @@ namespace kege::vk{
             kege::Log::error << vkResultToString( result );
             return;
         }
-        /*
-        if ( _device->instance()->isValidationEnabled() && !bindings.name.empty() )
+
+        if ( _device->instance()->isValidationEnabled() )
         {
-            _device->core().debugSetObjectName
-            (
-                (uint64_t)_handle,
-                VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT,
-                bindings.name.c_str()
-            );
+            std::string name = bindings[0].name;
+            for ( int i=1; i<bindings.size(); ++i )
+            {
+                name = " | " + bindings[i].name;
+            }
+            if (!name.empty())
+            {
+                _device->core().debugSetObjectName
+                (
+                    (uint64_t)_handle,
+                    VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT,
+                    name.c_str()
+                );
+            }
         }
-        */
+
        std::vector< VkDescriptorType > descriptor_types;
        for ( const VkDescriptorSetLayoutBinding& binding : descriptor_bindings )
        {

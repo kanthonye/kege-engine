@@ -171,3 +171,67 @@ void main()
     out_color = vec4( lighting, 1.0 );
     //out_color = vec4( 1 );
 }
+
+
+
+
+
+
+
+
+
+// Pure GLSL - no preprocessor directives needed
+vec3 calculateMetallicPBR(
+    vec3 baseColor,
+    float metallic,
+    float roughness,
+    vec3 normal,
+    vec3 viewDir,
+    Light light
+) {
+    // Clean, readable PBR implementation
+    vec3 halfVec = normalize(viewDir + light.direction);
+    float NdotL = max(dot(normal, light.direction), 0.0);
+    float NdotV = max(dot(normal, viewDir), 0.0);
+    float NdotH = max(dot(normal, halfVec), 0.0);
+    float VdotH = max(dot(viewDir, halfVec), 0.0);
+
+    // Direct implementation without ifdefs
+    vec3 F0 = mix(vec3(0.04), baseColor, metallic);
+    float alpha = roughness * roughness;
+
+    // ... clean implementation ...
+
+    return (diffuse + specular) * light.color * light.intensity * NdotL;
+}
+
+// Additional clearcoat layer that builds on metallic PBR
+vec3 addClearcoat(vec3 baseColor, float clearcoat, float clearcoatRoughness,
+                  vec3 normal, vec3 viewDir, Light light) {
+    // Pure implementation without ifdefs
+    vec3 halfVec = normalize(viewDir + light.direction);
+    float NdotH = max(dot(normal, halfVec), 0.0);
+
+    float D = clearcoatDistribution(NdotH, clearcoatRoughness);
+    float F = clearcoatFresnel(VdotH);
+    float V = clearcoatVisibility(NdotV, clearcoatRoughness);
+
+    return (D * F * V) * light.color * light.intensity * clearcoat;
+}
+
+
+// Generated main for GBuffer pass with metallic PBR
+void main() {
+    // Vertex shader part
+    VertexOutput vout = processVertex(vin);
+
+    // Fragment shader part
+    Material material = sampleMaterial(vout.uv);
+
+    // Pass to GBuffer
+    gBuffer.albedo = material.baseColor;
+    gBuffer.normal = material.normal;
+    gBuffer.metallic = material.metallic;
+    gBuffer.roughness = material.roughness;
+    gBuffer.emissive = material.emissive;
+}

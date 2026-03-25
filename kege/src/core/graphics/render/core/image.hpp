@@ -8,9 +8,122 @@
 #ifndef kege_image_hpp
 #define kege_image_hpp
 
+#include "../pipeline/depth-state.hpp"
 #include "graphics-core.hpp"
 
 namespace kege{
+
+    struct ClearRect
+    {
+        Rect2D      rect;
+        uint32_t    base_array_layer;
+        uint32_t    layer_count;
+    };
+
+    enum struct ImageAspectFlag
+    {
+        None = 0x00000000, // No aspect selected (invalid in most operations)
+        Color   = 0x00000001,
+        Depth   = 0x00000002,
+        Stencil = 0x00000004,
+        DepthStencil = Depth | Stencil
+    };
+
+    struct ClearAttachment
+    {
+        ImageAspectFlag aspect_mask;
+        uint32_t        attachment_index;
+        ClearValue      clear_value;
+    };
+
+    /**
+     * @brief Structure describing a region for texture copy operations.
+     *
+     * Defines the subresource layers and 3D offsets for both the source and
+     * destination textures, along with the 3D extent of the region to be copied.
+     */
+    struct ImageCopyRegion
+    {
+        SubresourceLayers src_subresource; // Subresource layers for the source texture.
+        SubresourceLayers dst_subresource; // Subresource layers for the destination texture.
+
+        Offset3D src_offset; // 3D offset for the source texture.
+        Offset3D dst_offset; // 3D offset for the destination texture.
+
+        Extent3D extent; // 3D extent of the copy region.
+    };
+
+    /**
+     * @brief Structure defining a subresource range for texture operations (e.g., clearing).
+     *
+     * This structure specifies the mip levels and array layers affected by an operation.
+     * It's used in functions like `clearColorTexture` and `clearDepthStencilTexture`.
+     */
+    struct ImageSubresourceRange
+    {
+        ImageAspectFlag aspect_mask; ///< Aspect mask indicating which parts of the image are affected (e.g., color, depth, stencil).
+        uint32_t base_mip_level;     ///< First mipmap level to affect.
+        uint32_t level_count;        ///< Number of mipmap levels to affect.
+        uint32_t base_array_layer;   ///< First array layer to affect.
+        uint32_t layer_count;        ///< Number of array layers to affect.
+    };
+
+    /**
+     * @brief Enumeration of image layouts.
+     *
+     * Describes the possible layouts an image can be in, which affects how
+     * the image data is organized in memory and how it can be accessed.
+     */
+    enum class ImageLayout
+    {
+        Undefined,          ///< Initial undefined layout
+        General,            ///< General-purpose layout
+        Color,              ///< Optimal for color attachment access
+        Depth,              ///< Optimal for depth attachment access
+        DepthRead,
+        Stencil,
+        StencilRead,
+        DepthStencil,       ///< Optimal for depth/stencil attachment access
+        DepthStencilRead,   ///< Optimal for depth/stencil attachment access
+        DepthRead_Stencil,
+        Depth_StencilRead,
+        ShaderRead,         ///< Optimal for shader read-only access
+        TransferSrc,        ///< Optimal for transfer source operations
+        TransferDst,        ///< Optimal for transfer destination operations
+        PreInitialized,
+        Present,            ///< Optimal for presentation engine access
+        HostRead,           ///< Layout suitable for CPU reading
+        HostWrite,          ///< Layout suitable for CPU writing
+        // Add more as needed...
+    };
+
+    /**
+     * @brief Describes an image memory barrier.
+     *
+     * Contains all the information needed to transition an image resource
+     * between different states, including layout, access patterns, and
+     * pipeline stages.
+     */
+    struct ImageMemoryBarrier
+    {
+        std::string resource_name;  ///< Name of the image in the RenderGraph
+
+        /// @name Transition Metadata
+        /// @{
+        ImageLayout old_layout;    ///< Layout before the barrier
+        ImageLayout new_layout;    ///< Layout after the barrier
+        AccessFlags src_access;     ///< Access type before the barrier
+        AccessFlags dst_access;     ///< Access type after the barrier
+        PipelineStageFlag src_stage;   ///< Pipeline stage before the barrier
+        PipelineStageFlag dst_stage;   ///< Pipeline stage after the barrier
+        /// @}
+
+        QueueType src_queue = QueueType::Graphics; ///< Source queue family
+        QueueType dst_queue = QueueType::Graphics; ///< Destination queue family
+
+        ImageSubresourceRange subresource_range; ///< Affected subresource range
+        ref::Image image;
+    };
 
     /**
      * @brief Enumeration of texture dimensionalities and types.
@@ -64,58 +177,23 @@ namespace kege{
         return (static_cast< uint32_t >( a ) & static_cast< uint32_t >( b )) != 0;
     }
 
-//    /**
-//     * @brief Describes the properties and configuration of a texture resource.
-//     */
-//    struct Image::Desc
-//    {
-//        ImageType type = ImageType::Type2D;             ///< Dimensionality and type of texture
-//        uint32_t width = 1;                                 ///< Base width in texels
-//        uint32_t height = 1;                                ///< Base height in texels
-//        uint32_t depth = 1;                                 ///< Depth for 3D textures, array layers for others
-//        uint32_t mip_levels = 1;                            ///< Number of mipmap levels
-//        uint32_t layers = 1;
-//        Format format = Format::undefined;                  ///< Pixel format and data type
-//        SampleCount sample_count = SampleCount::Count1;     ///< MSAA sample count
-//        ImageUsage usage = ImageUsage::Undefined;  ///< Allowed usages
-//        MemoryUsage memory_usage = MemoryUsage::GpuOnly;    ///< Memory placement strategy
-//        std::string name = "";                        ///< Debug label (visible in tools like RenderDoc)
-//
-//        const void* data =  nullptr;
-//
-//    };
+    /**
+     * @brief Enumeration of supported multisample anti-aliasing (MSAA) sample counts.
+     *
+     * Used for render targets and textures that support multisampling.
+     */
+    enum class SampleCount
+    {
+        Count1 = 1,    ///< No multisampling (1 sample per pixel)
+        Count2 = 2,    ///< 2x MSAA
+        Count4 = 4,    ///< 4x MSAA (common default)
+        Count8 = 8,    ///< 8x MSAA
+        Count16 = 16,  ///< 16x MSAA (high quality)
+        Count32 = 32,  ///< 32x MSAA (very high quality)
+        Count64 = 64   ///< 64x MSAA (extremely high quality)
+    };
 
-//
-//    /**
-//     * @brief Commonly used texture usage combinations
-//     */
-//    namespace TextureUsage
-//    {
-//        constexpr ImageUsage Default =
-//            ImageUsage::Sampled |
-//            ImageUsage::CopySrc |
-//            ImageUsage::CopyDst;
-//
-//        constexpr ImageUsage RenderTarget =
-//            ImageUsage::Color |
-//            ImageUsage::Sampled |
-//            ImageUsage::CopySrc;
-//
-//        constexpr ImageUsage DepthStencil =
-//            ImageUsage::DepthStencil |
-//            ImageUsage::Sampled;
-//
-//        constexpr ImageUsage Storage =
-//            ImageUsage::Storage |
-//            ImageUsage::Sampled |
-//            ImageUsage::CopySrc |
-//            ImageUsage::CopyDst;
-//    }
-}
-
-
-namespace kege{
-
+    
     // Abstract Image class
     class Image : public kege::RefCounter {
     public:
@@ -268,21 +346,6 @@ namespace kege{
         SampleCount _samples;
 
         friend kege::ref::Image;
-    };
-
-
-
-    class Sampler : public kege::RefCounter
-    {
-    public:
-
-        virtual const vk::Sampler* vk() const { return nullptr; }
-        virtual vk::Sampler* vk() { return nullptr; }
-        virtual ~Sampler() = default;
-
-    protected:
-
-        Sampler() = default;
     };
 
 }

@@ -14,7 +14,7 @@ namespace kege::vk{
 
     struct BindingSlot
     {
-        const kege::LayoutBinding* info = nullptr;
+        const kege::BindPointDesc* info = nullptr;
         uint32_t offset = 0;   // offset into flat arrays
         bool modifled = true;
     };

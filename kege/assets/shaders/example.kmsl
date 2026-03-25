@@ -1,0 +1,362 @@
+// ============================================================
+//  VPPL - Vulkan Pipeline Definition Language
+//  v1.0
+//  VPDL is a high-level, human-friendly language for defining Vulkan pipelines. 
+//  It abstracts away the boilerplate and complexity of Vulkan's pipeline creation, 
+//  allowing developers to focus on the core aspects of their rendering logic.
+// ============================================================
+
+@metadata
+{
+    pipeline:   GRAPHICS
+    version:    1.0 
+    cache:      "pbr_opaque_v1"
+    name:       "pbr_opaque"
+}
+
+// ============================================================
+//  SHADERS
+//  Inline GLSL lives in @vert / @frag / @comp blocks.
+//  No escaping. No quoting. Just code.
+// ============================================================
+
+@vert(version: 450, entry: main)
+    #extension GL_ARB_separate_shader_objects : enable
+
+    layout(location = 0) in vec3 a_position;
+    layout(location = 1) in vec3 a_normal;
+    layout(location = 2) in vec2 a_uv;
+    layout(location = 3) in vec4 a_tangent;
+
+    layout(location = 0) out vec3 v_worldPos;
+    layout(location = 1) out vec3 v_normal;
+    layout(location = 2) out vec2 v_uv;
+    layout(location = 3) out vec4 v_tangent;
+
+    layout(set = 0, binding = 0) uniform PerFrame {
+        mat4  view;
+        mat4  proj;
+        vec4  cameraPos;
+        float time;
+    } uPerFrame;
+
+    layout(set = 1, binding = 0) uniform PerObject {
+        mat4 model;
+        mat4 normalMatrix;
+    } uPerObject;
+
+    void main() {
+        vec4 worldPos = uPerObject.model * vec4(a_position, 1.0);
+        v_worldPos    = worldPos.xyz;
+        v_normal      = mat3(uPerObject.normalMatrix) * a_normal;
+        v_uv          = a_uv;
+        v_tangent     = a_tangent;
+        gl_Position   = uPerFrame.proj * uPerFrame.view * worldPos;
+    }
+@end
+
+@frag(version: 450, entry: main)
+    #extension GL_ARB_separate_shader_objects : enable
+
+    layout(location = 0) in vec3 v_worldPos;
+    layout(location = 1) in vec3 v_normal;
+    layout(location = 2) in vec2 v_uv;
+    layout(location = 3) in vec4 v_tangent;
+
+    layout(location = 0) out vec4 outColor;
+    layout(location = 1) out vec4 outNormal;
+
+    layout(set = 2, binding = 0) uniform sampler2D t_albedo;
+    layout(set = 2, binding = 1) uniform sampler2D t_normal;
+    layout(set = 2, binding = 2) uniform sampler2D t_metalRoughness;
+    layout(set = 2, binding = 3) uniform sampler2D t_ao;
+
+    layout(set = 2, binding = 4) uniform Material {
+        vec4  baseColorFactor;
+        float metallicFactor;
+        float roughnessFactor;
+        float occlusionStrength;
+        float alphaCutoff;
+    } uMaterial;
+
+    layout(push_constant) uniform PushConstants {
+        vec4 lightDir;
+        vec4 lightColor;
+    } pc;
+
+    const float PI = 3.14159265359;
+
+    vec3 fresnelSchlick(float cosTheta, vec3 F0) {
+        return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+    }
+
+    float distributionGGX(vec3 N, vec3 H, float roughness) {
+        float a      = roughness * roughness;
+        float a2     = a * a;
+        float NdotH  = max(dot(N, H), 0.0);
+        float NdotH2 = NdotH * NdotH;
+        float denom  = (NdotH2 * (a2 - 1.0) + 1.0);
+        return a2 / (PI * denom * denom);
+    }
+
+    void main() {
+        vec4  albedo    = texture(t_albedo, v_uv) * uMaterial.baseColorFactor;
+        vec2  mr        = texture(t_metalRoughness, v_uv).gb;
+        float metallic  = mr.x * uMaterial.metallicFactor;
+        float roughness = mr.y * uMaterial.roughnessFactor;
+        float ao        = texture(t_ao, v_uv).r * uMaterial.occlusionStrength;
+
+        vec3 N = normalize(v_normal);
+        vec3 L = normalize(-pc.lightDir.xyz);
+        vec3 V = normalize(-v_worldPos);
+        vec3 H = normalize(L + V);
+
+        vec3  F0       = mix(vec3(0.04), albedo.rgb, metallic);
+        vec3  F        = fresnelSchlick(max(dot(H, V), 0.0), F0);
+        float NDF      = distributionGGX(N, H, roughness);
+        vec3  specular = (NDF * F) / max(4.0 * max(dot(N,L),0.0) * max(dot(N,V),0.0), 0.001);
+        vec3  kD       = (1.0 - F) * (1.0 - metallic);
+        vec3  Lo       = (kD * albedo.rgb / PI + specular) * pc.lightColor.rgb * max(dot(N, L), 0.0);
+        vec3  ambient  = vec3(0.03) * albedo.rgb * ao;
+
+        outColor  = vec4(ambient + Lo, albedo.a);
+        outNormal = vec4(N * 0.5 + 0.5, 1.0);
+    }
+@end
+
+// ============================================================
+//  DESCRIPTOR SETS
+//  Organized by update frequency (high -> low rebind cost)
+// ============================================================
+
+@sets
+{
+    @set(0) "per_frame" {
+        @binding(0)
+        {
+            usage:  UNIFORM_BUFFER       
+            stages: [VERT, FRAG]
+            count:  1
+        } 
+    }
+
+    @set(1) "per_object" {
+        @binding(0)
+        {
+            usage:  UNIFORM_BUFFER       
+            stages: [VERT]
+            count:  1
+        }
+    }
+
+    @set(2) "material" {
+        @binding(0)
+        { 
+            usage:  COMBINED_IMAGE_SAMPLER   
+            stages: [FRAG]
+            count:  1
+        }
+        @binding(1)
+        { 
+            usage:  COMBINED_IMAGE_SAMPLER   
+            stages: [FRAG]
+            count:  1
+        }
+        @binding(2)
+        { 
+            usage:  COMBINED_IMAGE_SAMPLER   
+            stages: [FRAG]
+            count:  1
+        }
+        @binding(3)
+        { 
+            usage:  COMBINED_IMAGE_SAMPLER   
+            stages: [FRAG]
+            count:  1
+        }
+        @binding(4)
+        { 
+            usage:  UNIFORM_BUFFER           
+            stages: [FRAG]
+            count:  1
+        }
+    }
+
+}
+
+// ============================================================
+//  PUSH CONSTANTS
+// ============================================================
+
+@push_blocks {
+    @range {
+        stages: FRAG  
+        offset: 0  
+        size:   32
+    }
+}
+
+// ============================================================
+//  SPECIALIZATION CONSTANTS
+//  Baked at pipeline compile time — not uniform lookups.
+// ============================================================
+
+@specialization_constants {
+    @frag {
+        @const(0) INT MAX_LIGHTS 8 
+        @const(1) BOOL ENABLE_SHADOW true 
+        @const(2) FLOAT GAMMA 2.2
+    }
+}
+
+// ============================================================
+//  VERTEX INPUT
+//  stride is in bytes. offset is byte offset within binding.
+// ============================================================
+
+@vertex_layout
+{
+    @binding(0){ stride: 48   rate: VERTEX }
+
+    @attrib(0){ binding: 0   type: VEC3   offset: 0  } // position
+    @attrib(1){ binding: 0   type: VEC3   offset: 12 } // normal
+    @attrib(2){ binding: 0   type: VEC2   offset: 24 } // uv
+    @attrib(3){ binding: 0   type: VEC4   offset: 32 } // tangent
+}
+
+// ============================================================
+//  PIPELINE STAGES
+// ============================================================
+
+@input_assembly {
+    topology: TRIANGLE_LIST
+    primitive_restart:  off
+}
+
+@rasterization {
+    polygon_mode:   FILL
+    cull_mode:      NONE
+    front_face:     CCW
+    depth_clamp:    off
+    discard:        off
+    line_width:     1.0
+
+    @depth_bias {
+        enabled:         off
+        constant_factor: 0.0
+        clamp:           0.0
+        slope_factor:    0.0
+    }
+}
+
+@multisample {
+    samples:            1
+    sample_shading:     off
+    alpha_to_coverage:  off
+    alpha_to_one:       off
+}
+
+@depth_stencil {
+    @depth {
+        enable:         on
+        write:          on
+        compare_op:     LESS_OR_EQUAL
+        bounds_test:    off
+        bounds:         [0.0, 1.0]
+    }
+
+    @stencil {
+        enable:   off
+        reference:     0
+
+        @front {
+            fail_op:       KEEP
+            pass_op:       KEEP
+            depth_fail_op: KEEP
+            compare_op:    ALWAYS
+            compare_mask:  0xFF
+            write_mask:    0xFF
+        }
+
+        @back {
+            fail_op:       KEEP
+            pass_op:       KEEP
+            depth_fail_op: KEEP
+            compare_op:    ALWAYS
+            compare_mask:  0xFF
+            write_mask:    0xFF
+        }
+    }
+}
+
+@color_blend {
+    logic_op: COPY
+    blend_constants: [0.0, 0.0, 0.0, 0.0]
+    @attachment(0) {
+        enable: on
+        color_op: ADD
+        src_color: SRC_ALPHA
+        dst_color: ONE_MINUS_SRC_ALPHA
+        alpha_op: ADD
+        src_alpha: ONE
+        dst_alpha: ZERO
+    }
+}
+
+// ============================================================
+//  DYNAMIC STATES
+//  These are set at draw time — not baked into the pipeline.
+// ============================================================
+
+@dynamic_states {
+    VIEWPORT
+    SCISSOR
+    // LINE_WIDTH
+    // DEPTH_BIAS
+    // BLEND_CONSTANTS
+    // DEPTH_BOUNDS
+    // STENCIL_COMPARE_MASK
+    // STENCIL_WRITE_MASK
+    // STENCIL_REFERENCE
+}
+
+// ============================================================
+//  RENDER PASS
+// ============================================================
+
+@dynamic_rendering {
+    color_attachments: [ bgra_u8_norm ]
+    depth_attachment: depth_32
+    stencil_attachment: undefined
+    pass: "forward"
+}
+
+// @render_pass "gbuffer_pass" subpass(0) {
+
+//     @attachment "color" {
+//         format:          B8G8R8A8_SRGB
+//         samples:         1
+//         load:            CLEAR
+//         store:           STORE
+//         layout:          UNDEFINED -> COLOR_ATTACHMENT_OPTIMAL
+//     }
+
+//     @attachment "normal" {
+//         format:          R16G16B16A16_SFLOAT
+//         samples:         1
+//         load:            CLEAR
+//         store:           STORE
+//         layout:          UNDEFINED -> COLOR_ATTACHMENT_OPTIMAL
+//     }
+
+//     @attachment "depth" {
+//         format:          D32_SFLOAT
+//         samples:         1
+//         load:            CLEAR
+//         store:           DONT_CARE
+//         stencil_load:    DONT_CARE
+//         stencil_store:   DONT_CARE
+//         layout:          UNDEFINED -> DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+//     }
+
+// }

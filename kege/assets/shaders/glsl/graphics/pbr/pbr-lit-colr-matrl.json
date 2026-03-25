@@ -28,11 +28,11 @@
                 {
                     "blend_enable": "true",
                     "color_blend_op": "add",
-                    "src_color_blend_factor": "src_alpha",
-                    "dst_color_blend_factor": "one_minus_src_alpha",
+                    "src_color_blend": "src_alpha",
+                    "dst_color_blend": "one_minus_src_alpha",
                     "alpha_blend_op": "add",
-                    "src_alpha_blend_factor": "one",
-                    "dst_alpha_blend_factor": "zero"
+                    "src_alpha_blend": "one",
+                    "dst_alpha_blend": "zero"
                 }
             ]
         }

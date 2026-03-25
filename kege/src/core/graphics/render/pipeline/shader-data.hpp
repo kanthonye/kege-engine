@@ -93,7 +93,7 @@ namespace kege{
          */
         bool setImages( const std::string& block_name, const ImageBindings& bindings, int frame = 0 );
 
-        const std::map< int, kege::IndexedSet >& getShaderSets()const;
+        const std::map< int, kege::BindSet >& getShaderSets()const;
         
         /**
          * @brief Retrieves the associated shader layout.
@@ -124,7 +124,7 @@ namespace kege{
 
     private:
 
-        std::map< int, kege::IndexedSet > _sets;
+        std::map< int, kege::BindSet > _sets;
         ref::ShaderPipeline _pipeline;
 
         std::vector< uint8_t > _push_block_data;

@@ -90,11 +90,7 @@ namespace kege{
                     Ref< Material >* material_ptr = assets->fetch< Ref< Material > >( "default" );
                     if ( !material_ptr )
                     {
-                        uint64_t pipeline_id = assets->load< ref::ShaderPipeline >
-                        (
-                            kege::vfs( "graphics-shaders/basic/basic.json" ).c_str()
-                        );
-
+                        uint64_t pipeline_id = assets->load< ref::ShaderPipeline >( "graphics-shaders/error/error.json" );
                         ref::ShaderPipeline* pipeline = assets->get<ref::ShaderPipeline>(pipeline_id);
                         material = new Material(kege::RenderPassType::Geometry, *pipeline, {});
                         assets->add< ref::Material >( "default", material );

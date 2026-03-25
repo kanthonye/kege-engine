@@ -8,10 +8,10 @@
 #ifndef render_layer_hpp
 #define render_layer_hpp
 
-#include "app-layer.hpp"
-#include "graphics.hpp"
-#include "project-manager.hpp"
-#include "render-graph.hpp"
+#include "../app/app-layer.hpp"
+#include "../app/project-manager.hpp"
+#include "render/core/graphics.hpp"
+#include "render/graph/render-graph.hpp"
 
 namespace kege{
 

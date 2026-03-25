@@ -13,7 +13,6 @@
 #include "device.hpp"
 #include "swapchain.hpp"
 #include "../pipeline/shader-layout.hpp"
-#include "../pipeline/shader-library.hpp"
 #include "command-encoder.hpp"
 #include "command-buffer.hpp"
 #include "instance.hpp"
@@ -51,11 +50,12 @@ namespace kege{
 
         static std::vector< uint32_t > compileGlslToSpv
         (
-            const char* shader_name,
             ShaderStageFlag shader_stage,
-            const std::vector< char >& source
+            const char* shader_name,
+            const char* source,
+            size_t source_size
         );
-        
+
         bool submit
         (
             const std::vector< kege::SubmitInfo >& submit_infos,
@@ -79,7 +79,7 @@ namespace kege{
          * @param config Description of binding points for resources.
          * @return Handle to the created shader binding set layout.
          */
-        ref::SetLayout createSetLayout( const LayoutBindings& config );
+        ref::SetLayout createSetLayout( const BindPointDescs& config );
 
         /**
          * @brief Creates a shader binding set layout based on a description.
@@ -93,7 +93,7 @@ namespace kege{
          * @param create_info Compute pipeline description including shader and layout.
          * @return Handle to the created compute pipeline.
          */
-        ref::ShaderPipeline createShaderPipeline( const kege::PipelineCreateInfo& create_info );
+        ref::ShaderPipeline createShaderPipeline( const kege::ShaderPipelineDesc& create_info );
 
         /**
          * @brief Creates a shader module from source or bytecode.

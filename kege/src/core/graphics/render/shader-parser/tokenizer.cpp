@@ -226,7 +226,7 @@ namespace kege::glsl{
             { "dvec3",                  TokenType::Type },
             { "dvec4",                  TokenType::Type },
             { "struct",                 TokenType::Type },
-            { "push_block_layout",      TokenType::PushBlockLayout },
+            { "push_blocks",      TokenType::PushBlockDescs },
             { "vertex_layout",          TokenType::VertexLayout },
             { "set_layout",             TokenType::IndexedSetLayouts },
             { "in_layout",              TokenType::InLayout },
@@ -306,7 +306,7 @@ namespace kege::glsl{
             case TokenType::StorageBufferDynamic:   return "StorageBufferDynamic";
             case TokenType::CombinedImageSampler:   return "CombinedImageSampler";
             case TokenType::InputAttachment:        return "InputAttachment";
-            case TokenType::PushBlockLayout:        return "PushBlockLayout";
+            case TokenType::PushBlockDescs:        return "PushBlockDescs";
 
             // Misc
             case TokenType::Unknown:        return "Unknown";

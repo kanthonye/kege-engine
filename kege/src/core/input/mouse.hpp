@@ -114,7 +114,7 @@ namespace kege{
         bool isPressed(MouseButtonCode button) const;
         bool isDown(MouseButtonCode button) const;
 
-        Modifiers getModifiers() const noexcept;
+        Modifiers getModifiers() const;
 
 
         void begin();
@@ -126,6 +126,7 @@ namespace kege{
 
         std::vector<MouseButtonState*> _active_states;
         std::array<MouseButtonState, 16> _states;
+        Modifiers _modifiers;
 
         uint32_t _active_state_counter;
 

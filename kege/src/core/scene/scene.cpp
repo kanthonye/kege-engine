@@ -112,8 +112,6 @@ namespace kege{
 
     bool Scene::initialize()
     {
-
-
 //        Entity entity = ecs::Entity::create();
 //        entity.add< EntityTag >( "camera" );
 //        insert( entity );

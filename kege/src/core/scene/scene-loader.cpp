@@ -1179,8 +1179,7 @@ namespace kege{
 
     void parseComponentOrthographic( kege::ECS& ecs, ecs::Entity& entity, Json json )
     {
-        kege::Camera* camera = ecs.add< kege::Camera >( entity );
-        camera->projection = new Orthographic
+        *ecs.add< kege::Orthographic >( entity ) = Orthographic
         {
             json[ "left"  ].toFloat(),
             json[ "right" ].toFloat(),
@@ -1193,8 +1192,7 @@ namespace kege{
 
     void parseComponentPerspective( kege::ECS& ecs, ecs::Entity& entity, Json json )
     {
-        kege::Camera* camera = ecs.add< kege::Camera >( entity );
-        camera->projection = new Perspective
+        *ecs.add< kege::Perspective >( entity ) = kege::Perspective
         {
             json[ "aspect_ratio" ].toFloat(),
             json[ "fov" ].toFloat(),

@@ -99,7 +99,7 @@ namespace kege{
          * @param indexed_set Hold the set object and the set index where the set object should bo bind.
          * @return True if binding succeeded, false otherwise.
          */
-        virtual bool bind( const kege::IndexedSet& indexed_set ) = 0;
+        virtual bool bind( const kege::BindSet& indexed_set ) = 0;
 
         /**
          * @brief Sets push constant data for the command buffer.

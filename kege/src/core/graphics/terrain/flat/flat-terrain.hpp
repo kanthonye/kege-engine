@@ -8,10 +8,9 @@
 #ifndef flat_landscape_hpp
 #define flat_landscape_hpp
 
-#include "../terrain/physical-terrain.hpp"
+#include "../common/all.hpp"
 #include "flat-terrain-node.hpp"
 #include "flat-terrain-renderer.hpp"
-#include "terrain-topography-generator.hpp"
 
 namespace kege{
 

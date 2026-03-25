@@ -12,6 +12,7 @@ namespace kege{
     {
         if( code >= MAX_BUTTON_COUNT ) return;
 
+        _modifiers = (Modifiers)mods;
         //std::cout <<"action: "<< action <<"\n";
         _states[ code ].input.action = (ButtonAction)action;
         _states[ code ].input.mods = (Modifiers)mods;
@@ -166,6 +167,11 @@ namespace kege{
         return input.action != ButtonAction::Release;
     }
 
+    Modifiers Mouse::getModifiers() const
+    {
+        return _modifiers;
+    }
+
     void Mouse::begin()
     {
         _delta.x = _position.x - _last_position.x;
@@ -182,7 +188,8 @@ namespace kege{
 
             if ( state->input.action == ButtonAction::Release )
             {
-                continue;;
+                state->dragging = false;
+                continue;
             }
 
             if( now - state->curr_time_stamp >= _held_click_time_length )
@@ -211,5 +218,11 @@ namespace kege{
         _held_click_time_length = 0.05;
         _double_click_time_length = 0.06;
         _active_states.resize( MAX_BUTTON_COUNT );
+        for (int i=0; i<_states.size(); ++i)
+        {
+            MouseButtonState* state = &_states[i];
+            state->input.action = ButtonAction::Release;
+            state->dragging = false;
+        }
     }
 }

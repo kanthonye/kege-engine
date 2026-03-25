@@ -8,8 +8,7 @@
 #ifndef flat_terrain_tile_hpp
 #define flat_terrain_tile_hpp
 
-#include "mesh.hpp"
-#include "terrain-topography.hpp"
+#include "../common/all.hpp"
 #include "flat-terrain-node.hpp"
 
 namespace kege{

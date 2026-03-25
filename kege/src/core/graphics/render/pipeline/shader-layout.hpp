@@ -32,13 +32,13 @@ namespace kege{
      * to be used as a return value from a ShaderLayout object, allowing the use to
      * have the set index and the layout binding which is the binding spot info.
      *
-     * @see kege::LayoutBinding
+     * @see kege::BindPointDesc
      * @see kege::ShaderLayout
      */
     struct LayoutBindingDesc
     {
         uint32_t index;
-        kege::LayoutBinding binding;
+        kege::BindPointDesc binding;
     };
 
 
@@ -54,30 +54,30 @@ namespace kege{
         /**
          * @brief Retrieves a set binding point by name.
          * @param name The name of the set binding point.
-         * @return Pointer to the LayoutBinding if found, nullptr otherwise.
+         * @return Pointer to the BindPointDesc if found, nullptr otherwise.
          */
         const kege::ShaderStructBlock* getStructBlock( const std::string& name )const;
 
         /**
          * @brief Retrieves a set binding point by name.
          * @param name The name of the set binding point.
-         * @return Pointer to the LayoutBinding if found, nullptr otherwise.
+         * @return Pointer to the BindPointDesc if found, nullptr otherwise.
          */
         const kege::LayoutBindingDesc* getLayoutBindingDesc( const std::string& name )const;
 
         /**
          * @brief Retrieves a set binding point by name.
          * @param name The name of the set binding point.
-         * @return Pointer to the PushBlock if found, nullptr otherwise.
+         * @return Pointer to the PushBlockDesc if found, nullptr otherwise.
          */
-        const kege::PushBlock* getPushBlock( const std::string& name )const;
+        const kege::PushBlockDesc* getPushBlock( const std::string& name )const;
 
         /**
          * @brief Retrieves a set binding point by name.
          * @param index The index of the push block.
-         * @return Pointer to the PushBlock if found, nullptr otherwise.
+         * @return Pointer to the PushBlockDesc if found, nullptr otherwise.
          */
-        const kege::PushBlock* getPushBlock( int index )const;
+        const kege::PushBlockDesc* getPushBlock( int index )const;
 
         /**
          * @brief Retrieves a set binding point by index.
@@ -102,8 +102,8 @@ namespace kege{
 
         int32_t getSetIndex( const kege::SetLayout* layout )const;
 
-        kege::IndexedSet allocateSet( const std::string& set_name );
-        kege::IndexedSet allocateSet( int set_index );
+        kege::BindSet allocateSet( const std::string& set_name );
+        kege::BindSet allocateSet( int set_index );
 
         int getSetLayoutBindSignature()const;
 
@@ -114,7 +114,7 @@ namespace kege{
         (
             const std::string& name,
             const kege::IndexedSetLayouts& set_layouts,
-            const kege::PushBlockLayout& push_block_layout
+            const kege::PushBlockDescs& push_blocks
         );
 
         virtual ~ShaderLayout();
@@ -134,7 +134,7 @@ namespace kege{
         kege::IndexedSetLayouts _indexed_set_layouts;
 
         std::vector< LayoutBindingDesc > _set_bindings;
-        kege::PushBlockLayout _push_block_layout;
+        kege::PushBlockDescs _push_block_layout;
 
         std::string _name;
 

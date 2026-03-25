@@ -12,21 +12,22 @@
 
 namespace kege::vk{
 
-    std::vector< VkPipelineColorBlendAttachmentState > getColorBlendAttachmentState( ColorBlendStateDesc color_blend )
+
+    std::vector< VkPipelineColorBlendAttachmentState > getColorBlendAttachmentState( ColorBlendState color_blend )
     {
         std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states;
         for ( int i=0; i<color_blend.attachments.size(); i++ )
         {
             VkPipelineColorBlendAttachmentState attachment = {};
-            attachment.blendEnable         = (color_blend.attachments[i].blend_enable)? VK_TRUE : VK_FALSE;
+            attachment.blendEnable         = (color_blend.attachments[i].enable)? VK_TRUE : VK_FALSE;
 
             attachment.colorBlendOp        = convertBlendOp( color_blend.attachments[i].color_blend_op );
-            attachment.srcColorBlendFactor = convertBlendFactor( color_blend.attachments[i].src_color_blend_factor );
-            attachment.dstColorBlendFactor = convertBlendFactor( color_blend.attachments[i].dst_color_blend_factor );
+            attachment.srcColorBlendFactor = convertBlendFactor( color_blend.attachments[i].src_color_blend );
+            attachment.dstColorBlendFactor = convertBlendFactor( color_blend.attachments[i].dst_color_blend );
 
             attachment.alphaBlendOp        = convertBlendOp( color_blend.attachments[i].alpha_blend_op );
-            attachment.dstAlphaBlendFactor = convertBlendFactor( color_blend.attachments[i].dst_alpha_blend_factor );
-            attachment.srcAlphaBlendFactor = convertBlendFactor( color_blend.attachments[i].src_alpha_blend_factor );
+            attachment.dstAlphaBlendFactor = convertBlendFactor( color_blend.attachments[i].dst_alpha_blend );
+            attachment.srcAlphaBlendFactor = convertBlendFactor( color_blend.attachments[i].src_alpha_blend );
 
             attachment.colorWriteMask      = convertColorComponentMask( color_blend.attachments[i].color_write_mask );
             color_blend_attachment_states.push_back( attachment );
@@ -34,34 +35,35 @@ namespace kege::vk{
         return color_blend_attachment_states;
     }
 
-    VkPipelineDepthStencilStateCreateInfo getDepthStencilStateCreateInfo( const DepthStencilStateDesc& depth_stencil )
+    VkPipelineDepthStencilStateCreateInfo getDepthStencilStateCreateInfo( const DepthStencil& depth_stencil )
     {
         VkPipelineDepthStencilStateCreateInfo depth_stencil_info = {};
         depth_stencil_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depth_stencil_info.depthTestEnable       = depth_stencil.depth_test_enable;
-        depth_stencil_info.depthWriteEnable      = depth_stencil.depth_write_enable;
-        depth_stencil_info.depthCompareOp        = convertCompareOp( depth_stencil.depth_compare_op );
+        depth_stencil_info.depthTestEnable       = depth_stencil.depth.enable;
+        depth_stencil_info.depthWriteEnable      = depth_stencil.depth.write;
+        depth_stencil_info.depthCompareOp        = convertCompareOp( depth_stencil.depth.compare_op );
 
         depth_stencil_info.depthBoundsTestEnable = VK_FALSE;
         depth_stencil_info.minDepthBounds       = 0.0;
         depth_stencil_info.maxDepthBounds       = 1.0;
 
-        if ( depth_stencil.stencil_test_enable )
+        if ( depth_stencil.depth.bounds_test )
         {
             depth_stencil_info.stencilTestEnable    = VK_TRUE;
-            depth_stencil_info.front.compareMask    = depth_stencil.front_op.compare_mask;
-            depth_stencil_info.front.compareOp      = convertCompareOp( depth_stencil.front_op.compare_op );
-            depth_stencil_info.front.depthFailOp    = convertStencilOp( depth_stencil.front_op.depth_fail_op );
-            depth_stencil_info.front.failOp         = convertStencilOp( depth_stencil.front_op.fail_op );
-            depth_stencil_info.front.passOp         = convertStencilOp( depth_stencil.front_op.pass_op );
-            depth_stencil_info.front.reference      = depth_stencil.front_op.reference;
-            depth_stencil_info.front.writeMask      = depth_stencil.front_op.write_mask;
-            depth_stencil_info.back.depthFailOp     = convertStencilOp( depth_stencil.back_op.depth_fail_op );
-            depth_stencil_info.back.compareOp       = convertCompareOp( depth_stencil.back_op.compare_op );
-            depth_stencil_info.back.failOp          = convertStencilOp( depth_stencil.back_op.fail_op );
-            depth_stencil_info.back.passOp          = convertStencilOp( depth_stencil.back_op.pass_op );
-            depth_stencil_info.back.reference       = depth_stencil.back_op.reference;
-            depth_stencil_info.back.writeMask       = depth_stencil.back_op.write_mask;
+            depth_stencil_info.front.compareMask    = depth_stencil.stencil.front.compare_mask;
+            depth_stencil_info.front.compareOp      = convertCompareOp( depth_stencil.stencil.front.compare_op );
+            depth_stencil_info.front.depthFailOp    = convertStencilOp( depth_stencil.stencil.front.depth_fail_op );
+            depth_stencil_info.front.failOp         = convertStencilOp( depth_stencil.stencil.front.fail_op );
+            depth_stencil_info.front.passOp         = convertStencilOp( depth_stencil.stencil.front.pass_op );
+            depth_stencil_info.front.reference      = depth_stencil.stencil.reference;
+            depth_stencil_info.front.writeMask      = depth_stencil.stencil.front.write_mask;
+
+            depth_stencil_info.back.depthFailOp     = convertStencilOp( depth_stencil.stencil.back.depth_fail_op );
+            depth_stencil_info.back.compareOp       = convertCompareOp( depth_stencil.stencil.back.compare_op );
+            depth_stencil_info.back.failOp          = convertStencilOp( depth_stencil.stencil.back.fail_op );
+            depth_stencil_info.back.passOp          = convertStencilOp( depth_stencil.stencil.back.pass_op );
+            depth_stencil_info.back.reference       = depth_stencil.stencil.reference;
+            depth_stencil_info.back.writeMask       = depth_stencil.stencil.back.write_mask;
         }
         else
         {
@@ -72,69 +74,64 @@ namespace kege::vk{
         return depth_stencil_info;
     }
 
-    VkPipelineRasterizationStateCreateInfo getRasterizationStateCreateInfo( const RasterizationStateDesc& rasterization )
+    VkPipelineRasterizationStateCreateInfo getRasterizationStateCreateInfo( const RasterizerState& rasterization )
     {
         VkPipelineRasterizationStateCreateInfo state = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
-        state.lineWidth = rasterization.line_width;
-        state.rasterizerDiscardEnable = rasterization.rasterizer_disable;
-        state.depthClampEnable = rasterization.depth_clamp_enable;
-        state.depthBiasEnable = rasterization.depth_bias_enable;
-        state.depthBiasClamp = rasterization.depth_bias_clamp;
-        state.cullMode = VK_CULL_MODE_NONE;///convertCullMode( desc.rasterization_state.cull_mode );
+        state.polygonMode = convertPolygonMode( rasterization.fill_mode );
         state.frontFace = convertFrontFace( rasterization.front_face );
-        state.depthBiasConstantFactor = rasterization.depth_bias_constant_factor;
-        state.depthBiasSlopeFactor = rasterization.depth_bias_slope_factor;
-        state.polygonMode = convertPolygonMode( rasterization.polygon_mode );
+        state.cullMode = convertCullMode( rasterization.cull_mode );
+        state.depthBiasConstantFactor = rasterization.depth_bias.constant_factor;
+        state.depthBiasSlopeFactor = rasterization.depth_bias.slope_factor;
+        state.depthBiasEnable = rasterization.depth_bias.enable;
+        state.depthBiasClamp = rasterization.depth_bias.clamp;
+        state.depthClampEnable = rasterization.depth_clamp_enable;
+        state.lineWidth = rasterization.line_width;
+        state.rasterizerDiscardEnable = VK_FALSE;
         return state;
     }
 
-    VkPipelineMultisampleStateCreateInfo getMultisampleStateCreateInfo( const MultisampleStateDesc& multisample )
+    VkPipelineMultisampleStateCreateInfo getMultisampleStateCreateInfo( const Multisample& multisample )
     {
         VkPipelineMultisampleStateCreateInfo state = { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
-        state.sampleShadingEnable = multisample.sample_shading_enable;
-        state.rasterizationSamples = convertSampleCount( multisample.rasterization_samples );// VK_SAMPLE_COUNT_1_BIT;
-        state.minSampleShading = multisample.min_sample_shading;
+        state.sampleShadingEnable = multisample.sample_shading;
+        state.rasterizationSamples = convertSampleCount(multisample.sample_count);
+        state.alphaToCoverageEnable = multisample.alpha_to_coverage;
+        state.alphaToOneEnable = multisample.alpha_to_one;
+        state.minSampleShading = 1.f;
         state.pSampleMask = 0;
-        state.alphaToCoverageEnable = multisample.alpha_to_coverage_enable;
-        state.alphaToOneEnable = multisample.alpha_to_one_enable;
         state.flags = 0;
         return state;
     }
 
-    std::vector< VkVertexInputBindingDescription > getVertexInputBindingDescriptions( const VertexBufferLayout& vertex_input )
+    std::vector< VkVertexInputBindingDescription > getVertexInputBindingDescriptions( const VertexLayout& vertex_input )
     {
         std::vector< VkVertexInputBindingDescription > vertex_bindings;
-        for (int i=0; i<vertex_input.strides.size(); ++i)
+        for (uint32_t i=0; i<vertex_input.input_rates.size(); ++i)
         {
-            for (int j=0; j<vertex_input.attributes.size(); ++j)
-            {
-                if (i == vertex_input.attributes[j].binding)
-                {
-                    vertex_bindings.push_back
-                    ({
-                        .inputRate = convertVertexInputRate( vertex_input.attributes[j].input_rate ),
-                        .binding   = vertex_input.attributes[j].binding,
-                        .stride    = vertex_input.strides[j],
-                    });
-                    break;
-                }
-            }
+            vertex_bindings.push_back
+            ({
+                .inputRate = convertVertexInputRate( vertex_input.input_rates[i].input_rate ),
+                .stride    = vertex_input.input_rates[i].stride,
+                .binding   = i,
+            });
         }
         return vertex_bindings;
     }
 
-    std::vector< VkVertexInputAttributeDescription > getVertexInputAttributeDescriptions( const VertexBufferLayout& vertex_input )
+    std::vector< VkVertexInputAttributeDescription > getVertexInputAttributeDescriptions( const VertexLayout& vertex_layout )
     {
         std::vector< VkVertexInputAttributeDescription > vertex_attributes;
-        for (int i=0; i<vertex_input.attributes.size(); ++i)
+        uint32_t offset = 0;
+        for (int i=0; i<vertex_layout.attributes.size(); ++i)
         {
             vertex_attributes.push_back
             ({
-                .location = vertex_input.attributes[i].location,
-                .offset   = vertex_input.attributes[i].offset,
-                .format   = convertShaderVarTypeToVkFormat( vertex_input.attributes[i].type ),
-                .binding  = vertex_input.attributes[i].binding
+                .location = vertex_layout.attributes[i].location,
+                .offset   = offset,
+                .format   = convertShaderVarTypeToVkFormat( vertex_layout.attributes[i].type ),
+                .binding  = vertex_layout.attributes[i].binding
             });
+            offset += sizeOf(vertex_layout.attributes[i].type);
         }
         return vertex_attributes;
     }
@@ -150,7 +147,7 @@ namespace kege::vk{
     }
 
 
-    std::vector< VkFormat > getOutput( const PipelineOutputs& outputs )
+    std::vector< VkFormat > getOutput( const PipelineRendering& outputs )
     {
         std::vector< VkFormat > color_attachmen_formats;
         for(Format fmt : outputs.color_attachment_formats )
@@ -166,7 +163,7 @@ namespace kege::vk{
         return color_attachmen_formats;
     }
 
-    VkPipelineRenderingCreateInfoKHR getRenderingCreateInfo( std::vector< VkFormat >& output_formats, const PipelineOutputs& outputs )
+    VkPipelineRenderingCreateInfoKHR getRenderingCreateInfo( std::vector< VkFormat >& output_formats, const PipelineRendering& outputs )
     {
         VkPipelineRenderingCreateInfoKHR state{VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR};
         state.stencilAttachmentFormat = convertFormat(outputs.stencil_attachment_format);
@@ -193,7 +190,7 @@ namespace kege::vk{
     VkPipelineColorBlendStateCreateInfo getColorBlendStateCreateInfo
     (
         const std::vector< VkPipelineColorBlendAttachmentState >& color_blend_attachment_states,
-        const ColorBlendStateDesc& color_blend
+        const ColorBlendState& color_blend
     )
     {
         return VkPipelineColorBlendStateCreateInfo
@@ -206,12 +203,14 @@ namespace kege::vk{
         };
     }
 
-    VkPipelineInputAssemblyStateCreateInfo getInputAssemblyStateCreateInfo( const InputAssemblyStateDesc& input_assembly )
+    VkPipelineInputAssemblyStateCreateInfo getInputAssemblyStateCreateInfo( const kege::InputAssembly& input_assembly )
     {
-        VkPipelineInputAssemblyStateCreateInfo input_assembly_info = { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
-        input_assembly_info.primitiveRestartEnable = VK_TRUE;
-        input_assembly_info.topology = convertPrimitiveTopology( input_assembly.topology );
-        return input_assembly_info;
+        return VkPipelineInputAssemblyStateCreateInfo
+        {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+            .primitiveRestartEnable = input_assembly.primitive_restart,
+            .topology = convertPrimitiveTopology( input_assembly.topology )
+        };
     }
 
     std::vector< VkPipelineShaderStageCreateInfo > getShaderStageCreateInfo( const std::vector< ref::Shader >& stages )
@@ -236,7 +235,31 @@ namespace kege::vk{
         return shader_stages;
     }
 
-    void ShaderPipeline::createGraphicsPipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout )
+    std::vector< VkDynamicState > getDynamicState(kege::DynamicState states)
+    {
+        std::vector< VkDynamicState > dynamic_states;
+        if ( check(states, kege::DynamicState::Viewport) ) dynamic_states.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+        if ( check(states, kege::DynamicState::Scissor) ) dynamic_states.push_back(VK_DYNAMIC_STATE_SCISSOR);
+        if ( check(states, kege::DynamicState::LineWidth) ) dynamic_states.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
+        if ( check(states, kege::DynamicState::DepthBias) ) dynamic_states.push_back(VK_DYNAMIC_STATE_DEPTH_BIAS);
+        if ( check(states, kege::DynamicState::BlendConstants) ) dynamic_states.push_back(VK_DYNAMIC_STATE_BLEND_CONSTANTS);
+        if ( check(states, kege::DynamicState::BlendBounds) ) dynamic_states.push_back(VK_DYNAMIC_STATE_DEPTH_BOUNDS);
+        if ( check(states, kege::DynamicState::StencilCompareMask) ) dynamic_states.push_back(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK);
+        if ( check(states, kege::DynamicState::StencilWriteMask) ) dynamic_states.push_back(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK);
+        if ( check(states, kege::DynamicState::StencilReference) ) dynamic_states.push_back(VK_DYNAMIC_STATE_STENCIL_REFERENCE);
+        return dynamic_states;
+    }
+    VkPipelineDynamicStateCreateInfo getDynamicStateCreateInfo(const std::vector< VkDynamicState >& dynamic_states)
+    {
+        return VkPipelineDynamicStateCreateInfo
+        {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+            .dynamicStateCount = static_cast< uint32_t >( dynamic_states.size() ),
+            .pDynamicStates = dynamic_states.data()
+        };
+    }
+
+    void ShaderPipeline::createGraphicsPipeline( const kege::ShaderPipelineDesc& desc, const ref::ShaderLayout& shader_layout )
     {
         // --- Translate Desc to Vulkan Structures ---
         VkGraphicsPipelineCreateInfo create_info = {};
@@ -247,7 +270,7 @@ namespace kege::vk{
         // 1. Shader Stages
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-        std::vector< VkPipelineShaderStageCreateInfo > shader_stages = getShaderStageCreateInfo( info.shaders );
+        std::vector< VkPipelineShaderStageCreateInfo > shader_stages = getShaderStageCreateInfo( desc.shaders );
         create_info.stageCount = static_cast< uint32_t >( shader_stages.size() );
         create_info.pStages = shader_stages.data();
 
@@ -255,8 +278,8 @@ namespace kege::vk{
         // 2. Vertex Input State
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-        std::vector< VkVertexInputAttributeDescription > attributes = getVertexInputAttributeDescriptions( info.vertex_input );
-        std::vector< VkVertexInputBindingDescription > bindings = getVertexInputBindingDescriptions( info.vertex_input );
+        std::vector< VkVertexInputAttributeDescription > attributes = getVertexInputAttributeDescriptions( desc.vertex_layout );
+        std::vector< VkVertexInputBindingDescription > bindings = getVertexInputBindingDescriptions( desc.vertex_layout );
         VkPipelineVertexInputStateCreateInfo vertex_input_info = getVertexInputStateCreateInfo(attributes, bindings);
         create_info.pVertexInputState = &vertex_input_info;
 
@@ -264,7 +287,7 @@ namespace kege::vk{
         // 3. Input Assembly
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-        VkPipelineInputAssemblyStateCreateInfo input_assembly_info = getInputAssemblyStateCreateInfo( info.input_assembly );
+        VkPipelineInputAssemblyStateCreateInfo input_assembly_info = getInputAssemblyStateCreateInfo( desc.input_assembly );
         create_info.pInputAssemblyState = &input_assembly_info;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -277,48 +300,41 @@ namespace kege::vk{
         // 5. Rasterization State
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-        VkPipelineRasterizationStateCreateInfo rasterization_info = getRasterizationStateCreateInfo( info.rasterization );
+        VkPipelineRasterizationStateCreateInfo rasterization_info = getRasterizationStateCreateInfo( desc.rasterizer );
         create_info.pRasterizationState = &rasterization_info;
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // 6. Multisample State
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        VkPipelineMultisampleStateCreateInfo multisample_info = getMultisampleStateCreateInfo( info.multisample );
-        create_info.pMultisampleState = &multisample_info;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // 7. Depth Stencil State
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        VkPipelineDepthStencilStateCreateInfo depth_stencil_info = getDepthStencilStateCreateInfo( info.depth_stencil );
+        VkPipelineDepthStencilStateCreateInfo depth_stencil_info = getDepthStencilStateCreateInfo( desc.depth_stencil );
         create_info.pDepthStencilState = &depth_stencil_info;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // 8. Color Blend State
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states = getColorBlendAttachmentState( info.color_blend );
-        VkPipelineColorBlendStateCreateInfo color_blend_info = getColorBlendStateCreateInfo( color_blend_attachment_states, info.color_blend );
+        std::vector< VkPipelineColorBlendAttachmentState > color_blend_attachment_states = getColorBlendAttachmentState( desc.color_blend );
+        VkPipelineColorBlendStateCreateInfo color_blend_info = getColorBlendStateCreateInfo( color_blend_attachment_states, desc.color_blend );
         create_info.pColorBlendState = &color_blend_info;
+
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        // 6. Multisample State
+        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+        VkPipelineMultisampleStateCreateInfo multisample_info = getMultisampleStateCreateInfo( desc.multisample );
+        create_info.pMultisampleState = &multisample_info;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // 9. Dynamic State (Optional but common for viewport/scissor)
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        std::vector< VkDynamicState > dynamic_states = std::vector< VkDynamicState >
-        {
-            VK_DYNAMIC_STATE_VIEWPORT,
-            VK_DYNAMIC_STATE_SCISSOR,
-            //VK_DYNAMIC_STATE_LINE_WIDTH
-        };
-        VkPipelineDynamicStateCreateInfo dynamic_state_create_info = {};
-        dynamic_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-        dynamic_state_create_info.dynamicStateCount = static_cast< uint32_t >( dynamic_states.size() );
-        dynamic_state_create_info.pDynamicStates = dynamic_states.data();
+
+        std::vector< VkDynamicState > dynamic_states = getDynamicState(desc.dynamic_states);
+        VkPipelineDynamicStateCreateInfo dynamic_state_create_info = getDynamicStateCreateInfo( dynamic_states );
         create_info.pDynamicState = &dynamic_state_create_info;
 
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         // 10. Render Pass / Rendering Info (Crucial!)
         // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        std::vector< VkFormat > color_attachmen_formats = getOutput( info.outputs );
-        VkPipelineRenderingCreateInfoKHR rendering_info = getRenderingCreateInfo(color_attachmen_formats, info.outputs);
+        std::vector< VkFormat > color_attachmen_formats = getOutput( desc.pipeline_rendering );
+        VkPipelineRenderingCreateInfoKHR rendering_info = getRenderingCreateInfo(color_attachmen_formats, desc.pipeline_rendering);
 
         // Chain this to pipelineInfo.pNext
         create_info.pNext = &rendering_info;
@@ -341,9 +357,9 @@ namespace kege::vk{
         }
     }
 
-    void ShaderPipeline::createComputePipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout )
+    void ShaderPipeline::createComputePipeline( const kege::ShaderPipelineDesc& desc, const ref::ShaderLayout& shader_layout )
     {
-        std::vector< VkPipelineShaderStageCreateInfo > shader_stages = getShaderStageCreateInfo( info.shaders );
+        std::vector< VkPipelineShaderStageCreateInfo > shader_stages = getShaderStageCreateInfo( desc.shaders );
 
         VkComputePipelineCreateInfo create_info{};
         create_info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
@@ -365,24 +381,24 @@ namespace kege::vk{
     ShaderPipeline::ShaderPipeline
     (
         vk::Device* device,
-        const kege::PipelineCreateInfo& info,
+        const kege::ShaderPipelineDesc& desc,
         const ref::ShaderLayout& shader_layout
     )
-    :   kege::ShaderPipeline( info, shader_layout )
+    :   kege::ShaderPipeline( desc, shader_layout )
     ,   _device( device )
     {
-        if ( info.pipeline_type == PipelineType::Graphics )
+        if ( desc.pipeline_type == PipelineType::Graphics )
         {
-            createGraphicsPipeline( info, shader_layout );
+            createGraphicsPipeline( desc, shader_layout );
         }
-        else if ( info.pipeline_type == PipelineType::Compute )
+        else if ( desc.pipeline_type == PipelineType::Compute )
         {
-            createGraphicsPipeline( info, shader_layout );
+            createGraphicsPipeline( desc, shader_layout );
         }
 
-        if ( _device->_instance->isValidationEnabled() && !info.name.empty() )
+        if ( _device->_instance->isValidationEnabled() && !desc.name.empty() )
         {
-            _device->core().debugSetObjectName( (uint64_t)_handle, VK_OBJECT_TYPE_PIPELINE, info.name.c_str() );
+            _device->core().debugSetObjectName( (uint64_t)_handle, VK_OBJECT_TYPE_PIPELINE, desc.name.c_str() );
         }
     }
 }

@@ -17,16 +17,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# ECS_SOURCES at CMakeLists.txt:37 (file)
-file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/ecs/*.cpp")
-set(OLD_GLOB
-  )
-if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
-  message("-- GLOB mismatch!")
-  file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
-endif()
-
-# GRAPHICS_SOURCES at CMakeLists.txt:40 (file)
+# GRAPHICS_SOURCES at CMakeLists.txt:34 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/atmosphere/atmosphere.cpp"
@@ -42,7 +33,6 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-aligner.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-core.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-cursor.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-gui.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-layout.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-post-layout-ops.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/gui/ui-resizer.cpp"
@@ -100,10 +90,13 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/image.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/instance.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/physical-device.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/rendering-info.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/resource-recycler.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/sampler.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/semaphore.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/string-to-enum-types.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/swapchain.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/core/vertex-format.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/glsl-preprocessor/glsl-lexer.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/glsl-preprocessor/glsl-parser.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/glsl-preprocessor/glsl-preprocessor.cpp"
@@ -117,11 +110,11 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-queue.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/graph/render-stage.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/binding-point.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/pipeline-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/feature-flags.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/set-layout.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-compiler.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-data.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-layout.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-library.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-pipeline.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-set.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/pipeline/shader-struct-block.cpp"
@@ -149,41 +142,47 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/vulkan/vk-swapchain.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/vulkan/vk-utils.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/render/window/glfw-window.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/json-shader-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-lexer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/meta-shader-parser.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/pipeline-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-library.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/shader-system/shader-pipeline-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/height-map-generator.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/normal-map-generator.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/terrain-topography-generator.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/generator/topographic-layer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/image/image-layer-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape-system.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/quadtree/landscape.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/settings.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/physical-terrain.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-material.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-renderer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain-system.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/common/terrain/terrain.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-node.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-renderer.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain-tile.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/flat-terrain.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape-system.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/flat/quadtree/landscape.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/height-map-generator.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/normal-map-generator.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/terrain-topography-generator.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/generator/topographic-layer.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/settings.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-face-mesh-data.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/cube-mesh-shader-resource.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/dynamic-cube-mesh.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-face.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-renderer.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain-tile.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/spherical-terrain.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunk.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-chunklet.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-plane.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cubesphere/terrain-tile.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/image-layer-manager.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/physical-terrain.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-material.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-renderer.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain-system.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/terrain/terrain.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-face-mesh-data.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/cube-mesh-shader-resource.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/dynamic-cube-mesh.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-face.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-renderer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain-tile.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/spherical-terrain.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunk.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-chunklet.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-plane.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/graphics/terrain/spherical/terrain-tile.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# INPUT_SOURCES at CMakeLists.txt:43 (file)
+# INPUT_SOURCES at CMakeLists.txt:37 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/input/input-actions.cpp"
@@ -202,7 +201,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# IO_SOURCES at CMakeLists.txt:46 (file)
+# IO_SOURCES at CMakeLists.txt:40 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/io/file-io.cpp"
@@ -215,7 +214,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# MATH_SOURCES at CMakeLists.txt:49 (file)
+# MATH_SOURCES at CMakeLists.txt:43 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/math/algebra/quaternion.cpp"
@@ -234,7 +233,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# MEMORY_SOURCES at CMakeLists.txt:52 (file)
+# MEMORY_SOURCES at CMakeLists.txt:46 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/memory/pool.cpp"
@@ -244,7 +243,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# PHYSICS_SOURCES at CMakeLists.txt:58 (file)
+# PHYSICS_SOURCES at CMakeLists.txt:49 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/physics/3d/bodies/cloth.cpp"
@@ -320,7 +319,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# RESOURCE_SOURCES at CMakeLists.txt:61 (file)
+# RESOURCE_SOURCES at CMakeLists.txt:52 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/asset-cache-table.cpp"
@@ -329,16 +328,16 @@ set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/font-loader.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/image-loader.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/input-context-loader.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/resource/shader-pipeline-loader.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# SCENE_SOURCES at CMakeLists.txt:64 (file)
+# SCENE_SOURCES at CMakeLists.txt:55 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/*.cpp")
 set(OLD_GLOB
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-component.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-kind.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/scene/ecs-entity-registry.cpp"
@@ -356,7 +355,7 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# UTILS_SOURCES at CMakeLists.txt:70 (file)
+# UTILS_SOURCES at CMakeLists.txt:58 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/*.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/core/utils/bitvec.cpp"
@@ -373,35 +372,52 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# EDITOR_SOURCES at CMakeLists.txt:73 (file)
+# EDITOR_SOURCES at CMakeLists.txt:61 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/*.cpp")
 set(OLD_GLOB
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/gui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-description.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/common/ui-schema.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-loader.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock-split.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/dock/ui-dock.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/drag-drop-manager.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/editor-layer.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-camera.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-rigidbody.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-transform.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/elements/ui-tree-node.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/gui.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/hierarchy-panel.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector-panel.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-asset-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cubiod-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-cylinder-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-ellipsoid-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-grid-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/mesh/create-mesh-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-asset-view.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-create-asset.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-folder-tree.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-importer.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-module.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/asset-manager-tool-bar.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/modules/create-asset-mesh-ui.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/asset-manager/ui-asset-manager.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/hierarchy/hierarchy-panel.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-camera.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-light.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-mesh.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-particle-effect.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-rigidbody.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/elements/ui-transform.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/inspector/inspector-panel.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-console.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-file-browser.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-menu-bar.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-panel.cpp"
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/ui-settings.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/viewport-panel.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-dock-context.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-dock-loader.cpp"
-  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/ui-dock.cpp"
+  "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/panels/viewport/viewport-panel.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")
   file(TOUCH_NOCREATE "/Users/kae/Developer/vscode/kege-engine/build/CMakeFiles/cmake.verify_globs")
 endif()
 
-# ENGINE_SOURCES at CMakeLists.txt:78 (file)
+# ENGINE_SOURCES at CMakeLists.txt:65 (file)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp")
 set(OLD_GLOB
   "/Users/kae/Developer/vscode/kege-engine/kege/src/editor/main.cpp"

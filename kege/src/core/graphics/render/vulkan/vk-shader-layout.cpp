@@ -16,9 +16,9 @@ namespace kege::vk{
         vk::Device* device,
         const std::string& name,
         const kege::IndexedSetLayouts& indexed_set_layouts,
-        const kege::PushBlockLayout& push_block_layout
+        const kege::PushBlockDescs& push_blocks
     )
-    :   kege::ShaderLayout( name, indexed_set_layouts, push_block_layout )
+    :   kege::ShaderLayout( name, indexed_set_layouts, push_blocks )
     ,   _handle( VK_NULL_HANDLE )
     ,   _device( device )
     {
@@ -30,8 +30,8 @@ namespace kege::vk{
         }
 
         std::vector<VkPushConstantRange> push_constant_ranges;
-        push_constant_ranges.reserve( push_block_layout.size() );
-        for ( const kege::PushBlock& desc : push_block_layout )
+        push_constant_ranges.reserve( push_blocks.size() );
+        for ( const kege::PushBlockDesc& desc : push_blocks )
         {
             push_constant_ranges.push_back
             ({

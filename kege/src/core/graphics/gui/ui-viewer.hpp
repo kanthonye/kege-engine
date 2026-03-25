@@ -8,7 +8,7 @@
 #ifndef ui_viewer_hpp
 #define ui_viewer_hpp
 
-#include "font.hpp"
+#include "../font/font.hpp"
 #include "ui-layout.hpp"
 #include "../mesh/mesh.hpp"
 #include "../render/graph/render-queue.hpp"

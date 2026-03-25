@@ -66,7 +66,7 @@ namespace kege::glsl
         StorageBufferDynamic,
         CombinedImageSampler,
         InputAttachment,
-        PushBlockLayout,
+        PushBlockDescs,
 
         // Types (can be parsed dynamically too)
         Type,           // vec3, mat4, float, int, etc.

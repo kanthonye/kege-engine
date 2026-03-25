@@ -8,6 +8,7 @@
 #ifndef graphics_physical_device_hpp
 #define graphics_physical_device_hpp
 
+#include "sampler.hpp"
 #include "graphics-core.hpp"
 
 namespace kege{

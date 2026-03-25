@@ -10,7 +10,7 @@
 
 #include "ecs.hpp"
 #include "scene.hpp"
-#include "communication.hpp"
+#include "../utils/communication.hpp"
 #include "../graphics/render/graph/render-graph.hpp"
 
 namespace kege{

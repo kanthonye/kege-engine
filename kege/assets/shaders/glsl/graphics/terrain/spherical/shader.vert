@@ -31,8 +31,6 @@ layout( std140, set = 1, binding = 0 ) buffer PatchDataBuffer
 
 void main()
 {
-    //gl_Position = camera.projection * camera.transform * model.transform * vec4( _vertex_position.xyz, 1.0);
-
     float radius  = model.rotation[3][0];
     vec3 translation  = patch_data[ gl_InstanceIndex ].translation_scale.xyz;
     float scale = patch_data[ gl_InstanceIndex ].translation_scale.w;
@@ -47,22 +45,5 @@ void main()
 
     gl_Position = camera.projection * camera.transform * model.transform * vec4( position * radius, 1.0);
     gl_Position.y = -gl_Position.y;
-
-
-
-
-
-
-//    _color = vec4(1);
-//    switch(patch_vertices_id)
-//    {
-//        case 0: _color = vec4(1.f, 0.f, 0.f, 1.f); break;
-//        case 1: _color = vec4(0.f, 1.f, 0.f, 1.f); break;
-//        case 2: _color = vec4(.3f, .3f, 1.f, 1.f); break;
-//        case 3: _color = vec4(1.f, 1.f, 0.f, 1.f); break;
-//        case 4: _color = vec4(0.f, 1.f, 1.f, 1.f); break;
-//        case 5: _color = vec4(1.f, 0.f, 1.f, 1.f); break;
-//    }
-
 }
 

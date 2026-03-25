@@ -189,7 +189,8 @@ void main()
     lighting += ambient;
 
     // Add emissive lighting if available
-    if (material.emissive_map != 0) {
+    if (material.emissive_map != 0)
+    {
         vec3 emissive = texture(textures[material.emissive_map], frag_texcoord).rgb * material.emissive_intensity;
         lighting += emissive;
     }
@@ -201,9 +202,12 @@ void main()
         vec3 light_direction;
         float attenuation = 1.0;
 
-        if (light.type == LIGHT_TYPE_DIRECTIONAL) {
+        if (light.type == LIGHT_TYPE_DIRECTIONAL)
+        {
             light_direction = normalize(-light.direction);
-        } else {
+        }
+        else
+        {
             light_direction = light.position - frag_position;
             float dist = length(light_direction);
             light_direction /= dist;
@@ -213,26 +217,32 @@ void main()
                                 light.quadratic_attenuation * (dist * dist));
 
             // Spot light cone attenuation
-            if (light.type == LIGHT_TYPE_SPOT) {
+            if (light.type == LIGHT_TYPE_SPOT)
+            {
                 float theta = dot(light_direction, normalize(-light.direction));
-                if (theta > light.spot_cutoff) {
+                if (theta > light.spot_cutoff)
+                {
                     float epsilon = light.spot_cutoff - light.spot_cutoff * 0.9;
                     attenuation *= clamp((theta - light.spot_cutoff) / epsilon, 0.0, 1.0);
                     attenuation *= pow(theta, light.spot_exponent);
-                } else {
+                }
+                else
+                {
                     attenuation = 0.0;
                 }
             }
 
             // Range attenuation
-            if (dist > light.point_range) {
+            if (dist > light.point_range)
+            {
                 attenuation = 0.0;
             }
         }
 
         vec3 radiance = light.color * light.intensity * attenuation;
 
-        lighting += pbrLighting(
+        lighting += pbrLighting
+        (
             radiance,
             light_direction,
             normal,

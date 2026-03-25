@@ -52,14 +52,14 @@ namespace kege{
 //        {
 //            //TODO: switch ( binding.type )
 //            {
-//                case BindingType::SHADER_RESOURCE:
+//                case BindType::SHADER_RESOURCE:
 //                {
 //                    const ShaderResrc* resource = pass->fetchShaderResource( binding.name );
 //                    encoder->bind( resource->getShaderBindings() );
 //                    break;
 //                }
 //
-//                case BindingType::BUFFER:
+//                case BindType::BUFFER:
 //                {
 //                    //const BufferHandle* buffer = pass->fetchBuffer( binding.name );
 //                    //encoder->bind( pipeline->link( binding.set, binding.binding, *buffer ) );
@@ -68,7 +68,7 @@ namespace kege{
 //                    break;
 //                }
 //
-//                case BindingType::TEXTURE:
+//                case BindType::TEXTURE:
 //                {
 //                    //const ref::Image* texture = pass->fetchImage( binding.name );
 //                    //encoder->bind( pipeline->link( binding.set, binding.binding, *texture ) );
@@ -77,7 +77,7 @@ namespace kege{
 //                    break;
 //                }
 //
-//                case BindingType::PUSH_CONSTANTS:
+//                case BindType::PUSH_CONSTANTS:
 //                {
 //                    //const PushConstant* constant = pass->fetchPushConstant( binding.name );
 //                    //encoder->setPushBlock( constant.stages, constant.offset, constants.size, constants.data );

@@ -8,7 +8,7 @@
 #ifndef input_manager_hpp
 #define input_manager_hpp
 
-#include "app-layer.hpp"
+#include "../app/app-layer.hpp"
 #include "mouse.hpp"
 #include "keyboard.hpp"
 #include "../app/app-window.hpp"

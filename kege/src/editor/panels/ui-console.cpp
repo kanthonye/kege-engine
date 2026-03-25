@@ -5,6 +5,7 @@
 //  Created by Kenneth Esdaile on 1/17/26.
 //
 
+#include "../editor-layer.hpp"
 #include "ui-console.hpp"
 
 namespace kege::ui{
@@ -144,8 +145,8 @@ namespace kege::ui{
 
 namespace kege::ui{
 
-    Console::Console( kege::ProjectManager *pm, kege::GUI *gui, kege::ECS *ecs )
-    :   ui::Panel( "console", pm, gui, ecs )
+    Console::Console( kege::EditorLayer* editor )
+    :   ui::Panel( "Console", editor )
     {
         // Generate persistent UIDs
 //            _log_area_uid = _gui->layout()->generateUID();
@@ -349,14 +350,14 @@ namespace kege::ui{
 
         text.width = 50;
         text.ptr = "Clear";
-        if (_gui->button(0, _clear_button_uid, text, &_gui->_theme.button)) {
+        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button)) {
             clearLogs();
         }
 
         // Export button
         text.width = 50;
         text.ptr = "Export";
-        if (_gui->button(0, _export_button_uid, text, &_gui->_theme.button))
+        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button))
         {
             exportLogs();
         }
@@ -364,9 +365,9 @@ namespace kege::ui{
         // Search field
         char search_buffer[256] = "";
         strncpy(search_buffer, _search_text.c_str(), sizeof(search_buffer));
-        size_t search_size = _search_text.size() + 1;
-        uint64_t search_id = _gui->getAddressAsInt(&_search_text) + _frame_counter;
-
+//        size_t search_size = _search_text.size() + 1;
+//        uint64_t search_id = _gui->getAddressAsInt(&_search_text) + _frame_counter;
+//
 //        if (_gui->textField(0, search_id, search_buffer, search_size)) {
 //            _search_text = search_buffer;
 //            updateVisibleIndices();
@@ -380,7 +381,7 @@ namespace kege::ui{
         // Debug filter
         text.width = 50;
         text.ptr = "Debug";
-        if (_gui->radio(0, _filter_debug_uid, text, _filter_enabled[LogLevel::Debug]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::Debug]))
         {
             //updateVisibleIndices();
         }
@@ -388,7 +389,7 @@ namespace kege::ui{
         // Info filter
         text.width = 40;
         text.ptr = "Info";
-        if (_gui->radio(0, _filter_info_uid, text, _filter_enabled[LogLevel::INFO]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::INFO]))
         {
             //updateVisibleIndices();
         }
@@ -396,7 +397,7 @@ namespace kege::ui{
         // Warning filter
         text.width = 50;
         text.ptr = "Warning";
-        if (_gui->radio(0, _filter_warning_uid, text, _filter_enabled[LogLevel::WARNING]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::WARNING]))
         {
             //updateVisibleIndices();
         }
@@ -404,7 +405,7 @@ namespace kege::ui{
         // Error filter
         text.width = 50;
         text.ptr = "Error";
-        if (_gui->radio(0, _filter_error_uid, text, _filter_enabled[LogLevel::ERROR]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::ERROR]))
         {
             //updateVisibleIndices();
         }
@@ -412,7 +413,7 @@ namespace kege::ui{
         // Command filter
         text.width = 50;
         text.ptr = "Cmd";
-        if (_gui->radio(0, _filter_command_uid, text, _filter_enabled[LogLevel::COMMAND]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::COMMAND]))
         {
             //updateVisibleIndices();
         }
@@ -420,7 +421,7 @@ namespace kege::ui{
         // System filter
         text.width = 50;
         text.ptr = "Sys";
-        if (_gui->radio(0, _filter_system_uid, text, _filter_enabled[LogLevel::SYSTEM]))
+        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::SYSTEM]))
         {
             //updateVisibleIndices();
         }
@@ -428,7 +429,7 @@ namespace kege::ui{
         // Auto-scroll toggle
         text.width = 50;
         text.ptr = _auto_scroll ? "Auto" : "Manual";
-        if (_gui->button(0, _auto_scroll_uid, text, &_gui->_theme.button))
+        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button))
         {
             _auto_scroll = !_auto_scroll;
             if (_auto_scroll)
@@ -469,15 +470,15 @@ namespace kege::ui{
                  << "[" << entry.level_string() << "] "
                  << entry.message;
 
-            // Generate unique UID for this log line
-            //ui::UID line_uid = _gui->layout()->generateUID();
+            // Generate unique WidgetHandle for this log line
+            //ui::WidgetHandle line_uid = _gui->layout()->generateUID();
 
             if ( line.str().empty()) continue;
             if ( line.str()[0] < 32 ) continue;
 
             // Create widget description
             ui::WidgetDesc line_desc;
-            //line_desc.uid = &line_uid;
+            //line_desc.user_id = &line_uid;
             line_desc.text.width = 600;
             line_desc.text.font_size = 18;
             line_desc.text.color = 0xFFFFFFFF;
@@ -519,16 +520,16 @@ namespace kege::ui{
         // Command input field
         char input_buffer[256] = "";
         strncpy(input_buffer, _input_buffer.c_str(), sizeof(input_buffer));
-        size_t input_size = _input_buffer.size() + 1;
-
+//        size_t input_size = _input_buffer.size() + 1;
+//
 //        if (_gui->textField(0, _gui->getAddressAsInt(*this), input_buffer, input_size)) {
 //            _input_buffer = input_buffer;
 //        }
 
         // Execute button
-        ui::UID execute_uid;// = _gui->layout()->generateUID();
+        ui::WidgetHandle execute_uid;// = _gui->layout()->generateUID();
         ui::Text execute_text = _gui->layout()->text("Execute", 20);
-        if (_gui->button(0, execute_uid, execute_text, &_gui->_theme.button)) {
+        if (_gui->button(UI_BASE_ID(), 0, execute_text, &_gui->_theme.button)) {
             if (!_input_buffer.empty()) {
                 executeCommand(_input_buffer);
                 _input_buffer.clear();

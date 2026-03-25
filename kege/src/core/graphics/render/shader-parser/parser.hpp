@@ -58,9 +58,9 @@ namespace kege::glsl{
 
     private:
 
-        std::map<int, LayoutBindings> _set_layouts;
-        PushBlockLayout _push_blocks;
-        std::vector< VertexInputAttributeDesc > _attributes;
+        std::map<int, BindPointDescs> _set_layouts;
+        PushBlockDescs _push_blocks;
+        std::vector< VertexLayout > _attributes;
         //ShaderReflect reflection;
         std::string generated_glsl;
 

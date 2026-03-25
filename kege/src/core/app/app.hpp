@@ -11,11 +11,11 @@
 #include "app-layer-stack.hpp"
 #include "app-window.hpp"
 #include "project-manager.hpp"
-#include "graphics.hpp"
-#include "render-layer.hpp"
-#include "input-manager.hpp"
-#include "ecs-layer.hpp"
-#include "virtual-directory.hpp"
+#include "../graphics/render/core/graphics.hpp"
+#include "../graphics/render-layer.hpp"
+#include "../input/input-manager.hpp"
+#include "../scene/ecs-layer.hpp"
+#include "../io/virtual-directory.hpp"
 #include "../utils/communication.hpp"
 
 namespace kege{

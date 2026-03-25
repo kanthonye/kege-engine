@@ -23,6 +23,11 @@ namespace kege{
         Super    = 8,
     };
 
+    inline constexpr Modifiers operator &(const Modifiers m1, const Modifiers m2 )
+    {
+        return static_cast<Modifiers>(static_cast<int>(m1) & static_cast<int>(m2));
+    }
+
     inline constexpr bool operator ==(const Modifiers m1, const Modifiers m2 )
     {
         return (static_cast<int>(m1) & static_cast<int>(m2)) != 0;
@@ -31,6 +36,11 @@ namespace kege{
     inline constexpr bool operator !=(const Modifiers m1, const Modifiers m2 )
     {
         return (static_cast<int>(m1) & static_cast<int>(m2)) == 0;
+    }
+
+    inline constexpr bool contain(const Modifiers m1, const Modifiers m2 )
+    {
+        return (static_cast<int>(m1) & static_cast<int>(m2)) != 0;
     }
 
     enum struct KeyState : uint8_t

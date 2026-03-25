@@ -52,12 +52,12 @@
                             "blend_enable": "true",
 
                             "color_blend_op": "add",
-                            "src_color_blend_factor": "src-alpha",
-                            "dst_color_blend_factor": "one-minus-src-alpha",
+                            "src_color_blend": "src-alpha",
+                            "dst_color_blend": "one-minus-src-alpha",
 
                             "alpha_blend_op": "add",
-                            "src_alpha_blend_factor": "one",
-                            "dst_alpha_blend_factor": "zero",
+                            "src_alpha_blend": "one",
+                            "dst_alpha_blend": "zero",
                         }
                     ],
                 },

@@ -19,12 +19,56 @@
 #include "../../graphics/font/font-creator.hpp"
 #include "../../graphics/gui/uid.hpp"
 
+#define KEGE_MAKE_ID() ((((uint64_t)(uintptr_t)__FILE__) << 32) | __LINE__)
+
+#define UI_ID_FILE_BITS     32
+#define UI_ID_LINE_BITS     16
+#define UI_ID_CHILD_BITS    16
+
+#define UI_ID_FILE_SHIFT    (UI_ID_LINE_BITS + UI_ID_CHILD_BITS)  // 32
+#define UI_ID_LINE_SHIFT    UI_ID_CHILD_BITS                       // 16
+#define UI_ID_CHILD_SHIFT   0
+
+#define UI_ID_FILE_MASK     ((1ULL << UI_ID_FILE_BITS) - 1)
+#define UI_ID_LINE_MASK     ((1ULL << UI_ID_LINE_BITS) - 1)
+#define UI_ID_CHILD_MASK    ((1ULL << UI_ID_CHILD_BITS) - 1)
+
+// Generate base ID (without child index)
+#define UI_BASE_ID() \
+    ((((uint64_t)(uintptr_t)__FILE__ & UI_ID_FILE_MASK) << UI_ID_FILE_SHIFT) | \
+     ((__LINE__ & UI_ID_LINE_MASK) << UI_ID_LINE_SHIFT))
+
+
 namespace kege::ui{
 
     class Input;
     class Layout;
     class Viewer;
     class Cursor;
+
+    union WidgetId
+    {
+        WidgetId(uint32_t i,uint32_t v): index(i), version(v) {}
+        WidgetId(): id(0) {}
+        struct
+        {
+            uint32_t index;
+            uint32_t version;
+        };
+        uint64_t id;
+    };
+    constexpr inline bool operator==(const WidgetId &a, const WidgetId &b) { return a.id == b.id; }
+    constexpr inline bool operator!=(const WidgetId &a, const WidgetId &b) { return a.id != b.id; }
+
+    struct WidgetHandle
+    {
+        WidgetHandle(uint64_t user_id):user_id(user_id){}
+        WidgetHandle(): user_id(0){}
+        //private:
+        UserId user_id;
+        WidgetId widget_id;
+        friend class Layout;
+    };
 
     /**
      * Text alignment options.
@@ -44,8 +88,14 @@ namespace kege::ui{
         Independent,
     };
 
+    enum struct AlignType: uint8_t
+    {
+        LIST,
+        GRID,
+    };
+
     // X axis alignment options
-    enum struct AlignPosX: uint8_t
+    enum struct AlignX: uint8_t
     {
         LEFT,
         RIGHT,
@@ -53,7 +103,7 @@ namespace kege::ui{
     };
 
     // Y axis alignment options
-    enum struct AlignPosY: uint8_t
+    enum struct AlignY: uint8_t
     {
         TOP,
         BOTTOM,
@@ -63,37 +113,10 @@ namespace kege::ui{
     /**
      * XY Alignment structure
      */
-    struct AlignXY // 2 byte
+    struct AlignPos // 2 byte
     {
-        AlignPosX x = AlignPosX::LEFT;
-        AlignPosY y = AlignPosY::TOP;
-    };
-
-    /**
-     * Alignment flow direction
-     */
-    enum struct AlignDirX : uint8_t
-    {
-        ETW,
-        WTE,
-    };
-
-    /**
-     * Alignment flow direction
-     */
-    enum struct AlignDirY : uint8_t
-    {
-        NTS,
-        STN,
-    };
-
-    /**
-     * Alignment flow structure
-     */
-    struct AlignFlow // 2 byte
-    {
-        AlignDirX x = AlignDirX::WTE;
-        AlignDirY y = AlignDirY::NTS;
+        AlignX x = AlignX::LEFT;
+        AlignY y = AlignY::TOP;
     };
 
     /**
@@ -101,8 +124,26 @@ namespace kege::ui{
      */
     enum struct AlignDir: uint8_t
     {
-        HORIZONTAL,
-        VERTICAL,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+        CENTER,
+        CENTER_X,
+        CENTER_Y,
+    };
+
+    struct AlignWrap
+    {
+        bool enable = false;
+        AlignDir direction;
+    };
+
+    enum struct AlignItem
+    {
+        START,
+        CENTER,
+        END,
     };
 
     /**
@@ -110,11 +151,12 @@ namespace kege::ui{
      */
     struct alignas(8) Alignment
     {
-        AlignFlow flow; // 2 byte
-        AlignXY   origin; // 2 byte
-        AlignXY   content; // 2 byte
-        AlignDir  direction = AlignDir::HORIZONTAL; // 1 byte
-        bool wrap_around = false; // 1 byte
+        AlignType type;
+        AlignPos  origin; // 2 byte
+        AlignPos  content; // 2 byte
+        AlignDir  direction = AlignDir::RIGHT; // 1 byte
+        AlignItem items = AlignItem::START;
+        AlignWrap wrap; // 2 byte
     };
 
     /**
@@ -225,9 +267,9 @@ namespace kege::ui{
      */
     struct Rect
     {
-        float x, y;
-        float width;
-        float height;
+        float x = 0.0, y = 0.0;
+        float width = 0.0;
+        float height = 0.0;
     };
 
     /**
@@ -301,12 +343,12 @@ namespace kege::ui{
     struct alignas(8) Text // 34 bytes
     {
         const char* ptr = nullptr;   // 8 bytes
-        float width = 0.f;
-        float height = 20.f;
         float x = 0.f;
         float y = 0.f;
-        uint32_t color = 0xFFFFFFFF;
+        float width = 0.f;
+        float height = 20.f;
         uint16_t font_size = 20;
+        uint32_t color = 0xFFFFFFFF;
         AlignText align = AlignText::Left;
     };
 
@@ -331,7 +373,7 @@ namespace kege::ui{
         AlignText   align_text;
 
         Padding     padding;
-        Gap      gap;
+        Gap         gap;
 
         Positioning position = Positioning::Relative;
 
@@ -350,7 +392,8 @@ namespace kege::ui{
         /**
          * id: The unique identifier for this widget.
          */
-        ui::UID* uid; // 16 bytes
+        uint64_t user_id = 0;
+        //ui::WidgetHandle* uid; // 16 bytes
 
         /**
          * rect: hold the position and size of the ui element
@@ -397,7 +440,10 @@ namespace kege::ui{
         TexrInfo texr_info; // 2 short = 4 bytes
 
         Gap gap;
-        
+
+        Sizing width;
+        Sizing height;
+
         /**
          * layer: hold the layer of this ui element
          */
@@ -482,8 +528,10 @@ namespace kege::ui{
         /**
          * id: The unique identifier for this widget.
          */
-        ui::Id id;
-        uint32_t index;
+        //ui::WidgetId id;
+        uint64_t user_id = 0;
+        uint32_t index = 0;
+        uint32_t version = 0;
 
         /**
          * rect: hold the position and size of the ui element
@@ -514,6 +562,9 @@ namespace kege::ui{
          * align: hold the alignment for this ui element
          */
         Alignment alignment;
+
+        Sizing width;
+        Sizing height;
 
         /**
          * style: hold the style pointer for this ui element
@@ -625,16 +676,6 @@ namespace kege::ui{
     //ui::Background bgImage(int img_index, const ui::Rect& texel);
     //ui::Background bgColor(const ui::Color& color);
     //ui::Background bgColor(uint32_t color);
-
-
-    struct HitRecord
-    {
-        Id active  = {};
-        Id focus   = {};
-        Id hot     = {};
-
-        uint8_t  clicks     = 0;
-    };
 
 }
 

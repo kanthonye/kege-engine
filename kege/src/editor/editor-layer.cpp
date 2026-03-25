@@ -5,6 +5,15 @@
 //  Created by Kenneth Esdaile on 3/7/25.
 //
 
+#include "panels/asset-manager/ui-asset-manager.hpp"
+#include "panels/hierarchy/hierarchy-panel.hpp"
+#include "panels/inspector/inspector-panel.hpp"
+#include "panels/viewport/viewport-panel.hpp"
+#include "panels/ui-file-browser.hpp"
+
+#include "ui-console.hpp"
+#include "ui-menu-bar.hpp"
+
 #include "editor-layer.hpp"
 #include "render-graph.hpp"
 #include "shader-library.hpp"
@@ -42,14 +51,43 @@ namespace kege{
 
     void EditorLayer::addPanel( Ref< ui::Panel > panel )
     {
-        _panel_name_index_map[ panel->getName() ] = _panels.size();
+        _panel_name_index_map[ panel->getName() ] = (int32_t)_panels.size();
         _panels.push_back( panel );
+    }
+
+    void EditorLayer::displayPanel( uint32_t index )
+    {
+        if ( index < _panels.size() )
+        {
+            _panels[ index ]->update();
+        }
     }
 
     bool EditorLayer::update()
     {
         _gui.begin( 0.016 );
         _dock.update();
+
+//        _gui.push({
+//            .rect = {0,0,420,420},
+//            .color = 0xFFFFFF0F,
+//            .gap = {2,2},
+//            .padding = {20,20,20,20},
+//            .alignment = ui::Alignment
+//            {
+//                .wrap = ui::AlignWrap{.direction = ui::AlignDir::UP, .enable = true},
+//                .origin = {ui::AlignX::CENTER,ui::AlignY::CENTER},
+//                .direction = ui::AlignDir::CENTER,
+//                .items = ui::AlignItem::CENTER,
+//            }
+//        });
+//        _gui.put({.rect = {0,0,100,100}, .color = 0x0FFFFF0F});
+//        _gui.put({.rect = {0,0,100,120}, .color = 0x0FFFFF0F});
+//        _gui.put({.rect = {0,0,100,100}, .color = 0x0FFFFF0F});
+//        _gui.put({.rect = {0,0,120,100}, .color = 0x0FFFFF0F});
+//        _gui.put({.rect = {0,0,100,100}, .color = 0x0FFFFF0F});
+//        _gui.put({.rect = {0,0,120,120}, .color = 0x0FFFFF0F});
+//        _gui.pop();
         _gui.end();
 
         _viewer.begin();
@@ -57,6 +95,75 @@ namespace kege{
         //_viewer.drawText({0.f,0.f}, 200, 20, 0xFFFFFFFF, true, fps_text, {0,0,1000,400});
         _viewer.end(_render_graph->getRenderExecutor().ref());
         return true;
+    }
+
+    kege::InputManager* EditorLayer::getInputManager()
+    {
+        return _input_manager;
+    }
+
+    kege::ProjectManager* EditorLayer::getProjectManager()
+    {
+        return _project_manager;
+    }
+
+    kege::AssetManager* EditorLayer::getAssetManager()
+    {
+        return _asset_manager;
+    }
+
+    kege::RenderGraph* EditorLayer::getRenderGraph()
+    {
+        return _render_graph;
+    }
+
+    kege::ECS* EditorLayer::getECS()
+    {
+        return _ecs;
+    }
+
+    kege::GUI* EditorLayer::getGUI()
+    {
+        return &_gui;
+    }
+
+    ui::GhostObject* EditorLayer::getGhostObject()
+    {
+        return &_ghost;
+    }
+
+
+    std::vector< int32_t > EditorLayer::getPanelIndice( const std::vector< std::string >& names)
+    {
+        std::vector< int32_t > indices;
+        for (const std::string& name : names)
+        {
+            auto itr = _panel_name_index_map.find( name );
+            if( itr == _panel_name_index_map.end() )
+            {
+                indices.push_back( getPanelIndex( name ) );
+            }
+        }
+        return indices;
+    }
+
+    int32_t EditorLayer::getPanelIndex( const std::string& name )
+    {
+        auto itr = _panel_name_index_map.find( name );
+        if( itr != _panel_name_index_map.end() )
+        {
+            return itr->second;
+        }
+        return uint32_t(-1);
+    }
+    
+    ui::Panel* EditorLayer::getPanel( uint32_t index )
+    {
+        if ( index < _panels.size() )
+        {
+            return _panels[ index ].ref();
+        }
+        return nullptr;
     }
 
     bool EditorLayer::initialize()
@@ -97,21 +204,28 @@ namespace kege{
         _layout->setFont( font );
         _gui.initialize(_layout);
 
+        addPanel(new ui::HierarchyPanel( this ));
+        addPanel(new kege::InspectorPanel( this ));
+        addPanel(new kege::ViewportPanel( this ));
+        addPanel(new ui::FileBrowser( this, UI_BASE_ID(), "/Users/kae/Developer/vscode/kege-engine/kege/assets" ));
+        addPanel(new ui::AssetManagerUI( this, UI_BASE_ID() ));
+        addPanel(new ui::Console( this ));
+        addPanel(new ui::MenuBar( this ));
 
-        _context = new ui::DockContext( _project_manager, &_gui, _ecs );
-        _dock = ui::Dock(_context.ref(), window_size.width, window_size.height);
+        _dock = ui::Dock(this, window_size.width, window_size.height);
 
         ui::DockSplit* split[2];
 
-        split[0] = _dock.split( ui::AlignDir::HORIZONTAL, {}, {} );
-        split[0]->nodes[0].split( ui::AlignDir::VERTICAL, {0}, {1} );
-        split[1] = split[0]->nodes[1].split( ui::AlignDir::VERTICAL, {2}, {3,4,5} );
+        split[0] = _dock.split( 0.25, ui::Dock::SplitDirection::HORIZONTAL );
+        split[0]->nodes[0].split( 0.50, ui::Dock::SplitDirection::VERTICAL, {"Hierarchy"}, {"Properties"} );
+        split[1] = split[0]->nodes[1].split( 0.70, ui::Dock::SplitDirection::VERTICAL, {"Viewport"}, {"AssetManager", "Console", "FileBrowser"} );
 
         split[0]->slit_ratio = 0.25;
         split[0]->onReshape();
 
         split[1]->slit_ratio = 0.70;
         split[1]->onReshape();
+
 
         // TODO: SettingPanel, ConsolePanel
         return true;

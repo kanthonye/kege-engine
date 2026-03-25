@@ -16,7 +16,7 @@ namespace kege::ui{
     }
 
 
-    kege::ui::Widget* Layout::pushRoot( const WidgetDesc& desc )
+    WidgetId Layout::pushRoot( const WidgetDesc& desc )
     {
         if (_parent_stack.size() <= _parent_stack_count)
         {
@@ -29,15 +29,15 @@ namespace kege::ui{
         return push( desc );
     }
 
-    kege::ui::Widget* Layout::putRoot( const WidgetDesc& desc )
+    WidgetId Layout::putRoot( const WidgetDesc& desc )
     {
         int parent = _current_parent;
         _current_parent = 0;
 
-        kege::ui::Widget* w = put( desc );
+        WidgetId widget_id = put( desc );
 
         _current_parent = parent;
-        return w;
+        return widget_id;
     }
 
     void Layout::popRoot()
@@ -50,14 +50,14 @@ namespace kege::ui{
         }
     }
 
-    kege::ui::Widget* Layout::push( const WidgetDesc& desc )
+    WidgetId Layout::push( const WidgetDesc& desc )
     {
-        kege::ui::Widget* widget = widget = put( desc );
-        if ( widget != nullptr )
+        WidgetId widget_id = put( desc );
+        if ( widget_id.id != 0 )
         {
-            _current_parent = widget->index;
+            _current_parent = widget_id.index;
         }
-        return widget;
+        return widget_id;
     }
 
     uint32_t Layout::pop()
@@ -70,22 +70,22 @@ namespace kege::ui{
         return curr_parent;
     }
 
-    kege::ui::Widget* Layout::put( const WidgetDesc& desc )
+    WidgetId Layout::put( const WidgetDesc& desc )
     {
         if (_widget_count >= _widgets.size()) {
             kege::Log::error << "exceeding maximum ui widget capacity.";
-            return nullptr;
+            return {};
         }
 
-        const uint32_t index = _widget_count;
+        const uint32_t widget_index = _widget_count;
         _widget_count += 1;
 
-        setWidgetParameters( index, desc );
-        addToDesignatedLayer( index, desc );
+        setWidgetParameters( widget_index, desc );
+        addToDesignatedLayer( widget_index, desc );
 
-        resolveParentChildRelation( index );
+        resolveParentChildRelation( widget_index );
 
-        return &_widgets[ index ];
+        return WidgetId( _widgets[ widget_index ].index,_widgets[ widget_index ].version );
     }
 
     uint32_t Layout::computeExtent( int font_size, const char* text, float& width, float& height )
@@ -103,12 +103,12 @@ namespace kege::ui{
         return count;
     }
 
-    bool Layout::onNumericInput(const UID& uid, char* str, size_t& size)
+    bool Layout::onNumericInput(const WidgetId& widget_id, char* str, size_t& size)
     {
         return 0;//_cursor.onInput(Cursor::InputType::Numeric, uid, _font, str, size);
     }
 
-    bool Layout::onTextInput(const UID& uid, char* str, size_t& size)
+    bool Layout::onTextInput(const WidgetId& widget_id, char* str, size_t& size)
     {
         return 0;//_cursor.onInput(Cursor::InputType::Any, uid, _font, str, size);
     }
@@ -179,58 +179,57 @@ namespace kege::ui{
         return _mouse->isDragging(MouseButtonCode::Left);
     }
 
-
-    bool Layout::mouseover( const UID& uid )const
+    bool Layout::mouseover( const UserId& uid )const
     {
-        return _hit_record.hot == uid.id;
+        return _curr.hot.user_id == uid && _curr.hot.user_id != 0;
     }
 
-    bool Layout::doubleClick( const UID& uid )const
+    bool Layout::doubleClick( const UserId& uid )const
     {
-        return _hit_record.active == uid.id && _hit_record.clicks == 2;
+        return _curr.hit.user_id == uid && _curr.clicks == 2 && _curr.hit.user_id != 0;
     }
 
-    bool Layout::click( const UID& uid )const
+    bool Layout::click( const UserId& uid )const
     {
-        return _hit_record.active == uid.id && _hit_record.clicks == 1;
+        return _curr.hit.user_id == uid && _curr.clicks == 1 && _curr.hit.user_id != 0;
     }
 
-    bool Layout::hasFocus( const UID& uid )const
+    bool Layout::hasFocus( const UserId& uid )const
     {
-        return _focus == uid.id;
+        return _curr.focus.user_id == uid && _curr.focus.user_id != 0;
     }
 
-    const kege::ui::Widget* Layout::elem( const UID& uid ) const
+    const kege::ui::Widget* Layout::elem( const WidgetId& widget_id ) const
     {
-        if ( _widgets.size() <= uid.widget_index)
+        if ( _widgets.size() <= widget_id.index)
         {
-            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
             return nullptr;
         }
-        if ( _widgets[ uid.widget_index ].id != uid.id) return nullptr;
-        return &_widgets[ uid.widget_index ];
+        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
+        return &_widgets[ widget_id.index ];
     }
 
-    kege::ui::Widget* Layout::elem( const UID& uid )
+    kege::ui::Widget* Layout::elem( const WidgetId& widget_id )
     {
-        if ( _widgets.size() <= uid.widget_index)
+        if ( _widgets.size() <= widget_id.index)
         {
-            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
             return nullptr;
         }
-        if ( _widgets[ uid.widget_index ].id != uid.id) return nullptr;
-        return &_widgets[ uid.widget_index ];
+        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
+        return &_widgets[ widget_id.index ];
     }
 
-    kege::ui::Widget* Layout::elemParent( const UID& uid )
+    kege::ui::Widget* Layout::elemParent( const WidgetId& widget_id )
     {
-        if ( _widgets.size() <= uid.widget_index)
+        if ( _widgets.size() <= widget_id.index)
         {
-            kege::Log::error << "out of bound UID index" <<kege::Log::nl;
+            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
             return nullptr;
         }
-        if ( _widgets[ uid.widget_index ].id != uid.id) return nullptr;
-        return &_widgets[ _widgets[ uid.widget_index ].parent ];
+        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
+        return &_widgets[ _widgets[ widget_id.index ].parent ];
     }
 
     const Widget* Layout::operator[]( uint32_t node_id )const
@@ -315,7 +314,7 @@ namespace kege::ui{
 
     bool Layout::hasHit()const
     {
-        return _hit.num != 0;
+        return _curr.hit.user_id != 0;
     }
 
     bool Layout::validate( uint32_t node_id )const
@@ -341,37 +340,37 @@ namespace kege::ui{
         }
 
 
-        if ( _hit.num != 0)
+        // update current hit
+        if ( _next.hit.user_id != 0 )
         {
-            _hit_record.active = _hit;
+            _curr.hit = _next.hit;
         }
         else
-            _hit_record.active.num = 0;
-
-        if ( _focus.num != 0)
         {
-            _hit_record.focus = _focus;
+            _curr.hit.user_id = 0;
         }
-        _hit_record.hot = _hot;
 
-        _focus = {};
-        _hit = {};
+        // update current focus
+        _curr.focus = _next.focus;
+
+        // update current mouse over
+        _curr.hot = _next.hot;
+
+        //_focus = {};
+        //_hit = {};
+
+        _left_click_down = _left_click_state;
+        //_left_click_state = false;
     }
 
-    void Layout::setWidgetParameters(uint32_t index , const WidgetDesc& desc)
+    void Layout::setWidgetParameters(uint32_t index, const WidgetDesc& desc)
     {
         Widget* widget = &_widgets[ index ];
 
         // assign uid to widget
-        if( desc.uid )
-        {
-            widget->id = desc.uid->id;
-            desc.uid->widget_index = index;
-        }
-        else
-        {
-            widget->id = {};
-        }
+        widget->user_id = desc.user_id;
+        widget->version = widget->version + 1;
+        //widget->index = index;
 
         /**
          initalize the widgets parameters
@@ -381,9 +380,10 @@ namespace kege::ui{
         widget->rect         = desc.rect;
         widget->style        = desc.style;
         widget->text         = desc.text;
-        widget->text.color   = (desc.style)? desc.style->text_color : desc.text.color;
 
-        widget->color        = (desc.style)? desc.style->background.color : desc.color;
+        widget->width        = desc.width;
+        widget->height       = desc.height;
+
         widget->texel        = desc.texel;
         widget->texr_info    = desc.texr_info;
 
@@ -395,6 +395,10 @@ namespace kege::ui{
         widget->clip_overflow= desc.clip_overflow;
 
         widget->position     = desc.position;
+        widget->width        = (desc.style)? desc.style->width : desc.width;
+        widget->height       = (desc.style)? desc.style->height : desc.height;
+        widget->text.color   = (desc.style)? desc.style->text_color : desc.text.color;
+        widget->color        = (desc.style)? desc.style->background.color : desc.color;
         widget->border       = (desc.style)? desc.style->border : desc.border;
         widget->padding      = (desc.style)? desc.style->padding : desc.padding;
         widget->alignment    = (desc.style)? desc.style->alignment : desc.alignment;
@@ -407,16 +411,13 @@ namespace kege::ui{
         widget->next         = 0;
         widget->prev         = 0;
 
-        if (widget->style)
+        if (widget->width.type == ui::SizingType::Fixed)
         {
-            if (widget->style->width.type == ui::SizingType::Fixed)
-            {
-                widget->rect.width += widget->style->width.size;
-            }
-            if (widget->style->height.type == ui::SizingType::Fixed)
-            {
-                widget->rect.height += widget->style->height.size;
-            }
+            widget->rect.width += widget->width.size;
+        }
+        if (widget->height.type == ui::SizingType::Fixed)
+        {
+            widget->rect.height += widget->height.size;
         }
     }
 
@@ -489,19 +490,18 @@ namespace kege::ui{
         layer.count++;
     }
 
-    Id Layout::getHotElem(uint32_t node_index, bool button)
+    Record Layout::getHotElem(uint32_t node_index, bool button)
     {
         const ui::Widget& widget = _widgets[ node_index ];
         if ( !widget.visible || widget.inactive || widget.rect.width == 0.f || widget.rect.height == 0.f )
             return {};
-        //if ( !_widgets[ node_index ].visible || _widgets[ node_index ].inactive ) return {};
-
+        
         for (int child_index = _widgets[ node_index ].head; child_index != 0; child_index = _widgets[ child_index ].next)
         {
-            Id id = getHotElem( child_index, button );
-            if ( id.num != 0 )
+            Record record = getHotElem( child_index, button );
+            if ( record.user_id != 0 )
             {
-                return id;
+                return record;
             }
         }
 
@@ -519,21 +519,24 @@ namespace kege::ui{
 
         if ( testPointVsRect( _input_manager->getMouse()->getPosition(), _widgets[ node_index ].rect ) )
         {
-            _hot_index = node_index;
-            return _widgets[ node_index ].id;
+            return Record
+            {
+                .index = node_index,
+                .user_id = _widgets[ node_index ].user_id
+            };
         }
         return {};
     }
 
-    Id Layout::getHotElem(bool button)
+    Record Layout::getHotElem(bool button)
     {
-        Id hot = {};
+        Record hot = {};
         for (int layer_index=0; layer_index<_layers.size(); ++layer_index)
         {
             for( uint32_t root = _layers[ layer_index ].head; root != 0; root = _widgets[ root ].layer.next )
             {
-                Id result = getHotElem( root, button );
-                if ( result.num != 0 )
+                Record result = getHotElem( root, button );
+                if ( result.user_id != 0 )
                 {
                     hot = result;
                     break;
@@ -543,16 +546,17 @@ namespace kege::ui{
         return hot;
     }
 
-    uint32_t Layout::find(uint32_t widget_index, const ui::Id& id)
+    uint32_t Layout::find(uint64_t user_id, uint32_t index)
     {
-        if ( id == _widgets[ widget_index ].id )
+        if ( user_id == _widgets[ index ].user_id )
         {
-            return widget_index;
+            return index;
         }
 
-        for (int child_index = _widgets[ widget_index ].head; child_index != 0; child_index = _widgets[ child_index ].next)
+        uint32_t widget_index = _widgets[ index ].head;
+        for (; widget_index != 0; widget_index = _widgets[ widget_index ].next)
         {
-            uint32_t index = find( child_index, id );
+            uint32_t index = find( user_id, widget_index );
             if ( index != 0 )
             {
                 return index;
@@ -561,13 +565,14 @@ namespace kege::ui{
         return 0;
     }
 
-    uint32_t Layout::find(const ui::Id& id)
+    uint32_t Layout::find(uint64_t user_id)
     {
         for (int layer_index = 0; layer_index < _layers.size(); ++layer_index)
         {
-            for( uint32_t root = _layers[ layer_index ].head; root != 0; root = _widgets[ root ].layer.next )
+            uint32_t widget_index = _layers[ layer_index ].head;
+            for( ; widget_index != 0; widget_index = _widgets[ widget_index ].layer.next )
             {
-                uint32_t index = find( root, id );
+                uint32_t index = find( user_id, widget_index );
                 if ( index != 0 )
                 {
                     return index;;
@@ -579,75 +584,76 @@ namespace kege::ui{
 
     void Layout::handleInputEvents()
     {
-        _hit.num = 0;
+        _next.hit.user_id = 0;
 
         // when mouse button not down scan for hot element
 
         _mouse = _input_manager->getMouse();
 
 
-        bool button_down = _mouse->isDown(MouseButtonCode::Left);
-        if ( !button_down )
+        _left_click_state = _mouse->isDown(MouseButtonCode::Left);
+        if ( !_left_click_state )
         {
-            // handleButtonReleaseOnWidget()
             if ( _click_registered )
             {
                 _click_registered = false;
-                _active_index = find( _active );
+                //_active_index = find( _active );
 
-                kege::dvec2 position = _mouse->getClickPosition(MouseButtonCode::Left);
-                if( testPointVsRect( position, _widgets[ _active_index ].rect ) )
+                if (_next.hot.index != 0 && _next.hot.index < _widgets.size())
                 {
-                    if (_widgets[ _active_index ].single_click == ui::ClickTrigger::OnRelease)
+                    kege::dvec2 position = _mouse->getClickPosition(MouseButtonCode::Left);
+                    if( testPointVsRect( position, _widgets[ _next.pressing.index ].rect ) )
                     {
-                        _hit.num = _active.num;
-                        _focus.num = _hot.num;
-                        return;
+                        if (_widgets[ _next.pressing.index ].single_click == ui::ClickTrigger::OnRelease)
+                        {
+                            _next.focus = _next.hit = _next.pressing;
+                            return;
+                        }
                     }
                 }
             }
 
-            _hot = getHotElem();
-            _active_index = 0;
-            _active.num = 0;
+            _next.hot = getHotElem();
+            _next.pressing = {};
+            std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
         }
-        else if ( button_down && !_click_registered )
+        else if ( _left_click_state && !_click_registered )
         {
+            //_left_click_state = true;
             _click_registered = true;
-            _hot = getHotElem(true);
+            _next.hot = getHotElem(true);
         }
 
-        if ( button_down )
+        if ( _left_click_state )
         {
-            if ( _active.num == 0 && _hot.num != 0 )
+            if ( _next.pressing.user_id == 0 && _next.hot.user_id != 0 )
             {
                 kege::dvec2 position = _mouse->getClickPosition(MouseButtonCode::Left);
-                if( testPointVsRect( position, _widgets[ _hot_index ].rect ) )
+                if( testPointVsRect( position, _widgets[ _next.hot.index ].rect ) )
                 {
-                    _hit_record.clicks = (_mouse->isDoubleClick(MouseButtonCode::Left) ? 2 : 1);
-                    _active_index = _hot_index;
-                    _active.num = _hot.num;
-                    _focus.num = _hot.num;
+                    _next.clicks = (_mouse->isDoubleClick(MouseButtonCode::Left) ? 2 : 1);
+                    _next.pressing = _next.hot;
+                    _next.focus = _next.hot;
 
-                    if (_widgets[ _hot_index ].single_click == ui::ClickTrigger::Immediate ||
-                        _widgets[ _hot_index ].single_click == ui::ClickTrigger::Continuous)
+                    if (_widgets[ _next.hot.index ].single_click == ui::ClickTrigger::Immediate ||
+                        _widgets[ _next.hot.index ].single_click == ui::ClickTrigger::Continuous)
                     {
-                        _hit.num = _active.num;
+                        _next.hit = _next.hot;
                     }
                 }
             }
-            else if ( _active.num != 0 )
+            else if ( _next.pressing.user_id != 0 )
             {
-                _active_index = find( _active );
-                if (_widgets[ _active_index ].single_click == ui::ClickTrigger::Continuous ||
-                    _widgets[ _active_index ].double_click == ui::ClickTrigger::Continuous)
+                //_active_index = find( _active );
+                if (_widgets[ _next.pressing.index ].single_click == ui::ClickTrigger::Continuous ||
+                    _widgets[ _next.pressing.index ].double_click == ui::ClickTrigger::Continuous)
                 {
-                    _hit = _widgets[ _active_index ].id;
+                    _next.hit = _next.pressing;
                 }
             }
             else
             {
-                _focus.num = 0;
+                _next.focus.user_id = 0;
             }
         }
     }
@@ -666,9 +672,9 @@ namespace kege::ui{
         }
     }
 
-    bool Layout::buttonDown()const
+    bool Layout::leftClickDown()const
     {
-        return _click_registered;
+        return _left_click_down;
     }
 
     const kege::InputManager* Layout::inputManager()const
@@ -682,10 +688,8 @@ namespace kege::ui{
     }
 
     Layout::Layout(kege::InputManager* input_manager, uint32_t width, uint32_t height, uint32_t quantity)
-    :   _hot{}
-    ,   _active{}
-    ,   _active_index(0)
-    ,   _hot_index(0)
+    :   _curr{}
+    ,   _next{}
     ,   _widget_count( 1 )
     ,   _height( height )
     ,   _width( width )

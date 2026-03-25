@@ -37,11 +37,11 @@ namespace kege::vk{
         ShaderPipeline
         (
             vk::Device* device,
-            const kege::PipelineCreateInfo& info,
+            const kege::ShaderPipelineDesc& info,
             const ref::ShaderLayout& shader_layout
         );
-        void createGraphicsPipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout );
-        void createComputePipeline( const kege::PipelineCreateInfo& info, const ref::ShaderLayout& shader_layout );
+        void createGraphicsPipeline( const kege::ShaderPipelineDesc& desc, const ref::ShaderLayout& shader_layout );
+        void createComputePipeline( const kege::ShaderPipelineDesc& desc, const ref::ShaderLayout& shader_layout );
 
     private:
 

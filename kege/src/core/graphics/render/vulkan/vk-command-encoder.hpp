@@ -31,7 +31,7 @@ namespace kege::vk{
          * @param indexed_set Hold the set object and the set index where the set object should bo bind.
          * @return True if binding succeeded, false otherwise.
          */
-        bool bind( const kege::IndexedSet& indexed_set ) override;
+        bool bind( const kege::BindSet& indexed_set ) override;
 
         /**
          * @brief Binds a Vulkan shader set to the command buffer.

@@ -14,7 +14,7 @@ set_layout(set = 0, binding = 0) uniform_buffer CameraBlock
 }
 _camera;
 
-push_block_layout ObjectMatrices
+push_blocks ObjectMatrices
 {
     mat4 transform;
     mat3 rotation;

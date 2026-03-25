@@ -5,9 +5,7 @@
 //  Created by Kenneth Esdaile on 12/30/24.
 //
 
-#include "normal-map-generator.hpp"
-#include "height-map-generator.hpp"
-#include "task-manager-system.hpp"
+#include "../common/all.hpp"
 #include "flat-terrain-tile.hpp"
 #include "flat-terrain.hpp"
 
@@ -138,7 +136,7 @@ namespace kege{
     
     void FlatTerrain::generateHeightmapTile( Ref< FlatTerrainTile > tile )
     {
-        QueueManagerSystem::addTask( [ this, tile ](){ this->generateTerrainTopography( tile ); } );
+        //TODO: QueueManagerSystem::addTask( [ this, tile ](){ this->generateTerrainTopography( tile ); } );
     }
     
     sint2 FlatTerrain::calcTileCoord( const dvec3& tile_position )

@@ -6,11 +6,12 @@
 //
 
 #include "app.hpp"
-#include "glfw-window.hpp"
 
 #include "../resource/image-loader.hpp"
 #include "../resource/input-context-loader.hpp"
-#include "../resource/shader-pipeline-loader.hpp"
+#include "../graphics/render/window/glfw-window.hpp"
+#include "../graphics/shader-system/json-shader-loader.hpp"
+#include "../graphics/shader-system/shader-pipeline-loader.hpp"
 
 namespace kege{
 
@@ -126,7 +127,8 @@ namespace kege{
         // Add Asset Loaders
         //-----------------------------------------------------------------------//
 
-        _asset_manager->addLoader< ref::ShaderPipeline, kege::ShaderPipelineLoader >( ".json" );
+        _asset_manager->addLoader< ref::ShaderPipeline, kege::KMSLShaderLoader >( ".kmsl" );
+        _asset_manager->addLoader< ref::ShaderPipeline, kege::JsonShaderLoader >( ".json" );
         _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
         _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".jpg" );
         _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".png" );
@@ -170,21 +172,19 @@ namespace kege{
         _asset_manager->add< ref::Sampler >( "default", default_sampler );
 
         // fallback shader
-        kege::string shader_file = kege::vfs( "graphics-shaders/error/error.json" );
-        uint64_t error_shader_handle = _asset_manager->load< ref::ShaderPipeline >( "error-shader", shader_file.c_str() );
+        uint64_t error_shader_handle = _asset_manager->load< ref::ShaderPipeline >( "error-shader", "graphics-shaders/error/error.kmsl" );
         if( error_shader_handle == 0 )
         {
-            kege::Log::error << "LOAD_FAILED -> _asset_manager->load< ref::ShaderPipeline >("<< shader_file.c_str() <<")" << Log::nl;
             return false;
         }
+        //_asset_manager->setLibrary< ref::ShaderPipeline >( new kege::ShaderLibrary( _graphics.ref(), error_shader_handle ) );
 
-        // load shader library
-        _asset_manager->setLibrary< ref::ShaderPipeline >( new kege::ShaderLibrary( _graphics.ref(), error_shader_handle ) );
-        if( !_asset_manager->loadLibrary<ref::ShaderPipeline>( kege::vfs( "graphics-shaders/shader-library.json" ).c_str() ) )
-        {
-            kege::Log::error << "LOAD_FAILED -> _asset_manager->loadLibrary< ref::ShaderPipeline >(...)" << Log::nl;
-            return false;
-        }
+//        // load shader library
+//        if( !_asset_manager->loadLibrary<ref::ShaderPipeline>( kege::vfs( "graphics-shaders/shader-library.json" ).c_str() ) )
+//        {
+//            kege::Log::error << "LOAD_FAILED -> _asset_manager->loadLibrary< ref::ShaderPipeline >(...)" << Log::nl;
+//            return false;
+//        }
 
         //-----------------------------------------------------------------------//
         // Create Project Manager

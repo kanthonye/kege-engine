@@ -60,6 +60,13 @@ namespace kege{
 
         /**
          */
+        inline void remove( int32_t component, ecs::Entity& entity )
+        {
+            return _entity_manager.remove( component, entity );
+        }
+
+        /**
+         */
         template< typename C > inline void remove( ecs::Entity& entity )
         {
             return _entity_manager.remove<C>( entity );

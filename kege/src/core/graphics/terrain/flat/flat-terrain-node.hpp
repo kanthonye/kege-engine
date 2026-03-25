@@ -8,8 +8,7 @@
 #ifndef flat_terrain_node_hpp
 #define flat_terrain_node_hpp
 
-#include "landscape-settings.h"
-#include "../../../memory/ref.hpp"
+#include "../common/all.hpp"
 
 namespace kege{
 

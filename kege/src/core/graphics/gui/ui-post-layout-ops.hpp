@@ -18,23 +18,23 @@ namespace kege::ui{
         size_t size;
     };
 
-    typedef void (*DeferredOperation)(Layout* layout, const ui::UID* id, void* data);
+    typedef void (*DeferredOperation)(Layout* layout, UserId user_id, WidgetId widget_id, void* data);
 
     class PostLayoutOpsExecutor
     {
     public:
 
-
         struct OpEntry
         {
             DeferredOperation fn;
             AllocParam alloc;
-            const ui::UID* id;
+            UserId user_id;
+            WidgetId widget_id;
         };
 
     public:
 
-        template<typename Params>void pushPtr(const ui::UID* id, DeferredOperation fn, Params* params)
+        template<typename Params>void pushPtr(UserId user_id, WidgetId widget_id, DeferredOperation fn, Params* params)
         {
             AllocParam alloc = this->alloc(sizeof(Params*));
             void* dst = getDst(alloc);
@@ -47,11 +47,11 @@ namespace kege::ui{
             {
                 _operations.resize((_operations.empty()) ? 32 : 2 * _operations.size());
             }
-            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .id = id};
+            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .widget_id = widget_id};
             _op_count += 1;
         }
 
-        template<typename Params>void push(const ui::UID* id, DeferredOperation fn, const Params& params)
+        template<typename Params>void push(UserId user_id, WidgetId widget_id, DeferredOperation fn, const Params& params)
         {
             AllocParam alloc = this->alloc(sizeof(params));
             void* dst = getDst(alloc);
@@ -61,7 +61,7 @@ namespace kege::ui{
             {
                 _operations.resize((_operations.empty()) ? 32 : 2 * _operations.size());
             }
-            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .id = id};
+            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .widget_id = widget_id};
             _op_count += 1;
         }
 

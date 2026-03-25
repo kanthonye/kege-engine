@@ -11,10 +11,10 @@
 #include "../../../../libs/third-party/tiny-gltf/tiny_gltf.h"
 #include "glft-loader.hpp"
 #include <vector>
-#include "mesh.hpp"
-#include "vmath.hpp"
-#include "ecs.hpp"
-#include "camera.hpp"
+#include "../mesh/mesh.hpp"
+#include "../../math/algebra/vmath.hpp"
+#include "../../scene/ecs.hpp"
+#include "../camera/camera.hpp"
 
 
 namespace kege::gltf{
@@ -220,23 +220,23 @@ namespace kege::gltf{
         Camera cam = {};
         if ( camera.type == "perspective" )
         {
-            cam.projection = new Perspective
-            (
-                camera.perspective.aspectRatio,
-                camera.perspective.yfov,
-                camera.perspective.znear,
-                camera.perspective.zfar
-            );
+//            cam.projection = new Perspective
+//            (
+//                camera.perspective.aspectRatio,
+//                camera.perspective.yfov,
+//                camera.perspective.znear,
+//                camera.perspective.zfar
+//            );
         }
         else if ( camera.type == "orthographic" )
         {
-            cam.projection = new Orthographic
-            (
-                0, camera.orthographic.xmag,
-                0, camera.orthographic.ymag,
-                camera.orthographic.znear,
-                camera.orthographic.zfar
-            );
+//            cam.projection = new Orthographic
+//            (
+//                0, camera.orthographic.xmag,
+//                0, camera.orthographic.ymag,
+//                camera.orthographic.znear,
+//                camera.orthographic.zfar
+//            );
         }
         return cam;
     }
@@ -318,6 +318,28 @@ namespace kege::gltf{
                 if ( 0 <= node.camera )
                 {
                     *ecs->add< Camera >( entity ) = parseCamera( model, model.cameras[ node.camera ] );
+
+                    tinygltf::Camera& camera = model.cameras[ node.camera ];
+                    if ( camera.type == "perspective" )
+                    {
+                        *ecs->add< kege::Perspective >( entity ) = kege::Perspective
+                        {
+                            camera.perspective.aspectRatio,
+                            camera.perspective.yfov,
+                            camera.perspective.znear,
+                            camera.perspective.zfar
+                        };
+                    }
+                    else if ( camera.type == "orthographic" )
+                    {
+                        *ecs->add< kege::Orthographic >( entity ) = kege::Orthographic
+                        {
+                            0, camera.orthographic.xmag,
+                            0, camera.orthographic.ymag,
+                            camera.orthographic.znear,
+                            camera.orthographic.zfar
+                        };
+                    }
                 }
 
                 if ( 0 <= node.mesh )

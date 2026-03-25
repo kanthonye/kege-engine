@@ -31,8 +31,8 @@ namespace kege::ui{
 
         struct EditingState
         {
-            const UID* uid = nullptr;
-
+            WidgetId widget_id;
+            UserId user_id;
             char* buffer = nullptr;
             size_t* buffer_size = nullptr;
             size_t buffer_capacity = 0;
@@ -44,7 +44,7 @@ namespace kege::ui{
 
 
 
-        void startEditing(InputType type, const UID& uid, char* buffer, size_t& buffer_size, size_t buffer_capacity);
+        void startEditing(const UserId user_id, const WidgetId& widget_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity);
         void selectAll(const char* str, size_t size);
         void computeCursorPosition();
         void stopEditing();

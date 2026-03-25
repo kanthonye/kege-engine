@@ -25,7 +25,7 @@ namespace kege {
         return _bindings[ i->second ].block->get( field );
     }
 
-    const kege::LayoutBinding* SetLayout::getBinding( const std::string& name )const
+    const kege::BindPointDesc* SetLayout::getBinding( const std::string& name )const
     {
         auto i = _binding_set_lookup.find( name );
         if ( i == _binding_set_lookup.end() )
@@ -33,7 +33,7 @@ namespace kege {
         return getBinding(  i->second );
     }
 
-    kege::LayoutBinding* SetLayout::getBinding( const std::string& name )
+    kege::BindPointDesc* SetLayout::getBinding( const std::string& name )
     {
         auto i = _binding_set_lookup.find( name );
         if ( i == _binding_set_lookup.end() )
@@ -41,12 +41,12 @@ namespace kege {
         return getBinding(  i->second );
     }
 
-    const kege::LayoutBinding* SetLayout::getBinding( int binding_index )const
+    const kege::BindPointDesc* SetLayout::getBinding( int binding_index )const
     {
         return &_bindings[ binding_index ];
     }
 
-    kege::LayoutBinding* SetLayout::getBinding( int binding_index )
+    kege::BindPointDesc* SetLayout::getBinding( int binding_index )
     {
         return &_bindings[ binding_index ];
     }
@@ -76,7 +76,7 @@ namespace kege {
         return _bindings.size();
     }
 
-    SetLayout::SetLayout( const kege::LayoutBindings& bindings )
+    SetLayout::SetLayout( const kege::BindPointDescs& bindings )
     :   _bindings( bindings )
     ,   _total_buffers( 0 )
     ,   _total_images( 0 )
@@ -93,7 +93,7 @@ namespace kege {
                 case kege::BindingUsage::StorageBufferDynamic:
                 case kege::BindingUsage::StorageTexelBuffer:
                     _total_buffers += _bindings[i].count;
-                    _bindings[i].type = kege::BindingType::Buffer;
+                    _bindings[i].type = kege::BindType::Buffer;
                     break;
 
                 case kege::BindingUsage::CombinedImageSampler:
@@ -102,7 +102,7 @@ namespace kege {
                 case kege::BindingUsage::InputAttachment:
                 case kege::BindingUsage::Sampler:
                     _total_images += _bindings[i].count;
-                    _bindings[i].type = kege::BindingType::Image;
+                    _bindings[i].type = kege::BindType::Image;
                     break;
 
                 default: break;

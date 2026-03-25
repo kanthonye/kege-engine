@@ -20,7 +20,6 @@
 #include <fstream>
 #include <algorithm>
 #include <iomanip>
-#include "../gui.hpp"
 #include "ui-panel.hpp"
 
 namespace kege::ui{
@@ -109,7 +108,7 @@ namespace kege::ui{
     {
     public:
 
-        Console( kege::ProjectManager *pm, kege::GUI *gui, kege::ECS *ecs );
+        Console( kege::EditorLayer* editor );
 
         ~Console() override;
 
@@ -174,20 +173,20 @@ namespace kege::ui{
         std::mutex _command_mutex;
 
         // UI state
-        ui::UID _log_area_uid;
-        ui::UID _input_field_uid;
-        ui::UID _clear_button_uid;
-        ui::UID _export_button_uid;
-        ui::UID _scroll_container_uid;
+        ui::WidgetHandle _log_area_uid;
+        ui::WidgetHandle _input_field_uid;
+        ui::WidgetHandle _clear_button_uid;
+        ui::WidgetHandle _export_button_uid;
+        ui::WidgetHandle _scroll_container_uid;
 
         // Filter UIDs
-        ui::UID _filter_debug_uid;
-        ui::UID _filter_info_uid;
-        ui::UID _filter_warning_uid;
-        ui::UID _filter_error_uid;
-        ui::UID _filter_command_uid;
-        ui::UID _filter_system_uid;
-        ui::UID _auto_scroll_uid;
+        ui::WidgetHandle _filter_debug_uid;
+        ui::WidgetHandle _filter_info_uid;
+        ui::WidgetHandle _filter_warning_uid;
+        ui::WidgetHandle _filter_error_uid;
+        ui::WidgetHandle _filter_command_uid;
+        ui::WidgetHandle _filter_system_uid;
+        ui::WidgetHandle _auto_scroll_uid;
 
         // Filter state
         std::unordered_map<LogLevel, bool> _filter_enabled;

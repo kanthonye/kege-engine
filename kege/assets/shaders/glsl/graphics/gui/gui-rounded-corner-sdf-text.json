@@ -1,141 +1,56 @@
 {
-    "asset": {
-        "generator": "KEGE",
-        "version": "1.0",
-        "name": "shader-library",
-        "date_created": "10/29/2025"
-    },
-    "rasterizer_states": [
+    "features":[],
+    "rasterizer_states":
+    [
         {
             "cull_mode": "back",
             "front_face": "ccw",
             "polygon_mode": "fill",
-            "rasterizer_disable": "false"
+            "depth_bias": 0, 
+            "depth_bias_clamp": 0.0, 
+            "slope_scaled_depth_bias": 0.0,
+            "line_width": 1.0,
+            "depth_clip_enable": true,
+            "scissor_enable": false,
+            "multisample_enable": false
         }
     ],
-    "depth_stencil_states": [
+    "depth_states": 
+    [
         {
             "depth_test": "false",
             "depth_write": "true",
             "depth_compare_op": "less"
         }
     ],
-    "color_blend_states": [
+    "blend_states": 
+    [
         {
             "logic_op": "copy",
             "logic_op_enable": "false",
-            "color_blend_attachments": [
+            "color_blend_attachments":
+            [
                 {
                     "blend_enable": "true",
                     "color_blend_op": "add",
-                    "src_color_blend_factor": "src_alpha",
-                    "dst_color_blend_factor": "one_minus_src_alpha",
+                    "src_color_blend": "src_alpha",
+                    "dst_color_blend": "one_minus_src_alpha",
                     "alpha_blend_op": "add",
-                    "src_alpha_blend_factor": "one",
-                    "dst_alpha_blend_factor": "zero"
+                    "src_alpha_blend": "one",
+                    "dst_alpha_blend": "zero"
                 }
             ]
         }
     ],
-    "attributes": [],
-    "shaders": [
+    "blocks": 
+    [
         {
-            "name": "gui.vert",
-            "entry-point": "main",
-            "type": "vertex",
-            "uri": "gui-rounded-corner-sdf-text.vert"
-        },
-        {
-            "name": "gui.frag",
-            "entry-point": "main",
-            "type": "fragment",
-            "uri": "gui-rounded-corner-sdf-text.frag"
-        }
-    ],
-    "structs": [
-        "name": "DrawElem",
-        "fields":
-        [
-            {
-                "name":   "rect",
-                "type":   "vec4",
-                "count":  1,
-            },
-            {
-                "name":   "texel",
-                "type":   "vec4",
-                "count":  1,
-            },
-            {
-                "name":   "border",
-                "type":   "vec4",
-                "count":  1,
-            },
-            {
-                "name":   "clip_rect",
-                "type":   "vec4",
-                "count":  1,
-            },
-            {
-                "name":   "combo",
-                "type":   "vec4",
-                "count":  1,
-            }
-        ]
-    }],
-    "uniforms": [
-        {
-            "name": "UIViewBuffer",
-            "fields":
-            [
-                {
-                    "name": "instances",
-                    "type": "sampler2D",
-                    "count":  1
-                }
-            ]
-        }
-    ],
-    "storages": [
-        {
-            "name": "UIViewBuffer",
-            "fields":
-            [
-                {
-                    "name": "instances",
-                    "type": "DrawElem",
-                    "count":  1
-                }
-            ]
-        }
-    ],
-    "samplers": [
-        {
-            "name": "_theme",
-            "type": "sampler2D",
-            "count":  1
-        },
-        {
-            "name": "_font",
-            "type": "sampler2D",
-            "count":  1
-        },
-        {
-            "name": "_scene",
-            "type": "sampler2D",
-            "count":  1
-        }
-    ],
-    "push_constants": [
-        {
+            "id": "Camera",
+            "stages": ["vertex", "fragment"],
             "size": 128,
-            "offset": 0,
             "count": 1,
-            "name": "Camera2D",
-            "stages": [
-                "all"
-            ],
-            "fields": [
+            "fields":
+            [
                 {
                     "name": "projection",
                     "type": "mat4",
@@ -149,118 +64,114 @@
             ]
         }
     ],
-    "pipeline_layouts": [
+    "sets": 
+    [
         {
-            "push_constants": [
+            "set": "0",
+            "bindings": 
+            [
                 {
-                    "push_constant": 0,
-                    "name": "",
-                    "count": 1
+                    "id": "UIViewBuffer",
+                    "stages": ["vertex"],
+                    "usage": "storage_buffer",
+                    "binding": "0",
+                    "count": 1,
+                    "fields": [
+                        {
+                            "name": "instances",
+                            "type": "DrawElem",
+                            "count": 1
+                        }
+                    ]
                 }
-            ],
-            "uniform_layouts": [
+            ]
+        },
+        {
+            "set": "1",
+            "bindings": 
+            [
                 {
-                    "set": 0,
-                    "bindings": [
-                        {
-                            "binding": 0,
-                            "name": "Camera2D",
-                            "count": 1,
-                            "block":
-                            {
-                                "usage": "storage_buffer",
-                                "target": "storages",
-                                "index":0
-                            },
-                            "stages": [
-                                "vs"
-                            ]
-                        }
-                    ]
-                },
+                    "id": "_theme",
+                    "stages": ["fragment"],
+                    "usage": "combined_image_sampler",
+                    "binding": "0",
+                    "count": 1,
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "set": "2",
+            "bindings": 
+            [
                 {
-                    "set": 1,
-                    "bindings": [
-                        {
-                            "binding": 0,
-                            "name": "_theme",
-                            "count": 1,
-                            "block":
-                            {
-                                "usage": "combined_image_sampler",
-                                "target": "samplers",
-                                "index":0
-                            },
-                            "stages": [
-                                "fs"
-                            ]
-                        }
-                    ]
-                },
+                    "id": "_font",
+                    "stages": ["fragment"],
+                    "usage": "combined_image_sampler",
+                    "binding": "0",
+                    "count": 1,
+                    "fields": []
+                }
+            ]
+        },
+        {
+            "set": "3",
+            "bindings": 
+            [
                 {
-                    "set": 2,
-                    "bindings": [
-                        {
-                            "binding": 0,
-                            "name": "_font",
-                            "count": 1,
-                            "block":
-                            {
-                                "usage": "combined_image_sampler",
-                                "target": "samplers",
-                                "index":1
-                            },
-                            "stages": [
-                                "fs"
-                            ]
-                        }
-                    ],
-                    {
-                        "set": 3,
-                        "bindings": [
-                            {
-                                "binding": 0,
-                                "name": "_scene",
-                                "count": 1,
-                                "block":
-                                {
-                                    "usage": "combined_image_sampler",
-                                    "target": "samplers",
-                                    "index":2
-                                },
-                                "stages": [
-                                    "fs"
-                                ]
-                            }
-                        ]
-                    }
+                    "id": "_scene",
+                    "stages": ["fragment"],
+                    "usage": "combined_image_sampler",
+                    "binding": "0",
+                    "count": 1,
+                    "fields": []
                 }
             ]
         }
     ],
-    "outputs": [
+    "shaders": 
+    [
         {
-            "location": 0,
-            "format": "bgra_u8_norm",
-            "semantic": "COLOR",
-            "name": "out_color"
+            "name": "gui.vert",
+            "entry-point": "main",
+            "type": "vertex",
+            "uri": "gui-rounded-corner-sdf-text.vert"
+        },
+        {
+            "name": "gui.frag",
+            "entry-point": "main",
+            "type": "fragment",
+            "uri": "gui-rounded-corner-sdf-text.frag"
         }
     ],
-    "pipelines": [
+    "pipeline_layouts":
+    [
+        {
+            "blocks": [0],
+            "sets": [0,1,2,3]
+        }
+    ],
+    "pipeline_outputs":
+    [
+        {
+            "color_attachments": ["bgra_u8_norm"],
+            "depth_attachment": "depth_32",
+            "stencil_attachment": "undefined",
+            "sample_count": 1
+        }
+    ],
+    "pipelines":
+    [
         {
             "type": "Graphics",
             "name": "gui-pipeline",
             "topology": "triangle-strip",
-            "attributes": 0,
-            "rasterizer": 0,
-            "depth_stencil": 0,
-            "color_blend": 0,
+            "pipeline_output": 0,
             "pipeline_layout": 0,
-            "stages": [
-                0,
-                1
-            ],
-            "outputs": [0]
+            "raster_state": 0,
+            "depth_state": 0,
+            "blend_state": 0,
+            "stages": [0, 1]
         }
     ]
 }

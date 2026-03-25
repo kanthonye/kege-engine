@@ -8,7 +8,7 @@
 #ifndef update_decay_over_time_hpp
 #define update_decay_over_time_hpp
 
-#include "ecs.hpp"
+#include "../../../scene/ecs.hpp"
 
 namespace kege{
 

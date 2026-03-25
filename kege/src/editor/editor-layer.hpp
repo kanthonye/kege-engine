@@ -8,14 +8,7 @@
 #ifndef editor_hpp
 #define editor_hpp
 
-#include "../core/app/app-layer.hpp"
-
-#include "panels/hierarchy-panel.hpp"
-#include "panels/inspector-panel.hpp"
-#include "panels/viewport-panel.hpp"
-#include "panels/ui-file-browser.hpp"
-#include "ui-dock.hpp"
-#include "gui.hpp"
+#include "dock/ui-dock-split.hpp"
 
 namespace kege{
 
@@ -26,6 +19,19 @@ namespace kege{
         void operator()(const kege::WindowFrameBufferSizeEvent& event);
         void operator()(const kege::WindowSizeEvent& event);
 
+        kege::InputManager* getInputManager();
+        kege::ProjectManager* getProjectManager();
+        kege::AssetManager* getAssetManager();
+        kege::RenderGraph* getRenderGraph();
+        kege::ECS* getECS();
+        kege::GUI* getGUI();
+
+        std::vector< int32_t > getPanelIndice( const std::vector< std::string >& names);
+        int32_t getPanelIndex( const std::string& name );
+        ui::Panel* getPanel( uint32_t index );
+        ui::GhostObject* getGhostObject();
+
+        void displayPanel( uint32_t index );
         bool initialize();
         void shutdown();
         bool update();
@@ -39,23 +45,23 @@ namespace kege{
 
     public:
 
-        std::map< std::string, size_t > _panel_name_index_map;
+        std::map< std::string, int32_t > _panel_name_index_map;
         std::vector< Ref< ui::Panel > > _panels;
 
-        kege::InputManager* _input_manager;
         kege::ProjectManager* _project_manager;
+        kege::InputManager* _input_manager;
         kege::AssetManager* _asset_manager;
         kege::RenderGraph* _render_graph;
         kege::ECS* _ecs;
 
-
-        Ref< ui::DockContext > _context;
         ui::Dock _dock;
 
+        kege::Ref< ui::Layout > _layout;
         kege::GUI _gui;
 
-        Ref< ui::Layout > _layout;
         ui::Viewer _viewer;
+
+        ui::GhostObject _ghost;
 
         const ImageDefn* _color_image_defn;
         ref::Sampler _sampler;

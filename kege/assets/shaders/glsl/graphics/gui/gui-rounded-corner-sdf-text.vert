@@ -2,20 +2,19 @@
 
 struct DrawElem
 {
-    vec4 rect;
-    vec4 texel;
+    vec4  rect;
+    vec4  texel;
     ivec4 border;
-    vec4 clip_rect;
+    vec4  clip_rect;
     ivec4 combo;
 };
-
 
 layout( set = 0, binding = 0 ) buffer UIViewBuffer
 {
     DrawElem instances[];
 };
 
-layout( push_constant ) uniform Camera2D
+layout( push_constant ) uniform Camera
 {
     mat4 projection;
     vec4 resolution;
@@ -23,17 +22,17 @@ layout( push_constant ) uniform Camera2D
 
 const vec2 vertex_position[ 4 ] = vec2[]
 (
-    vec2( 0.f, 0.f),
     vec2( 1.f, 0.f),
-    vec2( 0.f,-1.f),
-    vec2( 1.f,-1.f)
+    vec2( 0.f, 0.f),
+    vec2( 1.f,-1.f),
+    vec2( 0.f,-1.f)
 );
 
 layout(location = 0) out vec4  color;
 layout(location = 1) out vec4  rect;
 layout(location = 2) out vec4  clip_rect;
 layout(location = 3) out vec2  text_uv;
-layout(location = 4) flat out ivec2 text_info;
+layout(location = 4) flat out  ivec2 text_info;
 layout(location = 5) out vec4  border_radius;
 layout(location = 6) out vec4  border_color;
 layout(location = 7) out float border_width;

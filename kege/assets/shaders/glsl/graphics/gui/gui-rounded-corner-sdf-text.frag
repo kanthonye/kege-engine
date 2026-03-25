@@ -51,16 +51,6 @@ float sdRoundedRect(vec2 p, vec2 size, vec4 r)
     vec2 q = abs(p) - h + vec2(radius);
     return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
 }
-// Function to compute the signed distance field for a rounded rectangle
-//float sdRoundedRect(vec2 p, vec2 size, vec4 r)
-//{
-//    vec2 q = abs(p) - size * 0.5 + vec2(
-//        p.x > 0.0 ? r.y : r.x,
-//        p.y > 0.0 ? r.z : r.w
-//    );
-//
-//    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0);
-//}
 
 vec4 sampleTexture(int texr_id)
 {

@@ -75,7 +75,7 @@ namespace kege{
         _shader_set.set->bind( frame, binding_index, bindings );
     }
 
-    const kege::IndexedSet& InstanceDrawBuffer::getShaderSet() const
+    const kege::BindSet& InstanceDrawBuffer::getShaderSet() const
     {
         return _shader_set;
     }

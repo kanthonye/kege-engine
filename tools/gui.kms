@@ -1,0 +1,307 @@
+
+// === gui.kems (Meta-Shader) ===
+// Everything declared once, used everywhere
+
+@structs
+{
+    @struct (stages = [vertex], name = "DrawElem")
+    {
+        vec4 rect;
+        vec4 texel;
+        ivec4 border;
+        vec4 clip_rect;
+        ivec4 combo;
+    }
+}
+
+@resources
+{
+    @set(0)
+    {
+        @binding(binding = 0, usage = UNIFORM_BUFFER, stages = [vertex])
+        UIViewBuffer
+        {
+            DrawElem instances[];
+        };
+    }
+
+    @set(1)
+    {
+        @binding(binding = 0, usage = COMBINED_IMAGE_SAMPLER, stages = [fragment])
+        image2D _theme;
+    }
+
+    @set(2)
+    {
+        @binding(binding = 0, usage = COMBINED_IMAGE_SAMPLER, stages = [fragment])
+        image2D _font;
+    }
+
+    @set(3)
+    {
+        @binding(binding = 0, usage = COMBINED_IMAGE_SAMPLER, stages = [fragment])
+        image2D _scene;
+    }
+}
+
+
+@push_blocks
+{
+    @push_block(stages = [vertex , fragment], offset = 0)
+    Camera2D
+    {
+        mat4 projection;
+        vec4 resolution;
+    };
+}
+
+@pipeline_state
+{
+    @rasterization
+    {
+        polygon_mode = FILL;
+        cull_mode = BACK;
+        front_face = COUNTER_CLOCKWISE;
+        depth_clamp_enable = false;
+        rasterizer_discard_enable = false;
+        depth_bias_enable = false;
+    }
+
+    @depth_stencil
+    {
+        depth_test_enable = true;
+        depth_write_enable = true;
+        depth_compare_op = LESS_OR_EQUAL;
+        depth_bounds_test_enable = false;
+        stencil_test_enable = false;
+    }
+
+    @color_blend
+    {
+        logic_op_enable = false;
+        attachment_count = 1;
+
+        @attachment(index = 0)
+        {
+            blend_enable = true;
+            src_color_blend_factor = SRC_ALPHA;
+            dst_color_blend_factor = ONE_MINUS_SRC_ALPHA;
+            color_blend_op = ADD;
+            src_alpha_blend_factor = ONE;
+            dst_alpha_blend_factor = ZERO;
+            alpha_blend_op = ADD;
+            color_write_mask = RGBA;
+        }
+    }
+
+    @multisample
+    {
+        rasterization_samples = 1;
+        sample_shading_enable = false;
+        min_sample_shading = 0.0;
+    }
+
+    @dynamic_states = [VIEWPORT, SCISSOR]
+}
+
+
+// ========= SHADER STAGES =========
+// Use declared names directly - no redeclaration!
+
+@vertex
+{
+    const vec2 vertex_position[ 4 ] = vec2[]
+    (
+        vec2( 0.f, 0.f),
+        vec2( 1.f, 0.f),
+        vec2( 0.f,-1.f),
+        vec2( 1.f,-1.f)
+    );
+
+    layout(location = 0) out vec4  color;
+    layout(location = 1) out vec4  rect;
+    layout(location = 2) out vec4  clip_rect;
+    layout(location = 3) out vec2  text_uv;
+    layout(location = 4) flat out ivec2 text_info;
+    layout(location = 5) out vec4  border_radius;
+    layout(location = 6) out vec4  border_color;
+    layout(location = 7) out float border_width;
+
+    vec4 unpackRGBA8(uint packed)
+    {
+        vec4 color;
+        color.r = float((packed >> 24) & 0xFF);
+        color.g = float((packed >> 16) & 0xFF);
+        color.b = float((packed >> 8) & 0xFF);
+        color.a = float(packed & 0xFF);
+
+        return color / 255.0;
+    }
+
+    ivec2 unpackUint16x2(uint packed)
+    {
+        return ivec2(
+            int(packed & 0xFFFFu),
+            int(packed >> 16)
+        );
+    }
+
+    void main()
+    {
+        clip_rect = instances[ gl_InstanceIndex ].clip_rect;
+        color = unpackRGBA8( instances[ gl_InstanceIndex ].combo.r );
+        text_info = unpackUint16x2( instances[ gl_InstanceIndex ].combo.g );
+        rect = instances[ gl_InstanceIndex ].rect;
+
+        border_radius.xy = vec2(unpackUint16x2( instances[ gl_InstanceIndex ].border.x ));
+        border_radius.zw = vec2(unpackUint16x2( instances[ gl_InstanceIndex ].border.y ));
+        border_color = unpackRGBA8( instances[ gl_InstanceIndex ].border.z );
+        border_width = float(instances[ gl_InstanceIndex ].border.w);
+
+        //color = instances[ gl_InstanceIndex ].color;
+        //position = rect.xy;
+        //size = rect.zw;
+
+        vec4 texel = instances[ gl_InstanceIndex ].texel;
+        text_uv = vertex_position[ gl_VertexIndex ] * vec2(1.f,-1.f);
+        text_uv = texel.xy + texel.zw * text_uv;
+
+        vec2 vp = vec2(rect.x, -rect.y) + rect.zw * vertex_position[ gl_VertexIndex ];
+        gl_Position = projection * vec4( vp, 0.0f, 1.0f );
+        gl_Position.y = -gl_Position.y;
+
+        //border_radius = instances[ gl_InstanceIndex ].combo.x;
+        //texture_id = instances[ gl_InstanceIndex ].combo.y;
+
+    }
+}
+
+@fragment
+{
+    layout(location = 0) in vec4  color;
+    layout(location = 1) in vec4  rect;          // xy = pos, zw = size
+    layout(location = 2) in vec4  clip_rect;
+    layout(location = 3) in vec2  text_uv;
+    layout(location = 4) flat in ivec2 text_info;
+    layout(location = 5) in vec4  border_radius; // already unpacked vec4
+    layout(location = 6) in vec4  border_color;  // already unpacked RGBA
+    layout(location = 7) in float border_width;  // already unpacked (px)
+
+    layout(location = 0) out vec4 final_color;
+
+    // p: fragment position relative to rect center
+    // size: full width/height
+    // r: vec4(TL, TR, BR, BL)
+    float sdRoundedRect(vec2 p, vec2 size, vec4 r)
+    {
+        vec2 h = size * 0.5;
+
+        // Determine quadrant
+        bool right  = p.x > 0.0;
+        bool bottom = p.y > 0.0;
+
+        float radius =
+            (!right && !bottom) ? r.x : // top-left
+            ( right && !bottom) ? r.y : // top-right
+            ( right &&  bottom) ? r.z : // bottom-right
+                                  r.w; // bottom-left
+
+        vec2 q = abs(p) - h + vec2(radius);
+        return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
+    }
+
+    vec4 sampleTexture(int texr_id)
+    {
+        if (texr_id == 0) return texture(_theme, text_uv);
+        if (texr_id == 1) return texture(_font,  text_uv);
+        if (texr_id == 2) return texture(_scene, text_uv);
+        return vec4(1.0);
+    }
+
+    void main()
+    {
+        vec2 frag = gl_FragCoord.xy * resolution.z;
+
+        // -----------------------------
+        // Clip rectangle
+        // -----------------------------
+        if
+        (
+            frag.x < clip_rect.x || frag.x > clip_rect.x + clip_rect.z ||
+            frag.y < clip_rect.y || frag.y > clip_rect.y + clip_rect.w
+        )
+        {
+            discard;
+        }
+
+        frag = frag / resolution.xy;
+
+        // -----------------------------
+        // Rectangle local space
+        // -----------------------------
+        vec2 size   = rect.zw;
+        vec2 center = rect.xy + size * 0.5;
+        vec2 p      = frag * resolution.xy - center;
+
+        // Clamp radii to sane values
+        vec4 r = min(border_radius, min(size.x, size.y) * 0.5);
+
+        // -----------------------------
+        // Signed distance
+        // -----------------------------
+        float d  = sdRoundedRect(p, size, r);
+        float aa = fwidth(d);
+
+        // Fill coverage (inside the shape)
+        float fill_alpha = smoothstep( aa, -aa, d );
+        vec3 rgb = color.rgb;
+
+        // -----------------------------
+        // Border coverage (band around edge)
+        // -----------------------------
+    //    float border_alpha = smoothstep(
+    //        border_width + aa,
+    //        border_width - aa,
+    //        abs(d)
+    //    );
+    //
+    //    // Base color & alpha
+    //    float A = fill_alpha;
+    //
+    //    // Apply border on top of fill
+    //    rgb = mix(rgb, border_color.rgb, border_alpha);
+    //    fill_alpha = max(A, border_alpha);
+
+        // -----------------------------
+        // Text rendering (your logic)
+        // -----------------------------
+        int texr_id = text_info.x;
+
+        vec4 texr_color = sampleTexture(texr_id);
+        if (texr_id == 1) // font
+        {
+            float width = 0.05;
+            float edge  = 0.07;
+
+            float text_alpha = 1.0 - texr_color.r;
+            text_alpha = 1.0 - smoothstep(width, width + edge, text_alpha);
+
+            fill_alpha *= text_alpha;
+        }
+        else// if (texr_id >= 0)
+        {
+            rgb *= texr_color.rgb;
+        }
+
+        fill_alpha *= color.a;
+
+        // -----------------------------
+        // Final output
+        // -----------------------------
+        if (fill_alpha <= 0.0)
+            discard;
+
+        //final_color = vec4(rgb, A);
+        final_color = vec4(rgb, fill_alpha);
+    }
+}

@@ -8,24 +8,26 @@
 #ifndef ui_panel_hpp
 #define ui_panel_hpp
 
-#include "ui-tree-node.hpp"
-#include "../../core/scene/ecs.hpp"
-#include "../../core/scene/scene.hpp"
-#include "../../core/app/project-manager.hpp"
+#include "../common/dependencies.hpp"
+
+namespace kege{
+    class EditorLayer;
+}
 
 namespace kege::ui{
 
     struct Panel : public kege::RefCounter
     {
+        virtual void operator()(const kege::ui::DragDropOffAssetMetadata& event){}
         const std::string getName()const{ return _name; }
+        kege::EditorLayer* getEditor(){ return _editor; }
         virtual void update() = 0;
 
-        Panel( const std::string& name, kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e );
+        Panel( const std::string& name, kege::EditorLayer* e );
         virtual ~Panel(){}
 
-        kege::ProjectManager* _project_manager;
+        kege::EditorLayer* _editor;
         kege::GUI* _gui;
-        kege::ECS* _ecs;
         std::string _name;
     };
 

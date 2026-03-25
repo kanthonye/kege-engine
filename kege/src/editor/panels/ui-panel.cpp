@@ -6,13 +6,14 @@
 //
 
 #include "ui-panel.hpp"
+#include "../editor-layer.hpp"
 
 namespace kege::ui{
 
-    Panel::Panel( const std::string& name, kege::ProjectManager* pm, kege::GUI* gui, kege::ECS* e )
+    Panel::Panel( const std::string& name, kege::EditorLayer* e )
     :   _name( name  )
-    ,   _project_manager( pm )
-    ,   _gui( gui )
-    ,   _ecs( e )
-    {}
+    ,   _editor( e )
+    ,   _gui(e->getGUI())
+    {
+    }
 }

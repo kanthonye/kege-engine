@@ -14,6 +14,8 @@
 #include <vector>
 
 namespace kege::ui{
+    typedef uint64_t UserId;
+
     class Layout;
 
     union Id
@@ -29,6 +31,14 @@ namespace kege::ui{
     constexpr inline bool operator==(const ui::Id &a, const ui::Id &b) { return a.num == b.num; }
     constexpr inline bool operator!=(const ui::Id &a, const ui::Id &b) { return a.num != b.num; }
 
+    struct Handle
+    {
+        //private:
+        UserId user_id;
+        Id handle;
+    };
+
+
     struct EID
     {
         ui::Id global;
@@ -42,28 +52,54 @@ namespace kege::ui{
 
     struct UID
     {
+    private:
+
+        struct Value
+        {
+            uint32_t value;
+            int32_t duplicates;
+            Value* next;
+        };
+
+        struct Recycler
+        {
+            Value* create();
+            ~Recycler();
+            Recycler();
+
+            Value* head;
+            Value* tail;
+        };
+
+    private:
+
+        inline friend bool operator==(const ui::UID &a, const ui::UID &b) { return a._value == b._value; }
+        inline friend bool operator!=(const ui::UID &a, const ui::UID &b) { return a._value != b._value; }
+
+        inline static UID create(){ return UID( _recycler.create() ); }
+
+        operator uint32_t()const;
+
         UID& operator=(const UID& uid);
         UID& operator=( UID&& uid);
 
         UID(const UID& uid);
         UID( UID&& uid);
 
-        UID();
         ~UID();
-
-        ui::Id id;
-        uint32_t widget_index;
+        UID();
 
     private:
 
-        void recycle();
+        UID( Value* value );
+        void clear();
 
-        mutable int* duplicates;
+    private:
+
+        Value* _value;
+        static Recycler _recycler;
+        static uint32_t _id_counter;
     };
-
-
-    constexpr inline bool operator==(const UID &a, const UID &b) { return a.id == b.id; }
-    constexpr inline bool operator!=(const UID &a, const UID &b) { return a.id != b.id; }
 
 }
 #endif  /* kege_uid_hpp */

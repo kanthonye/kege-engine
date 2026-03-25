@@ -60,8 +60,9 @@ namespace kege::ecs{
 
             for (comp_index = 0, k = 0; comp_index < _layout.attributes.size(); ++comp_index)
             {
-                if ( layout.attributes[ comp_index ].info->type == comp_type) continue;;
-                layout.attributes[ k ] = layout.attributes[ comp_index ];
+                if ( _layout.attributes[ comp_index ].info->type == comp_type) continue;
+                
+                layout.attributes[ k ] = _layout.attributes[ comp_index ];
                 layout.attributes[ k ].offset = layout.stride;
                 layout.stride += layout.attributes[ k ].info->size;
                 k += 1;

@@ -12,16 +12,29 @@
 #include <string>
 #include <unordered_map>
 #include "graphics-core.hpp"
-#include "string-to-enum-types.hpp"
 #include "image.hpp"
 #include "buffer.hpp"
+#include "sampler.hpp"
+#include "vertex-format.hpp"
+#include "rendering-info.hpp"
+#include "../pipeline/dynamic-state.hpp"
+#include "../pipeline/rasterizer-state.hpp"
+#include "../pipeline/shader.hpp"
 #include "../pipeline/shader-io.hpp"
+#include "../pipeline/blend-state.hpp"
+#include "../pipeline/depth-state.hpp"
+#include "../pipeline/rasterizer-state.hpp"
 
 namespace kege{
 
-    ShaderVarType stringToShaderVarType( const std::string& str );
+    DynamicState stringToDynamicState( const std::string& str );
 
-    kege::CompareOp stringToCompareOp( const std::string& type );
+    kege::ShaderVar stringToShaderVarType( const std::string& str );
+    kege::VertexInputRate stringToVertexInputRate( const std::string& str );
+
+    kege::ShaderVar convertVertexInputType( const std::string& type );
+
+    kege::ComparisonFunc stringToCompareOp( const std::string& type );
 
     StencilOp stringToStencilOp( const std::string& type );
 
@@ -33,15 +46,11 @@ namespace kege{
 
     FrontFace stringToFrontFace( const std::string& type );
 
-    kege::PolygonMode stringToPolygonMode( const std::string& type );
+    kege::FillMode stringToPolygonMode( const std::string& type );
 
     kege::CullMode stringToCullMode( const std::string& type );
 
     kege::PrimitiveTopology stringToPrimitiveTopology( const std::string& type );
-
-    kege::DescriptorType convertDescriptorType( const std::string& type );
-
-    kege::ShaderVarType convertVertexInputType( const std::string& type );
 
     kege::Filter stringToFilter( const std::string& name );
 
@@ -75,5 +84,4 @@ namespace kege{
 
     Format stringToFormat( const std::string& name );
 }
-
 #endif /* string_to_enum_types_hpp */
