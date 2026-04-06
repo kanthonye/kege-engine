@@ -16,7 +16,7 @@ namespace kege{
 
     class AppWindow;
 
-    class UserInputReceiver : public WindowListener
+    class UserInputReceiver// : public WindowListener
     {
     public:
 

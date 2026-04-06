@@ -11,6 +11,7 @@
 #include "modules/asset-manager-tool-bar.hpp"
 #include "modules/asset-manager-create-asset.hpp"
 #include "modules/create-asset-mesh-ui.hpp"
+#include "modules/ui-create-material.hpp"
 #include "ui-asset-manager.hpp"
 
 
@@ -23,7 +24,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerContextMenu(AssetManagerUI* m,kege::GUI* g, uint64_t user_id): AssetManagerModule(m,g, user_id){}
+        AssetManagerContextMenu(AssetManagerUI* m,kege::GUI* g): AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
         void update();
 
@@ -44,7 +45,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerStatusBar(AssetManagerUI* m,kege::GUI* g, uint64_t user_id): AssetManagerModule(m,g, user_id){}
+        AssetManagerStatusBar(AssetManagerUI* m,kege::GUI* g): AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
         void update();
 
@@ -60,17 +61,16 @@ namespace kege::ui{
 
 namespace kege::ui{
 
-    AssetManagerUI::AssetManagerUI(kege::EditorLayer* editor, uint64_t user_id)
-    :   ui::Panel("AssetManager", editor)
+    AssetManagerUI::AssetManagerUI(kege::ui::DockManager* dm)
+    :   ui::Panel("AssetManager", dm)
     ,   _string_categories({{"All"}, {"Textures"}, {"Models"}, {"Material"}, {"Shaders"}, {"Sounds"}, {"Scripts"}})
     ,   _category_index(0)
     ,   _show_generate_window(false)
-    ,   _user_id(user_id)
     {
         _categories.resize(_string_categories.size());
         for (int i=0; i<_string_categories.size(); ++i)
         {
-            _categories[i].text = ui::Text
+            _categories[i] = ui::Text
             {
                 .width = 100,
                 .color = 0xFFFFFFFF,
@@ -80,14 +80,15 @@ namespace kege::ui{
             };
         }
 
-        _modules.push_back(new AssetManagerToolBar(this, _gui, UI_BASE_ID()));
-        _modules.push_back(new AssetManagerFolderTree(this, _gui, UI_BASE_ID()));
-        _modules.push_back(new AssetManagerAssetView(this, _gui, UI_BASE_ID()));
-        _modules.push_back(new AssetManagerImport(this, _gui, UI_BASE_ID()));
-        _modules.push_back(new AssetManagerContextMenu(this, _gui, UI_BASE_ID()));
-        _modules.push_back(new AssetManagerCreateAsset(this, _gui, UI_BASE_ID()));
+        _modules.push_back(new AssetManagerToolBar(this, _gui));
+        _modules.push_back(new AssetManagerFolderTree(this, _gui));
+        _modules.push_back(new AssetManagerAssetView(this, _gui));
+        _modules.push_back(new AssetManagerImport(this, _gui));
+        _modules.push_back(new AssetManagerContextMenu(this, _gui));
+        _modules.push_back(new AssetManagerCreateAsset(this, _gui));
 
-        _modules.push_back(new CreateAssetMeshUI(this, _gui, UI_BASE_ID()));
+        _modules.push_back(new CreateAssetMeshUI(this, _gui));
+        _modules.push_back(new kege::ui::CreateMaterial(this, _gui));
     }
 
     AssetManagerUI::~AssetManagerUI()
@@ -104,7 +105,7 @@ namespace kege::ui{
         }
     }
 
-    void AssetManagerUI::update()
+    void AssetManagerUI::updateLayout( int16_t layer )
     {
 //        // Process any pending file changes
 //        processFileChanges();
@@ -114,14 +115,11 @@ namespace kege::ui{
 
         // Process any pending imports
 
-        _gui->push({ .layer = 0, .user_id = UI_BASE_ID(), .style = &_gui->_theme.panel, .clip_overflow = true });
         for (auto& modul : _modules)
         {
             modul->update();
         }
-        _gui->pop();
         _frame_counter++;
-
     }
 
     // Public API for importing assets
@@ -178,4 +176,9 @@ namespace kege::ui{
         _assets.push_back(amd);
     }
 
+    void AssetManagerUI::handle(const kege::ui::AssetMetadataDropOff& event)
+    {
+        std::cout << event.handle[0]->name << " DROPOFF\n";
+        return;
+    }
 }

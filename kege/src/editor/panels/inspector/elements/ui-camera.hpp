@@ -8,10 +8,10 @@
 #ifndef ui_camera_hpp
 #define ui_camera_hpp
 
+#include "../ui-components.hpp"
 #include "../../../common/dependencies.hpp"
 
-namespace kege::ui
-{
-    bool camera( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
+namespace kege::ui{
+//    bool camera( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* ui_camera_hpp */

@@ -135,6 +135,7 @@ namespace kege{
     void GlfwWindow::setResizable(bool resizable)
     {
         _create_info.resizable = resizable;
+        glfwSetWindowAttrib(_window, GLFW_RESIZABLE, resizable);
     }
 
     void GlfwWindow::setDecorated(bool decorated)
@@ -225,19 +226,29 @@ namespace kege{
         glfwHideWindow( _window );
     }
 
-    GlfwWindow::GlfwWindow()
+    void GlfwWindow::terminate()
+    {
+        glfwTerminate();
+    }
+
+    bool GlfwWindow::init()
     {
         if ( !glfwInit() )
         {
-            throw std::runtime_error( "Failed to initialize GLFW!" );
+            kege::Log::error << "Failed to initialize GLFW!" <<kege::Log::nl;
+            return false;
         }
+        return true;
+    }
+
+    GlfwWindow::GlfwWindow()
+    {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API); // No OpenGL context
     }
 
     GlfwWindow::~GlfwWindow()
     {
         destroy();
-        glfwTerminate();
     }
 
 

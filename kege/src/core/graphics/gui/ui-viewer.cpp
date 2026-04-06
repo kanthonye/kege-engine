@@ -233,33 +233,43 @@ namespace kege::ui{
             );
         }
     }
+    bool checkOverlap(const ui::Rect& a, const ui::Rect& b) {
+        // Check if one rectangle is to the left of the other
+        if (a.x + a.width < b.x || b.x + b.width < a.x) {
+            return false;
+        }
 
-    void Viewer::draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect )
+        // Check if one rectangle is above the other
+        // Note: This logic works regardless of whether Y increases up or down,
+        // as long as it is consistent for both rectangles.
+        if (a.y + a.height < b.y || b.y + b.height < a.y) {
+            return false;
+        }
+
+        return true;
+    }
+    void Viewer::draw( ui::Layout& layout, int pid, ui::Rect clip_rect )
     {
         Widget* widget = layout[ pid ];
         draw( *widget, clip_rect );
 
         if ( widget->clip_overflow )
         {
-            ui::Rect clip_rect = widget->rect;
-
+            clip_rect = widget->rect;
             clip_rect.x += widget->padding.left;
             clip_rect.y += widget->padding.above;
             clip_rect.width -= widget->padding.left + widget->padding.right;
             clip_rect.height -= widget->padding.above + widget->padding.below;
-            if ( clip_rect.width > 0 && clip_rect.height > 0 )
-            {
-                for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
-                {
-                    draw( layout, eid, clip_rect );
-                }
-            }
         }
-        else
+
+        if ( clip_rect.width > 0 && clip_rect.height > 0 )
         {
             for ( int eid = layout.head( pid ); eid != 0; eid = layout.next( eid )  )
             {
-                draw( layout, eid, clip_rect );
+                if ( checkOverlap(widget->rect, layout[ eid ]->rect))
+                {
+                    draw( layout, eid, clip_rect );
+                }
             }
         }
     }
@@ -268,7 +278,8 @@ namespace kege::ui{
     {
         for (int layer_index = 0; layer_index < layout._layers.size(); ++layer_index)
         {
-            for( uint32_t root = layout._layers[ layer_index ].head; root != 0; root = layout._widgets[ root ].layer.next )
+            ui::Layer& layer = layout._layers[ layer_index ];
+            for( uint32_t root = layer.head; root != 0; root = layout.next( root ) )
             {
                 draw( layout, root, _clip_rect );
             }

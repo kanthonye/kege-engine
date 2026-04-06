@@ -6,6 +6,7 @@
 //
 
 #include "../../editor-layer.hpp"
+#include "../../dock/ui-dock-manager.hpp"
 #include "hierarchy-panel.hpp"
 
 #include <unordered_map>
@@ -15,10 +16,9 @@
 
 namespace kege::ui{
 
-    void HierarchyPanel::update()
+    void HierarchyPanel::updateLayout( int16_t layer )
     {
-        kege::ProjectManager* project_manager = _editor->getProjectManager();
-        
+        kege::ProjectManager* project_manager = _manager->getEditor()->getProjectManager();
         if (!project_manager->empty())
         {
             ref::Scene scene = project_manager->getSceneManager()->getScene();
@@ -31,19 +31,18 @@ namespace kege::ui{
             }
         }
 
-        const int layer = 0;
-        _gui->push({ .layer = layer, .style = &_gui->_theme.panel});
-        _gui->beginScrollContainer(layer, _gui->getAddressAsInt(this));
-        handleDeletion();
-        handleCreation();
+        _gui->beginScrollContainer( _container, layer );
+        {
+            handleDeletion();
+            handleCreation();
 
-        updateToolbar();
-        updateTreeView(_scene->root());
-        updateDragAndDrop();
-        //updateStatistics();
-        updateSelection();
+            updateToolbar();
+            updateTreeView(_scene->root());
+            updateDragAndDrop();
+            //updateStatistics();
+            updateSelection();
+        }
         _gui->endScrollContainer();
-        _gui->pop();
     }
 
     void HierarchyPanel::updateToolbar()
@@ -53,7 +52,7 @@ namespace kege::ui{
         uint32_t bg_color = 0xFFFFFF08;
 
         _gui->beginRow(0);
-        _gui->push({.layer = 0, .style = &_gui->_theme.hierarchy_main_bar});
+        _gui->push({.layer = 0, .style = &_gui->theme().hierarchy_main_bar});
 
         _gui->put
         ({
@@ -71,7 +70,7 @@ namespace kege::ui{
             createEntity();
         }
 
-        _gui->put({.layer = 0, .style = &_gui->_theme.x_seperator});
+        _gui->put({.layer = 0, .style = &_gui->theme().x_seperator});
 
         _gui->put
         ({
@@ -89,7 +88,7 @@ namespace kege::ui{
             deleteSelectedEntities();
         }
 
-        _gui->put({.layer = 0, .style = &_gui->_theme.x_seperator});
+        _gui->put({.layer = 0, .style = &_gui->theme().x_seperator});
 
         _gui->put
         ({
@@ -119,13 +118,13 @@ namespace kege::ui{
         uint32_t small_butn_colr = 0xFFFFFF03;
         uint32_t small_butn_hot_colr = 0xFFFFFF10;
 
-        bool highlight = node->selected || _gui->mouseover(node->uid);
+        bool highlight = node->selected || _gui->mouseover(node->uid[0]);
 
         _gui->push
         ({
             .layer = 0,
-            .user_id = node->uid,
-            .style = highlight ? &_gui->_theme.hierarchy_entity_selected : &_gui->_theme.hierarchy_entity,
+            .user_id = node->uid[0],
+            .style = highlight ? &_gui->theme().hierarchy_entity_selected : &_gui->theme().hierarchy_entity,
             .single_click = ui::ClickTrigger::Immediate,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -133,11 +132,11 @@ namespace kege::ui{
         _gui->put
         ({
             .layer = 0,
-            .user_id = node->uid_expand,
+            .user_id = node->uid[1],
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
             .rect = {.width = 15,.height = 15},
-            .color = _gui->mouseover(node->uid_expand) ? small_butn_hot_colr : small_butn_colr,
+            .color = _gui->mouseover(node->uid[1]) ? small_butn_hot_colr : small_butn_colr,
             .text = ui::Text
             {
                 .ptr = node->expand ? ">" : "v",
@@ -148,7 +147,7 @@ namespace kege::ui{
                 .align = ui::AlignText::Center
             },
         });
-        if ( _gui->click(node->uid_expand) )
+        if ( _gui->click(node->uid[1]) )
         {
             node->expand = !node->expand;
         }
@@ -158,17 +157,17 @@ namespace kege::ui{
         _gui->put
         ({
             .layer = 0,
-            .style = &_gui->_theme.x_seperator
+            .style = &_gui->theme().x_seperator
         });
 
         _gui->put
         ({
             .layer = 0,
-            .user_id = node->uid_visible,
+            .user_id = node->uid[2],
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
             .rect = {.width = 15,.height = 15},
-            .color = _gui->mouseover(node->uid_visible) ? small_butn_hot_colr : small_butn_colr,
+            .color = _gui->mouseover(node->uid[2]) ? small_butn_hot_colr : small_butn_colr,
             .text = ui::Text
             {
                 .ptr = node->visible ? "o" : "-",
@@ -179,7 +178,7 @@ namespace kege::ui{
                 .align = ui::AlignText::Center
             },
         });
-        if ( _gui->click(node->uid_visible) )
+        if ( _gui->click(node->uid[2]) )
         {
             node->visible = !node->visible;
         }
@@ -187,11 +186,11 @@ namespace kege::ui{
         _gui->put
         ({
             .layer = 0,
-            .user_id = node->uid_delete,
+            .user_id = node->uid[3],
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
             .rect = {.width = 15,.height = 15},
-            .color = _gui->mouseover(node->uid_delete) ? small_butn_hot_colr : small_butn_colr,
+            .color = _gui->mouseover(node->uid[3]) ? small_butn_hot_colr : small_butn_colr,
             .text = ui::Text
             {
                 .ptr = "x",
@@ -202,7 +201,7 @@ namespace kege::ui{
                 .align = ui::AlignText::Center
             },
         });
-        if ( _gui->click(node->uid_delete) )
+        if ( _gui->click(node->uid[3]) )
         {
             _deletables.push_back( node->entity_id );
             node->visible = !node->visible;
@@ -210,7 +209,7 @@ namespace kege::ui{
 
         _gui->pop();
 
-        if ( _gui->click(node->uid) )
+        if ( _gui->click(node->uid[0]) )
         {
             _selected_id = node->entity_id;
             Communication::broadcast< const SetSelectedEntity& >({ node->entity });
@@ -221,7 +220,7 @@ namespace kege::ui{
 
     void HierarchyPanel::updateTreeView( ecs::Entity entity, int depth )
     {
-        kege::ECS* ecs = _editor->getECS();
+        kege::ECS* ecs = _manager->getEditor()->getECS();
         EntityNode* node = getEntityNode( entity );
         buildUI(node, depth);
         for (ecs::Entity child = ecs->begin(entity); child != 0; child = ecs->next(child))
@@ -232,8 +231,8 @@ namespace kege::ui{
 
     void HierarchyPanel::updateTreeView( ecs::Entity entity )
     {
-        kege::ECS* ecs = _editor->getECS();
-        _gui->push({.layer = 0, .style = &_gui->_theme.column});
+        kege::ECS* ecs = _manager->getEditor()->getECS();
+        _gui->push({.layer = 0, .style = &_gui->theme().column});
         for (ecs::Entity child = ecs->begin(entity); child != 0; child = ecs->next(child))
         {
             updateTreeView(child, 0);
@@ -282,7 +281,7 @@ namespace kege::ui{
         if (!_scene) return ecs::Entity{0};
 
         // Create entity in ECS
-        ecs::Entity entity = _editor->getECS()->create();
+        ecs::Entity entity = _manager->getEditor()->getECS()->create();
 
         // Add to scene
         _scene->insert(entity);
@@ -350,7 +349,7 @@ namespace kege::ui{
             if (itr != _entity_map.end())
             {
                 _scene->remove(itr->second->entity);
-                _editor->getECS()->destroy(itr->second->entity);
+                _manager->getEditor()->getECS()->destroy(itr->second->entity);
                 itr->second.clear();
                 _entity_map.erase( itr );
 
@@ -389,8 +388,8 @@ namespace kege::ui{
         _selected_nodes.clear();
     }
 
-    HierarchyPanel::HierarchyPanel( kege::EditorLayer* editor )
-    :   kege::ui::Panel( "Hierarchy", editor )
+    HierarchyPanel::HierarchyPanel( kege::ui::DockManager* dm )
+    :   kege::ui::Panel( "Hierarchy", dm )
     ,   _creation_count(0)
     {
         text_create = _gui->layout()->text("create", 20);
@@ -411,6 +410,19 @@ namespace kege::ui{
         _text_expand_all = _gui->layout()->text("Expand All", 20);
         _text_collapse_all = _gui->layout()->text("Collapse All", 20);
         _text_focus = _gui->layout()->text("Focus", 20);
+
+
+        _container[0]       = _uid_root[0];
+        _container[1]       = _uid_root[1];
+        _create_entity_uid  = _uid_root[2];
+        _create_folder_uid  = _uid_root[3];
+        _delete_uid         = _uid_root[4];
+        _duplicate_uid      = _uid_root[5];
+        _expand_all_uid     = _uid_root[6];
+        _collapse_all_uid   = _uid_root[7];
+        _filter_field_uid   = _uid_root[8];
+        _tree_container_uid = _uid_root[9];
+        _focus_button_uid   = _uid_root[10];
     }
 
 }

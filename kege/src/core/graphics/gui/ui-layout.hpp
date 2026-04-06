@@ -94,12 +94,12 @@ namespace kege::ui{
 
     public:
 
-        template<typename Params> void pushDeferredOp(UserId user_id, WidgetId widget_index, DeferredOperation fn, const Params& params)
+        template<typename Params> void pushDeferredOp(ui::ID user_id, WidgetId widget_index, DeferredOperation fn, const Params& params)
         {
             _deferred_operations.push< Params >(user_id, widget_index, fn, params);
         }
 
-        template<typename Params> void pushDeferredOpPtr(UserId user_id, WidgetId widget_index, DeferredOperation fn, Params* params)
+        template<typename Params> void pushDeferredOpPtr(ui::ID user_id, WidgetId widget_index, DeferredOperation fn, Params* params)
         {
             _deferred_operations.pushPtr< Params >(user_id, widget_index, fn, params);
         }
@@ -213,7 +213,7 @@ namespace kege::ui{
          *
          * @return true if mouse is over ui element, false otherwise.
          */
-        bool mouseover( const UserId& uid ) const;
+        bool mouseover( const ui::ID& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was double clicked on.
@@ -222,7 +222,7 @@ namespace kege::ui{
          *
          * @return true if the element was double clicked on, false otherwise.
          */
-        bool doubleClick( const UserId& uid ) const;
+        bool doubleClick( const ui::ID& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id was single clicked on.
@@ -231,7 +231,7 @@ namespace kege::ui{
          *
          * @return true if the ui-element was single clicked on, false otherwise.
          */
-        bool click( const UserId& uid ) const;
+        bool click( const ui::ID& uid ) const;
 
         /**
          * Checks if a ui-element that is associated with geven id has focus.
@@ -240,7 +240,7 @@ namespace kege::ui{
          *
          * @return true if the ui-element has focus, false otherwise.
          */
-        bool hasFocus( const UserId& uid )const;
+        bool hasFocus( const ui::ID& uid )const;
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -404,17 +404,9 @@ namespace kege::ui{
         mutable HitRecord _curr;
         mutable HitRecord _next;
 
-
-//        mutable WidgetId _active;
-//        mutable WidgetId _focus;
-//        mutable WidgetId _hot;
-//        mutable WidgetId _hit;
-
         double _dms;
         
         uint32_t _current_parent;
-//        uint32_t _active_index;
-//        uint32_t _hot_index;
 
         uint32_t _height;
         uint32_t _width;

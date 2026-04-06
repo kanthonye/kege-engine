@@ -17,7 +17,7 @@ namespace kege::ui{
     {
     public:
 
-        CreateAssetMeshUI(AssetManagerUI* m,kege::GUI* g, uint64_t user_id);
+        CreateAssetMeshUI(AssetManagerUI* m,kege::GUI* g);
         void operator()(const std::string& type, void* data);
         void update();
 
@@ -26,9 +26,13 @@ namespace kege::ui{
     private:
 
         static std::vector< Ref< CreateMeshUI > > _create_mesh_uis;
-        static std::vector<ListElem> _shape_labels;
+        static std::vector< kege::ui::Text > _shape_labels;
 
-        ui::UserId _close_butn;
+
+        ui::UID _uid;
+        uint32_t _id_offset;
+
+        //ui::ID _close_butn;
         bool _open_window;
         ui::Rect _rect;
         int _selection;

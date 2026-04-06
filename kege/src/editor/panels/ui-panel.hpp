@@ -10,25 +10,33 @@
 
 #include "../common/dependencies.hpp"
 
-namespace kege{
-    class EditorLayer;
-}
 
 namespace kege::ui{
+    class DockManager;
 
     struct Panel : public kege::RefCounter
     {
-        virtual void operator()(const kege::ui::DragDropOffAssetMetadata& event){}
-        const std::string getName()const{ return _name; }
-        kege::EditorLayer* getEditor(){ return _editor; }
-        virtual void update() = 0;
+        static void updateRectOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        virtual void operator()(const kege::ui::AssetMetadataDropOff& event);
+        virtual void handle(const kege::ui::AssetMetadataDropOff& event){}
 
-        Panel( const std::string& name, kege::EditorLayer* e );
+        const std::string getName()const{ return _name; }
+        kege::ui::DockManager* getManager(){ return _manager; }
+        virtual void updateLayout( int16_t layer ) = 0;
+        virtual void update();
+
+        Panel( const std::string& name, kege::ui::DockManager* e );
         virtual ~Panel(){}
 
-        kege::EditorLayer* _editor;
+
+
+        kege::ui::DockManager* _manager;
         kege::GUI* _gui;
         std::string _name;
+
+        ui::WidgetId _widget_index;
+        kege::ui::Rect _rect;
+        kege::ui::UID _uid;
     };
 
 }

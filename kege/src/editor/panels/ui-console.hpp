@@ -108,11 +108,11 @@ namespace kege::ui{
     {
     public:
 
-        Console( kege::EditorLayer* editor );
+        Console( kege::ui::DockManager* dm );
 
         ~Console() override;
 
-        void update() override;
+        void updateLayout( int16_t layer )override;
 
         // Public API for adding logs programmatically
         void log(const std::string& message, LogLevel level = LogLevel::INFO);
@@ -171,6 +171,9 @@ namespace kege::ui{
         // Command system
         std::unordered_map<std::string, std::unique_ptr<ConsoleCommand>> _commands;
         std::mutex _command_mutex;
+
+
+        ui::UID _uid;
 
         // UI state
         ui::WidgetHandle _log_area_uid;

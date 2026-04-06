@@ -6,6 +6,7 @@
 //
 
 #include "../../../editor-layer.hpp"
+#include "../../../dock/ui-dock-manager.hpp"
 #include "create-mesh-ui.hpp"
 //namespace kege::ui{
 //
@@ -16,9 +17,9 @@
 //        enum GenState{EDITING, GENERATE, COMPLETE};
 //        virtual void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity)
 //        {
-//            gui->push({.style = &gui->_theme.row, .single_click = ui::ClickTrigger::Continuous});
+//            gui->push({.style = &gui->theme().row, .single_click = ui::ClickTrigger::Continuous});
 //            gui->put({.text = text, .rect = {.width = 100, .height = 20} });
-//            gui->put({.style = &gui->_theme.x_seperator});
+//            gui->put({.style = &gui->theme().x_seperator});
 //            gui->put({.color = 0x00FF00FF, .rect = {.width = 10, .height = 10} });
 //            gui->put({.color = 0xFF0000FF, .rect = {.width = 10, .height = 10} });
 //            gui->pop();
@@ -46,7 +47,7 @@
 //
 //            if ( gen_state == EDITING )
 //            {
-//                gui->push({.layer = layer, .style = &gui->_theme.column});
+//                gui->push({.layer = layer, .style = &gui->theme().column});
 //                gui->scrubber(layer, gui->getAddressAsInt(lengths.x), text_width,  lengths.x);
 //                gui->scrubber(layer, gui->getAddressAsInt(lengths.y), text_height, lengths.y);
 //                gui->scrubber(layer, gui->getAddressAsInt(lengths.z), text_depth,  lengths.z);

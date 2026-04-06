@@ -9,7 +9,242 @@
 
 namespace kege{
 
-    bool GUI::submit( ui::UserId user_id, const char* label)
+    bool GUI::input(const ui::ID& user_id, uint16_t layer, ui::Cursor::InputType type, TextFieldMode& mode, ui::Text& text )
+    {
+        if (mode == TextFieldMode::Editing)
+        {
+            text.ptr = getCharBufr();
+        }
+
+        ui::WidgetId widget_id = _layout->put
+        ({
+            .user_id = user_id,
+            .layer = 2,
+            .text = text,
+            .single_click = ui::ClickTrigger::OnRelease,
+            .double_click = ui::ClickTrigger::Immediate,
+            .rect = {0, 0, 0, text.height},
+            .color = (mode == TextFieldMode::Editing) ? 0x66FFFF35 : (mode == TextFieldMode::Focused) ? 0xFFFFFF18 : 0xFFFFFF05,
+            .width = ui::extend(),
+        });
+
+        _layout->pushDeferredOp(user_id, widget_id, editTextOp, TextField
+        {
+            .type = type,
+            .mode = mode,
+            .edited = _edited,
+            .editing = _editing,
+            .str = text.ptr,
+            .str_len = _str_len,
+            .str_capacity = CHAR_BUFR_CAPACITY
+        });
+
+        return _edited;
+    }
+
+    void GUI::labelScrubber(const ui::ID& user_id, int16_t layer, const char* label, double& value)
+    {
+        _layout->push
+        ({
+            .layer = layer,
+            .padding = {10,5,10,5},
+            //.border.corner_curves = {border_radius,0,0,border_radius},
+            //.rect = {0,0,200,30},
+            .color = 0xFFFFFF08,
+            .gap = {2,2},
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::RIGHT,
+                .items = ui::AlignItem::CENTER,
+            },
+            .width = ui::extend(),
+            .height = ui::fixed(40),
+        });
+        _layout->put
+        ({
+            .layer = layer,
+            .text = ui::Text{.width = 60, .height = 24, .color = 0xFFFFFF30, .font_size = 24, .ptr = label},
+            .single_click = ui::ClickTrigger::OnRelease,
+            .rect = {0,0, 60, 24},
+            .color = 0xFFFFFF00,
+        });
+        this->scrubber(user_id, layer, value);
+        _layout->pop();
+    }
+
+    void GUI::labelInput(const char* label, const ui::ID& user_id, int16_t layer, TextFieldMode& mode, ui::Text& text)
+    {
+        _layout->push
+        ({
+            .layer = layer,
+            //.border.corner_curves = {border_radius,0,0,border_radius},
+            .color = 0xFFFFFF08,
+            .gap = {2,2},
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::RIGHT,
+                .items = ui::AlignItem::CENTER,
+            },
+            .width = ui::extend(),
+            .height = ui::fixed(40),
+        });
+        _layout->put
+        ({
+            .layer = 2,
+            .text = ui::Text{.width = 60, .height = 20, .color = 0xFFFFFF30, .font_size = 24, .ptr = label},
+            .single_click = ui::ClickTrigger::OnRelease,
+            .rect = {0,0, 60, 30},
+            .color = 0xFFFFFF00,
+            .padding = {10,5,5,10},
+        });
+        input(user_id, layer, ui::Cursor::InputType::Any, mode, text);
+        _layout->pop();
+    }
+
+    void GUI::beginWindow(const ui::ID uid[3], int16_t layer, ui::Rect& rect, const char* title, bool& close_window)
+    {
+        _layout->push
+        ({
+            .user_id = uid[0],
+            .layer = layer,
+            .rect = rect,
+            .position = ui::Positioning::Independent,
+            .padding = {10,10,10,10},
+            .color = 0x18141DFF,
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::DOWN,
+            },
+            .clip_overflow = true
+        });
+
+        _layout->push
+        ({
+            .user_id = uid[1],
+            .layer = layer,
+            .width = ui::extend(),
+            .height = ui::fixed(30),
+            .color = 0xFFFFF00,
+            .single_click = ui::ClickTrigger::Continuous,
+            .double_click = ui::ClickTrigger::Immediate,
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::RIGHT,
+                .items = ui::AlignItem::CENTER,
+            }
+        });
+        {
+            float w = rect.width - 50;
+            float h = 30;
+            _layout->put // the title
+            ({
+                .layer = 2,
+                .text = ui::Text
+                {
+                    .width = w,
+                    .height = h,
+                    .color = 0xFFFFFF30,
+                    .font_size = 30,
+                    .ptr = title
+                },
+                .single_click = ui::ClickTrigger::OnRelease,
+                .rect = {0,0, w,h},
+                .color = 0xFFFFFF00,
+                .padding = {10,5,5,10},
+            });
+            _layout->put({.style = &_theme.x_seperator});
+            charButn(uid[2], "x", 7, 0);
+        }
+        _layout->pop();
+        _layout->put({.rect = {0,0,10,10}});
+
+        if( _layout->click(uid[2]) )
+        {
+            close_window = false;
+        }
+
+        if( _layout->click(uid[1]) )
+        {
+            rect.x += _layout->inputManager()->getMouse()->getDelta().x;
+            rect.y += _layout->inputManager()->getMouse()->getDelta().y;
+        }
+    }
+    
+    void GUI::endWindow()
+    {}
+
+
+    void GUI::editTextOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    {
+        TextField* text = static_cast<TextField*>(data);
+        //TextFieldState* state = text->state;
+        text->edited = false;
+
+        if ( layout->click( user_id ) && text->mode != TextFieldMode::Editing )
+        {
+            text->mode = TextFieldMode::Focused;
+        }
+        else if ( layout->doubleClick( user_id ) )
+        {
+            if (text->mode == TextFieldMode::Editing)
+            {
+                layout->cursor()->selectAll( widget_id, getCharBufr(), text->str_len );
+            }
+            else
+            {
+                text->mode = TextFieldMode::Editing;
+            }
+        }
+        else if (!layout->hasFocus( user_id ) && text->mode != TextFieldMode::Idle)
+        {
+            // Lost focus
+            if (text->mode == TextFieldMode::Editing)
+            {
+                text->edited = true; // Text was being edited
+            }
+            layout->cursor()->stopEditing();
+            text->editing = false;
+
+            text->mode = TextFieldMode::Idle;
+        }
+
+        if (text->mode == TextFieldMode::Editing)
+        {
+            // begin editing
+            if (!text->editing)
+            {
+                text->editing = true;
+                text->str_len = strlen(text->str);
+                memcpy(getCharBufr(), text->str, text->str_len);
+
+                layout->cursor()->startEditing
+                (
+                    user_id, widget_id, text->type,
+                    getCharBufr(), text->str_len, CHAR_BUFR_CAPACITY
+                );
+                layout->cursor()->computeCursorPosition( widget_id );
+            }
+
+            if (text->editing)
+            {
+                if (!layout->cursor()->update( widget_id ))
+                {
+                    text->mode = TextFieldMode::Idle;
+                    text->edited = true;
+                }
+            }
+        }
+    }
+
+
+
+
+
+    bool GUI::submit( ui::ID user_id, const char* label)
     {
         _layout->put
         ({
@@ -32,74 +267,110 @@ namespace kege{
         return _layout->click( user_id );
     }
 
-    void GUI::text(const char* label, char* input, size_t& size, size_t capacity)
+    bool GUI::collapsableHeader( const ui::ID& id, int16_t layer, bool& expand, const ui::Text& text )
     {
         _layout->push
         ({
-            .layer = 2,
-            //.border.corner_curves = {border_radius,0,0,border_radius},
-            .color = 0xFFFFFF08,
-            .gap = {2,2},
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::RIGHT,
-                .items = ui::AlignItem::CENTER,
-            },
+            .layer = layer,
+            .user_id = id,
             .width = ui::extend(),
-            .height = ui::fixed(40),
-        });
-        _layout->put
-        ({
-            .layer = 2,
-            .text = ui::Text{.width = 60, .height = 20, .color = 0xFFFFFF30, .font_size = 24, .ptr = label},
+            .height = ui::fixed(20),
+            .padding = {10, 0, 10, 0,},
+            .alignment = {
+                .direction = ui::AlignDir::DOWN
+            },
+            //.style = &_theme.collapsable_header,
             .single_click = ui::ClickTrigger::OnRelease,
-            .rect = {0,0, 60, 30},
-            .color = 0xFFFFFF00,
-            .padding = {10,5,5,10},
+            .double_click = ui::ClickTrigger::Immediate,
+            .color = 0xFFFFFF06,
         });
-        textField(2, getAddressAsInt(input), input, capacity, size);
+        {
+            _layout->push
+            ({
+                .layer = layer,
+                .user_id = id,
+                .width = ui::extend(),
+                .height = ui::fixed(20),
+                .alignment = {
+                    .direction = ui::AlignDir::RIGHT
+                },
+                .gap.width = 5
+            });
+            {
+                _layout->put
+                ({
+                    .layer = layer,
+                    .rect = ui::Rect{.width = 10, .height = 10},
+                    .text = ui::Text{.width = 10, .height = 10, .ptr = (expand) ?"-" : "+"}
+                });
+                label(layer, text);
+            }
+            _layout->pop();
+        }
         _layout->pop();
-    }
 
-    void GUI::input( ui::UserId user_id, const char* label, double& value)
+        if ( _layout->click( id ) )
+        {
+            expand = !expand;
+        }
+        return expand;
+    }
+    bool GUI::checkbox( const ui::ID& id, int16_t layer, const ui::Text& text,  bool& checked )
     {
+        if ( _layout->click( id ) )
+        {
+            checked = !checked;
+        }
         _layout->push
         ({
-            .layer = 2,
-            .padding = {10,5,10,5},
-            //.border.corner_curves = {border_radius,0,0,border_radius},
-            //.rect = {0,0,200,30},
-            .color = 0xFFFFFF08,
-            .gap = {2,2},
-            .alignment =
+            .layer = layer,
+            .user_id = id,
+            .width = ui::extend(),
+            .height = ui::fixed(20),
+            .alignment = kege::ui::Alignment
             {
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .direction = ui::AlignDir::RIGHT,
-                .items = ui::AlignItem::CENTER,
+                .items = ui::AlignItem::CENTER
             },
-            .width = ui::extend(),
-            .height = ui::fixed(40),
-        });
-        _layout->put
-        ({
-            .layer = 2,
-            .text = ui::Text{.width = 60, .height = 24, .color = 0xFFFFFF30, .font_size = 24, .ptr = label},
             .single_click = ui::ClickTrigger::OnRelease,
-            .rect = {0,0, 60, 24},
+            .double_click = ui::ClickTrigger::Immediate,
             .color = 0xFFFFFF00,
-            //.padding = {10,5,5,10},
+            .gap {5,5}
         });
-        scrubber(user_id, 2, value);
+        _layout->push
+        ({
+            .layer = layer,
+            .user_id = id,
+            .rect = kege::ui::Rect{0.f, 0.f, .width = 10, .height = 10},
+            .single_click = ui::ClickTrigger::OnRelease,
+            .double_click = ui::ClickTrigger::Immediate,
+            .alignment = kege::ui::Alignment
+            {
+                .origin = {ui::AlignX::CENTER, ui::AlignY::CENTER},
+                .direction = ui::AlignDir::CENTER,
+            },
+            .color = ( checked ) ? 0xf71326ff : 0xFFFFFF30
+        });
+//        if ( checked )
+//        {
+//            _layout->put
+//            ({
+//                .layer = layer,
+//                .rect = kege::ui::Rect{0.f, 0.f, .width = 6, .height = 6},
+//                .color = 0xf71326ff
+//            });
+//        }
         _layout->pop();
+        label(layer, text);
+        _layout->pop();
+        return checked;
     }
 
-
-    int GUI::collapsableRemovableHeaderInput( ui::UserId user_id, int16_t layer, char* str, size_t& size )
+    int GUI::collapsableRemovableHeaderInput( const ui::UID& uid, int16_t layer, char* str, size_t& size )
     {
-        CollapsableRemovableHeader* header = State<CollapsableRemovableHeader>::get(user_id);
-        //CollapsableRemovableHeader& header = _collapsable_removable_headers[ user_id ];
-        const ui::UserId Id[4] = {user_id, user_id + 1, user_id + 2, user_id + 3};
+        CollapsableRemovableHeader* header = State<CollapsableRemovableHeader>::get( uid );
+        const ui::ID Id[4] = {uid[0], uid[1], uid[2], uid[4]};
 
         _layout->push
         ({
@@ -157,10 +428,10 @@ namespace kege{
         return header->state;
     }
 
-    int GUI::collapsableRemovableHeader( ui::UserId user_id, int16_t layer, const ui::Text& text )
+    int GUI::collapsableRemovableHeader( const ui::UID& uid, int16_t layer, const ui::Text& text )
     {
-        CollapsableRemovableHeader& header = _collapsable_removable_headers[ user_id ];
-        const ui::UserId Id[3] = {user_id, user_id + 1, user_id + 2};
+        CollapsableRemovableHeader* header = State<CollapsableRemovableHeader>::get( uid );
+        const ui::ID Id[3] = {uid[0], uid[1], uid[2]};
 
         _layout->push
         ({
@@ -171,7 +442,7 @@ namespace kege{
             .double_click = ui::ClickTrigger::Immediate,
             .gap = {10,0},
         });
-        radio( Id[1], layer, header.state );
+        radio( Id[1], layer, header->state );
         label(layer, text);
         bool state = dotButn( Id[2], layer );
         _layout->pop();
@@ -184,14 +455,14 @@ namespace kege{
         {
             return -1;
         }
-        return header.state;
+        return header->state;
     }
 
 
-    bool GUI::collapsableHeader( ui::UserId user_id, int16_t layer, const ui::Text& text )
+    bool GUI::collapsableHeader( const ui::UID& uid, int16_t layer, const ui::Text& text )
     {
-        CollapsableHeader& header = _collapsable_headers[ user_id ];
-        const uint64_t Id[3] = {user_id, user_id + 1, user_id + 2};
+        CollapsableHeader& header = _collapsable_headers[ uid[0] ];
+        const ui::ID Id[3] = {uid[0], uid[1], uid[2]};
 
         _layout->push
         ({
@@ -230,15 +501,14 @@ namespace kege{
         return header.state;
     }
 
-    int GUI::removableHeader( ui::UserId user_id, int16_t layer, const ui::Text& text )
+    int GUI::removableHeader( const ui::ID id[4], int16_t layer, const ui::Text& text )
     {
-        RemovableHeader& header = _removable_headers[ user_id ];
-        const ui::UserId Id[4] = {user_id, user_id + 1, user_id + 2, user_id + 3};
+        RemovableHeader& header = _removable_headers[ id[0] ];
 
         _layout->push
         ({
             .layer = layer,
-            .user_id = Id[0],
+            .user_id = id[0],
             .style = &_theme.collapsable_header,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
@@ -246,7 +516,7 @@ namespace kege{
         _layout->put
         ({
             .layer = layer,
-            .user_id = Id[1],
+            .user_id = id[1],
             .rect.height = 6,
             .rect.width = 6,
             .rect.y = 6,
@@ -257,7 +527,7 @@ namespace kege{
         _layout->put
         ({
             .layer = layer,
-            .user_id = Id[2],
+            .user_id = id[2],
             .style = &_theme.label,
             .text = text,
             .mouseover = false,
@@ -265,332 +535,30 @@ namespace kege{
         _layout->put
         ({
             .layer = layer,
-            .user_id = Id[3],
+            .user_id = id[3],
             .rect.height = 10,
             .rect.width = 10,
             .rect.y = 4,
-            .color = _layout->mouseover( Id[3] ) ? 0xEE2200FF : 0xEE220050,
+            .color = _layout->mouseover( id[3] ) ? 0xEE2200FF : 0xEE220050,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
             .border.corner_curves = {8,8,8,8}
         });
         _layout->pop();
 
-        if ( _layout->click(Id[0]) )
+        if ( _layout->click(id[0]) )
         {
             header.state = !header.state;
         }
-        if ( _layout->click(Id[3]) )
+        if ( _layout->click(id[3]) )
         {
             return 2;
         }
         return header.state;
     }
 
-
-    void GUI::textFieldOp(ui::Layout* layout, ui::UserId user_id, ui::WidgetId widget_id, void* data)
-    {
-        TextField* text = static_cast<TextField*>(data);
-        //TextFieldState* state = text->state;
-
-        text->edited = false;
-
-        if (layout->click( user_id ))
-        {
-            // Handle single click
-            if (text->mode != TextFieldMode::Editing)
-            {
-                text->mode = TextFieldMode::Focused;
-                layout->cursor()->startEditing
-                (
-                    user_id,
-                    widget_id,
-                    text->type,
-                    text->buffer,
-                    text->current_size,
-                    text->buffer_capacity
-                );
-            }
-        }
-        else if (layout->doubleClick( user_id ))
-        {
-            layout->cursor()->startEditing
-            (
-                user_id,
-                widget_id,
-                ui::Cursor::InputType::Any,
-                text->buffer,
-                text->current_size,
-                text->buffer_capacity
-            );
-            
-            layout->cursor()->computeCursorPosition();
-
-            // Select all text
-            if (text->mode == TextFieldMode::Editing)
-            {
-                layout->cursor()->selectAll(text->buffer, text->current_size);
-            }
-            text->mode = TextFieldMode::Editing;
-        }
-        else if (!layout->hasFocus( user_id ) && text->mode != TextFieldMode::Idle)
-        {
-            // Lost focus
-            if (text->mode == TextFieldMode::Editing)
-            {
-                text->edited = true; // Text was being edited
-            }
-            layout->cursor()->stopEditing();
-            text->mode = TextFieldMode::Idle;
-        }
-
-        // Handle text input if editing
-        if (text->mode == TextFieldMode::Editing)
-        {
-            if (!layout->cursor()->update())
-            {
-                text->mode = TextFieldMode::Idle;
-                text->edited = true;
-            }
-        }
-    }
-
-    bool GUI::textField( ui::UserId user_id, int16_t layer, char* buffer, size_t buffer_capacity, size_t& current_size )
-    {
-        TextFieldState& state = _input_texts[ user_id ];
-
-        ui::Style* style = nullptr;
-        switch (state.mode)
-        {
-            case TextFieldMode::Editing:
-                style = &_theme.text_field_editing;
-                break;
-            case TextFieldMode::Focused:
-                style = &_theme.text_field_focus;
-                break;
-            default: style = &_theme.text_field_idle;
-        }
-
-        ui::WidgetId widget_index = _layout->put
-        ({
-            .layer = layer,
-            .user_id = user_id,
-            .style = style,
-            .single_click = ui::ClickTrigger::OnRelease,
-            .double_click = ui::ClickTrigger::Immediate,
-            .text.ptr = buffer,
-        });
-
-        _layout->pushDeferredOp(user_id, widget_index, textFieldOp, TextField
-        {
-            .type = ui::Cursor::InputType::Any,
-            .mode = state.mode,
-            .edited = state.edited,
-            .buffer = buffer,
-            .buffer_capacity = buffer_capacity,
-            .current_size = current_size
-        });
-
-        return state.edited;
-    }
-
-    bool GUI::scrubber( ui::UserId user_id, int16_t layer, double& num )
-    {
-        ScrubberState* state;
-        auto i = _scrubbers.find( user_id );
-        if (i == _scrubbers.end())
-        {
-            state = &_scrubbers[user_id];
-            snprintf(state->str, 16, "%.3f", num);
-            state->text_value = _layout->text(state->str, 20);
-            state->text_value.color = 0xFFFFFFFF;
-            state->sensitivity = 0.002;
-            state->type = ScrubberState::DOUBLE;
-        }
-        else state = &i->second;
-        return scrubber<double>( user_id, layer, num, state );
-    }
-
-    bool GUI::scrubber( ui::UserId user_id, int16_t layer, float& num )
-    {
-        ScrubberState* state;
-        auto i = _scrubbers.find( user_id );
-        if (i == _scrubbers.end())
-        {
-            state = &_scrubbers[user_id];
-            snprintf(state->str, 16, "%.3f", num);
-            state->text_value = _layout->text(state->str, 20);
-            state->text_value.color = 0xFFFFFFFF;
-            state->sensitivity = 0.002;
-            state->type = ScrubberState::FLOAT;
-        }
-        else state = &i->second;
-        return scrubber<float>( user_id, layer, num, state );
-    }
-
-    bool GUI::scrubber( ui::UserId user_id, int16_t layer, int& num )
-    {
-        State<ScrubberState>::get(user_id);
-        ScrubberState* state;
-        auto i = _scrubbers.find( user_id );
-        if (i == _scrubbers.end())
-        {
-            state = &_scrubbers[user_id];
-            snprintf(state->str, 16, "%i", num);
-            state->text_value = _layout->text(state->str, 20);
-            state->text_value.color = 0xFFFFFFFF;
-            state->sensitivity = 0.002;
-            state->type = ScrubberState::INT32;
-        }
-        else state = &i->second;
-        return scrubber<int>( user_id, layer, num, state );
-    }
-
-//    bool GUI::scrubber( int16_t layer, const ui::Text& name, int& num )
-//    {
-//        _layout->push({ .layer = layer, .style = &_theme.scrubber_row });
-//        fittedLabel(layer, name);
-//        scrubber( layer, num );
-//        _layout->pop();
-//        return false;
-//    }
-
-    bool GUI::scrubber( ui::UserId user_id, int16_t layer, const ui::Text& name, float& num )
-    {
-        _layout->push({ .layer = layer, .style = &_theme.scrubber_row });
-        fittedLabel(layer, name);
-        scrubber( user_id, layer, num );
-        _layout->pop();
-        return false;
-    }
-
-    bool GUI::scrubber( ui::UserId user_id, int16_t layer, const ui::Text& name, double& num )
-    {
-        _layout->push({ .layer = layer, .style = &_theme.scrubber_row });
-        fittedLabel(layer, name);
-        scrubber( user_id, layer, num );
-        _layout->pop();
-        return false;
-    }
-
-    bool GUI::scrubber4( ui::UserId user_id, int16_t layer, const ui::Text& name, float& x, float& y, float& z, float& w )
-    {
-        bool modified[3] = {};
-
-        beginColumn(layer);
-        {
-            label(layer, name);
-
-            beginColumn(layer);
-            beginRow(layer);
-            ui::Text x_label{.ptr = "x:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[0] = scrubber(user_id + 1, layer, x_label, x);
-
-            ui::Text y_label{.ptr = "y:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[1] = scrubber(user_id + 2, layer, y_label, y);
-
-            ui::Text z_label{.ptr = "z:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[2] = scrubber(user_id + 3, layer, z_label, z);
-            endRow();
-
-            ui::Text w_label{.ptr = "w:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[2] = scrubber(user_id + 4, layer, w_label, w);
-            endColumn();
-        }
-        endColumn();
-
-        return modified[0] || modified[1] || modified[2];
-    }
-
-    bool GUI::scrubber3
-    (
-     ui::UserId user_id, int16_t layer, const ui::Text& name,
-     float& x, float& y, float& z
-    )
-    {
-        bool modified[3] = {};
-
-        beginColumn(layer);
-        {
-            label(layer, name);
-            beginRow(layer);
-            ui::Text x_label{.ptr = "x:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[0] = scrubber(user_id + 1, layer, x_label, x);
-
-            ui::Text y_label{.ptr = "y:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[1] = scrubber(user_id + 2, layer, y_label, y);
-
-            ui::Text z_label{.ptr = "z:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-            modified[2] = scrubber(user_id + 3, layer, z_label, z);
-            endRow();
-        }
-        endColumn();
-
-        return modified[0] || modified[1] || modified[2];
-    }
-
-
-    bool GUI::numeric( int16_t layer, ui::UserId user_id, double& num )
-    {
-        const uint64_t Id[3] = {user_id, user_id+1};
-        InputNumeric* state;
-        auto i = _numeric_states.find( user_id );
-        if (i == _numeric_states.end())
-        {
-            state = &_numeric_states[user_id];
-            state->mode = 0;
-            state->last_frame_value = 0;
-            snprintf(state->str, state->size, "%.6g", num);
-        }
-        else state = &i->second;
-
-        _layout->push(kege::ui::WidgetDesc{
-            .user_id = Id[0],
-            .layer = layer,
-            .style = &_theme.numeric,
-        });
-            ui::WidgetId widget_id = _layout->put
-            ({
-                .layer = layer,
-                .user_id = Id[1],
-                .style = (( state->mode == 2 )? &_theme.numeric_focus : &_theme.numeric_value ),
-                .single_click = ui::ClickTrigger::OnRelease,
-                .double_click = ui::ClickTrigger::Immediate,
-                .text.ptr = state->str
-            });
-        _layout->pop();
-
-        bool clicked = false;
-
-        if ( _layout->click( Id[1] ) )
-        {
-            clicked = true;
-            state->mode += 1;
-        }
-        else if ( _layout->doubleClick( Id[1] ) )
-        {
-            state->mode = 2;
-        }
-        else if ( !_layout->hasFocus( Id[1] ) && state->mode > 0 )
-        {
-            state->mode = 0;
-        }
-
-        if ( state->mode == 2 )
-        {
-            if ( !_layout->onTextInput( widget_id, state->str, state->size ) )
-            {
-                state->mode = 0;
-            }
-            num = atof( state->str );
-        }
-
-        return clicked;
-    }
-
-
     struct OptionParam{ GUI::OptionState* state; };
-    void repositionOptionListOp(ui::Layout* layout, ui::UserId user_id, ui::WidgetId widget_id, void* data)
+    void repositionOptionListOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
         OptionParam* state = reinterpret_cast< OptionParam* >(data);
         ui::Widget* main = layout->elem( widget_id );
@@ -621,15 +589,15 @@ namespace kege{
         }
     }
 
-    bool GUI::options( ui::UserId user_id, int16_t layer,std::vector<ListElem>& list, int& selection )
+    bool GUI::options( const ui::UID& uid, int16_t layer,std::vector< ui::Text >& list, int& selection )
     {
-        OptionState& state = _option_states[ user_id ];
+        OptionState& state = _option_states[ uid ];
         bool has_selection = false;
 
         ui::WidgetId widget_id = _layout->push
         ({
             .layer = layer,
-            .user_id = user_id,
+            .user_id = uid[0],
             .style = &_theme.option,
             .single_click = ui::ClickTrigger::Immediate,
             .double_click = ui::ClickTrigger::Immediate,
@@ -639,30 +607,31 @@ namespace kege{
         ({
             .layer = layer,
             .style = &_theme.option_selection,
-            .text = list[ state.selection ].text,
+            .text = list[ state.selection ],
             .mouseover = false,
         });
 
-        if ( _layout->click(user_id) )
+        if ( _layout->click( uid[0] ) )
         {
             state.state = !state.state;
         }
 
         if ( state.state )
         {
-            _layout->pushRoot({.layer = int16_t(layer + 1), .user_id = user_id + 1, .style = &_theme.option_list});
+            state.index = _layout->pushRoot({.layer = int16_t(layer + 1), .user_id = uid[1], .style = &_theme.option_list});
             for (int i=0; i<list.size(); ++i)
             {
+                ui::ID option_id = uid[i + 2];
                 _layout->put
                 ({
                     .layer = layer,
-                    .user_id = list[i].user_id,
-                    .text = list[i].text,
+                    .user_id = option_id,
+                    .text = list[i],
                     .single_click = ui::ClickTrigger::OnRelease,
-                    .style = (_layout->mouseover( list[i].user_id )) ? &_theme.option_hot : &_theme.option_element
+                    .style = (_layout->mouseover( option_id )) ? &_theme.option_hot : &_theme.option_element
                 });
 
-                if( _layout->click( list[i].user_id ) && !has_selection )
+                if( _layout->click( option_id ) && !has_selection )
                 {
                     state.selection = i;
                     has_selection = true;
@@ -670,14 +639,14 @@ namespace kege{
                 }
             }
             _layout->popRoot();
-            _layout->pushDeferredOp<OptionParam>(user_id, widget_id, repositionOptionListOp, {&state});
+            _layout->pushDeferredOp<OptionParam>(uid[0], widget_id, repositionOptionListOp, {&state});
         }
         _layout->pop();
         selection = state.selection;
         return has_selection;
     }
 
-    bool  GUI::select( int16_t layer, std::vector<ListElem>& list, int& selection )
+    bool  GUI::select( const ui::UID& uid, int16_t layer, std::vector< ui::Text >& list, int& selection )
     {
         bool has_selection = false;
         _layout->push
@@ -690,14 +659,14 @@ namespace kege{
             _layout->put
             ({
                 .layer = layer,
-                .user_id = list[i].user_id,
-                .text = list[i].text,
+                .user_id = uid[i],
+                .text = list[i],
                 .single_click = ui::ClickTrigger::OnRelease,
-                .style = (_layout->mouseover( list[i].user_id )) ? &_theme.select_elem_focus : &_theme.select_elem
+                .style = (_layout->mouseover( uid[i] )) ? &_theme.select_elem_focus : &_theme.select_elem
 
             });
 
-            if( _layout->click( list[i].user_id ) && !has_selection )
+            if( _layout->click( uid[i] ) && !has_selection )
             {
                 selection = i;
                 has_selection = true;
@@ -707,38 +676,21 @@ namespace kege{
         return has_selection;
     }
 
-    void GUI::list( int16_t layer, std::vector<ListElem>& list, int selection )
-    {
-        _layout->push({ .layer = layer, .style = &_theme.list });
-        for (int i=0; i<list.size(); ++i)
-        {
-            _layout->put
-            ({
-                .layer = layer,
-                .user_id = list[i].user_id,
-                .text = list[i].text,
-                .style = &_theme.list_elem
-            });
-        }
-        _layout->pop();
-    }
-
-    bool GUI::tab( int16_t layer, std::vector<ListElem>& list, int& selection )
+    bool GUI::tab( const ui::UID& uid, int16_t layer, std::vector< ui::Text >& list, int& selection )
     {
         bool active = false;
         _layout->push({ .layer = layer, .style = &_theme.tab });
         for (int i=0; i<list.size(); ++i)
         {
-            _layout->put({
+            _layout->put
+            ({
                 .layer = layer,
-                .user_id = list[i].user_id,
-                .text = list[i].text,
+                .user_id = uid[i],
+                .text = list[i],
                 .single_click = ui::ClickTrigger::OnRelease,
-                .style = (selection == i)
-                    ? &_theme.tab_elem_focus
-                    : &_theme.tab_elem
+                .style = (selection == i) ? &_theme.tab_elem_focus : &_theme.tab_elem
             });
-            if( _layout->click( list[i].user_id ) )
+            if( _layout->click( uid[i] ) )
             {
                 selection = i;
                 active = true;
@@ -748,7 +700,22 @@ namespace kege{
         return active;
     }
 
-    bool GUI::numSlideBar( ui::UserId user_id, int16_t layer, double* val, double min, double max )
+    void GUI::list( int16_t layer, std::vector< ui::Text >& list )
+    {
+        _layout->push({ .layer = layer, .style = &_theme.list });
+        for (int i=0; i<list.size(); ++i)
+        {
+            _layout->put
+            ({
+                .layer = layer,
+                .text = list[i],
+                .style = &_theme.list_elem
+            });
+        }
+        _layout->pop();
+    }
+
+    bool GUI::numSlideBar( ui::ID user_id, int16_t layer, double* val, double min, double max )
     {
         char snum[16];
         snprintf(snum, 16, "%.6g", *val );
@@ -770,7 +737,7 @@ namespace kege{
         return _layout->click( user_id );
     }
 
-    bool GUI::charButn(ui::UserId user_id, const char* label, float x, float y)
+    bool GUI::charButn(ui::ID user_id, const char* label, float x, float y)
     {
         // Back button
         ui::Text text;
@@ -795,7 +762,7 @@ namespace kege{
         return _layout->click(user_id);
     }
 
-    bool GUI::dotButn( ui::UserId user_id, int16_t layer )
+    bool GUI::dotButn( ui::ID user_id, int16_t layer )
     {
         _layout->put
         ({
@@ -818,7 +785,7 @@ namespace kege{
         return _layout->click( desc.user_id );
     }
 
-    bool GUI::button( ui::UserId user_id, int16_t layer, const ui::Text& text, ui::Style* style )
+    bool GUI::button( ui::ID user_id, int16_t layer, const ui::Text& text, const ui::Style* style )
     {
         _layout->put
         ({
@@ -853,7 +820,7 @@ namespace kege{
         });
     }
 
-    bool GUI::radio( ui::UserId user_id, int16_t layer, const ui::Text& text, bool& state )
+    bool GUI::radio( ui::ID user_id, int16_t layer, const ui::Text& text, bool& state )
     {
         push({.layer = layer, .style = &_theme.row });
         radio( user_id, layer, state );
@@ -862,7 +829,7 @@ namespace kege{
         return state;
     }
 
-    bool GUI::radio( ui::UserId user_id, int16_t layer, bool& state )
+    bool GUI::radio( ui::ID user_id, int16_t layer, bool& state )
     {
         _layout->put
         ({
@@ -882,7 +849,7 @@ namespace kege{
         return state;
     }
 
-    bool GUI::radio( ui::UserId user_id, int16_t layer )
+    bool GUI::radio( ui::ID user_id, int16_t layer )
     {
         RadioState& state = _radio_states[ user_id ];
         return radio(user_id, layer, state.state);
@@ -930,59 +897,60 @@ namespace kege{
         ui::WidgetId widget_id;
         float& amount;
     };
-    void scrollingOperation(ui::Layout* layout, ui::UserId user_id, ui::WidgetId widget_id, void* data)
+    void scrollingOperation(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
         ScrollOp* params = reinterpret_cast<ScrollOp*>(data);
 
         ui::Widget* scrolly = layout->elem(params->widget_id);
         ui::Widget* clipper = layout->elem(widget_id);
 
-        if (layout->testPointVsRect(layout->getPointerPosition(), clipper->rect))
+        if (layout->testPointVsRect( layout->getPointerPosition(), clipper->rect ))
         {
             float scroll_length = scrolly->rect.height - clipper->rect.height;
-            if ( 0 < scroll_length)
-            {
+//            if ( 0 < scroll_length)
+//            {
                 params->amount += layout->getScrollOffset().y;
                 params->amount = kege::min(0.f, kege::max(params->amount, -scroll_length));
-                scrolly->rect.y = params->amount;
-            }
-            else
-            {
-                params->amount = 0.f;
-            }
+                std::cout << params->amount <<"\n";
+//            }
+//            else
+//            {
+//                params->amount = 0.f;
+//            }
         }
+        scrolly->rect.y = clipper->rect.y + params->amount;
     }
     
-    void GUI::beginScrollContainer( ui::UserId user_id, int16_t layer )
+    void GUI::beginScrollContainer( const ui::ID id[2], int16_t layer )
     {
         ScrollContainer* state;
-        auto i = _scroll_containers.find( user_id );
+        auto i = _scroll_containers.find( id[0] );
         if (i == _scroll_containers.end())
         {
-            state = &_scroll_containers[user_id];
+            state = &_scroll_containers[ id[0] ];
             state->scroll_amount = 0.f;
             state->frame_id = _frame_index;
         }
         else state = &i->second;
 
-        ui::WidgetId widget_id = _layout->push /* the clipper is the container the scroller is clipped against */
+        ui::WidgetId clipper = _layout->push /* the clipper is the container the scroller is clipped against */
         ({
             .layer = layer,
-            .user_id = state->clipper,
-            .style = &_theme.panel_transparnt,
+            .user_id = id[0],
+            .style = &_theme.scroll_container,
             .clip_overflow = true
         });
 
         ui::WidgetId scroller = _layout->push /* the scroller is the container that is scrolled */
         ({
             .layer = layer,
-            .user_id = state->scroller,
+            .user_id = id[1],
             .style = &_theme.column,
             .rect.y = state->scroll_amount,
-            .mouseover = false
+            .mouseover = false,
         });
 
-        _layout->pushDeferredOp(state->clipper, widget_id, scrollingOperation, ScrollOp{
+        _layout->pushDeferredOp(id[0], clipper, scrollingOperation, ScrollOp{
             .widget_id = scroller,
             .amount = state->scroll_amount
         });
@@ -1029,19 +997,19 @@ namespace kege{
         return _layout->isPointerDragging();
     }
 
-    bool GUI::mouseover( uint64_t user_id )
+    bool GUI::mouseover( const ui::ID& id )
     {
-        return _layout->mouseover( user_id );
+        return _layout->mouseover( id );
     }
 
-    bool GUI::click( uint64_t user_id )
+    bool GUI::click( const ui::ID& id )
     {
-        return _layout->click( user_id );
+        return _layout->click( id );
     }
 
-    bool GUI::hot( uint64_t user_id )
+    bool GUI::hot( const ui::ID& id )
     {
-        return _layout->mouseover( user_id );
+        return _layout->mouseover( id );
     }
 
     bool GUI::leftClickDown()const
@@ -1135,6 +1103,7 @@ namespace kege{
 
     GUI::GUI()
     :   _frame_index(0)
+    ,   _str_len(0)
     {
     }
 
@@ -1158,6 +1127,7 @@ namespace kege{
         };
         Theme::padded_list = kege::ui::Style
         {
+            //.border.corner_curves = {20,20,20,20},
             .background = ui::Background(0xFFFFFF00),
             .padding = {10,10,10,10},
             .height = ui::flexible(),
@@ -1173,6 +1143,34 @@ namespace kege{
         {
             .background = ui::Background(0xFFFFFF00),
             .height = ui::extend(),
+            .width = ui::extend(),
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::DOWN,
+            },
+            .gap = {4, 4},
+        };
+
+        Theme::scroll_container = kege::ui::Style
+        {
+            .background = ui::Background(0xFFFFFF00),
+            .height = ui::extend(),
+            .width = ui::extend(),
+            .alignment =
+            {
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = ui::AlignDir::DOWN,
+            },
+            .gap = {4, 4},
+        };
+
+        Theme::group = kege::ui::Style
+        {
+            //.border.corner_curves = {20,20,20,20},
+            .background = ui::Background(0xFFFFFF00),
+            .padding = {10, 0, 10, 0},
+            .height = ui::flexible(),
             .width = ui::extend(),
             .alignment =
             {
@@ -1307,7 +1305,7 @@ namespace kege{
 
         column = kege::ui::Style
         {
-            .background = ui::Background(0xFFFFFF00),
+            .background = ui::Background(0xFFFFFF08),
             .height = ui::flexible(),
             .width = ui::extend(),
             .alignment =
@@ -1481,7 +1479,7 @@ namespace kege{
         };
         Theme::scrubber = kege::ui::Style
         {
-            .background = ui::Background( 0xFFFFFF00 ),
+            .background = ui::Background( 0xFFFFFF06 ),
             .height = ui::fixed(20),
             .width = ui::extend(),
             //.padding = {4,0,4,0},
@@ -1529,6 +1527,7 @@ namespace kege{
             {
                 .direction = ui::AlignDir::DOWN
             },
+            .gap = {4, 4},
         };
 
 

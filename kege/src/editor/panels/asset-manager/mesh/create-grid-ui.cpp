@@ -6,15 +6,18 @@
 //
 
 #include "../../../editor-layer.hpp"
+#include "../../../dock/ui-dock-manager.hpp"
 #include "create-grid-ui.hpp"
 
 namespace kege::ui{
 
     bool CreateGridMeshUI::create(GUI* gui)
     {
+        int16_t layer = 2;
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "grid-mesh-%i", _count++);
+            _text = gui->layout()->text(_asset_name, 20);
         }
         gui->push
         ({
@@ -32,18 +35,18 @@ namespace kege::ui{
             .height = ui::extend(),
         });
         {
-            gui->text("name", _asset_name, _current_size, _buffer_capacity);
+            gui->labelInput("Name:", _uid[1], layer, _text_input_mode, _text);
             gui->put({.rect = {0,0,50,20}});
-            gui->input(UI_BASE_ID(), "Width:", _width);
-            gui->input(UI_BASE_ID(), "Height:", _height);
-            gui->input(UI_BASE_ID(), "Columns:", _cols);
-            gui->input(UI_BASE_ID(), "Rows:", _rows);
+            gui->labelScrubber(_uid[1], layer, "Width:", _width);
+            gui->labelScrubber(_uid[2], layer, "Height:", _height);
+            gui->labelScrubber(_uid[3], layer, "Columns:", _cols);
+            gui->labelScrubber(_uid[4], layer, "Rows:", _rows);
 
-            gui->put({.style = &gui->_theme.y_seperator});
+            gui->put({.style = &gui->theme().y_seperator});
 
-            if( gui->submit(UI_BASE_ID(), "Submit") )
+            if( gui->submit(_uid[5], "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getEditor()->getAssetManager();
+                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                 kege::Ref<kege::MeshPrimitive> mesh = new GridMesh( _width, _height, _cols, _rows );
 
                 // Create metadata
@@ -70,8 +73,7 @@ namespace kege::ui{
     }
 
     CreateGridMeshUI::CreateGridMeshUI(ui::AssetManagerUI* m)
-    :   CreateMeshUI("Grid")
-    ,   _manager(m)
+    :   CreateMeshUI("Grid", m)
     {}
 
     int CreateGridMeshUI::_count = 1;

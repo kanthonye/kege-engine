@@ -17,7 +17,9 @@ namespace kege::ui{
     public:
 
         kege::ui::Dock* getDock(kege::ui::Dock& dock, const kege::dvec2& pointer);
-        void operator()(const kege::ui::DragDropOffAssetMetadata& event);
+        kege::ui::Dock* getDock(const kege::dvec2& pointer);
+        
+        void operator()(const kege::ui::AssetMetadataDropOff& event);
 
         enum SplitDirection {HORIZONTAL, VERTICAL};
 
@@ -28,7 +30,7 @@ namespace kege::ui{
         void update();
         void merge();
 
-        Dock(kege::EditorLayer* editor, int width, int height);
+        Dock(kege::ui::DockManager* manager, int width, int height);
 
         ~Dock();
         Dock();
@@ -39,8 +41,8 @@ namespace kege::ui{
         void displayContent();
         void displayTabs();
 
-        static void ghostDraggingOp(ui::Layout* layout, const ui::WidgetHandle* id, void* data);
-        static void ghostDropoffOp(ui::Layout* layout, const ui::WidgetHandle* id, void* data);
+        static void ghostDraggingOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        static void ghostDropoffOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
 
         void setDockPanels(const std::vector< int >& panels);
         //void addPanelToDock(const Ref< ui::Panel >& panel);
@@ -57,7 +59,11 @@ namespace kege::ui{
 
     public:
 
-        kege::EditorLayer* _editor;
+        kege::ui::DockManager* _manager;
+
+        ui::UID _uid_ghost;
+        ui::UID _uid_dock;
+        ui::UID _uid_tab;
 
         /**
          * rect: hold the position and size of the ui dock element
@@ -69,7 +75,7 @@ namespace kege::ui{
         /**
          * uid: hold the unique identifier for this dock
          */
-        WidgetHandle _uid;
+        WidgetId _uid;
 
         /**
          * tab: hold the tab list of panels in this dock

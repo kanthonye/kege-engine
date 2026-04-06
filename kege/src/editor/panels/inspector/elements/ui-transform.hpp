@@ -12,7 +12,7 @@
 
 namespace kege::ui{
 
-    bool transform( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
-    
+    //bool transform( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
+
 }
 #endif /* ui_transform_hpp */

@@ -210,6 +210,7 @@ namespace kege{
     void Mouse::end()
     {
         _active_state_counter = 0;
+        _scroll_delta = {0.0, 0.0};
     }
 
     Mouse::Mouse()

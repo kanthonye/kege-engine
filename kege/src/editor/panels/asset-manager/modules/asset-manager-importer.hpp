@@ -50,7 +50,7 @@ namespace kege::ui{
         void operator()(const std::string& type, void* data);
         void update();
 
-        AssetManagerImport(AssetManagerUI* m,kege::GUI* g, uint64_t user_id);
+        AssetManagerImport(AssetManagerUI* m,kege::GUI* g);
         ~AssetManagerImport();
 
     private:

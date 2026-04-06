@@ -21,7 +21,7 @@ namespace kege{
         _render_graph.clear();
     }
 
-    bool RenderLayer::update()
+    bool RenderLayer::render()
     {
         if (!_project_manager) return false;
 

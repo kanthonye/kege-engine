@@ -10,35 +10,16 @@
 
 namespace kege::ui{
     
-    AssetManagerImport::AssetManagerImport(AssetManagerUI* m,kege::GUI* g, uint64_t user_id)
-    :   AssetManagerModule(m,g,user_id)
+    AssetManagerImport::AssetManagerImport(AssetManagerUI* m,kege::GUI* g)
+    :   AssetManagerModule(m,g)
     {
         setupAssetTypeRegistry();
         setupFileWatcher();
-
-
-        for(int i=0; i<4; i++)
-        {
-            AssetMetadata metadata;
-            metadata.name = "rock.jpg";
-            metadata.display_name = "rock";
-            metadata.original_path = "texture/rock.jpg";
-            metadata.type = AssetType::TEXTURE;
-            metadata.handle = 0; // TODO: Get actual handle from AssetManager
-            metadata.loader_id = "jpg";
-            metadata.import_time = std::chrono::system_clock::now();
-            //metadata.last_modified = fs::last_write_time(job.source_path);
-            metadata.file_size = 3489270;//fs::file_size(job.source_path);
-            metadata.category = "Textures";
-            metadata.loaded = true;
-
-            std::lock_guard<std::mutex> lock(getAssetMutex());
-            getAssets()->push_back(metadata);
-            getFilteredIndices()->push_back(i);
-        }
     }
+
     void AssetManagerImport::operator()(const std::string& type, void* data)
     {}
+    
     bool AssetManagerImport::importAsset(const fs::path& file_path, const std::string& target_category)
     {
         // Add to import queue

@@ -16,13 +16,14 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g, uint64_t user_id);
+        AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g);
         void operator()(const std::string& type, void* data);
         void update();
 
     private:
 
         std::vector< Ref<AssetManagerModule> > _modules;
+        kege::ui::UID _uid;
         bool _open_window;
     };
 

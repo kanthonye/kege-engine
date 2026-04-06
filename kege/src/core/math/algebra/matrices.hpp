@@ -297,28 +297,6 @@ namespace kege{
         m.a10 * n.a03 + m.a11 * n.a13 + m.a12 * n.a23 + m.a13 * n.a33, // r13
         m.a20 * n.a03 + m.a21 * n.a13 + m.a22 * n.a23 + m.a23 * n.a33, // r23
         m.a30 * n.a03 + m.a31 * n.a13 + m.a32 * n.a23 + m.a33 * n.a33  // r33
-
-           /*
-            m.a00 * n.a00 + m.a01 * n.a10 + m.a02 * n.a20 + m.a03 * n.a30, // r00
-            m.a00 * n.a01 + m.a01 * n.a11 + m.a02 * n.a21 + m.a03 * n.a31, // r01
-            m.a00 * n.a02 + m.a01 * n.a12 + m.a02 * n.a22 + m.a03 * n.a32, // r02
-            m.a00 * n.a03 + m.a01 * n.a13 + m.a02 * n.a23 + m.a03 * n.a33, // r03
-
-            m.a10 * n.a00 + m.a11 * n.a10 + m.a12 * n.a20 + m.a13 * n.a30, // r10
-            m.a10 * n.a01 + m.a11 * n.a11 + m.a12 * n.a21 + m.a13 * n.a31, // r11
-            m.a10 * n.a02 + m.a11 * n.a12 + m.a12 * n.a22 + m.a13 * n.a32, // r12
-            m.a10 * n.a03 + m.a11 * n.a13 + m.a12 * n.a23 + m.a13 * n.a33, // r13
-
-            m.a20 * n.a00 + m.a21 * n.a10 + m.a22 * n.a20 + m.a23 * n.a30, // r20
-            m.a20 * n.a01 + m.a21 * n.a11 + m.a22 * n.a21 + m.a23 * n.a31, // r21
-            m.a20 * n.a02 + m.a21 * n.a12 + m.a22 * n.a22 + m.a23 * n.a32, // r22
-            m.a20 * n.a03 + m.a21 * n.a13 + m.a22 * n.a23 + m.a23 * n.a33, // r23
-
-            m.a30 * n.a00 + m.a31 * n.a10 + m.a32 * n.a20 + m.a33 * n.a30, // r30
-            m.a30 * n.a01 + m.a31 * n.a11 + m.a32 * n.a21 + m.a33 * n.a31, // r31
-            m.a30 * n.a02 + m.a31 * n.a12 + m.a32 * n.a22 + m.a33 * n.a32, // r32
-            m.a30 * n.a03 + m.a31 * n.a13 + m.a32 * n.a23 + m.a33 * n.a33  // r33
-            */
         );
     }
 
@@ -810,7 +788,7 @@ namespace kege{
         (
             1.f, 0.f, 0.f,
             0.f, 1.f, 0.f,
-            v.x, v.y, 0.f
+            v.x, v.y, 1.f
         );
     }
     

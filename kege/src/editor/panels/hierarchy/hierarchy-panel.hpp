@@ -8,7 +8,7 @@
 #ifndef hierarchy_panel_hpp
 #define hierarchy_panel_hpp
 
-#include "ui-panel.hpp"
+#include "ui-description.hpp"
 
 namespace kege::ui{
     
@@ -46,10 +46,7 @@ namespace kege::ui{
             ecs::Entity entity;
             uint64_t entity_id;
 
-            uint64_t uid_expand;
-            uint64_t uid_visible;
-            uint64_t uid_delete;
-            uint64_t uid;
+            ui::UID uid;
 
             bool expand;
             bool visible;
@@ -61,9 +58,9 @@ namespace kege::ui{
 
     public:
 
-        void update();
+        void updateLayout( int16_t layer );
         ecs::Entity getSelectedEntity();
-        HierarchyPanel( kege::EditorLayer* editor );
+        HierarchyPanel( kege::ui::DockManager* dm );
 
     public:
 
@@ -110,15 +107,19 @@ namespace kege::ui{
         ui::WidgetHandle _uid_create_entity;
         ui::Text text_create;
 
-        uint64_t _create_entity_uid;
-        uint64_t _create_folder_uid;
-        uint64_t _delete_uid;
-        uint64_t _duplicate_uid;
-        uint64_t _expand_all_uid;
-        uint64_t _collapse_all_uid;
-        uint64_t _filter_field_uid;
-        uint64_t _tree_container_uid;
-        uint64_t _focus_button_uid;
+        ui::UID _uid_root;
+
+        ui::ID _container[2];
+
+        ui::ID _create_entity_uid;
+        ui::ID _create_folder_uid;
+        ui::ID _delete_uid;
+        ui::ID _duplicate_uid;
+        ui::ID _expand_all_uid;
+        ui::ID _collapse_all_uid;
+        ui::ID _filter_field_uid;
+        ui::ID _tree_container_uid;
+        ui::ID _focus_button_uid;
 
         ui::Text _text_create_entity;
         ui::Text _text_create_folder;

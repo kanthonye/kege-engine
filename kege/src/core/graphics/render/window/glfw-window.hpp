@@ -10,10 +10,6 @@
 
 #define GLFW_INCLUDE_VULKAN
 
-
-//#include <vk_mem_alloc.h>  // Include Vulkan Memory Allocator (VMA)
-
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
 #pragma clang diagnostic ignored "-Wnullability-completeness"
@@ -27,6 +23,9 @@ namespace kege{
     class GlfwWindow : public AppWindow
     {
     public:
+
+        static void terminate();
+        static bool init();
 
         //GraphicsSurface createSurface( GraphicsInstance* instance ) override;
         std::vector< const char* > getRequiredInstanceExtensions() override;
@@ -65,13 +64,6 @@ namespace kege{
 
         ~GlfwWindow() override;
         GlfwWindow();
-
-    private:
-
-        friend void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-        friend void cursorPositionCallback( GLFWwindow* window, double xpos, double ypos );
-        friend void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-        friend void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
     private:
 

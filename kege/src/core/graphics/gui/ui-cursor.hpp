@@ -31,8 +31,7 @@ namespace kege::ui{
 
         struct EditingState
         {
-            WidgetId widget_id;
-            UserId user_id;
+            ui::ID user_id;
             char* buffer = nullptr;
             size_t* buffer_size = nullptr;
             size_t buffer_capacity = 0;
@@ -44,11 +43,11 @@ namespace kege::ui{
 
 
 
-        void startEditing(const UserId user_id, const WidgetId& widget_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity);
-        void selectAll(const char* str, size_t size);
-        void computeCursorPosition();
+        void startEditing(const ui::ID user_id, const WidgetId& widget_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity);
+        void selectAll(const ui::WidgetId& widget_id, const char* str, size_t size);
+        void computeCursorPosition(const ui::WidgetId& widget_id);
         void stopEditing();
-        bool update();
+        bool update(const ui::WidgetId& widget_id);
 
         Cursor( ui::Layout* layout );
         
@@ -61,7 +60,8 @@ namespace kege::ui{
             InputType type,
             char*& buffer, size_t& buffer_size, size_t& buffer_capacity,
             const ref::Font& font,
-            int font_size
+            int font_size,
+             const ui::WidgetId& widget_id
         );
 
         void insertCharacter
@@ -90,8 +90,8 @@ namespace kege::ui{
             float length;
         };
 
-        void handleClickAndSelection(Widget* widget);
-        void processKeyboardInputs(int font_size);
+        void handleClickAndSelection(const ui::WidgetId& widget_id, Widget* widget);
+        void processKeyboardInputs(const ui::WidgetId& widget_id, int font_size);
 
         void deleteSelection(char*& str, size_t& size, const ref::Font& font, int font_size);
         void eraseRange(char*& str, size_t& size, size_t begin, size_t end);

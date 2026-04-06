@@ -300,14 +300,6 @@ namespace kege{
     template< typename var > var clamp(var n, var min, var max){ return (n < min) ? min : (n > max) ? max : n; }
 
 
-//    template< typename var > void swap(var& a, var& b)
-//    {
-//        var t = a;
-//        a = b;
-//        b = t;
-//    }
-
-
     template< typename var > Vec2< var > operator+(const Vec2< var >& v, const Vec2< var >& r)
     {
        return Vec2< var >( v.x + r.x, v.y + r.y );
@@ -685,7 +677,7 @@ namespace kege{
         };
     }
 
-    template< typename var > void zeroSmallComponents( Vec4< var >& v, const float threshold = 1e-6f )
+    template< typename var > Vec4< var > zeroSmallComponents( Vec4< var >& v, const float threshold = 1e-6f )
     {
         return Vec4< var >
         {

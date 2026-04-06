@@ -63,8 +63,6 @@ namespace kege{
         OUTDATED_SWAPCHAIN,
     };
 
-
-
     struct BufferViewHandle
     {
         inline operator bool()const{ return id >= 0; }
@@ -741,24 +739,6 @@ namespace kege{
     }
 
     /**
-     * @brief Depth comparison operations.
-     *
-     * Used for shadow map sampling and depth tests.
-     */
-    // TODO: deprecated
-//    enum class CompareOp
-//    {
-//        Never,        ///< Never pass the comparison
-//        Less,         ///< Pass if incoming < stored
-//        Equal,        ///< Pass if incoming == stored
-//        LessEqual,    ///< Pass if incoming <= stored
-//        Greater,      ///< Pass if incoming > stored
-//        NotEqual,     ///< Pass if incoming != stored
-//        GreaterEqual, ///< Pass if incoming >= stored
-//        Always        ///< Always pass the comparison
-//    };
-
-    /**
      * @brief Stencil operations.
      */
     enum class StencilOp
@@ -772,17 +752,6 @@ namespace kege{
         IncrementAndWrap,   ///< Increment with wrap-around
         DecrementAndWrap    ///< Decrement with wrap-around
     };
-
-    /**
-     * @brief Polygon rendering mode.
-     */
-//    enum class PolygonMode
-//    {
-//        Invalid,
-//        Fill,  ///< Solid polygons (default)
-//        Line,  ///< Wireframe rendering
-//        Point  ///< Vertex points only
-//    };
 
     /**
      * @brief Face culling mode.

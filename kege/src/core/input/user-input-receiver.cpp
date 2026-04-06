@@ -31,7 +31,7 @@ namespace kege{
 
     bool UserInputReceiver::initialize( AppWindow* window )
     {
-        window->addListener( this );
+        //window->addListener( this );
         return true;
     }
 

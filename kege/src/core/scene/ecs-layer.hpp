@@ -22,6 +22,7 @@ namespace kege{
         bool initialize();
         void shutdown();
         bool update();
+        bool render();
 
         ECSLayer( ref::ECS ecs, ref::AssetManager am, ref::RenderGraph rg, const ref::ProjectManager& pm );
         ~ECSLayer();

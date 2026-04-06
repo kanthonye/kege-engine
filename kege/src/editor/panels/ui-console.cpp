@@ -145,8 +145,8 @@ namespace kege::ui{
 
 namespace kege::ui{
 
-    Console::Console( kege::EditorLayer* editor )
-    :   ui::Panel( "Console", editor )
+    Console::Console( kege::ui::DockManager* dm )
+    :   ui::Panel( "Console", dm )
     {
         // Generate persistent UIDs
 //            _log_area_uid = _gui->layout()->generateUID();
@@ -188,7 +188,7 @@ namespace kege::ui{
         _cerr_buf.reset();
     }
 
-    void Console::update()
+    void Console::updateLayout( int16_t layer )
     {
         // Process any pending log entries from other threads
         processPendingLogs();
@@ -339,6 +339,7 @@ namespace kege::ui{
 
     void Console::updateControls()
     {
+        int16_t layer = 0;
         // Start controls row
         _gui->beginRow(0);
 
@@ -350,14 +351,14 @@ namespace kege::ui{
 
         text.width = 50;
         text.ptr = "Clear";
-        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button)) {
+        if (_gui->button(_uid[0], layer, text, &_gui->theme().button)) {
             clearLogs();
         }
 
         // Export button
         text.width = 50;
         text.ptr = "Export";
-        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button))
+        if (_gui->button(_uid[1], layer, text, &_gui->theme().button))
         {
             exportLogs();
         }
@@ -381,7 +382,7 @@ namespace kege::ui{
         // Debug filter
         text.width = 50;
         text.ptr = "Debug";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::Debug]))
+        if (_gui->radio(_uid[2], layer, text, _filter_enabled[LogLevel::Debug]))
         {
             //updateVisibleIndices();
         }
@@ -389,7 +390,7 @@ namespace kege::ui{
         // Info filter
         text.width = 40;
         text.ptr = "Info";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::INFO]))
+        if (_gui->radio(_uid[3], layer, text, _filter_enabled[LogLevel::INFO]))
         {
             //updateVisibleIndices();
         }
@@ -397,7 +398,7 @@ namespace kege::ui{
         // Warning filter
         text.width = 50;
         text.ptr = "Warning";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::WARNING]))
+        if (_gui->radio(_uid[4], layer, text, _filter_enabled[LogLevel::WARNING]))
         {
             //updateVisibleIndices();
         }
@@ -405,7 +406,7 @@ namespace kege::ui{
         // Error filter
         text.width = 50;
         text.ptr = "Error";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::ERROR]))
+        if (_gui->radio(_uid[5], layer, text, _filter_enabled[LogLevel::ERROR]))
         {
             //updateVisibleIndices();
         }
@@ -413,7 +414,7 @@ namespace kege::ui{
         // Command filter
         text.width = 50;
         text.ptr = "Cmd";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::COMMAND]))
+        if (_gui->radio(_uid[6], layer, text, _filter_enabled[LogLevel::COMMAND]))
         {
             //updateVisibleIndices();
         }
@@ -421,7 +422,7 @@ namespace kege::ui{
         // System filter
         text.width = 50;
         text.ptr = "Sys";
-        if (_gui->radio(UI_BASE_ID(), 0, text, _filter_enabled[LogLevel::SYSTEM]))
+        if (_gui->radio(_uid[0], 0, text, _filter_enabled[LogLevel::SYSTEM]))
         {
             //updateVisibleIndices();
         }
@@ -429,7 +430,7 @@ namespace kege::ui{
         // Auto-scroll toggle
         text.width = 50;
         text.ptr = _auto_scroll ? "Auto" : "Manual";
-        if (_gui->button(UI_BASE_ID(), 0, text, &_gui->_theme.button))
+        if (_gui->button(_uid[0], layer, text, &_gui->theme().button))
         {
             _auto_scroll = !_auto_scroll;
             if (_auto_scroll)
@@ -449,12 +450,12 @@ namespace kege::ui{
         _gui->beginScrollContainer(0, _gui->getAddressAsInt(*this));
 
         // Set special style if new logs are available while not auto-scrolling
-        ui::Style* container_style = &_gui->_theme.panel;
+        const ui::Style* container_style = &_gui->theme().panel;
         if (_new_logs_available && !_auto_scroll)
         {
             // TODO: You might want to create a special style for this state
             // For now, we'll just modify the border color
-            container_style = &_gui->_theme.button;  // Temporary, you should create proper style
+            container_style = &_gui->theme().button;  // Temporary, you should create proper style
         }
 
         // Display visible log entries
@@ -485,7 +486,7 @@ namespace kege::ui{
             line_desc.text.ptr = line.str().c_str();
             //line_desc.text = _gui->layout()->text(line.str().c_str(), 12);
             line_desc.color = entry.color();
-            line_desc.style = &_gui->_theme.label;
+            line_desc.style = &_gui->theme().label;
             line_desc.layer = 0;
 
             // Highlight if search text matches
@@ -529,7 +530,7 @@ namespace kege::ui{
         // Execute button
         ui::WidgetHandle execute_uid;// = _gui->layout()->generateUID();
         ui::Text execute_text = _gui->layout()->text("Execute", 20);
-        if (_gui->button(UI_BASE_ID(), 0, execute_text, &_gui->_theme.button)) {
+        if (_gui->button(_uid[0], 0, execute_text, &_gui->theme().button)) {
             if (!_input_buffer.empty()) {
                 executeCommand(_input_buffer);
                 _input_buffer.clear();

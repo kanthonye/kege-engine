@@ -47,7 +47,7 @@ namespace kege{
         kege::VirtualDirectory::instance().add( "config", "/Users/kae/Developer/vscode/kege-engine/kege/assets/config" );
         kege::VirtualDirectory::instance().add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );
         kege::VirtualDirectory::instance().add( "compute-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/compute" );
-
+ 
         //-----------------------------------------------------------------------//
         // Create Asset Manager
         //-----------------------------------------------------------------------//
@@ -57,6 +57,12 @@ namespace kege{
         //-----------------------------------------------------------------------//
         // Create Application Window
         //-----------------------------------------------------------------------//
+
+        if ( !kege::GlfwWindow::init() )
+        {
+            kege::Log::error << "Failed to initialize GlfwWindow."<<Log::nl;
+            return false;
+        }
 
         kege::WindowCreateInfo create_window_info = {};
         create_window_info.title = "KEGE";
@@ -226,6 +232,7 @@ namespace kege{
         _input_manager.clear();
         _graphics.clear();
         _window.clear();
+        kege::GlfwWindow::terminate();
     }
 
     void Application::run()
@@ -238,9 +245,11 @@ namespace kege{
             {
                 _running = false;
             }
+            if( !_app_layer_stack->render() )
+            {
+                _running = false;
+            }
             _input_manager->endInput();
-
-            //_app_layer_stack->render()
         }
         shutdown();
     }

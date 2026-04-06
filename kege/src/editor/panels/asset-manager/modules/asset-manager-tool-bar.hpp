@@ -16,17 +16,20 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerToolBar(AssetManagerUI* m,kege::GUI* g, uint64_t user_id)
-        :   AssetManagerModule(m,g,user_id),_search_size(0){}
+        AssetManagerToolBar(AssetManagerUI* m,kege::GUI* g);
         void operator()(const std::string& type, void* data){}
         void update();
 
     private:
 
+
+        ui::Text text;
+        TextFieldMode mode;
         ViewMode _view_mode;
 
         char _search_buffer[256];
         size_t _search_size;
+        ui::UID _uid;
     };
 
 }

@@ -119,7 +119,7 @@ namespace kege::ui{
     
     uint32_t parseColor( kege::Json json )
     {
-        Color color = {};
+        //Color color = {};
         if ( json )
         {
             if ( json.count() == 4 )
@@ -134,7 +134,7 @@ namespace kege::ui{
             }
             else
             {
-                size_t len = strlen( json.value() );
+                //size_t len = strlen( json.value() );
                 uint32_t hex = (uint32_t)std::stoul( json.value(), 0, 16 );
                 return hex;
             }

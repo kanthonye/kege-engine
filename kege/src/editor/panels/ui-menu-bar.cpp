@@ -10,13 +10,13 @@
 
 namespace kege::ui{
 
-    MenuBar::MenuBar( kege::EditorLayer* editor )
-    :   kege::ui::Panel( "MenuBar", editor )
+    MenuBar::MenuBar( kege::ui::DockManager* dm )
+    :   kege::ui::Panel( "MenuBar", dm )
     {
 //        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }
 
-    void MenuBar::update()
+    void MenuBar::updateLayout( int16_t layer )
     {
 //        _layout->push({ .id = &_main });
 //        if ( 0 <= file.select( *_layout, "File", { "Save", "Open", "Import", "Export" } ) )

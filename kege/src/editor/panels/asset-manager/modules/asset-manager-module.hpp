@@ -31,14 +31,13 @@ namespace kege::ui{
 
         std::mutex& getAssetMutex();
 
-        AssetManagerModule(AssetManagerUI* m,kege::GUI* g, uint64_t user_id):_manager(m), _gui(g), _user_id(user_id){}
+        AssetManagerModule(AssetManagerUI* m,kege::GUI* g):_manager(m), _gui(g){}
         virtual ~AssetManagerModule(){}
 
     protected:
 
         AssetManagerUI* _manager;
         kege::GUI* _gui;
-        uint64_t _user_id;
     };
 }
 #endif /* asset_manager_module_hpp */

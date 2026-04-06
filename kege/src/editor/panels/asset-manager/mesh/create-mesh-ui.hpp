@@ -12,6 +12,8 @@
 
 namespace kege::ui{
 
+    class AssetManagerUI;
+    
     class CreateMeshUI : public kege::RefCounter
     {
     public:
@@ -19,12 +21,18 @@ namespace kege::ui{
         const std::string& getName()const{ return _name;}
         virtual bool create(GUI* gui) = 0;
 
-        CreateMeshUI(const std::string& n): _name(n) {}
+        CreateMeshUI(const std::string& n, AssetManagerUI* m): _name(n), _manager(m) {}
         virtual ~CreateMeshUI(){}
 
-    private:
+    protected:
 
+        AssetManagerUI* _manager;
         std::string _name;
+
+        ui::Text _text;
+        TextFieldMode _text_input_mode;
+        
+        ui::UID _uid;
     };
 }
 #endif /* create_mesh_ui_hpp */

@@ -17,6 +17,9 @@ namespace kege{
     //typedef std::map< int, ComponentAddFn > ComponentAdderFactory;
 
 
+
+
+
     class InspectorPanel : public kege::ui::Panel
     {
     public:
@@ -25,6 +28,8 @@ namespace kege{
         {
             ui::InspectorComponentUIBuilder buildUI;
             ComponentAddFn addComponent;
+            ui::UID uid_comp;
+            ui::UID uid;
             std::string name;
             int32_t type;
             size_t index;
@@ -33,12 +38,12 @@ namespace kege{
         //typedef std::map< int, ui::InspectorComponentUIBuilder > ComponentBuilderFactory;
 
 
-        void operator()(const kege::ui::DragDropOffAssetMetadata& event);
+        void handle(const kege::ui::AssetMetadataDropOff& event);
 
-        InspectorPanel( kege::EditorLayer* editor );
+        InspectorPanel( kege::ui::DockManager* dm );
         int select( const std::vector< std::string >& options );
         void operator()( const ui::SetSelectedEntity& msg );
-        void update();
+        void updateLayout( int16_t layer );
 
         void updateAddComponent(int16_t layer);
         void updateComponents(int16_t layer);
@@ -63,18 +68,24 @@ namespace kege{
 
         kege::ui::Style _styles[5];
 
-//        std::map< std::string, int > _string_to_component_type;
+        std::map< uint64_t, int > _string_to_component_type;
+        
         ComponentAdderFactory _component_adder_registry;
         
         std::vector< int > _deleted_components;
-        std::vector< ListElem > _listed_component;
+        std::vector< ui::Text > _listed_component;
         std::vector< CompInfo > _infos;
 
-        ui::WidgetHandle _add_component;
+        //ui::ID _add_component;
         ui::Tree _tree;
 
 
         kege::ECS* _ecs;
+
+        ui::UID _uid_selection;
+        ui::UID _add_component;
+        ui::UID _uid_main;
+
         ui::WidgetHandle _containers[2];
         float _scroll_amount;
 

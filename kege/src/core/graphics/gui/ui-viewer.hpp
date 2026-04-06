@@ -122,7 +122,7 @@ namespace kege::ui{
 
         /**
          */
-        void draw( ui::Layout& layout, int pid, const ui::Rect& clip_rect );
+        void draw( ui::Layout& layout, int pid, ui::Rect clip_rect );
 
         //void linearize( ui::Layout& layout, int pid, int zindex, std::vector< std::pair< int, ui::Widget* > >& nodes, int& count );
         //void insertionSort(std::vector< std::pair< int, ui::Widget* > >& arr);

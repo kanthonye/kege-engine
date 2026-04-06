@@ -6,44 +6,50 @@
 //
 
 #include "uid.hpp"
-#include "ui-layout.hpp"
 
 namespace kege::ui{
 
     UID::Value* UID::Recycler::create()
     {
         Value* value;
-        if (_recycler.head != nullptr)
+        if (head != nullptr)
         {
-            value = _recycler.head;
-            _recycler.head = _recycler.head->next;
+            value = head;
+            head = head->next;
             value->duplicates = 0;
         }
         else
         {
-            value = new UID::Value{ UID::_id_counter++, 0, nullptr };
+            value = new UID::Value{ ((uint64_t) _id_counter++ << 32), 1, nullptr };
         }
         return value;
     }
+
     UID::Recycler::~Recycler()
     {
+        uint64_t count = _id_counter;
         while (head != nullptr)
         {
             UID::Value* h = head;
             head = head->next;
             delete h;
+            count -= 1;
         }
         tail = nullptr;
     }
+
     UID::Recycler::Recycler()
     :   head(nullptr)
     ,   tail(nullptr)
+    ,   _id_counter(1)
     {}
 
+}
+
+
+namespace kege::ui{
 
     UID::Recycler UID::_recycler;
-    uint32_t UID::_id_counter = 1;
-
 
     void UID::clear()
     {
@@ -67,7 +73,16 @@ namespace kege::ui{
         }
     }
 
-    UID::operator uint32_t()const
+    ID UID::operator[]( uint32_t index )const
+    {
+        if ( _value == nullptr )
+        {
+            _value = _recycler.create();
+        }
+        return { *this, _value->value | uint64_t( index ) };
+    }
+
+    UID::operator uint64_t()const
     {
         if (_value) return _value->value;
         return 0;

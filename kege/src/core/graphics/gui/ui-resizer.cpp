@@ -255,7 +255,6 @@ namespace kege::ui{
             const Padding& padding = widget->padding;
             float h_pad = (padding.left + padding.right);
             float v_pad = (padding.above + padding.below);
-            float gapsum = (widget->count > 1)? widget->gap.width * (widget->count - 1) : 0.f;
 
             Extent flex = {};
             if( widget->text.ptr && (widget->width.type == ui::SizingType::Flexible || widget->height.type == ui::SizingType::Flexible) )
@@ -322,6 +321,7 @@ namespace kege::ui{
 
                 if (widget->width.type == ui::SizingType::Flexible)
                 {
+                    float gapsum = (widget->count > 1)? widget->gap.width * (widget->count - 1) : 0.f;
                     widget->rect.width += flex.width + h_pad + gapsum;
                 }
                 if (widget->height.type == ui::SizingType::Flexible)
@@ -339,6 +339,7 @@ namespace kege::ui{
                 }
                 if (widget->height.type == ui::SizingType::Flexible)
                 {
+                    float gapsum = (widget->count > 1)? widget->gap.height * (widget->count - 1) : 0.f;
                     widget->rect.height += flex.height + v_pad + gapsum;
                 }
             }

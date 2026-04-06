@@ -17,8 +17,8 @@ namespace kege::ui{
     {
         nodes[0]._parent = &dock;
         nodes[1]._parent = &dock;
-        nodes[0]._editor = dock._editor;
-        nodes[1]._editor = dock._editor;
+        nodes[0]._manager = dock._manager;
+        nodes[1]._manager = dock._manager;
         nodes[0]._gui = dock._gui;
         nodes[1]._gui = dock._gui;
         onReshape();

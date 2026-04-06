@@ -75,7 +75,7 @@ namespace kege::physics{
 
                 const RigidShape& shape1 = body1->collider->shape_type;
                 const RigidShape& shape2 = body2->collider->shape_type;
-                if( _collision_function_table[ shape1 ][ shape1 ]( body1, body2, _simulator->getCollisionRegistry() ) )
+                if( _collision_function_table[ shape1 ][ shape2 ]( body1, body2, _simulator->getCollisionRegistry() ) )
                 {}
             }
         }

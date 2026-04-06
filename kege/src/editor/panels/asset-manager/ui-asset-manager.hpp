@@ -21,7 +21,7 @@ namespace kege::ui{
 
         enum class ImportStatus { PENDING, PROCESSING, COMPLETE, FAILED };
         std::vector<std::string> _string_categories;
-        std::vector<kege::ListElem> _categories;
+        std::vector<kege::ui::Text> _categories;
 
         // Folder/category structure
         struct FolderNode
@@ -67,9 +67,11 @@ namespace kege::ui{
         void deleteAssets(const std::vector<uint64_t>& asset_handles);
         void addAsset(const AssetMetadata& amd);
 
-        void update() override;
+        void handle(const kege::ui::AssetMetadataDropOff& event)override;
 
-        AssetManagerUI(kege::EditorLayer* editor, uint64_t user_id);
+        void updateLayout( int16_t layer )override;
+
+        AssetManagerUI(kege::ui::DockManager* dm);
 
         ~AssetManagerUI() override;
 
@@ -173,7 +175,6 @@ namespace kege::ui{
 //        kege::dvec2 _drag_start;
 
         // UI state
-        uint64_t _user_id;
 //        ui::WidgetHandle _asset_grid_uid;
 //        ui::WidgetHandle _folder_tree_uid;
 //        ui::WidgetHandle _import_button_uid;

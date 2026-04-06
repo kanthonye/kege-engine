@@ -21,7 +21,7 @@ namespace kege{
 
         bool initialize();
         void shutdown();
-        bool update();
+        bool render();
 
         RenderLayer( kege::AssetManager* am, ref::RenderGraph& rg, kege::ProjectManager* pm );
         ~RenderLayer();

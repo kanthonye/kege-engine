@@ -12,6 +12,7 @@ namespace kege{
     {
         if( key >= 384 ) return;
 
+        _modifiers = (Modifiers)mods;
         _keys[ key ].code = key;
         _keys[ key ].scancode = scancode;
         _keys[ key ].action = (KeyState)action;
@@ -43,12 +44,12 @@ namespace kege{
 
     bool Keyboard::isPressed( int key )
     {
-        return _keys[key].action != KeyState::Pressed;
+        return _keys[key].action == KeyState::Pressed;
     }
 
     bool Keyboard::isDown( int key )
     {
-        return _keys[key].action != KeyState::Pressed || _keys[key].action != KeyState::PressedRepeat;
+        return _keys[key].action == KeyState::Pressed || _keys[key].action == KeyState::PressedRepeat;
     }
 
     void Keyboard::begin()
@@ -58,6 +59,11 @@ namespace kege{
     void Keyboard::end()
     {
         _active_key_count = 0;
+    }
+
+    Modifiers Keyboard::getModifiers() const
+    {
+        return _modifiers;
     }
 
     Keyboard::Keyboard()

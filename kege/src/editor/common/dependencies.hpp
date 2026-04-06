@@ -37,7 +37,7 @@
 #include "../../core/graphics/mesh/mesh-cylinder.hpp"
 #include "../../core/graphics/particle/effect/particle-effect.hpp"
 
-#include "gui.hpp"
+#include "ui-schema.hpp"
 
 namespace kege{
     class EditorLayer;
@@ -80,10 +80,8 @@ namespace kege::ui{
         std::string category;
         bool is_favorite = false;
 
-        uint64_t asset_uid;
-        uint64_t thumbnail_uid;
-        uint64_t name_uid;
-
+        ui::UID uid = ui::UID::create();
+        ui::WidgetId widget_id;
 
         // Import settings (type-specific)
         struct ImportSettings
@@ -165,14 +163,15 @@ namespace kege::ui{
         }
     };
 
-    struct DragDropOffAssetMetadata
+    struct AssetMetadataDropOff
     {
-        uint64_t handle;
-        kege::dvec2 pointer;
+        std::vector< AssetMetadata* > handle;
+        kege::dvec2 position;
     };
 
 
-    typedef bool(*InspectorComponentUIBuilder)( kege::AssetManager* am, int16_t layer, kege::GUI*, kege::ECS* ecs, ecs::Entity& );
+    typedef bool(*InspectorComponentUIBuilder)
+    ( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI*, kege::ECS* ecs, ecs::Entity& );
 }
 
 namespace kege::ui{
@@ -214,7 +213,7 @@ namespace kege::ui{
 
     struct TabElem
     {
-        ui::WidgetHandle uids[3];
+        ui::WidgetId uids[3];
         ui::Text text;
     };
 
@@ -226,7 +225,7 @@ namespace kege::ui{
         std::vector< int > panel_indices;
         std::vector< TabElem > list;
         int selection = 0;
-        WidgetHandle uid;
+        WidgetId widget_id;
     };
 
     struct ResizeHandler

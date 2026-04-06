@@ -74,7 +74,7 @@ namespace kege::ui{
             {
                 if (idx < assets->size())
                 {
-                    _dragged_asset_handles.push_back({ .index = assets->at(idx).handle });
+                    _dragged_asset_handles.push_back({ .index = idx });
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace kege::ui{
         {
             if (initial_index < assets->size())
             {
-                _dragged_asset_handles.push_back({ .index = assets->at(initial_index).handle });
+                _dragged_asset_handles.push_back({ .index = initial_index });
             }
         }
     }
@@ -104,20 +104,12 @@ namespace kege::ui{
             DragObj& obj = _dragged_asset_handles.at(0);
             obj.snum = std::to_string(_dragged_asset_handles.size());
             // Draw drag preview at pointer position
-            ui::WidgetDesc desc;
-            desc.user_id = UI_BASE_ID();
-            desc.color = assets->at(0).type_color();
-            desc.border.corner_curves = {5,5,5,5};
-            desc.position = Positioning::Independent;
-            desc.layer = 1; // Top layer
-            desc.text.width = 30;
-            desc.text.height = 20;
-            desc.text.font_size = 20;
-            desc.text.color = 0xFFFFFFFF;
-            desc.text.ptr = obj.snum.c_str();
-            desc.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
+            _drag_element.user_id = _uid_drag[0];
+            _drag_element.color = assets->at(0).type_color();
+            _drag_element.text.ptr = obj.snum.c_str();
+            _drag_element.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
 
-            _gui->put(desc);
+            _gui->put(_drag_element);
         }
 
         // Check for drop
@@ -126,8 +118,14 @@ namespace kege::ui{
             _is_dragging_assets = false;
             std::cout << " not dragging\n";
 
-            std::vector<AssetMetadata>* assets = getAssets();;
-            //kege::Communication::broadcast<DragDropOffAssetMetadata>({ &assets->at(0) });
+            AssetMetadataDropOff dropoff;
+            dropoff.position = _drag_start;
+            std::vector<AssetMetadata>* assets = getAssets();
+            for(const DragObj& obj : _dragged_asset_handles)
+            {
+                dropoff.handle.push_back( &assets->at( obj.index ) );
+            }
+            kege::Communication::broadcast< const AssetMetadataDropOff& >( dropoff );
             // TODO: Check drop target
             // If dropped on SceneEditor, create object with asset
             // If dropped on folder, move asset to that folder
@@ -136,7 +134,7 @@ namespace kege::ui{
     void AssetManagerAssetView::updateGridView()
     {
         // Begin scroll container for virtual scrolling
-        _gui->beginScrollContainer(0, _gui->getAddressAsInt(this));
+        _gui->beginScrollContainer(_scroll_container, 0);
 
         // Calculate grid layout
         //float available_width = _gui->layout()->getWidth();
@@ -165,10 +163,12 @@ namespace kege::ui{
             if (visible_idx >= assets->size()) continue;
             auto& asset = assets->at(visible_idx);
 
+            //uid::ID id[2] = {_uid_root[visible_idx + 1]};
+
             // Begin column for file item
-            _gui->push
+            asset.widget_id = _gui->push
             ({
-                .user_id = asset.asset_uid,
+                .user_id = asset.uid[0],
                 .layer = 0,
                 .rect =
                 {
@@ -193,17 +193,17 @@ namespace kege::ui{
                 // File icon
                 ui::WidgetDesc icon_desc;
                 icon_desc.layer = 0;
-                icon_desc.user_id = asset.thumbnail_uid;
+                icon_desc.user_id = asset.uid[1];
                 icon_desc.rect = {0, 0, ICON_SIZE, ICON_SIZE};
                 icon_desc.color = 0xFFFFFF0A;
                 icon_desc.border.corner_curves = {6,6,6,6};
 
                 // Use put for the icon (no container)
                 _gui->put(icon_desc);
-                _gui->put({.style = &_gui->_theme.y_seperator});
+                _gui->put({.style = &_gui->theme().y_seperator});
 
                 // Check for interactions
-                if (_gui->click( asset.asset_uid ))
+                if (_gui->click( asset.uid[0] ))
                 {
                     Modifiers modifiers = _gui->layout()->inputManager()->getMouse()->getModifiers();
                     handleAssetClick(visible_idx, modifiers);
@@ -221,7 +221,7 @@ namespace kege::ui{
 //                }
 
                 // Check for drag start on this icon
-                if (_gui->pointerDragging() && _gui->mouseover(asset.asset_uid))
+                if (_gui->pointerDragging() && _gui->mouseover(asset.uid[0]))
                 {
                     if (!_is_dragging_assets)
                     {
@@ -230,7 +230,7 @@ namespace kege::ui{
                 }
 
                 // Track hover for tooltips
-                if (_gui->mouseover(asset.asset_uid) || _gui->mouseover(asset.asset_uid))
+                if (_gui->mouseover(asset.uid[0]) || _gui->mouseover(asset.uid[0]))
                 {
 //                    tool_tips = true;
 //                    _hovered_file_index = i;
@@ -313,8 +313,25 @@ namespace kege::ui{
         std::vector<AssetMetadata>* assets = getAssets();
         for (size_t idx : *selected_indices)
         {
-            //_gui->get(assets->at(idx).asset_uid)->color = 0x80FFFF22;
+            _gui->get( assets->at(idx).widget_id )->color = 0x80FFFF22;
         }
+    }
+
+    AssetManagerAssetView::AssetManagerAssetView(AssetManagerUI* m,kege::GUI* g)
+    :   AssetManagerModule(m,g)
+    {
+        _scroll_container[0] = _uid_root[1];
+        _scroll_container[1] = _uid_root[2];
+
+        _drag_element.user_id = _uid_drag[0];
+        _drag_element.border.corner_curves = {5,5,5,5};
+        _drag_element.position = Positioning::Independent;
+        _drag_element.layer = 1; // Top layer
+        _drag_element.text.width = 30;
+        _drag_element.text.height = 20;
+        _drag_element.text.font_size = 20;
+        _drag_element.text.color = 0xFFFFFFFF;
+        _drag_element.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
     }
 }
 

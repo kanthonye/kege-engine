@@ -22,9 +22,10 @@ namespace kege{
 
         const std::string& name() const { return _name; }
 
+        virtual bool render(){ return true; }
+        virtual bool update(){ return true; }
         virtual bool initialize() = 0;
         virtual void shutdown() = 0;
-        virtual bool update() = 0;
 
         AppLayer( const std::string& n ): _name( n ) {}
         virtual ~AppLayer() = default;

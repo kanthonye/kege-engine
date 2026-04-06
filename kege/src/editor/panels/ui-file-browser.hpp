@@ -22,12 +22,10 @@ namespace kege::ui{
 
         struct FileEntry
         {
-            ui::WidgetId wid;
-            ui::WidgetHandle icon_uid;
-            ui::WidgetHandle label_uid;
-            
+            ui::UID uid;
+            ui::WidgetId widget_id;
+
             ui::Text name_text;
-            //ui::WidgetHandle uid;
             fs::path path;
             std::string name;
             std::string display_name;
@@ -83,8 +81,8 @@ namespace kege::ui{
 
     public:
 
-        FileBrowser(kege::EditorLayer* editor, ui::UserId uid_main, const std::string& path);
-        void update() override;
+        FileBrowser(kege::ui::DockManager* dm, const std::string& path);
+        void updateLayout( int16_t layer )override;
 
     private:
 
@@ -132,7 +130,7 @@ namespace kege::ui{
         std::string _current_path_str;
 
         // UI element IDs (persistent across frames)
-        ui::UserId _uid_main;
+        ui::UID _uid_main;
         ui::WidgetId _id_main_widget;
 
         ui::WidgetHandle _up_button_uid;
@@ -141,7 +139,6 @@ namespace kege::ui{
         ui::WidgetHandle _refresh_button_uid;
         ui::WidgetHandle _new_folder_button_uid;
         ui::WidgetHandle _tool_tip_button_uid;
-        uint64_t _scroll_container_id;
         uint64_t _path_field_id;
 
 

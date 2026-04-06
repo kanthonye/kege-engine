@@ -31,8 +31,8 @@ namespace kege::ui{
 
         enum class ImportStatus { PENDING, PROCESSING, COMPLETE, FAILED };
 
-        AssetManagerFolderTree(AssetManagerUI* m,kege::GUI* g, uint64_t user_id)
-        : AssetManagerModule(m,g,user_id){}
+        AssetManagerFolderTree(AssetManagerUI* m,kege::GUI* g)
+        : AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
 
 
@@ -46,10 +46,10 @@ namespace kege::ui{
     private:
 
         std::vector<std::string> _string_categories;
-        std::vector<kege::ListElem> _categories;
-        std::vector<size_t> _filtered_indices;
+        std::vector< kege::ui::Text > _categories;
+        std::vector< size_t > _filtered_indices;
 
-        kege::ListElem _current_category;
+        kege::ui::Text _current_category;
 
         std::string _search_text;
         std::set<AssetType> _type_filters;

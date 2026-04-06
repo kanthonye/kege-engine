@@ -11,8 +11,8 @@
 
 namespace kege::ui{
 
-    AssetManagerCreateAsset::AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g, uint64_t user_id)
-    : AssetManagerModule(m,g,user_id)
+    AssetManagerCreateAsset::AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g)
+    : AssetManagerModule(m,g)
     {}
 
     void AssetManagerCreateAsset::operator()(const std::string& type, void* data)
@@ -33,31 +33,29 @@ namespace kege::ui{
         {
             static std::vector<std::string> creates;
             static std::vector<std::string> names;
-            static std::vector<ListElem> list;
+            static std::vector< kege::ui::Text > list;
             if (list.empty())
             {
                 names = std::vector<std::string>{"Mesh", "Material", "Textures", "Shaders", "Sounds", "Scripts"};
                 for (int i=0; i<names.size(); ++i)
                 {
-                    list.push_back(ListElem
+                    list.push_back(
                     {
-                        .text = ui::Text
-                        {
-                            .ptr = names[i].c_str(),
-                            .width = 100,
-                            .font_size = 20,
-                            .height = 15,
-                            .color = 0xFFFFFFFF
-                        }
+                        .ptr = names[i].c_str(),
+                        .width = 100,
+                        .font_size = 20,
+                        .height = 15,
+                        .color = 0xFFFFFFFF
                     });
                     creates.push_back("OpenCreate" + names[i] + "Window");
                 }
             }
 
+            uint32_t id_offset = (uint32_t)names.size();
             _gui->push
             ({
                 .layer = 1,
-                .user_id = UI_BASE_ID(),
+                .user_id = _uid[ id_offset ],
                 .color = 0x000000FF,
                 .padding = {20,20,20,20},
                 .clip_overflow = true,
@@ -67,7 +65,7 @@ namespace kege::ui{
                 .double_click = ui::ClickTrigger::Immediate,
             });
             int selected_index;
-            if( _gui->select(1, list, selected_index) )
+            if( _gui->select(_uid, 0, list, selected_index) )
             {
                 _manager->handle(this, creates[selected_index].c_str(), nullptr);
                 _open_window = false;

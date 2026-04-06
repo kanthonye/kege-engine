@@ -6,15 +6,18 @@
 //
 
 #include "../../../editor-layer.hpp"
+#include "../../../dock/ui-dock-manager.hpp"
 #include "create-cylinder-ui.hpp"
 
 namespace kege::ui{
 
     bool CreateCylinderMeshUI::create(GUI* gui)
     {
+        int16_t layer = 2;
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "cylinder-mesh-%i", _count++);
+            _text = gui->layout()->text(_asset_name, 20);
         }
         gui->push
         ({
@@ -32,18 +35,18 @@ namespace kege::ui{
             .height = ui::extend(),
         });
         {
-            gui->text("name", _asset_name, _current_size, _buffer_capacity);
+            gui->labelInput("Name:", _uid[1], layer, _text_input_mode, _text);
             gui->put({.rect = {0,0,50,20}});
-            gui->input(UI_BASE_ID(), "Radius:", _radius);
-            gui->input(UI_BASE_ID(), "Height:", _height);
-            gui->input(UI_BASE_ID(), "Rings:", _rings);
+            gui->labelScrubber(_uid[4], layer, "Radius:", _radius);
+            gui->labelScrubber(_uid[4], layer, "Height:", _height);
+            gui->labelScrubber(_uid[3], layer, "Rings:", _rings);
 
-            gui->put({.style = &gui->_theme.y_seperator});
+            gui->put({.style = &gui->theme().y_seperator});
 
-            uint64_t user_id = UI_BASE_ID();
-            if( gui->submit(user_id, "Submit") )
+            //uint64_t user_id = UI_BASE_ID();
+            if( gui->submit(_uid[4], "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getEditor()->getAssetManager();
+                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                 kege::Ref<kege::MeshPrimitive> mesh = new CylinderMesh( _radius, _height, _rings );
 
                 // Create metadata
@@ -70,8 +73,7 @@ namespace kege::ui{
     }
 
     CreateCylinderMeshUI::CreateCylinderMeshUI(ui::AssetManagerUI* m)
-    : CreateMeshUI("Cylinder")
-    ,   _manager(m)
+    : CreateMeshUI("Cylinder", m)
     {}
 
     int CreateCylinderMeshUI::_count = 1;

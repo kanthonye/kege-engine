@@ -22,7 +22,7 @@ namespace kege{
         Modifiers mods;
     };
 
-    class Keyboard : public WindowListener
+    class Keyboard// : public WindowListener
     {
     public:
 
@@ -35,7 +35,7 @@ namespace kege{
         bool isPressed( int key );
         bool isDown( int key );
 
-        Modifiers getModifiers() const noexcept;
+        Modifiers getModifiers() const;
 
         void begin();
         void end();
@@ -47,6 +47,7 @@ namespace kege{
         std::vector< const Key* > _active_keys;
         std::array< Key,384 > _keys;
         uint32_t _active_key_count;
+        Modifiers _modifiers;
     };
 
 }

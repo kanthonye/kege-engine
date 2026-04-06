@@ -60,7 +60,7 @@ namespace kege::ecs{
                 // Default constructor - always safe
                 defaultConstruct = [](void* ptr) {
                     new (ptr) T();  // placement new
-                    printf( "Construct attribute at %p\n", ptr);
+                    //printf( "Construct attribute at %p\n", ptr);
                 };
 
                 // Only set non-trivial operations if type is non-trivial

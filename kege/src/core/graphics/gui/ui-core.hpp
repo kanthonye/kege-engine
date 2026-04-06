@@ -62,10 +62,8 @@ namespace kege::ui{
 
     struct WidgetHandle
     {
-        WidgetHandle(uint64_t user_id):user_id(user_id){}
-        WidgetHandle(): user_id(0){}
         //private:
-        UserId user_id;
+        ui::ID user_id;
         WidgetId widget_id;
         friend class Layout;
     };
@@ -392,8 +390,7 @@ namespace kege::ui{
         /**
          * id: The unique identifier for this widget.
          */
-        uint64_t user_id = 0;
-        //ui::WidgetHandle* uid; // 16 bytes
+        ui::ID user_id;
 
         /**
          * rect: hold the position and size of the ui element
@@ -418,7 +415,7 @@ namespace kege::ui{
         /**
          * style: hold the style pointer for this ui element
          */
-        Style* style = nullptr; // 8 byte
+        const Style* style = nullptr; // 8 byte
 
         /**
          * align: hold the alignment for this ui element
@@ -528,8 +525,7 @@ namespace kege::ui{
         /**
          * id: The unique identifier for this widget.
          */
-        //ui::WidgetId id;
-        uint64_t user_id = 0;
+        ui::ID user_id;
         uint32_t index = 0;
         uint32_t version = 0;
 
@@ -569,7 +565,7 @@ namespace kege::ui{
         /**
          * style: hold the style pointer for this ui element
          */
-        Style* style = nullptr; // 8 byte
+        const Style* style = nullptr; // 8 byte
 
         /**
          * color is a hex color value holding the rgba value for each color channel.

@@ -165,26 +165,25 @@ void main()
 {
     vec2 frag = gl_FragCoord.xy * resolution.z;
 
+    bool clip_fail = (frag.x < clip_rect.x ||
+                      frag.x > clip_rect.x + clip_rect.z ||
+                      frag.y < clip_rect.y ||
+                      frag.y > clip_rect.y + clip_rect.w);
     // -----------------------------
     // Clip rectangle
     // -----------------------------
-    if
-    (
-        frag.x < clip_rect.x || frag.x > clip_rect.x + clip_rect.z ||
-        frag.y < clip_rect.y || frag.y > clip_rect.y + clip_rect.w
-    )
+    if( clip_fail )
     {
+        //final_color = vec4(1,0,0, 1.0);
         discard;
     }
-
-    frag = frag / resolution.xy;
 
     // -----------------------------
     // Rectangle local space
     // -----------------------------
     vec2 size   = rect.zw;
     vec2 center = rect.xy + size * 0.5;
-    vec2 p      = frag * resolution.xy - center;
+    vec2 p      = frag - center;
 
     // Clamp radii to sane values
     vec4 r = min(border_radius, min(size.x, size.y) * 0.5);

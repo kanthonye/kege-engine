@@ -160,34 +160,17 @@ namespace kege{
         virtual bool isFullscreen() const = 0;
         virtual bool isVSyncEnabled() const = 0;
 
-        void onKeyboard( int key, int scancode, int action, int mods );
-        void onMouseButton( int button, int action, int mods );
-        void onCursorPosition( double xpos, double ypos );
-        void onScroll( double xoffset, double yoffset );
+        //void onKeyboard( int key, int scancode, int action, int mods );
+        //void onMouseButton( int button, int action, int mods );
+        //void onCursorPosition( double xpos, double ypos );
+        //void onScroll( double xoffset, double yoffset );
 
-        void removeListener( WindowListener* listener );
-        void addListener( WindowListener* listener );
+        //void removeListener( WindowListener* listener );
+        //void addListener( WindowListener* listener );
 
         virtual void* getHandle(){ return nullptr; }
 
         virtual ~AppWindow() = default;
-
-    protected:
-
-        std::vector< WindowListener* > _listeners;
-    };
-
-
-
-    class WindowListener : public RefCounter
-    {
-    public:
-
-        virtual void onKeyboard( int key, int scancode, int action, int mods ){}
-        virtual void onMouseButton( int button, int action, int mods ){}
-        virtual void onCursorPosition( double xpos, double ypos ){}
-        virtual void onScroll( double xoffset, double yoffset ){}
-        virtual ~WindowListener(){}
     };
 
 }

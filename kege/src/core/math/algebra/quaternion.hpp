@@ -30,7 +30,7 @@ namespace kege{
             x = rx;
             y = ry;
             z = rz;
-            z = rw;
+            w = rw;
         }
 
         inline Quat< var >& operator+=( const Quat< var >& q )
@@ -51,7 +51,7 @@ namespace kege{
             x = rx;
             y = ry;
             z = rz;
-            z = rw;
+            w = rw;
         }
 
         inline void operator += ( const Vec3< var >& v )
@@ -790,32 +790,6 @@ namespace kege{
         return t * m;
         //return r * t;
     }
-
-//    template< typename var > Quat< var > quatLookAt
-//    (
-//        const Vec3< var >& direction,
-//        const Vec3< var >& up = Vec3< var >(0, 1, 0)
-//    )
-//    {
-//        // Ensure the direction is normalized
-//        Vec3< var > forward = normalize( direction );
-//
-//        // Compute the right vector
-//        Vec3< var > right = normalize( cross(up, forward) );
-//
-//        // Recompute the orthonormal up vector
-//        Vec3< var > ortho_up = cross(forward, right);
-//
-//        // Convert the rotation matrix to a quaternion
-//
-//        return toQuat< var >
-//        (
-//            right.x,    right.y,    right.z,
-//            ortho_up.x, ortho_up.y, ortho_up.z,
-//            forward.x,  forward.y,  forward.z
-//        );
-//        //return quat_cast( rotation_matrix );
-//    }
 
 }
 #endif /* quaternion_hpp */

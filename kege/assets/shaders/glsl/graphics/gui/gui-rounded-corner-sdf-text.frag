@@ -62,7 +62,7 @@ vec4 sampleTexture(int texr_id)
 
 void main()
 {
-    vec2 frag = gl_FragCoord.xy * resolution.z;
+    vec2 frag = gl_FragCoord.xy;
 
     // -----------------------------
     // Clip rectangle
@@ -76,14 +76,12 @@ void main()
         discard;
     }
 
-    frag = frag / resolution.xy;
-
     // -----------------------------
     // Rectangle local space
     // -----------------------------
     vec2 size   = rect.zw;
     vec2 center = rect.xy + size * 0.5;
-    vec2 p      = frag * resolution.xy - center;
+    vec2 p      = frag * vec2(1536.0, 896.0) - center;
 
     // Clamp radii to sane values
     vec4 r = min(border_radius, min(size.x, size.y) * 0.5);

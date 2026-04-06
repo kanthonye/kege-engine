@@ -19,7 +19,10 @@ namespace kege{
         RenderObject object = {};
         for (auto [entity, renderable, transform] : view< kege::Renderable, kege::Transform >() )
         {
-            kege::Ref<Mesh>* meshptr = assets->get<kege::Ref<Mesh>>( renderable->mesh_handle );
+            kege::Renderable* r = renderable;
+            kege::Transform* t = transform;
+
+            kege::Ref<Mesh>* meshptr = assets->get<kege::Ref<Mesh>>( r->mesh_handle );
             if ( meshptr == nullptr)
             {
                 continue;

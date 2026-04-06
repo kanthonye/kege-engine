@@ -10,15 +10,13 @@
 
 namespace kege::ui{
 
-    FileBrowser::FileBrowser(kege::EditorLayer* editor, ui::UserId uid_main, const std::string& path)
-    :   kege::ui::Panel( "FileBrowser", editor )
+    FileBrowser::FileBrowser(kege::ui::DockManager* dm, const std::string& path)
+    :   kege::ui::Panel( "FileBrowser", dm )
     ,   _current_path(path)
     ,   _show_tool_tip(false)
     ,   _curr_selection(0)
-    ,   _uid_main( uid_main )
     {
         _path_field_id = _gui->getAddressAsInt(this);
-        _scroll_container_id = _path_field_id + 4;
 
         // Initialize navigation history
         _history.push(_current_path);
@@ -27,13 +25,13 @@ namespace kege::ui{
         refreshDirectory();
     }
 
-    void FileBrowser::update()
+    void FileBrowser::updateLayout( int16_t layer )
     {
         // Main update function called every frame
         _id_main_widget = _gui->push({
-            .layer = 0,
-            .user_id = _uid_main,
-            .style = &_gui->_theme.panel,
+            .layer = layer,
+            .user_id = _uid_main[0],
+            .style = &_gui->theme().panel,
             .clip_overflow = true
         });
         updateNavigationBar();
@@ -49,7 +47,7 @@ namespace kege::ui{
 
         for (const auto& entry : _selected_indices)
         {
-            _gui->get(_filtered_files[entry].wid)->color = 0xFFFFFF20;
+            _gui->get( _filtered_files[ entry ].widget_id )->color = 0xFFFFFF20;
         }
     }
 
@@ -167,7 +165,7 @@ namespace kege::ui{
         }
     }
 
-    bool navToggle(kege::GUI* gui, UserId uid, bool state, const ui::Text& label)
+    bool navToggle(kege::GUI* gui, ui::ID uid, bool state, const ui::Text& label)
     {
         gui->put
         ({
@@ -185,10 +183,10 @@ namespace kege::ui{
     void FileBrowser::updateNavigationBar()
     {
         // Start a row for navigation controls
-        _gui->push({.layer = 0, .style = &_gui->_theme.navbar});
+        _gui->push({.layer = 0, .style = &_gui->theme().navbar});
 
         // Back button
-        if ( _gui->charButn(UI_BASE_ID(), "<", 7, 0) )
+        if ( _gui->charButn(_uid_main[3], "<", 7, 0) )
         {
             if (_history.can_go_back())
             {
@@ -198,8 +196,8 @@ namespace kege::ui{
         }
 
         // Forward button
-        if ( _gui->charButn(UI_BASE_ID(), ">", 7,0) )
-        //if (_gui->button(0, _forward_button_id, forward_text, &_gui->_theme.button))
+        if ( _gui->charButn(_uid_main[4], ">", 7,0) )
+        //if (_gui->button(0, _forward_button_id, forward_text, &_gui->theme().button))
         {
             if (_history.can_go_forward())
             {
@@ -209,8 +207,8 @@ namespace kege::ui{
         }
 
         // Up button (parent directory)
-        if ( _gui->charButn(UI_BASE_ID(), "^", 6,2) )
-        //if (_gui->button(0, _up_button_id, up_text, &_gui->_theme.button))
+        if ( _gui->charButn(_uid_main[5], "^", 6,2) )
+        //if (_gui->button(0, _up_button_id, up_text, &_gui->theme().button))
         {
             if (_current_path.has_parent_path())
             {
@@ -227,7 +225,7 @@ namespace kege::ui{
         current_path_text.color = 0xFFFFFFFF;
         current_path_text.font_size = 20;
         current_path_text.ptr = _current_path_str.data();
-        _gui->put({.layer = 0, .style = &_gui->_theme.broswer_file_path, .text = current_path_text});
+        _gui->put({.layer = 0, .style = &_gui->theme().broswer_file_path, .text = current_path_text});
 
         // Use textField for path input
         /*
@@ -245,14 +243,14 @@ namespace kege::ui{
          */
 
         // Refresh button
-        if ( _gui->charButn(UI_BASE_ID(), "@", 7,2) )
-        //if (_gui->button(0, _refresh_button_id, refresh_text, &_gui->_theme.button))
+        if ( _gui->charButn(_uid_main[6], "@", 7,2) )
+        //if (_gui->button(0, _refresh_button_id, refresh_text, &_gui->theme().button))
         {
             refreshDirectory();
         }
 
         // New folder button//
-        if ( _gui->charButn(UI_BASE_ID(), "+", 7,2) )
+        if ( _gui->charButn(_uid_main[7], "+", 7,2) )
         {
             createNewFolder();
         }
@@ -265,7 +263,7 @@ namespace kege::ui{
         new_folder_text.ptr = "T";
         new_folder_text.x = 7;
         new_folder_text.y = 2;
-        if ( navToggle(_gui, UI_BASE_ID(), _show_tool_tip, new_folder_text) )
+        if ( navToggle(_gui, _uid_main[8], _show_tool_tip, new_folder_text) )
         {
             _show_tool_tip = !_show_tool_tip;
         }
@@ -274,7 +272,7 @@ namespace kege::ui{
 
 
         // Filter input
-//        _gui->push({.layer = 0, .style = &_gui->_theme.filter_container});
+//        _gui->push({.layer = 0, .style = &_gui->theme().filter_container});
 //        {
 //            // Filter input label
 //            ui::Text filter_text = {};
@@ -283,7 +281,7 @@ namespace kege::ui{
 //            _gui->fittedLabel(0, filter_text);
 //
 //            // Filter input text
-//            _gui->push({.layer = 0, .style = &_gui->_theme.filter_input});
+//            _gui->push({.layer = 0, .style = &_gui->theme().filter_input});
 //            strncpy(_filter_buffer, _filter_text.c_str(), sizeof(_filter_buffer));
 //            size_t filter_size = _filter_text.size() + 1;
 //            size_t filter_size = _filter_text.size() + 1;
@@ -316,20 +314,22 @@ namespace kege::ui{
         }
 
         // Begin scroll container
-        _gui->beginScrollContainer(layer, _scroll_container_id);
+        ui::ID scroll_container[2] = {_uid_main[20], _uid_main[21]};
+        _gui->beginScrollContainer(scroll_container, layer);
 
         // Start grid container
-        _gui->push({.layer = layer, .style = &_gui->_theme.file_container});
+        _gui->push({.layer = layer, .style = &_gui->theme().file_container});
 
-        UserId base_id = UI_BASE_ID();
         for (size_t i = 0; i < _filtered_files.size(); i++)
         {
             FileEntry& file = _filtered_files[i];
 
-            UserId file_uid = base_id + i;
-            UserId icon_uid = base_id + i + 1;
+            uint32_t id_offset = (uint32_t)i;
+            ui::ID file_uid = file.uid[id_offset + 1];
+            ui::ID icon_uid = file.uid[id_offset + 2];
+
             // Begin column for file item
-            _gui->push
+            file.widget_id = _gui->push
             ({
                 .user_id = file_uid,
                 .layer = layer,
@@ -365,11 +365,11 @@ namespace kege::ui{
                 /*
                 if (file.is_directory)
                 {
-                    icon_desc.style = &_gui->_theme.folder_icon;
+                    icon_desc.style = &_gui->theme().folder_icon;
                 }
                 else
                 {
-                    icon_desc.style = &_gui->_theme.file_icon;
+                    icon_desc.style = &_gui->theme().file_icon;
                 }
                  */
 
@@ -393,7 +393,7 @@ namespace kege::ui{
                     }
                 }
 
-                _gui->put({.style = &_gui->_theme.y_seperator});
+                _gui->put({.style = &_gui->theme().y_seperator});
 
                 // Check for drag start on this icon
                 if (_gui->pointerDragging() && _gui->mouseover(icon_uid))
@@ -446,7 +446,7 @@ namespace kege::ui{
         }
     }
 
-    void pointInBrowserAreaOperation(ui::Layout* layout, ui::UserId user_id, ui::WidgetId widget_id, void* data)
+    void pointInBrowserAreaOperation(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
         FileBrowser::HotState* param = (FileBrowser::HotState*)data;
         *param->hot = layout->testPointVsRect(layout->getPointerPosition(), layout->elem( widget_id )->rect);
@@ -454,7 +454,7 @@ namespace kege::ui{
 
     void FileBrowser::updateSelectionBox()
     {
-        _gui->pushDeferredOp<FileBrowser::HotState>(_uid_main, _id_main_widget, pointInBrowserAreaOperation, {&_hot});
+        _gui->pushDeferredOp<FileBrowser::HotState>(_uid_main[0], _id_main_widget, pointInBrowserAreaOperation, {&_hot});
 
         if (_begin_dragging || _is_dragging || !_hot) return;
 
@@ -543,7 +543,7 @@ namespace kege::ui{
         ui::WidgetDesc tooltip_desc;
         //tooltip_desc.user_id = &tooltip_uid;
         tooltip_desc.rect = {float(_tooltip_position.x + 10), float(_tooltip_position.y + 10), 0, 0};
-        tooltip_desc.style = &_gui->_theme.tooltip;
+        tooltip_desc.style = &_gui->theme().tooltip;
         //tooltip_desc.color = 0xFFFFFF0F;
         tooltip_desc.layer = 1;
 
@@ -621,7 +621,7 @@ namespace kege::ui{
                 drag_desc.rect.y = _gui->pointer().y - ICON_SIZE/2;
                 drag_desc.rect.width = ICON_SIZE;
                 drag_desc.rect.height = ICON_SIZE;
-                //drag_desc.style = file.is_directory ? &_gui->_theme.folder_icon : &_gui->_theme.file_icon;
+                //drag_desc.style = file.is_directory ? &_gui->theme().folder_icon : &_gui->theme().file_icon;
                 drag_desc.layer = 1; // Drag layer (on top)
                 drag_desc.color = 0x80FFFF30; // Semi-transparent
 
@@ -705,7 +705,7 @@ namespace kege::ui{
         std::vector<FileBrowser::FileEntry>& files;
     };
 
-    void executeSelectionFromBoxOp(ui::Layout* layout, ui::UserId id, ui::WidgetId widget_id, void* data)
+    void executeSelectionFromBoxOp(ui::Layout* layout, ui::ID id, ui::WidgetId widget_id, void* data)
     {
         SelectionOp* params = reinterpret_cast<SelectionOp*>(data);
 
@@ -717,7 +717,7 @@ namespace kege::ui{
 
         for (size_t i = 0; i < params->files.size(); i++)
         {
-             if (layout->intersect( params->selection_box, layout->elem( params->files[i].wid )->rect ))
+             if (layout->intersect( params->selection_box, layout->elem( params->files[i].widget_id )->rect ))
              {
                  params->files[i].selected = true;
                  params->selected_indices.push_back(i);

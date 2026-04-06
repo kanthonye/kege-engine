@@ -10,19 +10,20 @@
 
 namespace kege{
 
-    ViewportPanel::ViewportPanel( kege::EditorLayer* editor )
-    :   kege::ui::Panel( "Viewport", editor )
+    ViewportPanel::ViewportPanel( kege::ui::DockManager* dm )
+    :   kege::ui::Panel( "Viewport", dm )
     {
         _style.height = ui::extend();
         _style.width = ui::extend();
         _style.background = ui::Background( 0x340505FF );
     }
 
-    void ViewportPanel::update()
+    void ViewportPanel::updateLayout( int16_t layer )
     {
         _gui->put
         ({
-            .layer = 0,
+            .user_id = _uid[0],
+            .layer = layer,
             .style = &_style,
             .mouseover = false,
             .texr_info = ui::TexrInfo{.id = 2, .index = 2},

@@ -23,35 +23,42 @@ namespace kege::ui{
     void AssetManagerToolBar::update()
     {
         // Start a row for navigation controls
-        _gui->push({.layer = 0, .style = &_gui->_theme.navbar});
+        _gui->push({.layer = 0, .style = &_gui->theme().navbar});
         {
-            if ( _gui->charButn(UI_BASE_ID(), "+",7,2) )
+            if ( _gui->charButn(_uid[0], "+",7,2) )
             {
                 //Communication::broadcast<const OpenAddAssetWindow&>({});
                 _manager->handle(this, "OpenAddAssetWindow",nullptr);
             }
 
-            if ( _gui->charButn(UI_BASE_ID(), "^",7, 2) )
+            if ( _gui->charButn(_uid[1], "^",7, 2) )
             {
                 _manager->handle(this, "OpenFileBrowser",nullptr);
             }
 
             // Search field
-            uint64_t search_id = _gui->getAddressAsInt(&_search_buffer);// + _ref_counter;
-            if (_gui->textField(0, search_id, _search_buffer, 255, _search_size))
+//            uint64_t search_id = _gui->getAddressAsInt(&_search_buffer);// + _ref_counter;
+//            if (_gui->textField(_uid[2], search_id, _search_buffer, 255, _search_size))
+//            {
+//                _manager->handle(this, "UpdateFilteredAssets",_search_buffer);
+//            }
+
+            if (_gui->input(_uid[2], 0, ui::Cursor::InputType::Any, mode, text))
             {
-                _manager->handle(this, "UpdateFilteredAssets",_search_buffer);
+                memcpy(_search_buffer, _gui->getCharBufr(), _gui->getCharBufrLen());
             }
+            //bool GUI::input(const ui::ID& user_id, uint16_t layer, TextFieldMode& mode, ui::Text& text )
+
 
             // Refresh button
-            if ( _gui->charButn(UI_BASE_ID(), "@",7,0) )
+            if ( _gui->charButn(_uid[3], "@",7,0) )
             {
                 _manager->handle(this, "RefreshAssetList",nullptr);
             }
 
             // View mode toggle
             const char* str =  (_view_mode == ViewMode::GRID) ? "#" : "=";
-            if ( _gui->charButn(UI_BASE_ID(), str, 7, 2) )
+            if ( _gui->charButn(_uid[4], str, 7, 2) )
             {
                 ViewMode view_mode = (_view_mode == ViewMode::GRID)
                 ? ViewMode::LIST : ViewMode::GRID;
@@ -63,6 +70,20 @@ namespace kege::ui{
             }
         }
         _gui->pop();
+    }
+
+    AssetManagerToolBar::AssetManagerToolBar(AssetManagerUI* m,kege::GUI* g)
+    :   AssetManagerModule(m,g)
+    ,   _search_size(0)
+    {
+        _search_buffer[0] = 0;
+        text.ptr = _search_buffer;
+        text.width = 100;
+        text.height = 20;
+        text.x = 0;
+        text.y = 0;
+        text.color = 0xffffffff;
+        text.font_size = 20;
     }
 }
 

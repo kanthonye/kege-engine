@@ -16,8 +16,8 @@ namespace kege{
     {
     public:
 
-        ViewportPanel( kege::EditorLayer* editor );
-        void update();
+        ViewportPanel( kege::ui::DockManager* dm );
+        void updateLayout( int16_t layer );
 
     public:
 

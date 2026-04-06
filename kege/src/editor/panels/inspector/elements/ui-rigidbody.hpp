@@ -12,6 +12,5 @@
 
 namespace kege::ui
 {
-    bool rigidbody( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* ui_rigidbody_hpp */

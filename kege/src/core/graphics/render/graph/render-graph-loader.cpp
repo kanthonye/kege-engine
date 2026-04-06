@@ -177,7 +177,7 @@ namespace kege{
 
     RgWriteResrcDesc parseWriteResrcDesc( const Json& json )
     {
-        bool has_clear_value = false;
+        //bool has_clear_value = false;
         ClearValue clear_value = {};
         if ( json[ "clear_color" ] )
         {

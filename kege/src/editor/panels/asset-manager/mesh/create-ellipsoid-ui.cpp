@@ -6,15 +6,18 @@
 //
 
 #include "../../../editor-layer.hpp"
+#include "../../../dock/ui-dock-manager.hpp"
 #include "create-ellipsoid-ui.hpp"
 
 namespace kege::ui{
 
     bool CreateEllipsoidMeshUI::create(GUI* gui)
     {
+        int16_t layer = 2;
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "ellipsoid-mesh-%i", _count++);
+            _text = gui->layout()->text(_asset_name, 20);
         }
         gui->push
         ({
@@ -32,18 +35,18 @@ namespace kege::ui{
             .height = ui::extend(),
         });
         {
-            gui->text("name", _asset_name, _current_size, _buffer_capacity);
+            gui->labelInput("Name:", _uid[1], layer, _text_input_mode, _text);
             gui->put({.rect = {0,0,50,20}});
-            gui->input(UI_BASE_ID(), "RadiusX:", _radius_x);
-            gui->input(UI_BASE_ID(), "RadiusY:", _radius_y);
-            gui->input(UI_BASE_ID(), "Columns:", _cols);
-            gui->input(UI_BASE_ID(), "Rows:", _rows);
+            gui->labelScrubber(_uid[1], layer, "RadiusX:", _radius_x);
+            gui->labelScrubber(_uid[2], layer, "RadiusY:", _radius_y);
+            gui->labelScrubber(_uid[3], layer, "Columns:", _cols);
+            gui->labelScrubber(_uid[4], layer, "Rows:", _rows);
 
-            gui->put({.style = &gui->_theme.y_seperator});
+            gui->put({.style = &gui->theme().y_seperator});
 
-            if( gui->submit(UI_BASE_ID(), "Submit") )
+            if( gui->submit(_uid[5], "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getEditor()->getAssetManager();
+                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                 kege::Ref<kege::MeshPrimitive> mesh = new EllipsoidMesh( _radius_x, _radius_y, _cols, _rows );
 
                 // Create metadata
@@ -70,8 +73,7 @@ namespace kege::ui{
     }
 
     CreateEllipsoidMeshUI::CreateEllipsoidMeshUI(ui::AssetManagerUI* m)
-    :   CreateMeshUI("Ellipsoid")
-    ,   _manager(m)
+    :   CreateMeshUI("Ellipsoid", m)
     {}
 
     int CreateEllipsoidMeshUI::_count = 1;

@@ -12,7 +12,6 @@
 
 namespace kege::ui{
 
-    bool mesh( kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
-    
+
 }
 #endif /* ui_mesh_hpp */

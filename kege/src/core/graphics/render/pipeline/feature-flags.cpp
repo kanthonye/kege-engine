@@ -15,7 +15,6 @@ namespace kege{
         {
             case NONE:                     return "NONE";
             case VERTEX_COLOR:             return "VERTEX_COLOR";
-            //case BILLBOARD:                return "BILLBOARD";
             case INSTANCED_RENDERING:      return "INSTANCED_RENDERING";
             case VERTEX_DISPLACEMENT:      return "VERTEX_DISPLACEMENT";
             case GPU_SKINNING:             return "GPU_SKINNING";
@@ -34,6 +33,7 @@ namespace kege{
             case PN_TRIANGLES:             return "PN_TRIANGLES";
             case TESSELLATION_DISPLACEMENT:return "TESSELLATION_DISPLACEMENT";
 
+            case MATERIAL:                 return "MATERIAL";
             case CLEAR_COAT:               return "CLEAR_COAT";
             case ANISOTROPIC_REFLECTION:   return "ANISOTROPIC_REFLECTION";
             case SHEEN_LAYER:              return "SHEEN_LAYER";

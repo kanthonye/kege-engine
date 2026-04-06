@@ -56,6 +56,18 @@ namespace kege{
         return true;
     }
 
+    bool AppLayerStack::render()
+    {
+        for (int64_t i = _layers.size() - 1; 0 <= i; --i )
+        {
+            if( !_layers[ i ]->render() )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     AppLayerStack::~AppLayerStack()
     {
         shutdown();

@@ -179,22 +179,22 @@ namespace kege::ui{
         return _mouse->isDragging(MouseButtonCode::Left);
     }
 
-    bool Layout::mouseover( const UserId& uid )const
+    bool Layout::mouseover( const ui::ID& uid )const
     {
         return _curr.hot.user_id == uid && _curr.hot.user_id != 0;
     }
 
-    bool Layout::doubleClick( const UserId& uid )const
+    bool Layout::doubleClick( const ui::ID& uid )const
     {
         return _curr.hit.user_id == uid && _curr.clicks == 2 && _curr.hit.user_id != 0;
     }
 
-    bool Layout::click( const UserId& uid )const
+    bool Layout::click( const ui::ID& uid )const
     {
         return _curr.hit.user_id == uid && _curr.clicks == 1 && _curr.hit.user_id != 0;
     }
 
-    bool Layout::hasFocus( const UserId& uid )const
+    bool Layout::hasFocus( const ui::ID& uid )const
     {
         return _curr.focus.user_id == uid && _curr.focus.user_id != 0;
     }
@@ -217,7 +217,7 @@ namespace kege::ui{
             kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
             return nullptr;
         }
-        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
+        if ( _widgets[ widget_id.index ].version != widget_id.version ) return nullptr;
         return &_widgets[ widget_id.index ];
     }
 
@@ -228,7 +228,7 @@ namespace kege::ui{
             kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
             return nullptr;
         }
-        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
+        if ( _widgets[ widget_id.index ].version != widget_id.version ) return nullptr;
         return &_widgets[ _widgets[ widget_id.index ].parent ];
     }
 
@@ -344,6 +344,7 @@ namespace kege::ui{
         if ( _next.hit.user_id != 0 )
         {
             _curr.hit = _next.hit;
+            _curr.clicks = _next.clicks;
         }
         else
         {
@@ -615,13 +616,14 @@ namespace kege::ui{
 
             _next.hot = getHotElem();
             _next.pressing = {};
-            std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
+            //std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
         }
         else if ( _left_click_state && !_click_registered )
         {
             //_left_click_state = true;
             _click_registered = true;
             _next.hot = getHotElem(true);
+            _next.clicks = _mouse->isDoubleClick( MouseButtonCode::Left ) ? 2 : 1;
         }
 
         if ( _left_click_state )

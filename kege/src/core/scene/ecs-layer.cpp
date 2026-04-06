@@ -84,6 +84,18 @@ namespace kege{
         return true;
     }
 
+    bool ECSLayer::render()
+    {
+        if ( !_project_manager->empty() )
+        {
+            if ( _project_manager->getSceneManager()->getScene() )
+            {
+                _ecs->render(0);
+            }
+        }
+        return true;
+    }
+
     ECSLayer::~ECSLayer()
     {
         shutdown();

@@ -21,6 +21,7 @@ namespace kege{
         bool initialize();
         void shutdown();
         bool update();
+        bool render();
 
         ~AppLayerStack();
         AppLayerStack();

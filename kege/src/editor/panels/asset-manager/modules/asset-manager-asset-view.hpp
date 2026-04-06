@@ -16,9 +16,8 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerAssetView(AssetManagerUI* m,kege::GUI* g, uint64_t user_id)
-        : AssetManagerModule(m,g,user_id){}
-        
+        AssetManagerAssetView(AssetManagerUI* m,kege::GUI* g);
+
         void operator()(const std::string& type, void* data);
         void handleAssetClick(size_t asset_index, Modifiers modifiers);
         void updateGridView();
@@ -42,8 +41,15 @@ namespace kege::ui{
         std::vector<DragObj> _dragged_asset_handles;
         ui::ViewMode _view_mode;
         kege::dvec2 _drag_start;
+
+        ui::ID _scroll_container[2];
+        ui::UID _uid_drag;
+        ui::UID _uid_root;
         bool _is_dragging_assets;
         bool _butn_down;
+
+
+        ui::WidgetDesc _drag_element;
     };
 }
 

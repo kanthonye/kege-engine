@@ -113,14 +113,14 @@ namespace kege::ecs{
 
             std::tuple<const Entity&, const C*...> operator*() const
             {
-                //if ( !valid() ) return std::tuple<Entity, C*...>{};
+                if ( !valid() ) return std::tuple<Entity, C*...>{};
                 Entity entity = _view->_storages[ _list_index ]->entity[ _index ];
                 return _view->_ecs->fetch<C...>( entity );
             }
 
             inline std::tuple<Entity, C*...> operator*()
             {
-                //if ( !valid() ) return std::tuple<Entity, C*...>{};
+                if ( !valid() ) return std::tuple<Entity, C*...>{};
                 Entity entity = _view->_storages[ _list_index ]->entities[ _index ];
                 return _view->_ecs->fetch<C...>( entity );
             }
