@@ -13,13 +13,11 @@ namespace kege{
     {
         set_index = 0;
         binding_index = 0;
-
-        std::vector<std::string> defines;
-        writeFeatures(key, defines);
-
-        std::vector<VertexInfo> outputs;
-        std::string vs = writeVertexShader(key, defines, outputs);
-        std::string fs = writeFragmentShader(key, outputs, defines);
+        _key = key;
+        
+        writeFeatures();
+        std::string vs = writeVertexShader();
+        std::string fs = writeFragmentShader();
         return compileShader(key, vs, fs);
     }
 
@@ -35,53 +33,69 @@ namespace kege{
         return variant;
     }
 
-    std::string ShaderCompiler::writeVertexShader
-    (
-     const kege::PipelineKey& key,
-     const std::vector<std::string>& global_defines,
-     std::vector<VertexInfo>& outputs
-    )
+    std::string ShaderCompiler::writeVertexShader()
     {
-        std::vector<std::string> defines = global_defines;
-
-        buildVertexLayout(key, outputs);
-        defineVertexAttributeIO(key, outputs, defines);
-
         std::stringstream source;
-        writeVersionAndExtensions(source);
-        writeDefines(source, defines);
-        writeVertexProcessingSelection(source, key);
-        writeCameraData(source, key);
-        writeObjectData(source, key);
-        writeVertexShaderMainFunction(source, key);
+        beginVertexShader(source);
+
+        writeVersion(source);
+        writeExtensions(source);
+        writeMacros(source);
+        writeInputs(source);
+        writeOutputs(source);
+        writeResources(source);
+        writeFunctions(source);
+        writeMainFn(source);
+
+        endVertexShader(source);
         return source.str();
     }
 
-    std::string ShaderCompiler::writeFragmentShader
-    (
-     const kege::PipelineKey& key,
-     const std::vector<VertexInfo>& inputs,
-     const std::vector<std::string>& global_defines
-    )
+    std::string ShaderCompiler::writeFragmentShader()
     {
-        std::vector<std::string> defines = global_defines;
         std::stringstream source;
-        writeVersionAndExtensions(source);
-        writeDefines(source, defines);
-        writeFragmentShaderInput(source, inputs);
-        writeFragmentShaderIO(source, key);
-        writeCameraData(source, key);
-        writeObjectData(source, key);
-        writeLightingSelection(source, key);
-        writeFragmentShaderMainFunction(source, key);
+        beginFragmentShader(source);
+
+        writeVersion(source);
+        writeExtensions(source);
+        writeMacros(source);
+        writeInputs(source);
+        writeOutputs(source);
+        writeResources(source);
+        writeFunctions(source);
+        writeMainFn(source);
+
+        endFragmentShader(source);
         return source.str();
     }
 
     ShaderProgram* ShaderCompiler::compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs)
     {
-        std::cout << vs <<"\n";
-        std::cout <<"\n--------- --------- --------- --------- --------- --------- ---------\n\n";
-        std::cout << fs <<"\n";
+
+
+        const std::string path = "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/";
+
+        // Open file for writing
+        std::ofstream vsFile(path + "vs.glsl");
+        // Write the entire string buffer
+        vsFile << vs;
+        // Close the file
+        vsFile.close();
+
+
+        // Open file for writing
+        std::ofstream fsFile(path + "fs.glsl");
+        // Write the entire string buffer
+        fsFile << fs;
+        // Close the file
+        fsFile.close();
+
+
+
+
+        //std::cout << vs <<"\n";
+        //std::cout <<"\n--------- --------- --------- --------- --------- --------- ---------\n\n";
+        //std::cout << fs <<"\n";
 
 //            ref::Shader vs_module = _graphics->createShader
 //            ({
@@ -109,600 +123,824 @@ namespace kege{
         return nullptr;
     }
 
-    std::string ShaderCompiler::include(const std::string& fname )
+    void ShaderCompiler::beginVertexShader(std::stringstream& source)
     {
-        const std::string filename = "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/generate" + fname;
-        std::ifstream file(filename);
-        std::string loaded_source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        file.close();
-        return loaded_source;
+        _current_stage = ShaderStge::VERTEX;
+
+        int input_location = 0;
+        int output_location = 0;
+        if (_key.renderer_type == kege::MeshType::StaticMesh)
+        {
+            _inputs.push_back({ VertexInfo::POSITION, input_location++ });
+            _inputs.push_back({ VertexInfo::TEXCOORD, input_location++ });
+            _inputs.push_back({ VertexInfo::NORMAL, input_location++ });
+
+            _outputs.push_back({ VertexInfo::POSITION, output_location++ });
+            _outputs.push_back({ VertexInfo::TEXCOORD, output_location++ });
+            _outputs.push_back({ VertexInfo::NORMAL, output_location++ });
+        }
+
+        if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
+        {
+            _inputs.push_back({ VertexInfo::TANGENT, input_location++ });
+            _inputs.push_back({ VertexInfo::BITANGENT, input_location++ });
+
+            _outputs.push_back({ VertexInfo::TANGENT, output_location++ });
+            _outputs.push_back({ VertexInfo::BITANGENT, output_location++ });
+        }
+        if (_key.features & kege::FeatureFlag::GPU_SKINNING)
+        {
+            _inputs.push_back({ VertexInfo::JOINTS, input_location++ });
+            _inputs.push_back({ VertexInfo::WEIGHTS, input_location++ });
+        }
+
+        if (_key.features == kege::FeatureFlag::VERTEX_COLOR)
+        {
+            _inputs.push_back({ VertexInfo::COLOR, input_location++ });
+        }
     }
 
-    void ShaderCompiler::defineVertexAttributeIO
-    (
-     const kege::PipelineKey& key,
-     const std::vector<VertexInfo>& attributes,
-     std::vector<std::string>& defines
-    )
+    void ShaderCompiler::endVertexShader(std::stringstream& source){
+        _inputs = _outputs;
+        _outputs = {};
+    }
+
+    void ShaderCompiler::beginFragmentShader(std::stringstream& source)
     {
-        int in_location = 0;
-        int out_location = 0;
-        for(const VertexInfo& info : attributes)
+        _current_stage = ShaderStge::FRAGMENT;
+
+        _has_normal_mapping = (_key.features & kege::FeatureFlag::NORMAL_MAPPING);
+        _has_material = (_key.features & kege::FeatureFlag::MATERIAL);
+
+        _has_lights = (_key.features & kege::FeatureFlag::DIRECTIONAL_LIGHT) ||
+        (_key.features & kege::FeatureFlag::POINT_LIGHT) ||
+        (_key.features & kege::FeatureFlag::SPOT_LIGHT);
+
+        _has_light_funct =
+        _key.shading_model == kege::ShadingModel::LitPBR_Metallic ||
+        _key.shading_model == kege::ShadingModel::LitPBR_Subsurface ||
+        _key.shading_model == kege::ShadingModel::LitPBR_Clearcoat ||
+        _key.shading_model == kege::ShadingModel::LitPBR_Cloth |
+        _key.shading_model == kege::ShadingModel::LitPBR_Skin ||
+        _key.shading_model == kege::ShadingModel::LitPBR_Hair;
+
+        int output_location = 0;
+        switch ( _key.render_pass )
         {
-            switch (info.semantic)
+            default:
             {
-                case VertexInfo::POSITION:
-                    defines.push_back("VERTEX_POSITION " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_POSITION " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::TEXCOORD:
-                    defines.push_back("VERTEX_TEXCOORD " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_TEXCOORD " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::NORMAL:
-                    defines.push_back("VERTEX_NORMAL " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_NORMAL " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::COLOR:
-                    defines.push_back("VERTEX_COLOR " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_COLOR " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::TANGENT:
-                    defines.push_back("VERTEX_TANGENT " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_TANGENT " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::BITANGENT:
-                    defines.push_back("VERTEX_BITANGENT " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_BITANGENT " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::JOINTS:
-                    defines.push_back("VERTEX_JOINTS " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_JOINTS " + std::to_string(out_location++));
-                    break;
-
-                case VertexInfo::WEIGHTS:
-                    defines.push_back("VERTEX_WEIGHTS " + std::to_string(in_location++));
-                    defines.push_back("VSOUT_WEIGHTS " + std::to_string(out_location++));
-                    break;
-
-                default: break;
+                _outputs.push_back({ VertexInfo::COLOR, output_location++ });
+                break;
+            }
+            case kege::RenderPass::GBuffer:
+            {
+                _outputs.push_back({ VertexInfo::COLOR,    output_location++ });
+                _outputs.push_back({ VertexInfo::POSITION, output_location++ });
+                _outputs.push_back({ VertexInfo::NORMAL,   output_location++ });
+                _outputs.push_back({ VertexInfo::EMISSIVE,   output_location++ });
+                break;
             }
         }
     }
 
-    void ShaderCompiler::buildVertexLayout(const kege::PipelineKey& key, std::vector<VertexInfo>& attributes)
+    void ShaderCompiler::endFragmentShader(std::stringstream& source)
     {
-        int location = 0;
-
-        if (key.renderer_type == kege::RendererType::StaticMesh ||
-            //key.renderer_type == kege::RendererType::SkinnedMesh ||
-            key.renderer_type == kege::RendererType::Particle)
-        {
-            attributes.push_back({ VertexInfo::POSITION, location++ });
-        }
-        if (key.renderer_type == kege::RendererType::StaticMesh ||
-            //key.renderer_type == kege::RendererType::SkinnedMesh ||
-            key.renderer_type == kege::RendererType::Particle)
-        {
-            attributes.push_back({ VertexInfo::TEXCOORD, location++ });
-        }
-//        if (key.renderer_type == kege::RendererType::StaticMesh ||
-//            key.renderer_type == kege::RendererType::SkinnedMesh)
-//        {
-//            attributes.push_back({ VertexInfo::NORMAL, location++ });
-//        }
-        if (key.features & kege::FeatureFlag::NORMAL_MAPPING)
-        {
-            attributes.push_back({ VertexInfo::TANGENT, location++ });
-            attributes.push_back({ VertexInfo::BITANGENT, location++ });
-        }
-//        if (key.renderer_type == kege::RendererType::SkinnedMesh ||
-//            key.features & kege::FeatureFlag::GPU_SKINNING)
-//        {
-//            attributes.push_back({ VertexInfo::JOINTS, location++ });
-//            attributes.push_back({ VertexInfo::WEIGHTS, location++ });
-//        }
-        if (key.features == kege::FeatureFlag::VERTEX_COLOR)
-        {
-            attributes.push_back({ VertexInfo::COLOR, location++ });
-        }
+        _inputs = _outputs;
+        _outputs = {};
     }
 
-    void ShaderCompiler::writeFragmentShaderInput(std::stringstream& source, const std::vector<VertexInfo>& inputs)
+    void ShaderCompiler::writeVersion(std::stringstream& source)
     {
-        for (const auto& input : inputs)
-        {
-            switch (input.semantic)
-            {
-                case VertexInfo::POSITION:
-                    source << "layout(location = \"" << input.location <<"\") in vec3 _world_position;\n";
-                    break;
-
-                case VertexInfo::TEXCOORD:
-                    source << "layout(location = \"" << input.location <<"\") in vec2 _texcoord;\n";
-                    break;
-
-                case VertexInfo::NORMAL:
-                    source << "layout(location = \"" << input.location <<"\") in vec3 _world_normal;\n";
-                    break;
-
-                case VertexInfo::COLOR:
-                    source << "layout(location = \"" << input.location <<"\") in vec4 _color;\n";
-                    break;
-
-                case VertexInfo::TANGENT:
-                    source << "layout(location = \"" << input.location <<"\") in vec3 _world_tangent;\n";
-                    break;
-
-                case VertexInfo::BITANGENT:
-                    source << "layout(location = \"" << input.location <<"\") in vec3 _world_bitangent;\n";
-                    break;
-
-                default: break;
-            }
-        }
+        source << "#version 450\n";
     }
 
-    void ShaderCompiler::writeFragmentShaderIO(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::writeExtensions(std::stringstream& source)
     {
-        source << "// Render pass\n";
-        switch (key.render_pass)
-        {
-          case kege::RenderPass::GBuffer: // Multiple render targets for GBuffer
-              source << "layout(location = 0) out vec4 outGBuffer0; // Albedo + MaterialID\n";
-              source << "layout(location = 1) out vec4 outGBuffer1; // Normal + Roughness\n";
-              source << "layout(location = 2) out vec4 outGBuffer2; // Metallic + Specular + AO\n";
-              break;
-
-          case kege::RenderPass::Forward:
-          case kege::RenderPass::UI: // Single render target
-              source << "layout(location = 0) out vec4 out_color;\n";
-              break;
-
-          case kege::RenderPass::Shadow: // Depth only (might have no color output)
-              if (!(key.features & kege::FeatureFlag::DEPTH_ONLY))
-              {
-                  source << "layout(location = 0) out vec4 outShadow;\n";
-              }
-              break;
-
-          default: break;
-      }
-      source << "\n";
+        source << "#extension GL_ARB_separate_shader_objects : enable\n\n";
     }
 
-    void ShaderCompiler::writeVertexShaderIO(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::writeMacros(std::stringstream& source)
     {
-        source << "// Vertex outputs\n";
-        //source << "layout(location = 0) out vec3 outWorldPosition;\n";
-
-        int location = 0;
-//        if (key.renderer_type == kege::RendererType::StaticMesh ||
-//            key.renderer_type == kege::RendererType::SkinnedMesh ||
-//            key.renderer_type == kege::RendererType::Particle)
-//        {
-//            source << "layout(location = \"" << location++ <<"\") out vec3 _world_position;\n";
-//        }
-//        if (key.renderer_type == kege::RendererType::StaticMesh ||
-//            key.renderer_type == kege::RendererType::SkinnedMesh)
-//        {
-//            source << "layout(location = \"" << location++ <<"\") out vec3 _world_normal;\n";
-//        }
-//        if (key.renderer_type == kege::RendererType::StaticMesh ||
-//            key.renderer_type == kege::RendererType::SkinnedMesh ||
-//            key.renderer_type == kege::RendererType::Particle)
-//        {
-//            source << "layout(location = \"" << location++ <<"\") out vec2 _texcoord;\n";
-//        }
-        if (key.features & kege::FeatureFlag::NORMAL_MAPPING)
-        {
-            source << "layout(location = \"" << location++ <<"\") out vec3 _tangent;\n";
-            source << "layout(location = \"" << location++ <<"\") out vec3 _bitangent;\n";
-        }
-        if (key.features == kege::FeatureFlag::VERTEX_COLOR)
-        {
-            source << "layout(location = \"" << location++ <<"\") out vec4 _color;\n";
-        }
-        source << "\n";
-    }
-
-    void ShaderCompiler::writeCameraData(std::stringstream& source, const kege::PipelineKey& key)
-    {
-        source << "// Uniform buffer CameraData\n";
-        source << include("/common/camera-data.glsl");
-        source << "\n";
-    }
-
-    void ShaderCompiler::writeObjectData(std::stringstream& source, const kege::PipelineKey& key)
-    {
-        source << "// Uniform buffer ObjectData\n";
-        source << include("/common/object-data.glsl");
-        source << "\n";
-    }
-
-    void ShaderCompiler::writeDefines(std::stringstream& source, const std::vector<std::string>& defines)
-    {
-        for (const auto& define : defines)
+        for (const auto& define : _defines)
         {
             source << "#define " << define << "\n";
         }
         source << "\n";
+
+        for(const VertexInfo& info : _inputs)
+        {
+            _input_signature |= (1 << int(info.semantic));
+            switch (info.semantic)
+            {
+                case VertexInfo::POSITION:
+                    source << include( "define/input-position.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::TEXCOORD:
+                    source << include( "define/input-texcoord.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::NORMAL:
+                    source << include( "define/input-normal.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::COLOR:
+                    source << include( "define/input-color.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::TANGENT:
+                    source << include( "define/input-tangent.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::BITANGENT:
+                    source << include( "define/input-bitangent.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::JOINTS:
+                    source << include( "define/input-joints.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::WEIGHTS:
+                    source << include( "define/input-weights.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::EMISSIVE:
+                    source << include( "define/input-emissive.glsl") << info.location <<"\n";
+                    break;
+
+                default: break;
+            }
+        }
+        if( !_inputs.empty() ) source <<"\n";
+
+        for(const VertexInfo& info : _outputs)
+        {
+            switch (info.semantic)
+            {
+                case VertexInfo::POSITION:
+                    source << include( "define/output-position.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::TEXCOORD:
+                    source << include( "define/output-texcoord.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::NORMAL:
+                    source << include( "define/output-normal.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::COLOR:
+                    source << include( "define/output-color.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::TANGENT:
+                    source << include( "define/output-tangent.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::BITANGENT:
+                    source << include( "define/output-bitangent.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::JOINTS:
+                    source << include( "define/output-joints.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::WEIGHTS:
+                    source << include( "define/output-weights.glsl") << info.location <<"\n";
+                    break;
+
+                case VertexInfo::EMISSIVE:
+                    source << include( "define/output-emissive.glsl") << info.location <<"\n";
+                    break;
+
+                default: break;
+            }
+        }
+        if( !_outputs.empty() ) source <<"\n";
     }
 
-    void ShaderCompiler::writeVertexProcessingSelection(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::writeInputs(std::stringstream& source)
     {
-        source << "// Vertex processing\n";
-        switch (key.renderer_type)
+        switch (_key.renderer_type)
         {
             default:
-            case kege::RendererType::StaticMesh:
-                source << include("/vertex/static.glsl");
+            case kege::MeshType::Point:
+                source << include( "input/point.glsl") <<"\n";
                 break;
-//            case kege::RendererType::SkinnedMesh:
-//                source << include("/vertex/skinning.glsl");
-//                break;
-            case kege::RendererType::Particle:
-                source << include("/vertex/billboard-particles.glsl");
+
+            case kege::MeshType::ScreenRect:
+                source << include( "input/screen-rect.glsl") <<"\n";
+                break;
+
+            case kege::MeshType::StaticMesh:
+                source << include( "input/static-mesh.glsl") <<"\n";
+                break;
+                
+            case kege::MeshType::Particle:
+                source << include( "input/particle.glsl") <<"\n";
+                break;
+                
+            case kege::MeshType::FlatTerrain:
+                source << include( "input/flat-terrain.glsl") <<"\n";
+                break;
+                
+            case kege::MeshType::SphericalTerrain:
+                source << include( "input/spherical-terrain.glsl") <<"\n";
                 break;
         }
-        source << "\n";
+
+        if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
+        {
+            source << include( "input/normal-mapping.glsl") <<"\n";
+        }
+
+        if (_key.features & kege::FeatureFlag::GPU_SKINNING)
+        {
+            source << include( "input/gpu-skinning.glsl") <<"\n";
+        }
+
+        if (_key.features == kege::FeatureFlag::VERTEX_COLOR)
+        {
+            source << include( "input/vertex-color.glsl") <<"\n";
+        }
+        source <<"\n";
     }
 
-    void ShaderCompiler::writeLightingSelection(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::writeOutputs(std::stringstream& source)
     {
-        source << "// BRDF includes\n";
-//        switch (key.shading_model)
-//        {
-//            default:
-//            case kege::ShadingModel::Unlit:
-//                source << include("/brdf/unlit.glsl");
-//                break;
-//            case kege::ShadingModel::LitPBR_Metallic:
-//                source << include("/common/lights.glsl");
-//                source << include("/common/material.glsl");
-//                source << include("/brdf/brdf.glsl");
-//                source << include("/brdf/pbr-metallic.glsl");
-//                break;
-//            case kege::ShadingModel::LitPBR_Specular:
-//                source << include("/common/lights.glsl");
-//                source << include("/common/material.glsl");
-//                source << include("/brdf/brdf.glsl");
-//                source << include("/brdf/pbr-specular.glsl");
-//                break;
-//            case kege::ShadingModel::LitPBR_Subsurface:
-//                source << include("/common/lights.glsl");
-//                source << include("/common/material.glsl");
-//                source << include("/brdf/brdf.glsl");
-//                source << include("/brdf/pbr-subsurface.glsl");
-//                break;
-//        }
-        source << "\n";
+        if( _current_stage == ShaderStge::VERTEX )
+        {
+            for(const VertexInfo& info : _outputs)
+            {
+                switch (info.semantic)
+                {
+                    case VertexInfo::POSITION:
+                        source << include( "output/position.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::TEXCOORD:
+                        source << include( "output/texcoord.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::NORMAL:
+                        source << include( "output/normal.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::COLOR:
+                        source << include( "output/color.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::TANGENT:
+                        source << include( "output/tangent.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::BITANGENT:
+                        source << include( "output/bitangent.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::JOINTS:
+                        source << include( "output/joints.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::WEIGHTS:
+                        source << include( "output/weights.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::EMISSIVE:
+                        source << include( "output/emissive.glsl") <<"\n";
+                        break;
+
+                    default: break;
+                }
+            }
+        }
+        else if( _current_stage == ShaderStge::FRAGMENT )
+        {
+            for(const VertexInfo& info : _outputs)
+            {
+                switch (info.semantic)
+                {
+                    case VertexInfo::POSITION:
+                        source << include( "output/buffer-position.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::EMISSIVE:
+                        source << include( "output/buffer-emissive.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::NORMAL:
+                        source << include( "output/buffer-normal.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::COLOR:
+                        source << include( "output/buffer-color.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::TEXCOORD:
+                        source << include( "output/buffer-texcoord.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::TANGENT:
+                        source << include( "output/buffer-tangent.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::BITANGENT:
+                        source << include( "output/buffer-bitangent.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::JOINTS:
+                        source << include( "output/buffer-joints.glsl") <<"\n";
+                        break;
+
+                    case VertexInfo::WEIGHTS:
+                        source << include( "output/buffer-weights.glsl") <<"\n";
+                        break;
+
+                    default: break;
+                }
+            }
+        }
+        source <<"\n";
     }
 
-    void ShaderCompiler::writeVertexShaderMainFunction(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::writeResources(std::stringstream& source)
     {
+        source << include("resources/uniform-camera-data.glsl") << "\n\n";
+        source << include("resources/uniform-object-data.glsl") << "\n\n";
+
+        if( _current_stage == ShaderStge::FRAGMENT )
+        {
+            if ((_key.features & kege::FeatureFlag::MATERIAL))
+            {
+                source << include( "resources/uniform-material.glsl") <<"\n";
+            }
+
+            if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
+            {
+                source << include( "resources/textures-ibl.glsl") <<"\n";
+            }
+
+            if ((_key.features & kege::FeatureFlag::DIRECTIONAL_LIGHT))
+            {
+                source <<"\n";
+                source << include( "resources/uniform-directional-light.glsl") <<"\n";
+            }
+            if ((_key.features & kege::FeatureFlag::POINT_LIGHT))
+            {
+                source <<"\n";
+                source << include( "resources/uniform-point-light.glsl") <<"\n";
+            }
+            if ((_key.features & kege::FeatureFlag::SPOT_LIGHT))
+            {
+                source <<"\n";
+                source << include( "resources/uniform-spot-light.glsl") <<"\n";
+            }
+        }
+    }
+
+    void ShaderCompiler::writeFunctions(std::stringstream& source)
+    {
+        if( _current_stage == ShaderStge::FRAGMENT )
+        {
+            if( _has_material )
+            {
+                source << include( "resources/fn-get-albedo.glsl") <<"\n";
+                if (_has_normal_mapping)
+                {
+                    source << include( "resources/fn-get-tbn-normal.glsl") <<"\n";
+                }
+            }
+            if( _has_material && _has_light_funct && _has_lights )
+            {
+                source << include( "resources/fn-get-opacity.glsl") <<"\n";
+                source << include( "resources/fn-get-ambient-occlusion.glsl") <<"\n";
+                source << include( "resources/fn-get-roughness.glsl") <<"\n";
+                source << include( "resources/fn-get-metallic.glsl") <<"\n";
+                source << include( "resources/fn-get-albedo.glsl") <<"\n";
+                source << include( "resources/fn-get-normal.glsl") <<"\n";
+                source << include( "resources/fn-get-emissive.glsl") <<"\n";
+            }
+
+
+            if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
+            {
+                source << include( "shading-model/fn-calc-ambient-ibl.glsl") <<"\n";
+            }
+
+            if (_key.shading_model == kege::ShadingModel::LitPBR_Metallic ||
+                _key.shading_model == kege::ShadingModel::LitPBR_Skin ||
+                _key.shading_model == kege::ShadingModel::LitPBR_Hair ||
+                _key.shading_model == kege::ShadingModel::LitPBR_Cloth ||
+                _key.shading_model == kege::ShadingModel::LitPBR_Subsurface ||
+                _key.shading_model == kege::ShadingModel::LitPBR_Clearcoat )
+            {
+                source << include( "shading-model/fn-brdf.glsl") <<"\n";
+            }
+
+            if (_key.shading_model == kege::ShadingModel::LitPBR_Metallic)
+            {
+                source << include( "shading-model/fn-lighting.glsl") <<"\n";
+            }
+
+            if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
+            {
+                source << include( "shading-model/fn-calc-ambient-ibl.glsl") <<"\n";
+            }
+            if ((_key.features & kege::FeatureFlag::MATERIAL))
+            {
+                source << include( "resources/fn-material.glsl") <<"\n";
+                if ((_key.features & kege::FeatureFlag::NORMAL_MAPPING))
+                {
+                    source << include( "resources/fn-normal-mapping.glsl") <<"\n";
+                }
+
+                if ((_key.features & kege::FeatureFlag::ANISOTROPIC_REFLECTION))
+                {
+                    source << include( "resources/fn-anisotropy.glsl") <<"\n";
+                }
+
+                if ((_key.features & kege::FeatureFlag::CLEAR_COAT))
+                {
+                    source << include( "resources/fn-clear-coat.glsl") <<"\n";
+                }
+            }
+        }
+    }
+    
+    void ShaderCompiler::writeMainFn(std::stringstream& source)
+    {
+        source <<"\n";
         source << "void main() {\n";
-        source << "    // Process vertex based on renderer type\n";
-
-        source << "    _world_position = processVertexPosition();\n";
-
-        switch (key.renderer_type)
+        switch ( _current_stage )
         {
-//            case kege::RendererType::SkinnedMesh:
-//                source << "    _world_normal = processVertexNormal();\n";
-//                source << "    _texcoord = processVertexTexcoord();\n";
-//                break;
+            case ShaderStge::VERTEX:
+            {
+                source << "    // Process vertex based on renderer type\n";
 
-            case kege::RendererType::StaticMesh:
-                source << "    _world_normal = processVertexNormal();\n";
-                source << "    _texcoord = processVertexTexcoord();\n";
-                break;
+                if (_key.renderer_type == kege::MeshType::StaticMesh && (_key.features & kege::FeatureFlag::GPU_SKINNING))
+                {
+                    source << include( "renderer-type/gpu-skinning.glsl") <<"\n";
+                    if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
+                    {
+                        source << include( "renderer-type/gpu-skinning-normal-mapping.glsl") <<"\n";
+                    }
+                }
+                else if (_key.renderer_type == kege::MeshType::StaticMesh)
+                {
+                    source << include( "renderer-type/static-mesh.glsl") <<"\n";
+                    if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
+                    {
+                        source << include( "renderer-type/static-mesh-normal-mapping.glsl") <<"\n";
+                    }
+                }
+                else if (_key.renderer_type == kege::MeshType::FlatTerrain)
+                {
+                }
+                else if (_key.renderer_type == kege::MeshType::SphericalTerrain)
+                {
+                }
+                else if (_key.renderer_type == kege::MeshType::Particle)
+                {
+                }
 
-            case kege::RendererType::Particle:
-                source << "    _texcoord = processVertexTexcoord();\n";
-                break;
+                if (_key.features == kege::FeatureFlag::VERTEX_COLOR)
+                {
+                    source << include( "main/vertex/static-color.glsl") <<"\n";
+                }
 
-            case kege::RendererType::ScreenRect:
-                source << "    _texcoord = processVertexTexcoord();\n";
-                break;
+                source << include( "renderer-type/final-vertex-output.glsl") <<"\n";
+            }
+            break;
 
-            default:
-                source << "    _world_position = in_position;\n";
+            case ShaderStge::FRAGMENT:
+            {
+                if(( _input_signature & VertexInfo::POSITION ))
+                {
+                    source << "    vec3 position = in_position;\n";
+                }
+                if( _has_material )
+                {
+                    source << include( "resources/get-albedo.glsl") <<"\n";
+                    if (_has_normal_mapping)
+                    {
+                        source << include( "resources/get-tbn-normal.glsl") <<"\n";
+                    }
+                }
+                if( _has_light_funct )
+                {
+                    if( _has_material && _has_lights )
+                    {
+                        source << include( "resources/get-opacity.glsl") <<"\n";
+                        source << include( "resources/get-ambient-occlusion.glsl") <<"\n";
+                        source << include( "resources/get-roughness.glsl") <<"\n";
+                        source << include( "resources/get-metallic.glsl") <<"\n";
+                        source << include( "resources/get-normal.glsl") <<"\n";
+                        source << include( "resources/get-emissive.glsl") <<"\n";
+                    }
+                    else
+                    {
+                        source << include( "resources/use-internal-material.glsl") <<"\n";
+                        if(( _input_signature & (1 << VertexInfo::NORMAL) ))
+                        {
+                            source << include( "resources/get-input-normal.glsl") <<"\n";
+                        }
+                    }
+                    
+                    if(( _input_signature & (1 << VertexInfo::POSITION) ))
+                    {
+                        source << "    vec3 view_dir = normalize(camera.cameraPosition - in_position);\n";
+                    }
+
+                    if( _has_lights )
+                    {
+                        if ((_key.features & kege::FeatureFlag::DIRECTIONAL_LIGHT))
+                        {
+                            source << include( "resources/integrate-directional-light.glsl") <<"\n";
+                        }
+                        if ((_key.features & kege::FeatureFlag::POINT_LIGHT))
+                        {
+                            source << include( "resources/integrate-point-light.glsl") <<"\n\n";
+                        }
+                        if ((_key.features & kege::FeatureFlag::SPOT_LIGHT))
+                        {
+                            source << include( "resources/integrate-spot-light.glsl") <<"\n\n";
+                        }
+                    }
+                    else
+                    {
+                        source << include( "resources/use-internal-light.glsl") <<"\n";
+                    }
+                }
+                else if (_key.shading_model == kege::ShadingModel::Unlit)
+                {
+                    if( _has_material )
+                    {
+                        source << "    vec3 final_color = getAlbedo();\n";
+                    }
+                    if(( _input_signature & VertexInfo::COLOR ))
+                    {
+                        source << "    vec3 final_color = in_color.rgb;\n";
+                    }
+                }
+
+                if ((_key.features & kege::FeatureFlag::TONE_MAPPING))
+                {
+                    source << include( "features/tone-mapping.glsl") <<"\n\n";
+                }
+                
+                if ((_key.features & kege::FeatureFlag::GAMMA))
+                {
+                    source << include( "features/gamma.glsl") <<"\n\n";
+                }
+
+                switch (_key.render_pass)
+                {
+                    default:
+                    case RenderPass::Forward:
+                        source << include( "render-pass/to-color-buffer.glsl") <<"\n";
+                        break;
+
+                    case RenderPass::GBuffer:
+                        source << include( "render-pass/to-geometry-buffer.glsl") <<"\n";
+                        break;
+
+                    case RenderPass::Shadow:
+                        source << include( "render-pass/to-depth-buffer.glsl") <<"\n";
+                        break;
+
+                    case RenderPass::DepthPrePass:
+                        source << include( "render-pass/to-depth-buffer.glsl") <<"\n";
+                        break;
+                }
+            }
+            break;
+
+            default: break;
         }
-
-        if ((key.features & kege::FeatureFlag::NORMAL_MAPPING))
-        {
-            source << "    _world_tangent = normalize(object.normal_matrix * in_tangent);\n";
-            source << "    _world_bitangent = normalize(object.normal_matrix * in_bitangent);\n";
-        }
-
-        if (key.vertex_signature & kege::VertexBit::COLOR)
-        {
-            source << "    _color = processVertexColor();\n";
-        }
-
-        // Final position
-        source << "    gl_Position = camera.view_projection_matrix * vec4(world_position, 1.0);\n";
         source << "}\n";
     }
 
-    void ShaderCompiler::writeFragmentForwardOpaque(std::stringstream& source, const kege::PipelineKey& key)
+    std::string ShaderCompiler::include(const std::string& fname )
     {
-//        source << "    // Forward shading\n";
-//        if (key.shading_model == kege::ShadingModel::LitPBR_Metallic ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Specular ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Cloth ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Clearcoat ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Skin ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Hair ||
-//            key.shading_model == kege::ShadingModel::LitPBR_Subsurface)
-//        {
-//
-//            // Apply features in order
-//            source << "    // Initial values\n";
-//            source << "    vec2 texcoord = in_texcoord;\n";
-//            source << "    vec3 normal = normalize(_world_normal);\n";
-//            source << "    \n";
-//            source << "    vec3 view_dir = normalize(camera.camera_position - in_position);\n";
-//            source << "    vec3 result = calculateLighting\n";
-//            source << "    (\n";
-//            source << "        in_position,\n";
-//            source << "        normal,\n";
-//            source << "        base_color.rgb,\n";
-//            source << "        material.roughness,\n";
-//            source << "        material.metallic\n";
-//            source << "    );\n";
-//            source << "    out_color = vec4(result, base_color.a);\n";
-//        }
-//        else if(key.shading_model == kege::ShadingModel::Toon_Cel)
-//        {
-//        }
-//        else if(key.shading_model == kege::ShadingModel::Skybox)
-//        {
-//        }
-//        else if(key.shading_model == kege::ShadingModel::Emissive)
-//        {
-//        }
-//        else if(key.shading_model == kege::ShadingModel::Toon_UnlitOutline)
-//        {
-//        }
-//        else if(key.shading_model == kege::ShadingModel::DepthOnly)
-//        {
-//            source << "    out_shadow = vec4(gl_FragCoord.z, gl_FragCoord.z * gl_FragCoord.z, 0.0, 1.0);\n";
-//        }
-//        else if(key.shading_model == kege::ShadingModel::Unlit)
-//        {
-//            if(key.features & kege::FeatureFlag::VERTEX_COLOR)
-//            {
-//                source << "    out_color = _color;\n";
-//            }
-//            else
-//            {
-//                source << "    out_color = vec4(1.0);\n";
-//            }
-//        }
+        const std::string filename = "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/snippets/" + fname;
+        std::ifstream file(filename);
+        std::string loaded_source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        file.close();
+        if(loaded_source.length() >= 1)
+        {
+            size_t i = loaded_source.length() - 1;
+            if(loaded_source[ i ] == '\n')
+                loaded_source[ i ] = ' ';
+        }
+        return loaded_source;
     }
 
-    void ShaderCompiler::writeFragmentShaderMainFunction(std::stringstream& source, const kege::PipelineKey& key)
+    void ShaderCompiler::processShadingModel(std::stringstream& source, const kege::ShadingModel& model)
     {
-        // Main function
-        source << "void main() {\n";
-
-        // Parallax occlusion (modifies texcoord)
-        if (key.features & kege::FeatureFlag::PARALLAX_OCCLUSION)
+        switch(model)
         {
-            source << include("/features/parallax-occlusion.glsl");
-            source << "    \n";
+            default:
+            case kege::ShadingModel::Unlit:
+            {
+                source << include("shading-model/unlit.glsl");
+                break;
+            }
+
+            case kege::ShadingModel::LitPBR_Metallic:
+            {
+                source << include("shading-model/lit-pbr-metallic.glsl");
+                break;
+            }
+        }
+    }
+
+    void ShaderCompiler::processMeshType(std::stringstream& source, const kege::PipelineKey& key)
+    {
+        switch(key.renderer_type)
+        {
+            default:
+            case kege::MeshType::Point:
+            {
+                source << include("renderer-type/point.glsl");
+                break;
+            }
+            case kege::MeshType::StaticMesh:
+            {
+                source << include("renderer-type/static-mesh.glsl");
+                break;
+            }
         }
 
-        // Normal mapping (modifies normal)
         if (key.features & kege::FeatureFlag::NORMAL_MAPPING)
         {
-            source << include("/features/normal-mapping.glsl");
-            source << "    \n";
+            source << include("feature/vertex/normal-mapping.glsl");
         }
 
-
-        // Sample base color
-        //source << "    // Sample textures\n";
-        //source << "    vec4 base_color = texture(base_colorTexture, texcoord) * material.base_color;\n";
-        //source << "    \n";
-
-        // Execute shading based on render pass
-        switch (key.render_pass)
+        if (key.features & kege::FeatureFlag::GPU_SKINNING)
         {
-            case kege::RenderPass::GBuffer:
-                source << "    // GBuffer output\n";
-                source << "    outGBuffer0 = vec4(base_color.rgb, 0.0); // MaterialID in alpha\n";
-                source << "    outGBuffer1 = vec4(normal * 0.5 + 0.5, material.roughness);\n";
-                source << "    outGBuffer2 = vec4(material.metallic, 0.0, material.ambient_occlusion, 0.0);\n";
-                break;
-
-            case kege::RenderPass::Forward:
-                writeFragmentForwardOpaque(source, key);
-                break;
-
-            case kege::RenderPass::Shadow:
-                if (!(key.features & kege::FeatureFlag::DEPTH_ONLY))
-                {
-                    source << "    // Shadow map (maybe output depth variance)\n";
-                    source << "    outShadow = vec4(gl_FragCoord.z, gl_FragCoord.z * gl_FragCoord.z, 0.0, 1.0);\n";
-                }
-                break;
-
-            default:
-            case kege::RenderPass::UI:
-                source << "    // UI rendering (simple)\n";
-                source << "    out_color = base_color;\n";
-                break;
+            source << include("feature/vertex/gpu-skinning.glsl");
         }
 
-        source << "}\n";
+        if (key.features & kege::FeatureFlag::VERTEX_COLOR)
+        {
+            source << include("feature/vertex/vertex-color.glsl");
+        }
     }
 
-    void ShaderCompiler::writeVersionAndExtensions(std::stringstream& source)
-    {
-        source << "#version 450\n";
-        source << "#extension GL_ARB_separate_shader_objects : enable\n\n";
-    }
-
-    void ShaderCompiler::writeFeatures(const kege::PipelineKey& key, std::vector<std::string>& defines)
+    void ShaderCompiler::writeFeatures()
     {
         // ====== VERTEX SHADER FEATURES ======
-        if (key.features & kege::FeatureFlag::VERTEX_ANIMATION)
-            defines.push_back("FEATURE_VERTEX_ANIMATION");
-        if (key.features & kege::FeatureFlag::MORPH_TARGETS)
-            defines.push_back("FEATURE_MORPH_TARGETS");
-        if (key.features & kege::FeatureFlag::GPU_SKINNING)
-            defines.push_back("FEATURE_GPU_SKINNING");
-        if (key.features & kege::FeatureFlag::VERTEX_DISPLACEMENT)
-            defines.push_back("FEATURE_VERTEX_DISPLACEMENT");
-        if (key.features & kege::FeatureFlag::WIND_ANIMATION)
-            defines.push_back("FEATURE_WIND_ANIMATION");
-        if (key.features & kege::FeatureFlag::VERTEX_ANIMATION)
-            defines.push_back("FEATURE_VERTEX_ANIMATION");
-        if (key.features & kege::FeatureFlag::INSTANCED_RENDERING)
-            defines.push_back("FEATURE_INSTANCED_RENDERING");
-        if (key.features & kege::FeatureFlag::VERTEX_COLOR)
-            defines.push_back("FEATURE_VERTEX_COLOR");
+        if (_key.features & kege::FeatureFlag::VERTEX_ANIMATION)
+            _defines.push_back("FEATURE_VERTEX_ANIMATION");
+        if (_key.features & kege::FeatureFlag::MORPH_TARGETS)
+            _defines.push_back("FEATURE_MORPH_TARGETS");
+        if (_key.features & kege::FeatureFlag::GPU_SKINNING)
+            _defines.push_back("FEATURE_GPU_SKINNING");
+        if (_key.features & kege::FeatureFlag::VERTEX_DISPLACEMENT)
+            _defines.push_back("FEATURE_VERTEX_DISPLACEMENT");
+        if (_key.features & kege::FeatureFlag::WIND_ANIMATION)
+            _defines.push_back("FEATURE_WIND_ANIMATION");
+        if (_key.features & kege::FeatureFlag::VERTEX_ANIMATION)
+            _defines.push_back("FEATURE_VERTEX_ANIMATION");
+        if (_key.features & kege::FeatureFlag::INSTANCED_RENDERING)
+            _defines.push_back("FEATURE_INSTANCED_RENDERING");
+        if (_key.features & kege::FeatureFlag::VERTEX_COLOR)
+            _defines.push_back("FEATURE_VERTEX_COLOR");
 
         // ====== TESSELLATION FEATURES ======
-        if (key.features & kege::FeatureFlag::TESSELLATION)
-            defines.push_back("FEATURE_TESSELLATION");
-        if (key.features & kege::FeatureFlag::PN_TRIANGLES)
-            defines.push_back("FEATURE_PN_TRIANGLES");
-        if (key.features & kege::FeatureFlag::TESSELLATION_DISPLACEMENT)
-            defines.push_back("FEATURE_DISPLACEMENT_TESSELLATION");
+        if (_key.features & kege::FeatureFlag::TESSELLATION)
+            _defines.push_back("FEATURE_TESSELLATION");
+        if (_key.features & kege::FeatureFlag::PN_TRIANGLES)
+            _defines.push_back("FEATURE_PN_TRIANGLES");
+        if (_key.features & kege::FeatureFlag::TESSELLATION_DISPLACEMENT)
+            _defines.push_back("FEATURE_DISPLACEMENT_TESSELLATION");
 
         // ====== FRAGMENT SHADER FEATURES ======
-        if (key.features & kege::FeatureFlag::NORMAL_MAPPING)
-            defines.push_back("FEATURE_NORMAL_MAPPING");
-        if (key.features & kege::FeatureFlag::TRIPLANAR_MAPPING)
-            defines.push_back("FEATURE_TRIPLANAR_MAPPING");
-        if (key.features & kege::FeatureFlag::PARALLAX_MAPPING)
-            defines.push_back("FEATURE_PARALLAX_MAPPING");
-        if (key.features & kege::FeatureFlag::PARALLAX_OCCLUSION)
-            defines.push_back("FEATURE_PARALLAX_OCCLUSION");
+        if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
+            _defines.push_back("FEATURE_NORMAL_MAPPING");
+        if (_key.features & kege::FeatureFlag::TRIPLANAR_MAPPING)
+            _defines.push_back("FEATURE_TRIPLANAR_MAPPING");
+        if (_key.features & kege::FeatureFlag::PARALLAX_MAPPING)
+            _defines.push_back("FEATURE_PARALLAX_MAPPING");
+        if (_key.features & kege::FeatureFlag::PARALLAX_OCCLUSION)
+            _defines.push_back("FEATURE_PARALLAX_OCCLUSION");
 
         // ====== MATERIAL LAYERS ======
-        if (key.features & kege::FeatureFlag::CLEAR_COAT)
-            defines.push_back("FEATURE_CLEAR_COAT");
-        if (key.features & kege::FeatureFlag::ANISOTROPIC_REFLECTION)
-            defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
-        if (key.features & kege::FeatureFlag::SHEEN_LAYER)
-            defines.push_back("FEATURE_SHEEN_LAYER");
-        if (key.features & kege::FeatureFlag::THIN_FILM)
-            defines.push_back("FEATURE_THIN_FILM");
-        if (key.features & kege::FeatureFlag::TRANSMISSION)
-            defines.push_back("FEATURE_TRANSMISSION");
-        if (key.features & kege::FeatureFlag::SUBSURFACE_SCATTERING)
-            defines.push_back("FEATURE_SUBSURFACE_SCATTERING");
+        if (_key.features & kege::FeatureFlag::CLEAR_COAT)
+            _defines.push_back("FEATURE_CLEAR_COAT");
+        if (_key.features & kege::FeatureFlag::ANISOTROPIC_REFLECTION)
+            _defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
+        if (_key.features & kege::FeatureFlag::SHEEN_LAYER)
+            _defines.push_back("FEATURE_SHEEN_LAYER");
+        if (_key.features & kege::FeatureFlag::THIN_FILM)
+            _defines.push_back("FEATURE_THIN_FILM");
+        if (_key.features & kege::FeatureFlag::TRANSMISSION)
+            _defines.push_back("FEATURE_TRANSMISSION");
+        if (_key.features & kege::FeatureFlag::SUBSURFACE_SCATTERING)
+            _defines.push_back("FEATURE_SUBSURFACE_SCATTERING");
 
         // ====== TRANSPARENCY/ALPHA ======
-        if (key.features & kege::FeatureFlag::ALPHA_TEST)
-            defines.push_back("FEATURE_ALPHA_TEST");
-        if (key.features & kege::FeatureFlag::ALPHA_TO_COVERAGE)
-            defines.push_back("FEATURE_ALPHA_TO_COVERAGE");
-        if (key.features & kege::FeatureFlag::DITHERED_OPACITY)
-            defines.push_back("FEATURE_DITHERED_OPACITY");
-        if (key.features & kege::FeatureFlag::PREMULTIPLIED_ALPHA)
-            defines.push_back("FEATURE_PREMULTIPLIED_ALPHA");
+        if (_key.features & kege::FeatureFlag::ALPHA_TEST)
+            _defines.push_back("FEATURE_ALPHA_TEST");
+        if (_key.features & kege::FeatureFlag::ALPHA_TO_COVERAGE)
+            _defines.push_back("FEATURE_ALPHA_TO_COVERAGE");
+        if (_key.features & kege::FeatureFlag::DITHERED_OPACITY)
+            _defines.push_back("FEATURE_DITHERED_OPACITY");
+        if (_key.features & kege::FeatureFlag::PREMULTIPLIED_ALPHA)
+            _defines.push_back("FEATURE_PREMULTIPLIED_ALPHA");
 
         // ====== PARTICLE EFFECTS ======
-        if (key.features & kege::FeatureFlag::SOFT_PARTICLES)
-            defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
-        if (key.features & kege::FeatureFlag::PARTICLE_ROTATION)
-            defines.push_back("FEATURE_PARTICLE_ROTATION");
+        if (_key.features & kege::FeatureFlag::SOFT_PARTICLES)
+            _defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
+        if (_key.features & kege::FeatureFlag::PARTICLE_ROTATION)
+            _defines.push_back("FEATURE_PARTICLE_ROTATION");
 
         // ====== ENVIRONMENT INTERACTION ======
-        if (key.features & kege::FeatureFlag::SCREEN_SPACE_REFLECTION)
-            defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
-        if (key.features & kege::FeatureFlag::REFRACTION)
-            defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
-        if (key.features & kege::FeatureFlag::WATER_EFFECTS)
-            defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
-        if (key.features & kege::FeatureFlag::DECAL)
-            defines.push_back("FEATURE_DECAL");
+        if (_key.features & kege::FeatureFlag::SCREEN_SPACE_REFLECTION)
+            _defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
+        if (_key.features & kege::FeatureFlag::REFRACTION)
+            _defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
+        if (_key.features & kege::FeatureFlag::WATER_EFFECTS)
+            _defines.push_back("FEATURE_ANISOTROPIC_REFLECTION");
+        if (_key.features & kege::FeatureFlag::DECAL)
+            _defines.push_back("FEATURE_DECAL");
 
         // ====== LIGHTING FEATURES ======
-        if (key.features & kege::FeatureFlag::MULTIPLE_BOUNCE_GI)
-            defines.push_back("FEATURE_MULTIPLE_BOUNCE_GI");
-        if (key.features & kege::FeatureFlag::AREA_LIGHTS)
-            defines.push_back("FEATURE_AREA_LIGHTS");
-        if (key.features & kege::FeatureFlag::CONTACT_SHADOWS)
-            defines.push_back("FEATURE_CONTACT_SHADOWS");
-        if (key.features & kege::FeatureFlag::VOLUMETRIC_LIGHTING)
-            defines.push_back("FEATURE_VOLUMETRIC_LIGHTING");
+        if (_key.features & kege::FeatureFlag::MULTIPLE_BOUNCE_GI)
+            _defines.push_back("FEATURE_MULTIPLE_BOUNCE_GI");
+        if (_key.features & kege::FeatureFlag::AREA_LIGHTS)
+            _defines.push_back("FEATURE_AREA_LIGHTS");
+        if (_key.features & kege::FeatureFlag::CONTACT_SHADOWS)
+            _defines.push_back("FEATURE_CONTACT_SHADOWS");
+        if (_key.features & kege::FeatureFlag::VOLUMETRIC_LIGHTING)
+            _defines.push_back("FEATURE_VOLUMETRIC_LIGHTING");
 
 
         // ====== POST-PROCESS/SCREEN SPACE ======
-        if (key.features & kege::FeatureFlag::MOTION_VECTORS)
-            defines.push_back("FEATURE_MOTION_VECTORS");
-        if (key.features & kege::FeatureFlag::VELOCITY_BUFFER)
-            defines.push_back("FEATURE_VELOCITY_BUFFER");
-        if (key.features & kege::FeatureFlag::DEPTH_ONLY)
-            defines.push_back("FEATURE_DEPTH_ONLY");
-        if (key.features & kege::FeatureFlag::CUSTOM_DEPTH)
-            defines.push_back("FEATURE_CUSTOM_DEPTH");
+        if (_key.features & kege::FeatureFlag::MOTION_VECTORS)
+            _defines.push_back("FEATURE_MOTION_VECTORS");
+        if (_key.features & kege::FeatureFlag::VELOCITY_BUFFER)
+            _defines.push_back("FEATURE_VELOCITY_BUFFER");
+        if (_key.features & kege::FeatureFlag::DEPTH_ONLY)
+            _defines.push_back("FEATURE_DEPTH_ONLY");
+        if (_key.features & kege::FeatureFlag::CUSTOM_DEPTH)
+            _defines.push_back("FEATURE_CUSTOM_DEPTH");
 
         // ====== TERRAIN/VEGETATION ======
-        if (key.features & kege::FeatureFlag::TERRAIN_BLENDING)
-            defines.push_back("FEATURE_TERRAIN_BLENDING");
-        if (key.features & kege::FeatureFlag::VERTEX_GRASS_WIND)
-            defines.push_back("FEATURE_VERTEX_GRASS_WIND");
-        if (key.features & kege::FeatureFlag::LOD_CROSSFADE)
-            defines.push_back("FEATURE_LOD_CROSSFADE");
-        if (key.features & kege::FeatureFlag::DECAL_LAYER)
-            defines.push_back("FEATURE_DECAL_LAYER");
+        if (_key.features & kege::FeatureFlag::TERRAIN_BLENDING)
+            _defines.push_back("FEATURE_TERRAIN_BLENDING");
+        if (_key.features & kege::FeatureFlag::VERTEX_GRASS_WIND)
+            _defines.push_back("FEATURE_VERTEX_GRASS_WIND");
+        if (_key.features & kege::FeatureFlag::LOD_CROSSFADE)
+            _defines.push_back("FEATURE_LOD_CROSSFADE");
+        if (_key.features & kege::FeatureFlag::DECAL_LAYER)
+            _defines.push_back("FEATURE_DECAL_LAYER");
 
         // ====== DEBUG/DEVELOPMENT ======
-        if (key.features & kege::FeatureFlag::WIREFRAME_OVERLAY)
-            defines.push_back("FEATURE_WIREFRAME_OVERLAY");
-        if (key.features & kege::FeatureFlag::DEBUG_NORMALS)
-            defines.push_back("FEATURE_DEBUG_NORMALS");
-        if (key.features & kege::FeatureFlag::DEBUG_UVS)
-            defines.push_back("FEATURE_DEBUG_UVS");
-        if (key.features & kege::FeatureFlag::DEBUG_TANGENTS)
-            defines.push_back("FEATURE_DEBUG_TANGENTS");
+        if (_key.features & kege::FeatureFlag::WIREFRAME_OVERLAY)
+            _defines.push_back("FEATURE_WIREFRAME_OVERLAY");
+        if (_key.features & kege::FeatureFlag::DEBUG_NORMALS)
+            _defines.push_back("FEATURE_DEBUG_NORMALS");
+        if (_key.features & kege::FeatureFlag::DEBUG_UVS)
+            _defines.push_back("FEATURE_DEBUG_UVS");
+        if (_key.features & kege::FeatureFlag::DEBUG_TANGENTS)
+            _defines.push_back("FEATURE_DEBUG_TANGENTS");
 
         // ====== SHADOW FEATURES ======
-        if (key.features & kege::FeatureFlag::CONTACT_HARDENING)
-            defines.push_back("FEATURE_CONTACT_HARDENING");
-        if (key.features & kege::FeatureFlag::VARIANCE_SHADOW_MAP)
-            defines.push_back("FEATURE_VARIANCE_SHADOW_MAP");
-        if (key.features & kege::FeatureFlag::CASCADE_BLENDING)
-            defines.push_back("FEATURE_CASCADE_BLENDING");
+        if (_key.features & kege::FeatureFlag::CONTACT_HARDENING)
+            _defines.push_back("FEATURE_CONTACT_HARDENING");
+        if (_key.features & kege::FeatureFlag::VARIANCE_SHADOW_MAP)
+            _defines.push_back("FEATURE_VARIANCE_SHADOW_MAP");
+        if (_key.features & kege::FeatureFlag::CASCADE_BLENDING)
+            _defines.push_back("FEATURE_CASCADE_BLENDING");
 
         // ====== ADVANCED RENDERING ======
-        if (key.features & kege::FeatureFlag::RAY_TRACING_OVERRIDE)
-            defines.push_back("FEATURE_RAY_TRACING_OVERRIDE");
-        if (key.features & kege::FeatureFlag::VIRTUAL_TEXTURE)
-            defines.push_back("FEATURE_VIRTUAL_TEXTURE");
-        if (key.features & kege::FeatureFlag::FLIPBOOK_ANIMATION)
-            defines.push_back("FEATURE_FLIPBOOK_ANIMATION");
+        if (_key.features & kege::FeatureFlag::RAY_TRACING_OVERRIDE)
+            _defines.push_back("FEATURE_RAY_TRACING_OVERRIDE");
+        if (_key.features & kege::FeatureFlag::VIRTUAL_TEXTURE)
+            _defines.push_back("FEATURE_VIRTUAL_TEXTURE");
+        if (_key.features & kege::FeatureFlag::FLIPBOOK_ANIMATION)
+            _defines.push_back("FEATURE_FLIPBOOK_ANIMATION");
 
         // ====== UI RENDERING ======
-        if (key.features & kege::FeatureFlag::ROUNDED_UI_CORNERS)
-            defines.push_back("FEATURE_ROUNDED_UI_CORNERS");
-        if (key.features & kege::FeatureFlag::SINE_DIST_TEXT)
-            defines.push_back("FEATURE_SINE_DIST_TEXT");
+        if (_key.features & kege::FeatureFlag::ROUNDED_UI_CORNERS)
+            _defines.push_back("FEATURE_ROUNDED_UI_CORNERS");
+        if (_key.features & kege::FeatureFlag::SINE_DIST_TEXT)
+            _defines.push_back("FEATURE_SINE_DIST_TEXT");
 
         // ====== FRAGMENT SHADER FEATURES ======
-        if (key.features & kege::FeatureFlag::DETAIL_NORMAL)
-            defines.push_back("FEATURE_DETAIL_NORMAL");
+        if (_key.features & kege::FeatureFlag::DETAIL_NORMAL)
+            _defines.push_back("FEATURE_DETAIL_NORMAL");
 
+        _defines.push_back("CAMERA_SET " + std::to_string(set_index++));
+        _defines.push_back("CAMERA_BINDING 0");
 
-        defines.push_back("CAMERA_SET_INDEX " + std::to_string(set_index++));
-        defines.push_back("CAMERA_BINDING_INDEX 0");
-
-        defines.push_back("OBJECT_SET_INDEX " + std::to_string(set_index++));
-        defines.push_back("OBJECT_BINDING_INDEX 0");
+        _defines.push_back("OBJECT_SET " + std::to_string(set_index++));
+        _defines.push_back("OBJECT_BINDING 0");
+        
+        // ====== FRAGMENT SHADER FEATURES ======
+        if (_key.features & kege::FeatureFlag::MATERIAL)
+            _defines.push_back("MATERIAL_SET " + std::to_string(set_index++));
     }
 
 }

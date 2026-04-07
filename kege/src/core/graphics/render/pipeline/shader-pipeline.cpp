@@ -45,7 +45,7 @@ namespace kege{
 //        return _shading_model;
 //    }
 //
-//    const kege::RendererType ShaderPipeline::getRendererType()const
+//    const kege::MeshType ShaderPipeline::getMeshType()const
 //    {
 //        return _renderer_type;
 //    }

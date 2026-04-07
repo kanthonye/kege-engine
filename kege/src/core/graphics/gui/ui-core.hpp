@@ -275,6 +275,7 @@ namespace kege::ui{
      */
     struct CornerCurves
     {
+        ~CornerCurves() = default;
         uint16_t top_left = 0;
         uint16_t top_right = 0;
         uint16_t bottom_left = 0;

@@ -732,8 +732,7 @@ namespace kege{
         _layout->put({ .layer = layer, .style = &_theme.slide_bar_value, .text = snum });
         _layout->pop();
 
-        _layout->pushDeferredOp(user_id, widget_index, slidebarOp<double>, RangeParams{min,max,val,widget_index});
-
+        _layout->pushDeferredOp(user_id, widget_index, slidebarOp<double>, kege::RangeParams<double>{min, max, val, widget_index});
         return _layout->click( user_id );
     }
 

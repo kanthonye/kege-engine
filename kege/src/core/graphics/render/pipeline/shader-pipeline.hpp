@@ -118,7 +118,7 @@ namespace kege{
         const kege::PrimitiveTopology getTopology()const; // TriangleList, TriangleStrip, LineList, etc.
 
         //const kege::ShadingModel getShadingModel()const;
-        //const kege::RendererType getRendererType()const;
+        //const kege::MeshType getMeshType()const;
         const kege::FeaturesBitmask getFeatures()const;
 
         const kege::ref::ShaderLayout& getShaderLayout()const;
@@ -156,7 +156,7 @@ namespace kege{
 
         // Shader selection
         //kege::ShadingModel          _shading_model;
-        //kege::RendererType          _renderer_type;
+        //kege::MeshType          _renderer_type;
 
         //bool _alpha_to_coverage_enable;  // For foliage transparency
         friend ref::ShaderPipeline;

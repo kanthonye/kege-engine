@@ -11,29 +11,28 @@
 #include "panels/viewport/viewport-panel.hpp"
 #include "panels/ui-file-browser.hpp"
 
-#include "ui-console.hpp"
-#include "ui-menu-bar.hpp"
+#include "panels/ui-console.hpp"
+#include "panels/ui-menu-bar.hpp"
 
 #include "editor-layer.hpp"
-#include "render-graph.hpp"
-#include "shader-library.hpp"
-#include "bench.h"
-
-using Clock = std::chrono::high_resolution_clock;
-double bench_repeat(const char *name, size_t iterations, std::function<void()> fn)
-{
-    auto begin = Clock::now();
-    for (size_t i = 0; i < iterations; i++)
-        fn();
-    auto end = Clock::now();
-
-    double total = std::chrono::duration<double, std::milli>(end - begin).count();
-    std::cout << name << ": [ Avg Time: " << (total / iterations) << " ms "
-    << "| iterations: " << iterations << " | total time to complete: ("
-    << total << " ms) ]\n";
-
-    return total;
-}
+#include "../core/graphics/render/graph/render-graph.hpp"
+//#include "bench.h"
+//
+//using Clock = std::chrono::high_resolution_clock;
+//double bench_repeat(const char *name, size_t iterations, std::function<void()> fn)
+//{
+//    auto begin = Clock::now();
+//    for (size_t i = 0; i < iterations; i++)
+//        fn();
+//    auto end = Clock::now();
+//
+//    double total = std::chrono::duration<double, std::milli>(end - begin).count();
+//    std::cout << name << ": [ Avg Time: " << (total / iterations) << " ms "
+//    << "| iterations: " << iterations << " | total time to complete: ("
+//    << total << " ms) ]\n";
+//
+//    return total;
+//}
 
 namespace kege{
 

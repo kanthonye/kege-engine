@@ -8,7 +8,7 @@
 #ifndef viewport_panel_hpp
 #define viewport_panel_hpp
 
-#include "ui-panel.hpp"
+#include "../ui-panel.hpp"
 
 namespace kege{
 

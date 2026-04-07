@@ -15,8 +15,7 @@ namespace kege{
     enum class ShadingModel : uint8_t
     {
         Unlit = 0,          // Color = BaseColor (no lighting)
-        LitPBR_Metallic,    // Metallic-Roughness PBR
-        LitPBR_Specular,    // Specular-Glossiness PBR
+        LitPBR_Metallic,    // Metallic-Roughness
         LitPBR_Clearcoat,   // PBR with clearcoat layer (car paint)
         LitPBR_Subsurface,  // PBR with subsurface scattering
         LitPBR_Cloth,       // Fabric-specific BRDF
@@ -30,7 +29,7 @@ namespace kege{
         // etc.
     };
 
-    enum class RendererType
+    enum class MeshType
     {
         Point,      //
         ScreenRect,      //
@@ -67,8 +66,8 @@ namespace kege{
     struct PipelineKey
     {
         // Shader selection
-        // TODO: ShadingModel shading_model;
-        RendererType renderer_type;
+        ShadingModel shading_model;
+        MeshType renderer_type;
         RenderPass render_pass;
         FeaturesBitmask features = 0;
 
@@ -101,7 +100,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::LitPBR_Metallic,
-                .renderer_type = RendererType::StaticMesh,
+                .renderer_type = MeshType::StaticMesh,
                 .render_pass = RenderPass::GBuffer,
                 .blend_state = BlendStatePreset::opaque(),
                 .depth_state = DepthStencilPresets::depthTestWrite(),
@@ -116,7 +115,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::LitPBR_Metallic,
-                .renderer_type = RendererType::StaticMesh,
+                .renderer_type = MeshType::StaticMesh,
                 .render_pass = RenderPass::Transparent,
                 .blend_state = BlendStatePreset::alphaBlend(),
                 .depth_state = DepthStencilPresets::depthTestNoWrite(), // Test but don't write!
@@ -131,7 +130,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::Unlit,
-                .renderer_type = RendererType::Particle,
+                .renderer_type = MeshType::Particle,
                 .render_pass = RenderPass::Transparent,
                 .blend_state = BlendStatePreset::additive(),
                 .depth_state = DepthStencilPresets::depthTestNoWrite(),
@@ -146,7 +145,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::DepthOnly, // Special shading model
-                .renderer_type = RendererType::StaticMesh,
+                .renderer_type = MeshType::StaticMesh,
                 .render_pass = RenderPass::Shadow,
                 .blend_state = BlendStatePreset::opaque(),
                 .depth_state = DepthStencilPresets::depthTestWrite(),
@@ -161,7 +160,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::Unlit,
-                .renderer_type = RendererType::GUI,
+                .renderer_type = MeshType::GUI,
                 .render_pass = RenderPass::UI,
                 .blend_state = BlendStatePreset::uiAlphaBlend(),
                 .depth_state = DepthStencilPresets::uiOverlay(),
@@ -176,7 +175,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::Unlit,
-                .renderer_type = RendererType::StaticMesh,
+                .renderer_type = MeshType::StaticMesh,
                 .render_pass = RenderPass::Debug,
                 .blend_state = BlendStatePreset::opaque(),
                 .depth_state = DepthStencilPresets::depthTestWrite(),

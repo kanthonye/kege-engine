@@ -8,9 +8,8 @@
 #ifndef inspector_panel_hpp
 #define inspector_panel_hpp
 
-#include "ui-panel.hpp"
-#include "hierarchy-panel.hpp"
-
+#include "../ui-panel.hpp"
+#include "../hierarchy/hierarchy-panel.hpp"
 namespace kege{
 
     typedef void(*ComponentAddFn)( kege::ECS*, ecs::Entity& );

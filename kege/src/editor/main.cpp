@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 3/5/25.
 //
 
-#include "entry-point.hpp"
+#include "../core/app/entry-point.hpp"
 #include "editor-layer.hpp"
 
 namespace kege{

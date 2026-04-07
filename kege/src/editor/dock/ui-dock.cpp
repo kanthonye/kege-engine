@@ -8,7 +8,7 @@
 #include "ui-dock.hpp"
 #include "ui-dock-split.hpp"
 #include "ui-dock-manager.hpp"
-#include "editor-layer.hpp"
+#include "../editor-layer.hpp"
 
 namespace kege::ui{
 

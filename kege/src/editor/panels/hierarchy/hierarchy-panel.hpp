@@ -8,7 +8,7 @@
 #ifndef hierarchy_panel_hpp
 #define hierarchy_panel_hpp
 
-#include "ui-description.hpp"
+#include "../../common/ui-description.hpp"
 
 namespace kege::ui{
     
