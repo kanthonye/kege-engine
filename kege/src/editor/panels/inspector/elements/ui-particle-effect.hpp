@@ -12,6 +12,6 @@
 
 namespace kege::ui{
 
-    bool particleEffect( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity );
+    bool particleEffect( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity );
 }
 #endif /* ui_particle_effect_hpp */

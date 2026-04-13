@@ -16,7 +16,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerToolBar(AssetManagerUI* m,kege::GUI* g);
+        AssetManagerToolBar(AssetManagerUI* m,kege::UI* g);
         void operator()(const std::string& type, void* data){}
         void update();
 

@@ -112,7 +112,7 @@ namespace kege::ui{
 
         ~Console() override;
 
-        void updateLayout( int16_t layer )override;
+        void updateLayout()override;
 
         // Public API for adding logs programmatically
         void log(const std::string& message, LogLevel level = LogLevel::INFO);

@@ -18,7 +18,7 @@ namespace kege::ui{
     public:
 
         enum{WINDOW, BANNER, CLOSE_BUTN, NAMING, SCROLL_CLIPPER, SCROLL_CONTAINER, OFFSET_COUNT, };
-        CreateMaterial(AssetManagerUI* m,kege::GUI* g);
+        CreateMaterial(AssetManagerUI* m,kege::UI* g);
         void operator()(const std::string& type, void* data);
         void update();
         

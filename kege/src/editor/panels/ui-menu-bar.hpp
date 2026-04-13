@@ -17,7 +17,7 @@ namespace kege::ui{
     public:
 
         MenuBar( kege::ui::DockManager* dm );
-        void updateLayout( int16_t layer );
+        void updateLayout();
 
     public:
 

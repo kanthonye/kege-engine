@@ -51,10 +51,11 @@ namespace kege{
     ui::UID uid;
     bool EditorLayer::update()
     {
-        _gui.begin( 0.016 );
+        _ui.begin( 0.016 );
+        //ui::execute(_commands.data(), _commands.size(), &_context);
         _dock_manager->update();
-        _gui.end();
-//        _gui.push({
+        _ui.end();
+//        _ui.push({
 //            .layer = 0,
 //            .rect = {200,200,500, 50},
 //            .color = 0xFFFFFF18,
@@ -65,15 +66,15 @@ namespace kege{
 //            .clip_overflow = false,
 //        });
 //            ui::ID id[3] = {uid[0],uid[1],uid[2]};
-//            _gui.beginScrollContainer(id, 0);
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//                _gui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
-//            _gui.endScrollContainer();
-//        _gui.pop();
+//            _ui.beginScrollContainer(id, 0);
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//                _ui.put({.layer = 0, .rect = {0,0,100, 20}, .color = 0xFFFFFF18});
+//            _ui.endScrollContainer();
+//        _ui.pop();
 
         _viewer.begin();
         _viewer.render( *_layout );
@@ -106,10 +107,11 @@ namespace kege{
         return _ecs;
     }
 
-    kege::GUI* EditorLayer::getGUI()
+    kege::UI* EditorLayer::getGUI()
     {
-        return &_gui;
+        return &_ui;
     }
+    float testvar = 0;
 
     bool EditorLayer::initialize()
     {
@@ -150,13 +152,40 @@ namespace kege{
 
         Extent2D window_size = graphics->getWindow()->getSize();
         _layout = new ui::Layout( _input_manager, window_size.width, window_size.height, 5000 );
-        _layout->createLayers(5);
+        _layout->createLayers(ui::LAYER_MAX_COUNT);
 
         _layout->setFont( font );
-        _gui.initialize(_layout);
+        _ui.initialize(_layout);
 
         _dock_manager = new kege::ui::DockManager(this, window_size.width, window_size.height);
         // TODO: SettingPanel, ConsolePanel
+
+
+//        _context.ui = &_ui;
+//        _context.bindings.add("apple", ui::Binding{
+//            .get = [](void*& v){v = &testvar;},
+//            .set = [](void*& v){},
+//            .type = ui::VarType::F32
+//        });
+//        _commands.resize(3);
+//        _commands[0].type = ui::UICommandType::BeginWindow;
+//        _commands[0].window = ui::Window{
+//            .title = "test window",
+//            .rect = {0,0, 300, 300},
+//            .open = true,
+//        };
+//        _commands[1].type = ui::UICommandType::LabelScrubber;
+//        _commands[1].scrubber = ui::Scrubber{
+//            .text = {.ptr = "Scrubber", .width = 100, .height = 30},
+//            .action = {
+//                .type = ui::ActionType::None,
+//                .bind = _context.bindings.get("apple"),
+//            }
+//        };
+//        _commands[2].type = ui::UICommandType::EndWindow;
+//        _commands[2].end_window = ui::EndWindow{
+//            .window_cmd_index = 0,
+//        };
         return true;
     }
 

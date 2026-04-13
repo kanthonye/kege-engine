@@ -10,7 +10,7 @@
 
 namespace kege::ui{
     
-    AssetManagerImport::AssetManagerImport(AssetManagerUI* m,kege::GUI* g)
+    AssetManagerImport::AssetManagerImport(AssetManagerUI* m,kege::UI* g)
     :   AssetManagerModule(m,g)
     {
         setupAssetTypeRegistry();

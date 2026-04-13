@@ -42,11 +42,11 @@ namespace kege{
         InspectorPanel( kege::ui::DockManager* dm );
         int select( const std::vector< std::string >& options );
         void operator()( const ui::SetSelectedEntity& msg );
-        void updateLayout( int16_t layer );
+        void updateLayout();
 
-        void updateAddComponent(int16_t layer);
-        void updateComponents(int16_t layer);
-        void updateUI(int16_t layer, int32_t comp_type, const ecs::Component::Layout& layout, kege::AssetManager* am);
+        void updateAddComponent();
+        void updateComponents();
+        void updateUI(int32_t comp_type, const ecs::Component::Layout& layout, kege::AssetManager* am);
         void updateRemoveComponent();
 
         uint64_t getCompKey(int comp_type);

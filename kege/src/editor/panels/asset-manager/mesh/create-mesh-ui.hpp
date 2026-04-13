@@ -19,7 +19,7 @@ namespace kege::ui{
     public:
         
         const std::string& getName()const{ return _name;}
-        virtual bool create(GUI* gui) = 0;
+        virtual bool create(UI* ui) = 0;
 
         CreateMeshUI(const std::string& n, AssetManagerUI* m): _name(n), _manager(m) {}
         virtual ~CreateMeshUI(){}

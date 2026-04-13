@@ -23,7 +23,7 @@ namespace kege::ui{
 
         void onResizeGrandChild(ui::Dock::SplitDirection direction, const Rect& drag_rect);
         void onResize(ui::Dock::SplitDirection direction, const Rect& drag_rect);
-        bool update(GUI* gui);
+        bool update(UI* ui);
 
         /**
          * nodes: hold the two child docks of this split

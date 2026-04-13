@@ -31,7 +31,7 @@ namespace kege::ui{
 
         enum class ImportStatus { PENDING, PROCESSING, COMPLETE, FAILED };
 
-        AssetManagerFolderTree(AssetManagerUI* m,kege::GUI* g)
+        AssetManagerFolderTree(AssetManagerUI* m,kege::UI* g)
         : AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
 

@@ -16,6 +16,8 @@ namespace kege::ui{
     class Resizer
     {
         public:
+        static void resolveFlexSizes( Layout& layout, uint32_t widget_index, const Extent& boundary );
+        static void resolveExtendSizes( Layout& layout, uint32_t widget_index );
         static void resize( Layout& layout, uint32_t widget_index );
     };
 

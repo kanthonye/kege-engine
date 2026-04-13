@@ -16,7 +16,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g);
+        AssetManagerCreateAsset(AssetManagerUI* m,kege::UI* g);
         void operator()(const std::string& type, void* data);
         void update();
 

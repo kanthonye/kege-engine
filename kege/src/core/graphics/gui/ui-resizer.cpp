@@ -72,7 +72,7 @@ namespace kege::ui{
         return newline;
     }
 
-    void resolveExtendSizes( Layout& layout, uint32_t widget_index )
+    void Resizer::resolveExtendSizes( Layout& layout, uint32_t widget_index )
     {
         Widget* widget = layout[ widget_index ];
 
@@ -242,7 +242,7 @@ namespace kege::ui{
         }
     }
 
-    void resolveFlexSizes( Layout& layout, uint32_t widget_index, const Extent& boundary )
+    void Resizer::resolveFlexSizes( Layout& layout, uint32_t widget_index, const Extent& boundary )
     {
         Widget* widget = layout[ widget_index ];
         for (uint32_t child_index = widget->head; child_index != 0 ; child_index = layout.next( child_index ) )
@@ -350,24 +350,6 @@ namespace kege::ui{
     {
         int extendable_count;
         Widget* widget = layout[ widget_index ];
-        {
-            resolveSizing
-            (
-                widget->parent,
-                widget->width,
-                widget->rect.width,
-                layout.getWidth(),
-                extendable_count
-            );
-            resolveSizing
-            (
-                widget->parent,
-                widget->height,
-                widget->rect.height,
-                layout.getHeight(),
-                extendable_count
-            );
-        }
         resolveFlexSizes( layout, widget_index, Extent{ widget->rect.width, widget->rect.height });
         resolveExtendSizes( layout, widget_index );
     }

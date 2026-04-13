@@ -58,15 +58,19 @@ namespace kege{
         return a;
     }
 
-    inline constexpr bool operator==(ShaderStageFlag& a, ShaderStageFlag b)
+    inline constexpr bool isset(const ShaderStageFlag& flags, const ShaderStageFlag& flag)
     {
-        return (static_cast<uint32_t>(a) == static_cast<uint32_t>(b));
+        return (static_cast<uint32_t>(flags) & static_cast<uint32_t>(flag)) == static_cast<uint32_t>(flag);
     }
 
-    inline constexpr bool operator!=(ShaderStageFlag& a, ShaderStageFlag b)
+    inline constexpr ShaderStageFlag unset(const ShaderStageFlag& flags, const ShaderStageFlag& flag) noexcept
     {
-        return (static_cast<uint32_t>(a) != static_cast<uint32_t>(b));
+        return static_cast<ShaderStageFlag>(static_cast<uint32_t>(flags) & ~static_cast<uint32_t>(flag));
     }
+
+
+
+
 
     /**
      * @brief Describes a shader module for pipeline creation.

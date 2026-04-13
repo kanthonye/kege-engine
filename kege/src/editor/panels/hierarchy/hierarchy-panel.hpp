@@ -58,7 +58,7 @@ namespace kege::ui{
 
     public:
 
-        void updateLayout( int16_t layer );
+        void updateLayout();
         ecs::Entity getSelectedEntity();
         HierarchyPanel( kege::ui::DockManager* dm );
 

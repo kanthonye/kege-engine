@@ -17,14 +17,14 @@ namespace kege::ui{
     {
     public:
 
-        bool create(GUI* gui);
+        bool create(UI* ui);
         CreateCylinderMeshUI(AssetManagerUI* manager);
 
         size_t _current_size = 0;
         size_t _buffer_capacity = 0;
         char _asset_name[32];
 
-        double _radius, _height, _rings;
+        float _radius, _height, _rings;
         static int _count;
     };
 

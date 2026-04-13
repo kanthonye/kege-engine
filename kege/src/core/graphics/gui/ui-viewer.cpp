@@ -1,6 +1,6 @@
 //
 //  ui-viewer.cpp
-//  gui
+//  ui
 //
 //  Created by Kenneth Esdaile on 8/5/25.
 //
@@ -233,6 +233,7 @@ namespace kege::ui{
             );
         }
     }
+
     bool checkOverlap(const ui::Rect& a, const ui::Rect& b) {
         // Check if one rectangle is to the left of the other
         if (a.x + a.width < b.x || b.x + b.width < a.x) {
@@ -276,6 +277,17 @@ namespace kege::ui{
 
     void Viewer::render( ui::Layout& layout )
     {
+        for (size_t layer_index = 0; layer_index < layout._layers.size(); ++layer_index)
+        {
+            for (uint32_t root = layout._layers[ layer_index ].head; root != 0; root = layout._widgets[ layer_index ].layer.next)
+            {
+                if ( checkOverlap(layout._rect, layout[ root ]->rect))
+                {
+                    draw( layout, root, layout[ root ]->rect );
+                }
+            }
+        }
+
         for (int layer_index = 0; layer_index < layout._layers.size(); ++layer_index)
         {
             ui::Layer& layer = layout._layers[ layer_index ];
@@ -300,7 +312,7 @@ namespace kege::ui{
                 instance.rect = cursor._rect_cursor;
             }
 
-            instance.clip_rect = {0.f,0.f, float(layout.getWidth()),float(layout.getHeight())};
+            instance.clip_rect = layout.getRect();
             instance.border = {};
             instance.texel = {};
             instance.texr_info = {};
@@ -408,7 +420,7 @@ namespace kege::ui{
         _clip_rect.height = _fbo_size.height;
         _clip_rect.width = _fbo_size.width;
 
-        kege::string shader_file = kege::vfs( "graphics-shaders/gui/gui.kmsl" );
+        kege::string shader_file = kege::vfs( "graphics-shaders/gui/ui.kmsl" );
         _pipeline = _asset_manager->load< ref::ShaderPipeline >( shader_file.c_str() );
         if( _pipeline == 0 )
         {

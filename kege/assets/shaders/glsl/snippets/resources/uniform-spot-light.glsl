@@ -19,3 +19,4 @@ layout(std140, set = SPOT_LIGHTS_SET, binding = SPOT_LIGHTS_BINDING) uniform Spo
     uint spot_light_count;
     PointLight spot_lights[MAX_SPOT_LIGHTS];
 };
+

@@ -12,6 +12,7 @@
 #include "modules/asset-manager-create-asset.hpp"
 #include "modules/create-asset-mesh-ui.hpp"
 #include "modules/ui-create-material.hpp"
+#include "modules/ui-create-pipeline.hpp"
 #include "ui-asset-manager.hpp"
 
 
@@ -24,7 +25,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerContextMenu(AssetManagerUI* m,kege::GUI* g): AssetManagerModule(m,g){}
+        AssetManagerContextMenu(AssetManagerUI* m,kege::UI* g): AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
         void update();
 
@@ -45,7 +46,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerStatusBar(AssetManagerUI* m,kege::GUI* g): AssetManagerModule(m,g){}
+        AssetManagerStatusBar(AssetManagerUI* m,kege::UI* g): AssetManagerModule(m,g){}
         void operator()(const std::string& type, void* data);
         void update();
 
@@ -80,15 +81,16 @@ namespace kege::ui{
             };
         }
 
-        _modules.push_back(new AssetManagerToolBar(this, _gui));
-        _modules.push_back(new AssetManagerFolderTree(this, _gui));
-        _modules.push_back(new AssetManagerAssetView(this, _gui));
-        _modules.push_back(new AssetManagerImport(this, _gui));
-        _modules.push_back(new AssetManagerContextMenu(this, _gui));
-        _modules.push_back(new AssetManagerCreateAsset(this, _gui));
+        _modules.push_back(new AssetManagerToolBar(this, _ui));
+        _modules.push_back(new AssetManagerFolderTree(this, _ui));
+        _modules.push_back(new AssetManagerAssetView(this, _ui));
+        _modules.push_back(new AssetManagerImport(this, _ui));
+        _modules.push_back(new AssetManagerContextMenu(this, _ui));
+        _modules.push_back(new AssetManagerCreateAsset(this, _ui));
 
-        _modules.push_back(new CreateAssetMeshUI(this, _gui));
-        _modules.push_back(new kege::ui::CreateMaterial(this, _gui));
+        _modules.push_back(new CreateAssetMeshUI(this, _ui));
+        _modules.push_back(new kege::ui::CreateMaterial(this, _ui));
+        _modules.push_back(new kege::ui::CreatePipeline(this, _ui));
     }
 
     AssetManagerUI::~AssetManagerUI()
@@ -105,7 +107,7 @@ namespace kege::ui{
         }
     }
 
-    void AssetManagerUI::updateLayout( int16_t layer )
+    void AssetManagerUI::updateLayout()
     {
 //        // Process any pending file changes
 //        processFileChanges();

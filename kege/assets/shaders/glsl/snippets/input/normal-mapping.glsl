@@ -1,2 +1,3 @@
-layout(location = INPUT_TANGENT) in vec3 in_tangent;
-layout(location = INPUT_BITANGENT) in vec3 in_bitangent;
+layout(location = IN_TANGENT) in vec3 in_tangent;
+layout(location = IN_BITANGENT) in vec3 in_bitangent;
+

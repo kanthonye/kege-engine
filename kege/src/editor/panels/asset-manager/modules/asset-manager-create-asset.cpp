@@ -11,7 +11,7 @@
 
 namespace kege::ui{
 
-    AssetManagerCreateAsset::AssetManagerCreateAsset(AssetManagerUI* m,kege::GUI* g)
+    AssetManagerCreateAsset::AssetManagerCreateAsset(AssetManagerUI* m,kege::UI* g)
     : AssetManagerModule(m,g)
     {}
 
@@ -36,7 +36,7 @@ namespace kege::ui{
             static std::vector< kege::ui::Text > list;
             if (list.empty())
             {
-                names = std::vector<std::string>{"Mesh", "Material", "Textures", "Shaders", "Sounds", "Scripts"};
+                names = std::vector<std::string>{"Mesh", "Material", "Textures", "Shader", "Sounds", "Scripts"};
                 for (int i=0; i<names.size(); ++i)
                 {
                     list.push_back(
@@ -52,9 +52,8 @@ namespace kege::ui{
             }
 
             uint32_t id_offset = (uint32_t)names.size();
-            _gui->push
+            _ui->push
             ({
-                .layer = 1,
                 .user_id = _uid[ id_offset ],
                 .color = 0x000000FF,
                 .padding = {20,20,20,20},
@@ -65,12 +64,12 @@ namespace kege::ui{
                 .double_click = ui::ClickTrigger::Immediate,
             });
             int selected_index;
-            if( _gui->select(_uid, 0, list, selected_index) )
+            if( _ui->select(_uid, list, selected_index) )
             {
                 _manager->handle(this, creates[selected_index].c_str(), nullptr);
                 _open_window = false;
             }
-            _gui->pop();
+            _ui->pop();
         }
     }
 }

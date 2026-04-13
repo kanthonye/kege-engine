@@ -1,6 +1,6 @@
 //
 //  ui-viewer.hpp
-//  gui
+//  ui
 //
 //  Created by Kenneth Esdaile on 8/5/25.
 //

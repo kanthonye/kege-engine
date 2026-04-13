@@ -1,6 +1,6 @@
 //
 //  ui-layout.cpp
-//  gui
+//  ui
 //
 //  Created by Kenneth Esdaile on 8/5/25.
 //
@@ -11,10 +11,32 @@ namespace kege::ui{
 
     void Layout::onWindowResize(int width, int height)
     {
-        _height = height;
-        _width = width;
+        _rect.height = height;
+        _rect.width = width;
     }
 
+    void Layout::pushLayer( uint32_t index )
+    {
+        _layer_stack.push( &_layers[index] );
+    }
+
+    void Layout::resetLayer()
+    {
+        for (int i=0; i<_layers.size(); ++i)
+        {
+            _layers[i].reset();
+        }
+    }
+
+    bool Layout::popLayer()
+    {
+        if (!_layer_stack.empty())
+        {
+            _layer_stack.pop();
+            return true;
+        }
+        return false;
+    }
 
     WidgetId Layout::pushRoot( const WidgetDesc& desc )
     {
@@ -65,6 +87,7 @@ namespace kege::ui{
         uint32_t curr_parent = 0;
         if ( _current_parent )
         {
+            _layer_stack.top()->popIfRoot(_widgets, _current_parent);
             _current_parent = _widgets[ _current_parent ].parent;
         }
         return curr_parent;
@@ -81,11 +104,14 @@ namespace kege::ui{
         _widget_count += 1;
 
         setWidgetParameters( widget_index, desc );
-        addToDesignatedLayer( widget_index, desc );
-
         resolveParentChildRelation( widget_index );
 
         return WidgetId( _widgets[ widget_index ].index,_widgets[ widget_index ].version );
+    }
+
+    ui::WidgetId Layout::text( const Text& text )
+    {
+        return put({.rect = Rect{.width = text.width, .height = text.height}, .text = text});
     }
 
     uint32_t Layout::computeExtent( int font_size, const char* text, float& width, float& height )
@@ -272,16 +298,11 @@ namespace kege::ui{
         return _widgets[ index ].next;
     }
 
-    uint32_t Layout::getHeight()const
+    const kege::ui::Rect& Layout::getRect()const
     {
-        return _height;
+        return _rect;
     }
-
-    uint32_t Layout::getWidth()const
-    {
-        return _width;
-    }
-
+    
     uint32_t Layout::count( uint32_t index )const
     {
         return _widgets[ index ].count;
@@ -292,8 +313,8 @@ namespace kege::ui{
         _layers.resize( quantity );
         for (int i=0; i<quantity; ++i)
         {
-            _layers[i].head = 0;
-            _layers[i].tail = 0;
+            //_layers[i].head = 0;
+            //_layers[i].tail = 0;
             _layers[i].count = 0;
         }
     }
@@ -320,48 +341,6 @@ namespace kege::ui{
     bool Layout::validate( uint32_t node_id )const
     {
         return node_id > 0 && node_id < _widgets.size();
-    }
-
-    void Layout::begin( double dms )
-    {
-        _dms = dms;
-        
-        _widget_count = 1;
-        _root_count = 0;
-        _parent_stack_count = 0;
-        _current_parent = 0;
-        _deferred_operations.reset();
-
-        for (int i=0; i<_layers.size(); ++i)
-        {
-            _layers[i].head = 0;
-            _layers[i].tail = 0;
-            _layers[i].count = 0;
-        }
-
-
-        // update current hit
-        if ( _next.hit.user_id != 0 )
-        {
-            _curr.hit = _next.hit;
-            _curr.clicks = _next.clicks;
-        }
-        else
-        {
-            _curr.hit.user_id = 0;
-        }
-
-        // update current focus
-        _curr.focus = _next.focus;
-
-        // update current mouse over
-        _curr.hot = _next.hot;
-
-        //_focus = {};
-        //_hit = {};
-
-        _left_click_down = _left_click_state;
-        //_left_click_state = false;
     }
 
     void Layout::setWidgetParameters(uint32_t index, const WidgetDesc& desc)
@@ -420,6 +399,8 @@ namespace kege::ui{
         {
             widget->rect.height += widget->height.size;
         }
+
+        _layer_stack.top()->pushIfRoot( *widget );
     }
 
     void Layout::resolveParentChildRelation(uint32_t index)
@@ -453,42 +434,6 @@ namespace kege::ui{
             _roots[ _root_count ] = index;
             _root_count += 1;
         }
-    }
-    
-    void Layout::addToDesignatedLayer(uint32_t index, const WidgetDesc& desc)
-    {
-        int layer_index = desc.layer;
-        if (layer_index < 0)
-        {
-            if ( _current_parent != 0)
-            {
-                layer_index = _widgets[ _current_parent ].layer.layer;
-            }
-            else
-            {
-                layer_index = 0;
-            }
-        }
-
-        ui::Layer& layer = _layers[ layer_index ];
-        LayerNode& node = _widgets[ index ].layer;
-        node.layer = layer_index;
-
-        if ( layer.head == 0 )
-        {
-            layer.tail = layer.head = index;
-            node.next = 0;
-            node.prev = 0;
-        }
-        else
-        {
-            node.next = 0;
-            node.prev = layer.tail;
-            _widgets[ layer.tail ].layer.next = index;
-            layer.tail = index;
-        }
-
-        layer.count++;
     }
 
     Record Layout::getHotElem(uint32_t node_index, bool button)
@@ -531,10 +476,11 @@ namespace kege::ui{
 
     Record Layout::getHotElem(bool button)
     {
+        uint32_t root;
         Record hot = {};
-        for (int layer_index=0; layer_index<_layers.size(); ++layer_index)
+        for (int layer_index = int(_layers.size() - 1); 0 <= layer_index; --layer_index)
         {
-            for( uint32_t root = _layers[ layer_index ].head; root != 0; root = _widgets[ root ].layer.next )
+            for (root = _layers[ layer_index ].head; root != 0; root = _widgets[ layer_index ].layer.next)
             {
                 Record result = getHotElem( root, button );
                 if ( result.user_id != 0 )
@@ -568,12 +514,12 @@ namespace kege::ui{
 
     uint32_t Layout::find(uint64_t user_id)
     {
-        for (int layer_index = 0; layer_index < _layers.size(); ++layer_index)
+        uint32_t root;
+        for (int layer_index = int(_layers.size() - 1); 0 <= layer_index; --layer_index)
         {
-            uint32_t widget_index = _layers[ layer_index ].head;
-            for( ; widget_index != 0; widget_index = _widgets[ widget_index ].layer.next )
+            for (root = _layers[ layer_index ].head; root != 0; root = _widgets[ layer_index ].layer.next)
             {
-                uint32_t index = find( user_id, widget_index );
+                uint32_t index = find( user_id, root );
                 if ( index != 0 )
                 {
                     return index;;
@@ -660,6 +606,43 @@ namespace kege::ui{
         }
     }
 
+    void Layout::begin( double dms )
+    {
+        _dms = dms;
+
+        _widget_count = 1;
+        _root_count = 0;
+        _parent_stack_count = 0;
+        _current_parent = 0;
+        _deferred_operations.reset();
+
+        // update current hit
+        if ( _next.hit.user_id != 0 )
+        {
+            _curr.hit = _next.hit;
+            _curr.clicks = _next.clicks;
+        }
+        else
+        {
+            _curr.hit.user_id = 0;
+        }
+
+        // update current focus
+        _curr.focus = _next.focus;
+
+        // update current mouse over
+        _curr.hot = _next.hot;
+
+        //_focus = {};
+        //_hit = {};
+
+        _left_click_down = _left_click_state;
+        //_left_click_state = false;
+
+        resetLayer();
+        pushLayer(0);
+    }
+
     void Layout::end()
     {
         if ( 0 < _widget_count )
@@ -669,9 +652,18 @@ namespace kege::ui{
                 Resizer::resize( *this, _roots[ root_index ] );
                 Aligner::align( *this, _roots[ root_index ] );
             }
+//            for (int layer_index = int(_layers.size() - 1); 0 <= layer_index; --layer_index)
+//            {
+//                for (root = _layers[ layer_index ].head; root != 0; root = _widgets[ layer_index ].layer.next)
+//                {
+//                    Resizer::resize( *this, root );
+//                    Aligner::align( *this, root );
+//                }
+//            }
             _deferred_operations.execute(this);
             handleInputEvents();
         }
+        popLayer();
     }
 
     bool Layout::leftClickDown()const
@@ -693,8 +685,7 @@ namespace kege::ui{
     :   _curr{}
     ,   _next{}
     ,   _widget_count( 1 )
-    ,   _height( height )
-    ,   _width( width )
+    ,   _rect( 0, 0, width, height )
     ,   _cursor( this )
     ,   _parent_stack_count(0)
     ,   _root_count(0)

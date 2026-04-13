@@ -171,7 +171,7 @@ namespace kege::ui{
 
 
     typedef bool(*InspectorComponentUIBuilder)
-    ( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI*, kege::ECS* ecs, ecs::Entity& );
+    ( const ui::UID& uid, kege::AssetManager* am, kege::UI*, kege::ECS* ecs, ecs::Entity& );
 }
 
 namespace kege::ui{

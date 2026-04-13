@@ -17,9 +17,9 @@ namespace kege::ui{
     {
     public:
 
-        bool submit(GUI* gui, const char* label);
+        bool submit(UI* ui, const char* label);
 
-        bool create(GUI* gui);
+        bool create(UI* ui);
 
         CreateCuboidMeshUI(AssetManagerUI* manager);
 
@@ -27,7 +27,7 @@ namespace kege::ui{
         size_t _buffer_capacity = 0;
         char _asset_name[32];
 
-        double _width, _height, _depth;
+        float _width, _height, _depth;
         static int _count;
     };
 

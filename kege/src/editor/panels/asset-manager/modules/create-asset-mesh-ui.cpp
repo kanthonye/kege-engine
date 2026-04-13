@@ -16,7 +16,7 @@ namespace kege::ui{
     std::vector< Ref< CreateMeshUI > > CreateAssetMeshUI::_create_mesh_uis;
     std::vector< kege::ui::Text > CreateAssetMeshUI::_shape_labels;
 
-    CreateAssetMeshUI::CreateAssetMeshUI(AssetManagerUI* m,kege::GUI* g)
+    CreateAssetMeshUI::CreateAssetMeshUI(AssetManagerUI* m,kege::UI* g)
     : AssetManagerModule(m,g), _selection(0)
     {
         if (_shape_labels.empty())
@@ -34,7 +34,7 @@ namespace kege::ui{
             _shape_labels.resize(_create_mesh_uis.size());
             for (int i=0; i<_create_mesh_uis.size(); ++i)
             {
-                _shape_labels[i] = _gui->layout()->text(_create_mesh_uis[i]->getName().c_str(), 20);
+                _shape_labels[i] = _ui->layout()->text(_create_mesh_uis[i]->getName().c_str(), 20);
                 _shape_labels[i].color = 0xFFFFFF70;
             }
         }
@@ -49,8 +49,8 @@ namespace kege::ui{
             _open_window = true;
             _rect.width = 600;
             _rect.height = 400;
-            _rect.x = (_gui->layout()->getWidth() - _rect.width) * 0.5;
-            _rect.y = (_gui->layout()->getHeight() - _rect.height) * 0.5;
+            _rect.x = (_ui->layout()->getRect().width - _rect.width) * 0.5;
+            _rect.y = (_ui->layout()->getRect().height - _rect.height) * 0.5;
         }
     }
     
@@ -62,13 +62,12 @@ namespace kege::ui{
         _open_window = true;
         _rect.width = 600;
         _rect.height = 400;
-        _rect.x = (_gui->layout()->getWidth() - _rect.width) * 0.5;
-        _rect.y = (_gui->layout()->getHeight() - _rect.height) * 0.5;
+        _rect.x = (_ui->layout()->getRect().width - _rect.width) * 0.5;
+        _rect.y = (_ui->layout()->getRect().height - _rect.height) * 0.5;
 
         // Generate the outter container for the create mesh window
-        _gui->push
+        _ui->push
         ({
-            .layer = 2,
             .rect = _rect,
             .position = Positioning::Independent,
             .color = 0x18141D00,
@@ -80,9 +79,8 @@ namespace kege::ui{
         });
         {
             // The selection panel for the different mesh types
-            _gui->push
+            _ui->push
             ({
-                .layer = 2,
                 .border.corner_curves = {border_radius,0,0,border_radius},
                 .rect = {0,0,200,400},
                 .color = 0x202020FF,
@@ -98,9 +96,8 @@ namespace kege::ui{
             {
                 for (int i=0; i<_shape_labels.size(); ++i)
                 {
-                    ui::WidgetId widget_id = _gui->put
+                    ui::WidgetId widget_id = _ui->put
                     ({
-                        .layer = 2,
                         .user_id = _uid[i],
                         .text = _shape_labels[i],
                         .single_click = ui::ClickTrigger::OnRelease,
@@ -108,23 +105,22 @@ namespace kege::ui{
                         .color = 0xFFFFFF08,
                         .padding = {10,5,5,10},
                     });
-                    if( _gui->click( _uid[i] ) )
+                    if( _ui->click( _uid[i] ) )
                     {
                         _selection = i;
-                        _gui->get( widget_id )->rect.width = 200;
+                        _ui->get( widget_id )->rect.width = 200;
                     }
-                    if( _gui->mouseover( _uid[i] ) )
+                    if( _ui->mouseover( _uid[i] ) )
                     {
-                        _gui->get( widget_id )->color = 0xFFFFFF12;
+                        _ui->get( widget_id )->color = 0xFFFFFF12;
                     }
                 }
             }
-            _gui->pop();
+            _ui->pop();
 
             // The panel for the selected mesh type
-            _gui->push
+            _ui->push
             ({
-                .layer = 2,
                 .border.corner_curves = {0,border_radius,border_radius,0},
                 .rect = {0,0,400,400},
                 .color = 0x18141DFF,
@@ -136,9 +132,8 @@ namespace kege::ui{
                 }
             });
             {
-                _gui->push
+                _ui->push
                 ({
-                    .layer = 2,
                     .border.corner_curves = {border_radius,0,0,border_radius},
                     .width = extend(),
                     .height = fixed(40),
@@ -152,9 +147,8 @@ namespace kege::ui{
                 });
                 {
                     // the title and name of the mesh being created
-                    _gui->put
+                    _ui->put
                     ({
-                        .layer = 2,
                         .text = ui::Text
                         {
                             .width = 100,
@@ -168,9 +162,8 @@ namespace kege::ui{
                         .color = 0xFFFFFF00,
                         .padding = {10,5,5,10},
                     });
-                    _gui->put
+                    _ui->put
                     ({
-                        .layer = 2,
                         .text = ui::Text
                         {
                             .width = 100,
@@ -184,25 +177,25 @@ namespace kege::ui{
                         .color = 0xFFFFFF00,
                         .padding = {10,5,5,10},
                     });
-                    _gui->put({.style = &_gui->theme().x_seperator});
-                    _gui->charButn(_uid[ _id_offset ], "x", 7, 0);
+                    _ui->put({.style = &_ui->theme().x_seperator});
+                    _ui->charButn(_uid[ _id_offset ], "x", 7, 0);
                 }
-                _gui->pop();
+                _ui->pop();
 
                 // the UI for creating the selected mesh type
-                if( _create_mesh_uis[_selection]->create(_gui) )
+                if( _create_mesh_uis[_selection]->create(_ui) )
                 {
                     _open_window = false;
                 }
                 // the UI for creating the selected mesh type
-                if( _gui->click(_uid[ _id_offset ]) )
+                if( _ui->click(_uid[ _id_offset ]) )
                 {
                     _open_window = false;
                 }
             }
-            _gui->pop();
+            _ui->pop();
         }
-        _gui->pop();
+        _ui->pop();
     }
 
     CreateAssetMeshUI::~CreateAssetMeshUI()

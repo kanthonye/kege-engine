@@ -166,7 +166,7 @@
 
         {
             "type": "GRAPHICS",
-            "pass": "GUI",
+            "pass": "UI",
             "name": "final",
             "reads":
             [

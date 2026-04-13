@@ -26,3 +26,4 @@ layout(std140, set = LIGHTS_SET_INDEX, binding = LIGHTS_BINDING_INDEX) uniform L
     Light lights[MAX_LIGHTS];
 }
 light_data;
+

@@ -8,6 +8,7 @@
 #ifndef editor_hpp
 #define editor_hpp
 
+#include "ui-executor.hpp"
 #include "dock/ui-dock-manager.hpp"
 
 namespace kege{
@@ -24,7 +25,7 @@ namespace kege{
         kege::AssetManager* getAssetManager();
         kege::RenderGraph* getRenderGraph();
         kege::ECS* getECS();
-        kege::GUI* getGUI();
+        kege::UI* getGUI();
 
         bool initialize();
         void shutdown();
@@ -39,6 +40,9 @@ namespace kege{
 
     public:
 
+        kege::array<ui::Command> _commands;
+        ui::Context _context;
+
         kege::Ref< kege::ui::DockManager > _dock_manager;
         kege::ProjectManager* _project_manager;
         kege::InputManager* _input_manager;
@@ -47,7 +51,7 @@ namespace kege{
         kege::ECS* _ecs;
 
         kege::Ref< ui::Layout > _layout;
-        kege::GUI _gui;
+        kege::UI _ui;
 
         ui::Viewer _viewer;
 

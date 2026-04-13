@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 //
-//    bool mesh( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+//    bool mesh( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
 //    {
 //        uint64_t component_id = ecs->getCompId< kege::Renderable >( entity );
 //
@@ -38,7 +38,7 @@ namespace kege::ui{
 //            .color = 0xFFFFFFFF
 //        };
 //
-//        gui->push({.layer = layer, .style = &gui->theme().padded_list});
+//        ui->push({.style = &ui->theme().padded_list});
 //        {
 //            static std::vector< kege::ui::Text > list;
 //            if (list.empty())
@@ -55,19 +55,19 @@ namespace kege::ui{
 //                list[1].width = 150;
 //            }
 //
-//            gui->push({.layer = layer, .style = &gui->theme().column});
+//            ui->push({.style = &ui->theme().column});
 //            {
 //                text.width = 150;
 //                text.ptr = "Geometry:";
-//                gui->put({.layer = layer, .text = text, .rect = {.width = 55, .height = 20} });
+//                ui->put({.text = text, .rect = {.width = 55, .height = 20} });
 //
 //                int mesh_option;
 //                text.width = 150;
 //                text.ptr = "Source:";
-//                gui->push({.layer = layer, .style = &gui->theme().row});
-//                gui->put({.layer = layer, .text = text, .rect = {.width = 45, .height = 20} });
-//                gui->options(uid, layer, list, mesh_option);
-//                gui->pop();
+//                ui->push({.style = &ui->theme().row});
+//                ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+//                ui->options(uid, layer, list, mesh_option);
+//                ui->pop();
 //                switch (mesh_option)
 //                {
 //                    case 0: // Loaded Asset
@@ -75,13 +75,13 @@ namespace kege::ui{
 //                        kege::Renderable* comp = ecs->get< kege::Renderable >( entity );
 //                        text.ptr = "Target:";
 //                        text.width = 55;
-//                        gui->push({.layer = layer, .style = &gui->theme().row});
-//                        gui->put({.layer = layer, .text = text, .rect = {.width = 45, .height = 20} });
-//                        if(gui->textField( uid[10], layer, comp->fname, 64, comp->size ))
+//                        ui->push({.style = &ui->theme().row});
+//                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+//                        if(ui->textField( uid[10], layer, comp->fname, 64, comp->size ))
 //                        {
 //                            comp->mesh_handle = am->getId< kege::Ref<MeshPrimitive> >(comp->fname);
 //                        }
-//                        gui->pop();
+//                        ui->pop();
 //                        break;
 //                    }
 //
@@ -110,14 +110,14 @@ namespace kege::ui{
 ////
 ////                        text.ptr = "Target:";
 ////                        text.width = 55;
-////                        gui->push({.layer = layer, .style = &gui->theme().row});
-////                        gui->put({.layer = layer, .text = text, .rect = {.width = 45, .height = 20} });
-////                        gui->options(layer, gui->getAddressAsInt(generators[mesh_option]), mesh_types, mesh_option);
-////                        gui->pop();
+////                        ui->push({.style = &ui->theme().row});
+////                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+////                        ui->options(layer, ui->getAddressAsInt(generators[mesh_option]), mesh_types, mesh_option);
+////                        ui->pop();
 ////
 ////                        if( mesh_option )
 ////                        {
-////                            generators[mesh_option]->update(am, layer, gui, ecs, entity);
+////                            generators[mesh_option]->update(am, layer, ui, ecs, entity);
 ////                        }
 //                        break;
 //                    }
@@ -129,9 +129,9 @@ namespace kege::ui{
 //                    default: break;
 //                }
 //            }
-//            gui->pop();
+//            ui->pop();
 //        }
-//        gui->pop();
+//        ui->pop();
 //        return false;
 //    }
 

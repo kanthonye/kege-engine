@@ -11,3 +11,4 @@ layout(std140, set = DIRECTIONAL_LIGHT_SET, binding = DIRECTIONAL_LIGHT_BINDING)
     uint directional_light_count;
     DirectionalLight directional_lights[MAX_LIGHTS];
 };
+

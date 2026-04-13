@@ -22,7 +22,7 @@ namespace kege::ui{
 
         const std::string getName()const{ return _name; }
         kege::ui::DockManager* getManager(){ return _manager; }
-        virtual void updateLayout( int16_t layer ) = 0;
+        virtual void updateLayout() = 0;
         virtual void update();
 
         Panel( const std::string& name, kege::ui::DockManager* e );
@@ -31,7 +31,7 @@ namespace kege::ui{
 
 
         kege::ui::DockManager* _manager;
-        kege::GUI* _gui;
+        kege::UI* _ui;
         std::string _name;
 
         ui::WidgetId _widget_index;

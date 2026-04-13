@@ -1,1 +1,1 @@
-layout(location = OUTPUT_NORMAL ) out vec4 out_normal;
+layout(location = OUT_NORMAL ) out vec4 out_normal;

@@ -13,7 +13,7 @@
 
 namespace kege::ui{
 
-    CreateMaterial::CreateMaterial(AssetManagerUI* m,kege::GUI* g)
+    CreateMaterial::CreateMaterial(AssetManagerUI* m,kege::UI* g)
     : AssetManagerModule(m,g), _selection(0), _id_offset(0), _count(0)
     {
         Features* features = getFeatures( "Vertex Shader Features" );
@@ -113,13 +113,13 @@ namespace kege::ui{
         if (type == "OpenCreateMaterialWindow")
         {
             snprintf(_asset_name, 31, "material-%i", _count);
-            _text = _gui->layout()->text(_asset_name, 20);
+            _text = _ui->layout()->text(_asset_name, 20);
 
             _open_window = true;
             _window_rect.width = 600;
             _window_rect.height = 400;
-            _window_rect.x = (_gui->layout()->getWidth() - _window_rect.width) * 0.5;
-            _window_rect.y = (_gui->layout()->getHeight() - _window_rect.height) * 0.5;
+            _window_rect.x = (_ui->layout()->getRect().width - _window_rect.width) * 0.5;
+            _window_rect.y = (_ui->layout()->getRect().height - _window_rect.height) * 0.5;
         }
     }
 
@@ -170,23 +170,21 @@ namespace kege::ui{
     {
         if (!_open_window) return;
 
-        int16_t layer = 3;
-
         ui::ID id[3] = {_uid[WINDOW], _uid[BANNER], _uid[CLOSE_BUTN]};
-        _gui->beginWindow(id, layer, _window_rect, "Create Material", _open_window);
+        _ui->beginWindow(id, _window_rect, "Create Material", _open_window);
         {
             ui::ID scroll_id[2] = {_uid[SCROLL_CLIPPER], _uid[SCROLL_CONTAINER]};
-            _gui->beginScrollContainer(scroll_id, layer);
+            _ui->beginScrollContainer(scroll_id);
             {
-                _gui->labelInput("Name:", _uid[NAMING], layer, _text_input_mode, _text);
+                _ui->labelInput("Name:", _uid[NAMING], _text_input_mode, _text);
                 _id_offset = OFFSET_COUNT;
-                ui::drawProperties(_gui, _uid, _id_offset, layer, _parameters, MaterialParameters);
+                ui::drawProperties(_ui, _uid, _id_offset, _parameters, MaterialParameters);
 
                 PipelineKey key;
                 ui::Text text_feature = {.ptr = "Feature", 0.f, 0.f, 100.f, 20.f };
-                if( _gui->collapsableHeader(_uid[ _id_offset++ ], layer, _expand_feature, text_feature) )
+                if( _ui->collapsableHeader(_uid[ _id_offset++ ], _expand_feature, text_feature) )
                 {
-                    _gui->push
+                    _ui->push
                     ({
                         .width = ui::extend(),
                         .height = ui::flexible(),
@@ -195,14 +193,14 @@ namespace kege::ui{
                         .alignment = {
                             .direction = ui::AlignDir::DOWN
                         },
-                        .gap.height = 5,
+                        .gap = {5,5},
                     });
                     for(auto& features : _features)
                     {
                         features.title.ptr = features.name.c_str();
-                        if( _gui->collapsableHeader(_uid[ _id_offset++ ], layer, features.expand, features.title) )
+                        if( _ui->collapsableHeader(_uid[ _id_offset++ ], features.expand, features.title) )
                         {
-                            _gui->push({
+                            _ui->push({
                                 .width = ui::extend(),
                                 .height = ui::flexible(),
                                 .padding = {20, 0, 20, 10,},
@@ -215,19 +213,19 @@ namespace kege::ui{
                             for(Feature& feature : features.list)
                             {
                                 feature.label.ptr = feature.name.c_str();
-                                if( _gui->checkbox(_uid[ _id_offset ], layer, feature.label, feature.state) )
+                                if( _ui->checkbox(_uid[ _id_offset ], feature.label, feature.state) )
                                 {
                                 }
                                 _id_offset += 1;
                             }
-                            _gui->pop();
+                            _ui->pop();
                         }
                     }
-                    _gui->pop();
+                    _ui->pop();
                 }
 
                 //uint64_t user_id = UI_BASE_ID();
-                if( _gui->submit(_uid[ _id_offset++ ], "Submit") )
+                if( _ui->submit(_uid[ _id_offset++ ], "Submit") )
                 {
 //                    ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
 //                    kege::RenderPassType pass;
@@ -254,9 +252,9 @@ namespace kege::ui{
 //                    _asset_name[0] = 0;
                 }
             }
-            _gui->endScrollContainer();
+            _ui->endScrollContainer();
         }
-        _gui->endWindow();
+        _ui->endWindow();
     }
     void CreateMaterial::setFeature( std::vector<Feature>& list, kege::FeatureFlag flag )
     {

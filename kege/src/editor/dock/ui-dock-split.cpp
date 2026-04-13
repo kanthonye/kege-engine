@@ -19,8 +19,8 @@ namespace kege::ui{
         nodes[1]._parent = &dock;
         nodes[0]._manager = dock._manager;
         nodes[1]._manager = dock._manager;
-        nodes[0]._gui = dock._gui;
-        nodes[1]._gui = dock._gui;
+        nodes[0]._ui = dock._ui;
+        nodes[1]._ui = dock._ui;
         onReshape();
     }
 
@@ -200,25 +200,25 @@ namespace kege::ui{
         }
     }
 
-    bool DockSplit::update(GUI* gui)
+    bool DockSplit::update(UI* ui)
     {
-        if (!gui->layout()->inputManager()->getMouse()->isDown(MouseButtonCode::Left))
-            show_drag_knob = gui->testPointVsRect(gui->pointer(), drag_rect);
+        if (!ui->layout()->inputManager()->getMouse()->isDown(MouseButtonCode::Left))
+            show_drag_knob = ui->testPointVsRect(ui->pointer(), drag_rect);
 
         else if (show_drag_knob)
         {
-            if( gui->pointerDragging() )
+            if( ui->pointerDragging() )
             {
                 float amount, available, delta_ratio;
                 if( direction == Dock::SplitDirection::VERTICAL )
                 {
-                    amount = gui->deltaPointer().y;
+                    amount = ui->deltaPointer().y;
                     available = owner->_rect.height - gap - owner->_padding.above - owner->_padding.below;
                     delta_ratio = amount / available;
                 }
                 else
                 {
-                    amount = gui->deltaPointer().x;
+                    amount = ui->deltaPointer().x;
                     available = owner->_rect.width - gap - owner->_padding.left - owner->_padding.right;
                     delta_ratio = amount / available;
                 }

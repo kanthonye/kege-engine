@@ -20,7 +20,7 @@ namespace kege::ui{
 
     void Panel::operator()(const kege::ui::AssetMetadataDropOff& event)
     {
-        if ( _gui->testPointVsRect(event.position, _rect) )
+        if ( _ui->testPointVsRect(event.position, _rect) )
         {
             handle( event );
         }
@@ -28,23 +28,21 @@ namespace kege::ui{
 
     void Panel::update()
     {
-        int16_t layer = 0;
-        _widget_index = _gui->push
+        _widget_index = _ui->push
         ({
             .user_id = _uid[0],
-            .layer = layer,
-            .style = &_gui->theme().panel
+            .style = &_ui->theme().panel
         });
-        updateLayout( layer );
-        _gui->pop();
+        updateLayout();
+        _ui->pop();
 
-        _gui->pushDeferredOp(_uid[0], _widget_index, updateRectOp, PanelPtr{this});
+        _ui->pushDeferredOp(_uid[0], _widget_index, updateRectOp, PanelPtr{this});
     }
 
     Panel::Panel( const std::string& name, kege::ui::DockManager* dm )
     :   _name( name  )
     ,   _manager( dm )
-    ,   _gui(dm->getEditor()->getGUI())
+    ,   _ui(dm->getEditor()->getGUI())
     {
     }
 }

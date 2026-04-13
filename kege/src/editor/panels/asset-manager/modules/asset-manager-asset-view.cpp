@@ -62,8 +62,8 @@ namespace kege::ui{
         std::cout << "startAssetDrag\n";
         _is_dragging_assets = true;
         _dragged_asset_handles.clear();
-        _drag_start.x = _gui->pointer().x;
-        _drag_start.y = _gui->pointer().y;
+        _drag_start.x = _ui->pointer().x;
+        _drag_start.y = _ui->pointer().y;
 
         std::vector<size_t>* selected_indices = getSelectedIndices();
         std::vector<AssetMetadata>* assets = getAssets();
@@ -92,9 +92,9 @@ namespace kege::ui{
 
         if (!_dragged_asset_handles.empty())
         {
-            _drag_start.x += _gui->deltaPointer().x;
-            _drag_start.y += _gui->deltaPointer().y;
-            //std::cout <<_gui->pointer() << " is dragging\n";
+            _drag_start.x += _ui->deltaPointer().x;
+            _drag_start.y += _ui->deltaPointer().y;
+            //std::cout <<_ui->pointer() << " is dragging\n";
         }
 
         if (!_dragged_asset_handles.empty())
@@ -109,11 +109,13 @@ namespace kege::ui{
             _drag_element.text.ptr = obj.snum.c_str();
             _drag_element.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
 
-            _gui->put(_drag_element);
+            _ui->pushLayer(ui::UILayer::LAYER_DRAGGING);
+            _ui->put(_drag_element);
+            _ui->pop();
         }
 
         // Check for drop
-        if (!_gui->leftClickDown() && _is_dragging_assets)
+        if (!_ui->leftClickDown() && _is_dragging_assets)
         {
             _is_dragging_assets = false;
             std::cout << " not dragging\n";
@@ -134,10 +136,10 @@ namespace kege::ui{
     void AssetManagerAssetView::updateGridView()
     {
         // Begin scroll container for virtual scrolling
-        _gui->beginScrollContainer(_scroll_container, 0);
+        _ui->beginScrollContainer(_scroll_container);
 
         // Calculate grid layout
-        //float available_width = _gui->layout()->getWidth();
+        //float available_width = _ui->layout()->getWidth();
         const float ICON_SIZE = 80.0f;
         const float ITEM_W = 120.0f;
         const float ITEM_H = 120.0f;
@@ -145,8 +147,8 @@ namespace kege::ui{
         //int columns = std::max(1, static_cast<int>(available_width / (ITEM_WIDTH + ITEM_SPACING)));
         //int column_count = 0;
 
-        _gui->beginRow(0);
-        //_gui->putSpacer(0);
+        _ui->beginRow(0);
+        //_ui->putSpacer(0);
 
 
         // Virtual scrolling: only render visible items
@@ -166,10 +168,9 @@ namespace kege::ui{
             //uid::ID id[2] = {_uid_root[visible_idx + 1]};
 
             // Begin column for file item
-            asset.widget_id = _gui->push
+            asset.widget_id = _ui->push
             ({
                 .user_id = asset.uid[0],
-                .layer = 0,
                 .rect =
                 {
                     .width = ITEM_W,
@@ -192,36 +193,35 @@ namespace kege::ui{
             {
                 // File icon
                 ui::WidgetDesc icon_desc;
-                icon_desc.layer = 0;
                 icon_desc.user_id = asset.uid[1];
                 icon_desc.rect = {0, 0, ICON_SIZE, ICON_SIZE};
                 icon_desc.color = 0xFFFFFF0A;
                 icon_desc.border.corner_curves = {6,6,6,6};
 
                 // Use put for the icon (no container)
-                _gui->put(icon_desc);
-                _gui->put({.style = &_gui->theme().y_seperator});
+                _ui->put(icon_desc);
+                _ui->put({.style = &_ui->theme().y_seperator});
 
                 // Check for interactions
-                if (_gui->click( asset.uid[0] ))
+                if (_ui->click( asset.uid[0] ))
                 {
-                    Modifiers modifiers = _gui->layout()->inputManager()->getMouse()->getModifiers();
+                    Modifiers modifiers = _ui->layout()->inputManager()->getMouse()->getModifiers();
                     handleAssetClick(visible_idx, modifiers);
                     selection = visible_idx;
                 }
 
-//                if (_gui->layout()->doubleClick(asset.asset_uid))
+//                if (_ui->layout()->doubleClick(asset.asset_uid))
 //                {
 //                    if (file.is_directory)
 //                    {
 //                        navigateTo(file.path);
-//                        _gui->pop();
+//                        _ui->pop();
 //                        break;
 //                    }
 //                }
 
                 // Check for drag start on this icon
-                if (_gui->pointerDragging() && _gui->mouseover(asset.uid[0]))
+                if (_ui->pointerDragging() && _ui->mouseover(asset.uid[0]))
                 {
                     if (!_is_dragging_assets)
                     {
@@ -230,11 +230,11 @@ namespace kege::ui{
                 }
 
                 // Track hover for tooltips
-                if (_gui->mouseover(asset.uid[0]) || _gui->mouseover(asset.uid[0]))
+                if (_ui->mouseover(asset.uid[0]) || _ui->mouseover(asset.uid[0]))
                 {
 //                    tool_tips = true;
 //                    _hovered_file_index = i;
-//                    _tooltip_position = _gui->pointer();
+//                    _tooltip_position = _ui->pointer();
                 }
 
 
@@ -245,13 +245,13 @@ namespace kege::ui{
 //                    display_name = display_name.substr(0, font_size) + "...";
 //                }
 //
-//                ui::Text name_text = _gui->layout()->text(display_name.c_str(), font_size);
-//                _gui->label(0, name_text);
+//                ui::Text name_text = _ui->layout()->text(display_name.c_str(), font_size);
+//                _ui->label(0, name_text);
 //
 //
 //                file.name_text.ptr = file.display_name.c_str();
 
-                _gui->label(0, ui::Text{
+                _ui->label(ui::Text{
                     .x      = 0,
                     .y      = 0,
                     .width  = 50,
@@ -261,7 +261,7 @@ namespace kege::ui{
                     .ptr    = asset.display_name.data(),
                 });
             }
-            _gui->pop();
+            _ui->pop();
 
             /*
             // Move to next column or next row
@@ -269,21 +269,21 @@ namespace kege::ui{
             if (column_count >= columns)
             {
                 column_count = 0;
-                _gui->endRow(layer);
-                _gui->beginRow(layer);
-                _gui->putSpacer(layer);
+                _ui->endRow(layer);
+                _ui->beginRow(layer);
+                _ui->putSpacer(layer);
             }*/
         }
 
-        _gui->endRow();
-        _gui->endScrollContainer();
+        _ui->endRow();
+        _ui->endScrollContainer();
 
 
-        if(!_gui->leftClickDown() && _butn_down)
+        if(!_ui->leftClickDown() && _butn_down)
         {
             _butn_down = false;
         }
-        else if(_gui->leftClickDown() && !_butn_down)
+        else if(_ui->leftClickDown() && !_butn_down)
         {
             _butn_down = true;
             if(selection < 0)
@@ -313,11 +313,11 @@ namespace kege::ui{
         std::vector<AssetMetadata>* assets = getAssets();
         for (size_t idx : *selected_indices)
         {
-            _gui->get( assets->at(idx).widget_id )->color = 0x80FFFF22;
+            _ui->get( assets->at(idx).widget_id )->color = 0x80FFFF22;
         }
     }
 
-    AssetManagerAssetView::AssetManagerAssetView(AssetManagerUI* m,kege::GUI* g)
+    AssetManagerAssetView::AssetManagerAssetView(AssetManagerUI* m,kege::UI* g)
     :   AssetManagerModule(m,g)
     {
         _scroll_container[0] = _uid_root[1];
@@ -326,7 +326,6 @@ namespace kege::ui{
         _drag_element.user_id = _uid_drag[0];
         _drag_element.border.corner_curves = {5,5,5,5};
         _drag_element.position = Positioning::Independent;
-        _drag_element.layer = 1; // Top layer
         _drag_element.text.width = 30;
         _drag_element.text.height = 20;
         _drag_element.text.font_size = 20;

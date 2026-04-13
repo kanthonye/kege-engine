@@ -312,77 +312,77 @@ namespace kege::ui{
     };
 
 
-    bool perspectiveCamera( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool perspectiveCamera( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         kege::Perspective* projection = ecs->get< kege::Perspective >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *projection, PerspectiveProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *projection, PerspectiveProperties);
+        ui->pop();
         return false;
     }
 
-    bool orthographicCamera( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool orthographicCamera( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         kege::Orthographic* projection = ecs->get< kege::Orthographic >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *projection, OrthographicProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *projection, OrthographicProperties);
+        ui->pop();
         return false;
     }
 
-    bool rigidbody( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool rigidbody( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         kege::Rigidbody* rigidbody = ecs->get< kege::Rigidbody >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *rigidbody, RigidbodyProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *rigidbody, RigidbodyProperties);
+        ui->pop();
         return false;
     }
 
-    bool transform( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool transform( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         Transform* transform = ecs->get< kege::Transform >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *transform, TransformProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *transform, TransformProperties);
+        ui->pop();
         return false;
     }
 
-    bool directionalLight( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool directionalLight( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         DirectionalLight* light = ecs->get< kege::DirectionalLight >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *light, DirectionalLightProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *light, DirectionalLightProperties);
+        ui->pop();
         return false;
     }
 
-    bool pointLight( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool pointLight( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         PointLight* light = ecs->get< kege::PointLight >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *light, PointLightProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *light, PointLightProperties);
+        ui->pop();
         return false;
     }
 
-    bool spotLight( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool spotLight( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         uint32_t id_offset = 0;
         SpotLight* light = ecs->get< kege::SpotLight >( entity );
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        drawProperties(gui, uid, id_offset, layer, *light, SpotLightProperties);
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        drawProperties(ui, uid, id_offset, *light, SpotLightProperties);
+        ui->pop();
         return false;
     }
 
-    bool renderable( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool renderable( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         Renderable* component = ecs->get< kege::Renderable >( entity );
         ui::Text text
@@ -393,20 +393,20 @@ namespace kege::ui{
             .color = 0xFFFFFFFF
         };
 
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
+        ui->push({.style = &ui->theme().padded_list});
         {
             text.width = 150;
             text.ptr = "Geometry:";
-            gui->put({.layer = layer, .text = text, .rect = {.width = 55, .height = 20} });
+            ui->put({.text = text, .rect = {.width = 55, .height = 20} });
 
             text.ptr = component->fname;
-            gui->put({.layer = layer, .text = text, .rect = {.width = 55, .height = 20} });
+            ui->put({.text = text, .rect = {.width = 55, .height = 20} });
         }
-        gui->pop();
+        ui->pop();
         return false;
     }
 
-    bool particleEffect( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+    bool particleEffect( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
         ui::Text text
         {
@@ -461,26 +461,26 @@ namespace kege::ui{
 
         int selection;
         text.ptr = "Emitters:";
-        gui->push({.layer = layer, .style = &gui->theme().row});
-        gui->put({.layer = layer, .text = text, .rect = {.width = 45, .height = 20} });
-        gui->options(uid, layer, list, selection);
-        gui->pop();
+        ui->push({.style = &ui->theme().row});
+        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+        ui->options(uid, list, selection);
+        ui->pop();
 
         //float emissions_per_second, bool burst
         //max particle quantity
         //rate_of_deterioration
-        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-        gui->pop();
+        ui->push({.style = &ui->theme().padded_list});
+        ui->pop();
 
         return false;
     }
-//    bool particleEffect( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+//    bool particleEffect( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
 //    {
 //        uint32_t id_offset = 0;
 //        Transform* transform = ecs->get< kege::Transform >( entity );
-//        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-//        drawProperties(gui, uid, id_offset, layer, *transform, TransformProperties);
-//        gui->pop();
+//        ui->push({.style = &ui->theme().padded_list});
+//        drawProperties(ui, uid, id_offset, *transform, TransformProperties);
+//        ui->pop();
 //        return false;
 //    }
 

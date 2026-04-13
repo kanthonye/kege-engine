@@ -8,7 +8,7 @@
 #ifndef ui_schema_hpp
 #define ui_schema_hpp
 
-#include "gui.hpp"
+#include "ui.hpp"
 
 namespace kege::ui{
 
@@ -89,10 +89,9 @@ namespace kege::ui{
     template<typename DataType>
     bool drawSlider
     (
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         DataType& value,
         const PropertyMeta& meta
     )
@@ -100,20 +99,19 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        gui->push({.layer = layer, .style = &gui->theme().column});
-        gui->label(layer, meta.text);
-        bool active = gui->slider< DataType >(id, layer, value, meta.hint.min, meta.hint.max);
-        gui->pop();
+        ui->push({.style = &ui->theme().column});
+        ui->label(meta.text);
+        bool active = ui->slider< DataType >(id, value, meta.hint.min, meta.hint.max);
+        ui->pop();
         return active;
     }
 
     template<typename DataType>
     bool drawSlidebar
     (   ScrubberState::Type type,
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         DataType& value,
         const PropertyMeta& meta
     )
@@ -121,35 +119,33 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        gui->push({.layer = layer, .style = &gui->theme().column});
-        gui->label(layer, meta.text);
-        bool active = gui->slidebar< DataType >(id, layer, value, meta.hint.min, meta.hint.max);
-        gui->pop();
+        ui->push({.style = &ui->theme().column});
+        ui->label(meta.text);
+        bool active = ui->slidebar< DataType >(id, value, meta.hint.min, meta.hint.max);
+        ui->pop();
         return active;
     }
 
     template<typename DataType>
     bool drawDragNum
     (   ScrubberState::Type type,
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         DataType& value,
         const PropertyMeta& meta
     )
     {
-        gui->push({.layer = layer, .style = &gui->theme().row});
-        gui->put
+        ui->push({.style = &ui->theme().row});
+        ui->put
         ({
             .rect = {meta.text.x, meta.text.y, meta.text.width, meta.text.height},
-            .layer = layer,
             .text = meta.text.ptr,
             .color = 0xFFFFFF00,
             .mouseover = false
         });
-        bool active = gui->scrubber< DataType >(type, uid[ id_offset++ ], layer, value, meta.hint.min, meta.hint.max);
-        gui->pop();
+        bool active = ui->scrubber< DataType >(type, uid[ id_offset++ ], value, meta.hint.min, meta.hint.max);
+        ui->pop();
         return active;
     }
 
@@ -157,10 +153,9 @@ namespace kege::ui{
     bool drawNumericUI
     (
         ScrubberState::Type type,
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         DataType& value,
         const PropertyMeta& meta
     )
@@ -171,10 +166,9 @@ namespace kege::ui{
             case ui::UIHint::Slider:
                 active = drawSlider
                 (
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     value,
                     meta
                 );
@@ -184,10 +178,9 @@ namespace kege::ui{
                 active = drawSlidebar
                 (
                     type,
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     value,
                     meta
                 );
@@ -197,10 +190,9 @@ namespace kege::ui{
                 active = drawDragNum
                 (
                     type,
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     value,
                     meta
                 );
@@ -228,10 +220,9 @@ namespace kege::ui{
     template<typename Component, size_t N>
     inline bool drawProperties
     (
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         Component& instance,
         const Property<Component>(&props)[N]
     );
@@ -239,10 +230,9 @@ namespace kege::ui{
     template<typename Component>
     inline bool drawProperty
     (
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         Component& instance,
         const Property<Component>& p
     )
@@ -254,31 +244,31 @@ namespace kege::ui{
         {
             case PropertyType::Float:
             {
-                modified = drawNumericUI< float >( ScrubberState::FLOAT, gui, uid, id_offset, layer, *(float*)data, p.meta );
+                modified = drawNumericUI< float >( ScrubberState::F32, ui, uid, id_offset, *(float*)data, p.meta );
                 break;
             }
 
             case PropertyType::Double:
             {
-                modified = drawNumericUI< double >( ScrubberState::DOUBLE, gui, uid, id_offset, layer, *(double*)data, p.meta );
+                modified = drawNumericUI< double >( ScrubberState::F64, ui, uid, id_offset, *(double*)data, p.meta );
                 break;
             }
 
             case PropertyType::Int:
             {
-                modified = drawNumericUI< int >( ScrubberState::INT32, gui, uid, id_offset, layer, *(int*)data, p.meta );
+                modified = drawNumericUI< int >( ScrubberState::I32, ui, uid, id_offset, *(int*)data, p.meta );
                 break;
             }
 
             case PropertyType::Int64:
             {
-                modified = drawNumericUI< int64_t >( ScrubberState::INT64, gui, uid, id_offset, layer, *(int64_t*)data, p.meta );
+                modified = drawNumericUI< int64_t >( ScrubberState::I64, ui, uid, id_offset, *(int64_t*)data, p.meta );
                 break;
             }
 
             case PropertyType::Bool:
             {
-                //modified = drawUI< bool >( gui, uid, id_offset, layer, *(bool*)data, p.meta, p.label );
+                //modified = drawUI< bool >( ui, uid, id_offset, *(bool*)data, p.meta, p.label );
                 break;
             }
 
@@ -286,93 +276,89 @@ namespace kege::ui{
             {
                 //const std::string& str = *(std::string*)data;
                 //p.label.ptr = str.c_str();
-                //gui->label(layer, p.label);
+                //ui->label(p.label);
                 break;
             }
 
             case PropertyType::Vec2:
             {
-                gui->push({.layer = layer, .style = &gui->theme().group});
-                gui->label(layer, p.meta.text);
+                ui->push({.style = &ui->theme().group});
+                ui->label(p.meta.text);
                 modified = drawProperties
                 (
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     *((kege::vec2*)(data)),
                     Vec2Properties
                 );
-                gui->pop();
+                ui->pop();
                 break;
             }
 
             case PropertyType::Vec3:
             {
-                //gui->push({.layer = layer, .style = &gui->theme().group});
-                gui->label(layer, p.meta.text);
+                //ui->push({.style = &ui->theme().group});
+                ui->label(p.meta.text);
                 modified = drawProperties
                 (
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     *((kege::vec3*)(data)),
                     Vec3Properties
                 );
-                //gui->pop();
+                //ui->pop();
                 break;
             }
 
             case PropertyType::Vec4:
             {
-                //gui->push({.layer = layer, .style = &gui->theme().group});
-                gui->label(layer, p.meta.text);
+                //ui->push({.style = &ui->theme().group});
+                ui->label(p.meta.text);
                 modified = drawProperties
                 (
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     *((kege::vec4*)(data)),
                     Vec4Properties
                 );
-                //gui->pop();
+                //ui->pop();
                 break;
             }
 
             case PropertyType::Quat:
             {
-                //gui->push({.layer = layer, .style = &gui->theme().group});
-                gui->label(layer, p.meta.text);
+                //ui->push({.style = &ui->theme().group});
+                ui->label(p.meta.text);
                 modified = drawProperties
                 (
-                    gui,
+                    ui,
                     uid,
                     id_offset,
-                    layer,
                     *((kege::quat*)(data)),
                     QuatProperties
                 );
-                //gui->pop();
+                //ui->pop();
                 break;
             }
 
             case PropertyType::Mat22:
             {
-                //modified = drawUI< kege::mat22 >( gui, uid, id_offset, layer, *(kege::mat22*)data, p.meta, p.label );
+                //modified = drawUI< kege::mat22 >( ui, uid, id_offset, *(kege::mat22*)data, p.meta, p.label );
                 break;
             }
 
             case PropertyType::Mat33:
             {
-                //modified = drawUI< kege::mat33 >( gui, uid, id_offset, layer, *(kege::mat33*)data, p.meta, p.label );
+                //modified = drawUI< kege::mat33 >( ui, uid, id_offset, *(kege::mat33*)data, p.meta, p.label );
                 break;
             }
 
             case PropertyType::Mat44:
             {
-                //modified = drawUI< kege::mat44 >( gui, uid, id_offset, layer, *(kege::mat44*)data, p.meta, p.label );
+                //modified = drawUI< kege::mat44 >( ui, uid, id_offset, *(kege::mat44*)data, p.meta, p.label );
                 break;
             }
 
@@ -380,7 +366,7 @@ namespace kege::ui{
             {
                 //AssetHandle& v = *(AssetHandle*)data;
 
-                //if (DrawAsset(gui, layer, label, v, p.meta.assetType))
+                //if (DrawAsset(ui, label, v, p.meta.assetType))
                 //    modified = true;
 
                 break;
@@ -392,23 +378,21 @@ namespace kege::ui{
     template<typename Component, size_t N>
     inline bool drawProperties
     (
-        kege::GUI* gui,
+        kege::UI* ui,
         const ui::UID& uid,
         uint32_t& id_offset,
-        int16_t layer,
         Component& instance,
         const Property<Component>(&props)[N]
     )
     {
-        gui->push({.layer = layer, .style = &gui->theme().group});
+        ui->push({.style = &ui->theme().group});
         bool modified = false;
         for ( auto& p : props)
         {
             if(drawProperty< Component >(
-                gui,
+                ui,
                 uid,
                 id_offset,
-                layer,
                 instance,
                 p
             ))
@@ -416,7 +400,7 @@ namespace kege::ui{
                 modified = true;
             }
         }
-        gui->pop();
+        ui->pop();
         return modified;
     }
 

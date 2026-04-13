@@ -17,11 +17,11 @@ namespace kege::ui{
     {
     public:
 
-        bool submit(GUI* gui, const char* label);
-        void text(GUI* gui, const char* label);
-        void input(GUI* gui, const char* label, double& value);
+        bool submit(UI* ui, const char* label);
+        void text(UI* ui, const char* label);
+        void input(UI* ui, const char* label, double& value);
 
-        bool create(GUI* gui);
+        bool create(UI* ui);
 
         CreateEllipsoidMeshUI(AssetManagerUI* manager);
 
@@ -29,7 +29,7 @@ namespace kege::ui{
         size_t _buffer_capacity = 0;
         char _asset_name[32];
 
-        double _radius_x, _radius_y, _cols, _rows;
+        float _radius_x, _radius_y, _cols, _rows;
         static int _count;
     };
 

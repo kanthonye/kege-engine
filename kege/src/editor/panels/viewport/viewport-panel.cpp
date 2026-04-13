@@ -18,12 +18,11 @@ namespace kege{
         _style.background = ui::Background( 0x340505FF );
     }
 
-    void ViewportPanel::updateLayout( int16_t layer )
+    void ViewportPanel::updateLayout()
     {
-        _gui->put
+        _ui->put
         ({
             .user_id = _uid[0],
-            .layer = layer,
             .style = &_style,
             .mouseover = false,
             .texr_info = ui::TexrInfo{.id = 2, .index = 2},

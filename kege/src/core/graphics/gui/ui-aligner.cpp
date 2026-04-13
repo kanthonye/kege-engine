@@ -301,7 +301,7 @@ namespace kege::ui{
         }
     }
 
-    void advanceDownward( Layout& layout, const Widget& parent )
+    void Aligner::advanceDownward( Layout& layout, const Widget& parent )
     {
         vec2 origin = getAlignmentOrigin(parent);
         vec2 position = origin;
@@ -353,7 +353,7 @@ namespace kege::ui{
         alignX(parent.alignment, begin, end, layout, position, width);
     }
 
-    void advanceUpward( Layout& layout, const Widget& parent )
+    void Aligner::advanceUpward( Layout& layout, const Widget& parent )
     {
         vec2 origin = getAlignmentOrigin(parent);
         vec2 position = origin;
@@ -399,7 +399,7 @@ namespace kege::ui{
         alignX(parent.alignment, begin, end, layout, position, width);
     }
 
-    void advanceToTheRight( Layout& layout, const Widget& parent )
+    void Aligner::advanceToTheRight( Layout& layout, const Widget& parent )
     {
         float MAX_LENGTH = parent.rect.width - (parent.padding.left + parent.padding.right);
         vec2 origin = getAlignmentOrigin(parent);
@@ -454,7 +454,7 @@ namespace kege::ui{
         alignY(parent.alignment, begin, end, layout, position, height);
     }
 
-    void advanceToTheLeft( Layout& layout, const Widget& parent )
+    void Aligner::advanceToTheLeft( Layout& layout, const Widget& parent )
     {
         float MAX_LENGTH = parent.rect.width - (parent.padding.left + parent.padding.right);
         vec2 origin = getAlignmentOrigin(parent);
@@ -504,7 +504,7 @@ namespace kege::ui{
     }
 
 
-    void centerAll( Layout& layout, const Widget& parent )
+    void Aligner::centerAll( Layout& layout, const Widget& parent )
     {
         vec2 origin = getAlignmentOrigin(parent);
         uint32_t end, begin = parent.head;

@@ -16,7 +16,7 @@ namespace kege::ui{
     {
     public:
 
-        AssetManagerAssetView(AssetManagerUI* m,kege::GUI* g);
+        AssetManagerAssetView(AssetManagerUI* m,kege::UI* g);
 
         void operator()(const std::string& type, void* data);
         void handleAssetClick(size_t asset_index, Modifiers modifiers);

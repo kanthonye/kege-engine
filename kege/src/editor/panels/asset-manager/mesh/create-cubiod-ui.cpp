@@ -11,11 +11,10 @@
 
 namespace kege::ui{
 
-    bool CreateCuboidMeshUI::submit(GUI* gui, const char* label)
+    bool CreateCuboidMeshUI::submit(UI* ui, const char* label)
     {
-        gui->put
+        ui->put
         ({
-            .layer = 2,
             .user_id = _uid[0],
             .text = ui::Text{
                 .width = 50,
@@ -31,20 +30,18 @@ namespace kege::ui{
             .width = ui::extend(),
             .height = ui::fixed(30),
         });
-        return gui->click(_uid[0]);
+        return ui->click(_uid[0]);
     }
 
-    bool CreateCuboidMeshUI::create(GUI* gui)
+    bool CreateCuboidMeshUI::create(UI* ui)
     {
-        int16_t layer = 2;
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "cube-mesh-%i", _count++);
-            _text = gui->layout()->text(_asset_name, 20);
+            _text = ui->layout()->text(_asset_name, 20);
         }
-        gui->push
+        ui->push
         ({
-            .layer = layer,
             .rect = {0,0,0,0},
             .color = 0xFFFFFF00,
             .padding = {20,20,20,20},
@@ -58,15 +55,21 @@ namespace kege::ui{
             .height = ui::extend(),
         });
         {
-            gui->labelInput("Name:", _uid[1], layer, _text_input_mode, _text);
-            gui->put({.rect = {0,0,50,20}});
-            gui->labelScrubber(_uid[2], layer, "Width:", _width);
-            gui->labelScrubber(_uid[3], layer, "Height:", _height);
-            gui->labelScrubber(_uid[4], layer, "Depth:", _depth);
+            ui->labelInput("Name:", _uid[1], _text_input_mode, _text);
+            ui->put({.rect = {0,0,50,20}});
 
-            gui->put({.style = &gui->theme().y_seperator});
+            ui::Text text = {.width = 50, .height = 20, .font_size = 20};
 
-            if( submit(gui, "Submit") )
+            text.ptr = "Width:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[2], text, _width);
+            text.ptr = "Height:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _height);
+            text.ptr = "Depth:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _depth);
+
+            ui->put({.style = &ui->theme().y_seperator});
+
+            if( submit(ui, "Submit") )
             {
                 ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                 kege::Ref<kege::MeshPrimitive> mesh = new CuboidMesh( kege::vec3(0.0), kege::vec3(_width, _height, _depth) );
@@ -90,7 +93,7 @@ namespace kege::ui{
                 return true;
             }
         }
-        gui->pop();
+        ui->pop();
         return false;
     }
 

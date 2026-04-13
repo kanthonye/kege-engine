@@ -1,6 +1,6 @@
 //
 //  file-browser.hpp
-//  gui
+//  ui
 //
 //  Created by Kenneth Esdaile on 8/11/25.
 //
@@ -82,7 +82,7 @@ namespace kege::ui{
     public:
 
         FileBrowser(kege::ui::DockManager* dm, const std::string& path);
-        void updateLayout( int16_t layer )override;
+        void updateLayout()override;
 
     private:
 

@@ -23,59 +23,69 @@
 
 #include "../core/graphics-core.hpp"
 #include "pipeline-key.hpp"
+#include "shader.hpp"
+#include "shader-io.hpp"
+#include "shader-reflection.hpp"
 
 namespace kege{
-
-    class ShaderProgram;
-
 
     class ShaderCompiler
     {
     public:
 
-        ShaderProgram* compileVariant(const kege::PipelineKey& key);
-        ShaderProgram* getVariant(const kege::PipelineKey& key);
+        void compileVariant(const kege::PipelineKey& key);
+        void getVariant(const kege::PipelineKey& key);
+        ShaderCompiler(kege::Graphics* graphics);
 
     private:
-        enum ShaderStge
-        {
-            VERTEX,
-            FRAGMENT,
-        };
 
         struct VertexInfo
         {
-            enum Semantic
-            {
-                POSITION,
-                TEXCOORD,
-                NORMAL,
-                TANGENT,
-                BITANGENT,
-                COLOR,
-                JOINTS,
-                WEIGHTS,
-
-                ALBEDO,
-                EMISSIVE,
-            };
-
-            Semantic semantic;
+            kege::VertexBit semantic;
             int location;
         };
 
+        struct Define
+        {
+            std::string name;
+            int value;
+        };
+
+        struct Defines
+        {
+            std::map< std::string, size_t > table;
+            std::vector< Define > defs;
+        };
+
+        struct Pair
+        {
+            uint32_t set, binding;
+        };
+
+        struct Stage
+        {
+            std::map< std::string, int > defines;
+            std::vector< ShaderIO > output;
+            std::vector< ShaderIO > input;
+        };
+
+        void addAttribute(kege::VertexBit semantic, int location, kege::ShaderVar type, const char* name );
 
         void beginVertexShader(std::stringstream& source);
         void endVertexShader(std::stringstream& source);
         void beginFragmentShader(std::stringstream& source);
         void endFragmentShader(std::stringstream& source);
 
+        void writeResource(std::stringstream& source, const std::string& fname);
+        void writeOutputs(std::stringstream& source, const std::string& fname);
+        void writeInputs(std::stringstream& source, const std::string& fname);
+
         void writeVersion(std::stringstream& source);
         void writeExtensions(std::stringstream& source);
-        void writeMacros(std::stringstream& source);
-        void writeInputs(std::stringstream& source);
-        void writeOutputs(std::stringstream& source);
-        void writeResources(std::stringstream& source);
+        //void writeMacros(std::stringstream& source);
+        void processOutput(std::stringstream& source);
+        void processInput(std::stringstream& source);
+        void processResources(std::stringstream& source);
         void writeFunctions(std::stringstream& source);
         void writeMainFn(std::stringstream& source);
 
@@ -85,31 +95,14 @@ namespace kege{
         std::string writeVertexShader();
         std::string writeFragmentShader();
 
-        ShaderProgram* compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs);
+        void compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs);
 
         std::string include(const std::string& fname );
+        std::string process(const std::string& fname );
 
-//        void defineVertexAttributeIO(const kege::PipelineKey& key, const std::vector<VertexInfo>& attributes, std::vector<std::string>& defines);
-//
-//        void buildVertexLayout(const kege::PipelineKey& key, std::vector<VertexInfo>& attributes);
-//
-//        void writeFragmentShaderInput(std::stringstream& source, const std::vector<VertexInfo>& inputs);
-//
-//        void writeFragmentShaderIO(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeVertexShaderIO(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeDefines(std::stringstream& source, const std::vector<std::string>& defines);
-//
-//        void writeVertexProcessingSelection(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeLightingSelection(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeVertexShaderMainFunction(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeFragmentForwardOpaque(std::stringstream& source, const kege::PipelineKey& key);
-//
-//        void writeFragmentShaderMainFunction(std::stringstream& source, const kege::PipelineKey& key);
+        void define(std::stringstream& source, const std::string& name, int index = 1);
+        std::string parseDefineName(const std::string& line);
+        void addDefine(Defines& defines, const std::string& name, int index = 1);
 
         bool checkFeatures(uint64_t signature) { return (_key.features & signature); }
         bool hasInput(int signature);
@@ -119,17 +112,39 @@ namespace kege{
         void processMeshType(std::stringstream& source, const kege::PipelineKey& key);
 
     private:
+//        std::map<std::string, kege::BindSetDesc> _sets;
 
-        ShaderStge _current_stage;
+
+        std::map< kege::ShaderStageFlag, Stage > _stages;
+        Stage* _curr_stage;
+
+        std::vector< std::string > _output_fnames;
+
+        std::map< kege::ShaderStageFlag, Defines > _defines;
+        Defines _global_defines;
+
+        std::map< std::string, Pair > _defs;
+
+        ShaderStageFlag _current_stage;
 
         kege::PipelineKey _key;
-        std::vector<VertexInfo> _inputs;
-        std::vector<VertexInfo> _outputs;
+        //std::vector<VertexInfo> _inputs;
+        //std::vector<VertexInfo> _outputs;
 
-        std::vector<std::string> _defines;
+//        kege::PipelineRendering _pipeline_rendering;
+//        kege::VertexLayout _vertex_layout;
+
+
+        //std::map< std::string, size_t > _shader_set_index_map;
+        kege::BindSetDescs _shader_sets;
+        kege::PushBlockDescs _push_blocks;
+
         kege::Graphics* _graphics;
-        int binding_index = 0;
-        int set_index = 0;
+        int _binding_index = 0;
+        int _set_index = 0;
+
+        int _output_location = 0;
+        int _input_location = 0;
 
         bool _has_lights;
         bool _has_material;

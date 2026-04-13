@@ -40,7 +40,7 @@ namespace kege{
         Atmosphere,      // Volumetric, raymarched
         Ocean,           // FFT waves, tessellation
         Foliage,         // GPU instancing, wind
-        GUI,
+        UI,
         FlatTerrain,
         SphericalTerrain,
         // etc.
@@ -160,7 +160,7 @@ namespace kege{
             return
             {
                 //.shading_model = ShadingModel::Unlit,
-                .renderer_type = MeshType::GUI,
+                .renderer_type = MeshType::UI,
                 .render_pass = RenderPass::UI,
                 .blend_state = BlendStatePreset::uiAlphaBlend(),
                 .depth_state = DepthStencilPresets::uiOverlay(),

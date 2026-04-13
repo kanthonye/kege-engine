@@ -9,7 +9,7 @@
 
 namespace kege::ui{
 
-//    bool light( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+//    bool light( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
 //    {
 //        uint64_t component_id = ecs->getCompId< kege::Light >( entity );
 //        kege::Light* light = ecs->get< kege::Light >( entity );
@@ -23,7 +23,7 @@ namespace kege::ui{
 //            .color = 0xFFFFFFFF
 //        };
 //
-//        gui->push({.layer = layer, .style = &gui->theme().padded_list});
+//        ui->push({.layer = layer, .style = &ui->theme().padded_list});
 //
 //        ui::Text text;
 //        text.font_size = 20;
@@ -59,14 +59,14 @@ namespace kege::ui{
 //            });
 //        }
 //
-//        gui->options(uid, layer, list, light->type);
+//        ui->options(uid, layer, list, light->type);
 //
 //        if ( light->type == Light::POINT )
 //        {
 //            ui::ID id[3] = {uid[10],uid[11],uid[12]};
 //            text.ptr = "Color:";
 //            text.width = 100;
-////            gui->scrubber3
+////            ui->scrubber3
 ////            (
 ////                id,
 ////                layer,
@@ -78,11 +78,11 @@ namespace kege::ui{
 ////
 ////            text.ptr = "Linear Attenuation:";
 ////            text.width = 100;
-////            gui->scrubber( uid[13], layer, text, light->spot_exponent );
+////            ui->scrubber( uid[13], layer, text, light->spot_exponent );
 ////
 ////            text.ptr = "Quadratic Attenuation:";
 ////            text.width = 100;
-////            gui->scrubber( uid[14], layer, text, light->spot_exponent );
+////            ui->scrubber( uid[14], layer, text, light->spot_exponent );
 //        }
 //        else if ( light->type == Light::DIRECTIONAL )
 //        {
@@ -91,7 +91,7 @@ namespace kege::ui{
 //
 //            text.ptr = "Direction:";
 //            text.width = 100;
-////            gui->scrubber3
+////            ui->scrubber3
 ////            (
 ////                id_dir,
 ////                layer,
@@ -103,7 +103,7 @@ namespace kege::ui{
 //
 //            text.ptr = "Color:";
 //            text.width = 100;
-////            gui->scrubber3
+////            ui->scrubber3
 ////            (
 ////                id_col,
 ////                layer,
@@ -122,7 +122,7 @@ namespace kege::ui{
 //            text.width = 100;
 //            drawProperties
 //            (
-//                gui,
+//                ui,
 //                uid,
 //                layer,
 //                light->direction,
@@ -134,7 +134,7 @@ namespace kege::ui{
 //            text.width = 100;
 //            drawProperties
 //            (
-//                gui,
+//                ui,
 //                uid,
 //                layer,
 //                light->color,
@@ -143,21 +143,21 @@ namespace kege::ui{
 //
 ////            text.ptr = "Spot Exponent:";
 ////            text.width = 100;
-////            gui->scrubber( uid[16], layer, text, light->spot_exponent );
+////            ui->scrubber( uid[16], layer, text, light->spot_exponent );
 ////
 ////            text.ptr = "Spot Cutoff:";
 ////            text.width = 100;
-////            gui->scrubber( uid[17], layer, text, light->spot_cutoff );
+////            ui->scrubber( uid[17], layer, text, light->spot_cutoff );
 ////
 ////            text.ptr = "Linear Attenuation:";
 ////            text.width = 100;
-////            gui->scrubber( uid[18], layer, text, light->spot_exponent );
+////            ui->scrubber( uid[18], layer, text, light->spot_exponent );
 ////
 ////            text.ptr = "Quadratic Attenuation:";
 ////            text.width = 100;
-////            gui->scrubber( uid[19], layer, text, light->spot_exponent );
+////            ui->scrubber( uid[19], layer, text, light->spot_exponent );
 //        }
-//        gui->pop();
+//        ui->pop();
 //        return false;
 //    }
 

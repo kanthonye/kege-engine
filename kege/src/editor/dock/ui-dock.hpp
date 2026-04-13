@@ -99,7 +99,7 @@ namespace kege::ui{
          */
         ui::Text _name;
 
-        kege::GUI* _gui;
+        kege::UI* _ui;
 
         friend DockSplit;
     };

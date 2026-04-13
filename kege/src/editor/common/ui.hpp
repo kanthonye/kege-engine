@@ -1,5 +1,5 @@
 //
-//  gui.hpp
+//  ui.hpp
 //  editor
 //
 //  Created by Kenneth Esdaile on 12/8/25.
@@ -98,6 +98,7 @@ namespace kege{
         kege::ui::Style container_body;
 
         kege::ui::Style card;
+        kege::ui::Style card2;
 
         kege::ui::Style folder_icon;
         kege::ui::Style selected_item;
@@ -144,7 +145,7 @@ namespace kege{
         uint32_t last_frame_value;
 
 
-        enum Type{FLOAT, DOUBLE, INT32, INT64};
+        enum Type{F32, F64, I32, I64, U32, U64};
         ui::Text text_value;
 
         char str[16];
@@ -161,7 +162,7 @@ namespace kege{
     };
 
 
-    class GUI
+    class UI
     {
     public:
 
@@ -191,6 +192,7 @@ namespace kege{
             char str[16];
             uint32_t last_frame_value;
         };
+        
         struct CollapsableRemovableHeader
         {
             ui::WidgetHandle uid[4];
@@ -256,12 +258,45 @@ namespace kege{
 
     public:
 
-        bool input(const ui::ID& user_id, uint16_t layer, ui::Cursor::InputType type, TextFieldMode& mode, ui::Text& text);
+        bool input(const ui::ID& user_id, ui::Cursor::InputType type, TextFieldMode& mode, ui::Text& text);
 
-        void labelScrubber(const ui::ID& user_id, int16_t layer, const char* label, double& value);
-        void labelInput(const char* label, const ui::ID& user_id, int16_t layer, TextFieldMode& mode, ui::Text& text);
+        void labelScrubber(const ui::ID& user_id, const char* label, double& value);
 
-        void beginWindow(const ui::ID uid[3], int16_t layer, ui::Rect& rect, const char* title, bool& close_window);
+        template<typename T>
+        void labelScrubber
+        (
+            ScrubberState::Type type,
+            const ui::ID& user_id,
+            const kege::ui::Text& label,
+            T& value,
+            bool clamp = false,
+            const T& min = 0,
+            const T& max = 1
+        )
+        {
+            _layout->push
+            ({
+                .padding = {10,5,10,5},
+                //.border.corner_curves = {border_radius,0,0,border_radius},
+                .color = 0xFFFFFF08,
+                .gap = {2,2},
+                .alignment =
+                {
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = ui::AlignDir::RIGHT,
+                    .items = ui::AlignItem::CENTER,
+                },
+                .width = ui::extend(),
+                .height = ui::fixed(30),
+            });
+            _layout->text(label);
+            this->scrubber< T >( type, user_id, value, clamp, min, max );
+            _layout->pop();
+        }
+
+        bool labelInput(const char* label, const ui::ID& user_id, TextFieldMode& mode, ui::Text& text);
+
+        void beginWindow(const ui::ID uid[3], ui::Rect& rect, const char* title, bool& close_window);
         void endWindow();
 
         template<typename Params>void pushDeferredOp(const ui::ID& id, ui::WidgetId index, ui::DeferredOperation fn, const Params& params)
@@ -280,26 +315,27 @@ namespace kege{
         }
 
         bool submit(ui::ID user_id, const char* label);
+        bool clickButton( ui::ID user_id, const ui::Text& text );
 
 
-        bool button( ui::ID user_id, int16_t layer, const ui::Text& text, const ui::Style* style = nullptr );
+        bool button( ui::ID user_id, const ui::Text& text, const ui::Style* style = nullptr );
         bool button( const kege::ui::WidgetDesc& desc );
 
 
-        bool collapsableHeader( const ui::ID& id, int16_t layer, bool& expand, const ui::Text& text );
-        bool checkbox( const ui::ID& id, int16_t layer, const ui::Text& text, bool& expand );
+        bool collapsableHeader( const ui::ID& id, bool& expand, const ui::Text& text );
+        bool checkbox( const ui::ID& id, const ui::Text& text, bool& expand );
 
-        int collapsableRemovableHeaderInput( const ui::UID& uid, int16_t layer, char* str, size_t& size );
-        int collapsableRemovableHeader( const ui::UID& uid, int16_t layer, const ui::Text& text );
-        bool collapsableHeader( const ui::UID& uid, int16_t layer, const ui::Text& text );
-        int removableHeader( const ui::ID Id[4], int16_t layer, const ui::Text& text );
+        int collapsableRemovableHeaderInput( const ui::UID& uid, char* str, size_t& size );
+        int collapsableRemovableHeader( const ui::UID& uid, const ui::Text& text );
+        bool collapsableHeader( const ui::UID& uid, const ui::Text& text );
+        int removableHeader( const ui::ID Id[4], const ui::Text& text );
 
         // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         // ---  SCRUBBER                                                               ---
         // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         template< typename T >
-        bool scrubber( const ui::ID& id, int16_t layer, T& num, const T& min, const T& max, ScrubberState* state )
+        bool scrubber( const ui::ID& id, T& num, const T& min, const T& max, ScrubberState* state )
         {
             state->text_value.ptr = state->str;
             ui::WidgetId widget_id = _layout->put
@@ -333,10 +369,12 @@ namespace kege{
                     switch(state->type)
                     {
                         default:
-                        case ScrubberState::FLOAT:  format = "%.3f"; break;
-                        case ScrubberState::DOUBLE: format = "%.3f"; break;
-                        case ScrubberState::INT32:  format = "%i"; break;
-                        case ScrubberState::INT64:  format = "%i"; break;
+                        case ScrubberState::F32: format = "%.3f"; break;
+                        case ScrubberState::F64: format = "%.3f"; break;
+                        case ScrubberState::I32: format = "%i"; break;
+                        case ScrubberState::I64: format = "%i"; break;
+                        case ScrubberState::U32: format = "%i"; break;
+                        case ScrubberState::U64: format = "%i"; break;
                     }
                     snprintf(state->str, 16, format, num);
                     state->text_value = _layout->text(state->str, 20);
@@ -361,7 +399,7 @@ namespace kege{
         }
 
         template< typename T >
-        bool scrubber( ScrubberState::Type type, const ui::ID& id, int16_t layer, T& num, const T& min = 0, const T& max = 1, bool clamp = false )
+        bool scrubber( ScrubberState::Type type, const ui::ID& id, T& num, bool clamp = false, const T& min = 0, const T& max = 1 )
         {
             ScrubberState* state;
             auto i = _scrubbers.find( id );
@@ -372,10 +410,10 @@ namespace kege{
                 switch(type)
                 {
                     default:
-                    case ScrubberState::FLOAT:  format = "%.3f"; break;
-                    case ScrubberState::DOUBLE: format = "%.3f"; break;
-                    case ScrubberState::INT32:  format = "%i"; break;
-                    case ScrubberState::INT64:  format = "%i"; break;
+                    case ScrubberState::F32: format = "%.3f"; break;
+                    case ScrubberState::F64: format = "%.3f"; break;
+                    case ScrubberState::I32: format = "%i"; break;
+                    case ScrubberState::I64: format = "%i"; break;
                 }
                 snprintf(state->str, 16, format, num);
                 state->text_value = _layout->text(state->str, 20);
@@ -385,82 +423,86 @@ namespace kege{
                 state->clamp = clamp;
             }
             else state = &i->second;
-            return scrubber( id, layer, num, min, max, state );
+            return scrubber( id, num, min, max, state );
         }
+
+        template< typename T >
+        bool scrubber( ScrubberState::Type type, const ui::ID& id, T& num )
+        {
+            return scrubber<T>( type, id, num, false );
+        }
+
         bool scrubber
         (
             const ui::ID& id,
-            int16_t layer,
             double& num,
+            bool clamp = false,
             const double& min = 0.0,
-            const double& max = 1.0,
-            bool clamp = false
+            const double& max = 1.0
         )
         {
-            return scrubber< double >( ScrubberState::DOUBLE, id, layer, num, min, max, clamp );
+            return scrubber< double >( ScrubberState::F64, id, num, clamp, min, max );
         }
         bool scrubber
         (
             const ui::ID& id,
             int16_t layer,
             float& num,
+            bool clamp = false,
             float min = 0.0,
-            float max = 1.0,
-            bool clamp = false
+            float max = 1.0
         )
         {
-            return scrubber< float >( ScrubberState::FLOAT, id, layer, num, min, max, clamp );
+            return scrubber< float >( ScrubberState::F32, id, num, min, max, clamp );
         }
         bool scrubber
         (
             const ui::ID& id,
-            int16_t layer,
             int& num,
             int min = 0,
             int max = 1,
             bool clamp = false
         )
         {
-            return scrubber< int >( ScrubberState::INT32, id, layer, num, min, max, clamp );
+            return scrubber< int >( ScrubberState::I32, id, num, clamp, min, max );
         }
         bool scrubber
         (
             const ui::ID& id,
-            int16_t layer,
             int64_t& num,
+            bool clamp = false,
             int64_t min = 0,
-            int64_t max = 1,
-            bool clamp = false
+            int64_t max = 1
         )
         {
-            return scrubber< int64_t >( ScrubberState::INT64, id, layer, num, min, max, clamp );
+            return scrubber< int64_t >( ScrubberState::I64, id, num, clamp, min, max );
         }
 
         template< typename T >
-        bool scrubber( ScrubberState::Type type, const ui::ID& id, int16_t layer, const ui::Text& name, T& num )
+        bool scrubber( ScrubberState::Type type, const ui::ID& id, const ui::Text& name, T& num )
         {
-            _layout->push({ .layer = layer, .style = &_theme.scrubber_row });
-            fittedLabel(layer, name);
-            scrubber< T >( type, id, layer, num, 0, 0, false );
+            _layout->push({ .style = &_theme.scrubber_row });
+            fittedLabel(name);
+            scrubber< T >( type, id, num, 0, 0, false );
             _layout->pop();
             return false;
         }
 
         template< typename T >
-        bool scrubber2( ScrubberState::Type type, const ui::ID uid[2], int16_t layer, const ui::Text& name, T& x, T& y )
+        bool scrubber2( ScrubberState::Type type, const ui::ID uid[2], const ui::Text& name, T& x, T& y )
         {
             bool modified[2] = {};
 
-            beginColumn(layer);
+            beginColumn();
             {
-                label(layer, name);
+                label(name);
 
-                beginColumn(layer);
+                beginColumn();
                 ui::Text x_label{.ptr = "x:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[0] = scrubber(type, uid[0], layer, x_label, x);
+                modified[0] = scrubber(type, uid[0], x_label, x);
 
                 ui::Text y_label{.ptr = "y:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[1] = scrubber(type, uid[1], layer, y_label, y);
+                modified[1] = scrubber(type, uid[1], y_label, y);
                 endColumn();
             }
             endColumn();
@@ -469,21 +511,21 @@ namespace kege{
         }
 
         template< typename T >
-        bool scrubber3( ScrubberState::Type type, const ui::ID id[3], int16_t layer, T& x, T& y, T& z )
+        bool scrubber3( ScrubberState::Type type, const ui::ID id[3], T& x, T& y, T& z )
         {
             bool modified[3] = {};
 
-            beginColumn(layer);
+            beginColumn();
             {
-                beginColumn(layer);
+                beginColumn();
                 ui::Text x_label{.ptr = "x:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[0] = scrubber(type, id[0], layer, x_label, x);
+                modified[0] = scrubber(type, id[0], x_label, x);
 
                 ui::Text y_label{.ptr = "y:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[1] = scrubber(type, id[1], layer, y_label, y);
+                modified[1] = scrubber(type, id[1], y_label, y);
 
                 ui::Text z_label{.ptr = "z:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[2] = scrubber(type, id[2], layer, z_label, z);
+                modified[2] = scrubber(type, id[2], z_label, z);
                 endColumn();
             }
             endColumn();
@@ -492,26 +534,26 @@ namespace kege{
         }
 
         template< typename T >
-        bool scrubber4( ScrubberState::Type type, const ui::ID uid[4], int16_t layer, const ui::Text& name, T& x, T& y, T& z, T& w )
+        bool scrubber4( ScrubberState::Type type, const ui::ID uid[4], const ui::Text& name, T& x, T& y, T& z, T& w )
         {
             bool modified[4] = {};
 
-            beginColumn(layer);
+            beginColumn();
             {
-                label(layer, name);
+                label(name);
 
-                beginColumn(layer);
+                beginColumn();
                 ui::Text x_label{.ptr = "x:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[0] = scrubber(type, uid[0], layer, x_label, x);
+                modified[0] = scrubber(type, uid[0], x_label, x);
 
                 ui::Text y_label{.ptr = "y:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[1] = scrubber(type, uid[1], layer, y_label, y);
+                modified[1] = scrubber(type, uid[1], y_label, y);
 
                 ui::Text z_label{.ptr = "z:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[2] = scrubber(type, uid[2], layer, z_label, z);
+                modified[2] = scrubber(type, uid[2], z_label, z);
 
                 ui::Text w_label{.ptr = "w:", .width = 10, .font_size = 20, .height = 15, .color = 0xFFFFFFFF};
-                modified[2] = scrubber(type, uid[3], layer, w_label, w);
+                modified[2] = scrubber(type, uid[3], w_label, w);
                 endColumn();
             }
             endColumn();
@@ -555,16 +597,15 @@ namespace kege{
         }
 
         template< typename T >
-        bool slidebar( const ui::ID uid[2], int16_t layer, T& val, const T& min, const T& max )
+        bool slidebar( const ui::ID uid[2], T& val, const T& min, const T& max )
         {
             ui::WidgetId widget_index = _layout->push
             ({
-                .layer = layer,
                 .user_id = uid[0],
                 .style = &_theme.slide_bar_track,
                 .single_click = ui::ClickTrigger::Continuous
             });
-            ui::WidgetId widget_id = _layout->put({ .layer = layer, .user_id = uid[1], .style = &_theme.slide_bar });
+            ui::WidgetId widget_id = _layout->put({ .user_id = uid[1], .style = &_theme.slide_bar });
             _layout->pop();
 
             _layout->pushDeferredOp(uid[1], widget_index, slidebarOp<T>, RangeParams<T>{min, max, &val, widget_id});
@@ -576,12 +617,14 @@ namespace kege{
 
 
         
-        bool options( const ui::UID& uid, int16_t layer, std::vector< ui::Text >& list, int& selection );
-        bool select( const ui::UID& uid, int16_t layer, std::vector< ui::Text >& list, int& selection );
-        bool tab( const ui::UID& uid, int16_t layer, std::vector< ui::Text>& list, int& selection );
-        void list( int16_t layer, std::vector< ui::Text>& list );
+        bool labelOptions( const ui::UID& uid, const ui::Text& label, std::vector< ui::Text >& list, int& selection, bool vertical = false );
+        bool options( const ui::UID& uid, std::vector< ui::Text >& list, int& selection );
 
-        bool numSlideBar( ui::ID user_id, int16_t layer, double* val, double min, double max );
+        bool select( const ui::UID& uid, std::vector< ui::Text >& list, int& selection );
+        bool tab( const ui::UID& uid, std::vector< ui::Text>& list, int& selection );
+        void list( std::vector< ui::Text>& list );
+
+        bool numSlideBar( ui::ID user_id, double* val, double min, double max );
 
         template< typename T >
         static void sliderOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
@@ -610,12 +653,12 @@ namespace kege{
         }
 
         template< typename T >
-        bool slider( const ui::ID uid[2], int16_t layer, T& val, const T& min, const T& max )
+        bool slider( const ui::ID uid[2], T& val, const T& min, const T& max )
         {
-            _layout->push({ .layer = layer, .user_id = uid[0], .style = &_theme.slider_track });
+            _layout->push({ .user_id = uid[0], .style = &_theme.slider_track });
             ui::WidgetId widget_index = _layout->put
             ({
-                .layer = layer, .user_id = uid[1],
+                .user_id = uid[1],
                 .style = &_theme.slider_knob,
                 .single_click = ui::ClickTrigger::Continuous
             });
@@ -625,25 +668,25 @@ namespace kege{
         }
 
         bool charButn( ui::ID user_id, const char* label, float x, float y );
-        bool dotButn( ui::ID user_id, int16_t layer );
+        bool dotButn( ui::ID user_id );
 
-        ui::WidgetId fittedLabel( int16_t layer, const ui::Text& text, ui::Style* style = nullptr );
-        ui::WidgetId label( int16_t layer, const ui::Text& text, ui::Style* style = nullptr );
+        ui::WidgetId fittedLabel( const ui::Text& text, ui::Style* style = nullptr );
+        ui::WidgetId label( const ui::Text& text, ui::Style* style = nullptr );
 
-        bool radio( ui::ID user_id, int16_t layer, const ui::Text& text, bool& state );
-        bool radio( ui::ID user_id, int16_t layer, bool& state );
+        bool radio( ui::ID user_id, const ui::Text& text, bool& state );
+        bool radio( ui::ID user_id, bool& state );
         bool radio( ui::ID user_id, int16_t layer );
 
         ui::WidgetId beginList(int16_t layer);
         void endList();
 
-        ui::WidgetId beginColumn( int16_t layer, ui::Style* style = nullptr );
+        ui::WidgetId beginColumn( ui::Style* style = nullptr );
         void endColumn();
 
-        ui::WidgetId beginRow( int16_t layer, ui::Style* style = nullptr );
+        ui::WidgetId beginRow( ui::Style* style = nullptr );
         void endRow();
 
-        void beginScrollContainer( const ui::ID id[2], int16_t layer );
+        void beginScrollContainer( const ui::ID id[2] );
         void endScrollContainer();
 
         ui::WidgetId pushRoot( const ui::WidgetDesc& desc );
@@ -652,8 +695,12 @@ namespace kege{
 
         ui::WidgetId push( const kege::ui::WidgetDesc& desc );
         ui::WidgetId put( const kege::ui::WidgetDesc& desc );
+        ui::WidgetId text( const kege::ui::Text& text );
         void pop();
 
+        void pushLayer( uint32_t index );
+        bool popLayer();
+        
         /**
          * Checks if the mouse pointer is being dragged.
          *
@@ -708,8 +755,8 @@ namespace kege{
         void begin( double dms );
         void end();
 
-        ~GUI();
-        GUI();
+        ~UI();
+        UI();
 
         enum { CHAR_BUFR_CAPACITY = 256 };
 

@@ -21,22 +21,22 @@
 
 #define KEGE_MAKE_ID() ((((uint64_t)(uintptr_t)__FILE__) << 32) | __LINE__)
 
-#define UI_ID_FILE_BITS     32
-#define UI_ID_LINE_BITS     16
-#define UI_ID_CHILD_BITS    16
+#define ID_FILE_BITS     32
+#define ID_LINE_BITS     16
+#define ID_CHILD_BITS    16
 
-#define UI_ID_FILE_SHIFT    (UI_ID_LINE_BITS + UI_ID_CHILD_BITS)  // 32
-#define UI_ID_LINE_SHIFT    UI_ID_CHILD_BITS                       // 16
-#define UI_ID_CHILD_SHIFT   0
+#define ID_FILE_SHIFT    (ID_LINE_BITS + ID_CHILD_BITS)  // 32
+#define ID_LINE_SHIFT    ID_CHILD_BITS                       // 16
+#define ID_CHILD_SHIFT   0
 
-#define UI_ID_FILE_MASK     ((1ULL << UI_ID_FILE_BITS) - 1)
-#define UI_ID_LINE_MASK     ((1ULL << UI_ID_LINE_BITS) - 1)
-#define UI_ID_CHILD_MASK    ((1ULL << UI_ID_CHILD_BITS) - 1)
+#define ID_FILE_MASK     ((1ULL << ID_FILE_BITS) - 1)
+#define ID_LINE_MASK     ((1ULL << ID_LINE_BITS) - 1)
+#define ID_CHILD_MASK    ((1ULL << ID_CHILD_BITS) - 1)
 
 // Generate base ID (without child index)
-#define UI_BASE_ID() \
-    ((((uint64_t)(uintptr_t)__FILE__ & UI_ID_FILE_MASK) << UI_ID_FILE_SHIFT) | \
-     ((__LINE__ & UI_ID_LINE_MASK) << UI_ID_LINE_SHIFT))
+#define BASE_ID() \
+    ((((uint64_t)(uintptr_t)__FILE__ & ID_FILE_MASK) << ID_FILE_SHIFT) | \
+     ((__LINE__ & ID_LINE_MASK) << ID_LINE_SHIFT))
 
 
 namespace kege::ui{
@@ -443,11 +443,6 @@ namespace kege::ui{
         Sizing height;
 
         /**
-         * layer: hold the layer of this ui element
-         */
-        int16_t layer = -1;
-
-        /**
          * single_click: hold the single click trigger type
          */
         ClickTrigger single_click = ui::ClickTrigger::Disable;
@@ -506,13 +501,6 @@ namespace kege::ui{
          * layer: hold the layer of this ui element
          */
         uint32_t layer = 0;  // 4 byte
-    };
-
-    struct Layer
-    {
-        int32_t head        = 0;
-        int32_t tail        = 0;
-        int32_t count       = 0;
     };
 
 
@@ -674,6 +662,76 @@ namespace kege::ui{
     //ui::Background bgColor(const ui::Color& color);
     //ui::Background bgColor(uint32_t color);
 
+
+
+    enum UILayer
+    {
+        LAYER_BASE,
+        LAYER_BASE_OVERLAY,
+        LAYER_WINDOW,
+        LAYER_WINDOW_OVERLAY,
+        LAYER_DRAGGING,
+        LAYER_DRAGGING_OVERLAY,
+        LAYER_MAX_COUNT,
+    };
+
+    struct Layer
+    {
+        void pushIfRoot(Widget& widget)
+        {
+            if( current_root != 0 ) return;
+
+            current_root = widget.index;
+
+            if ( head == 0 )
+            {
+                tail = head = widget.index;
+                widget.layer.next = 0;
+                widget.layer.prev = 0;
+            }
+            else
+            {
+                widget.layer.next = 0;
+                widget.layer.prev = tail;
+                widget.layer.next = widget.index;
+                tail = widget.index;
+            }
+
+            count++;
+        }
+        void popIfRoot(std::vector< kege::ui::Widget >& widgets, uint32_t index)
+        {
+            if ( current_root == index )
+            {
+                if( widgets[ index ].parent )
+                {
+                    current_root = widgets[ widgets[ index ].parent ].index;
+                    current_root = 0;
+                }
+            }
+        }
+
+        void reset()
+        {
+            current_root = 0;
+            count = 0;
+            head = 0;
+            tail = 0;
+        }
+        
+        Layer()
+        : current_root(0)
+        , head(0)
+        , tail(0)
+        , count(0)
+        {}
+
+        //std::vector< uint32_t > roots;
+        uint32_t current_root;
+        uint32_t head;
+        uint32_t tail;
+        int32_t count;
+    };
 }
 
 #endif /* ui_primitives_hpp */

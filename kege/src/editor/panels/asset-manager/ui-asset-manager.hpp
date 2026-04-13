@@ -69,7 +69,7 @@ namespace kege::ui{
 
         void handle(const kege::ui::AssetMetadataDropOff& event)override;
 
-        void updateLayout( int16_t layer )override;
+        void updateLayout()override;
 
         AssetManagerUI(kege::ui::DockManager* dm);
 

@@ -9,12 +9,12 @@
 
 namespace kege::ui{
 
-//    bool camera( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+//    bool camera( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
 //    {
 //        kege::Perspective& perspective = *ecs->get< kege::Perspective >( entity );
-//        gui->push({.layer = layer, .style = &gui->theme().padded_list});
-//        drawProperties(gui, uid, layer, perspective, PerspectiveProperties);
-//        gui->pop();
+//        ui->push({..style = &ui->theme().padded_list});
+//        drawProperties(ui, uid, layer, perspective, PerspectiveProperties);
+//        ui->pop();
 //        return false;
 //    }
 

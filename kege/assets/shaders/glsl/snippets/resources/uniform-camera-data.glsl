@@ -7,3 +7,4 @@ layout(std140, set = CAMERA_SET, binding = CAMERA_BINDING) uniform CameraData
     vec3 camera_position;
 }
 camera;
+

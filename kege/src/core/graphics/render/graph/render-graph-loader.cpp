@@ -15,7 +15,7 @@ namespace kege{
         static std::map< std::string, RenderPassType > types;
         if ( types.empty() )
         {
-            types[ "GUI" ] = RenderPassType::UI;
+            types[ "UI" ] = RenderPassType::UI;
             types[ "ShadowMap" ] = RenderPassType::ShadowMap;
             types[ "DepthPrePass" ] = RenderPassType::DepthPrePass;
             types[ "Geometry" ] = RenderPassType::Geometry;

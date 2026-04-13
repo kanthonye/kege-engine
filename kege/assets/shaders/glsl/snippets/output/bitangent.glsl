@@ -1,1 +1,1 @@
-layout(location = OUTPUT_BITANGENT ) out vec3 in_bitangent;
+layout(location = OUT_BITANGENT ) out vec3 in_bitangent;

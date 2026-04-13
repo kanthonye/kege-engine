@@ -16,7 +16,7 @@ namespace kege::ui{
 //        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }
 
-    void MenuBar::updateLayout( int16_t layer )
+    void MenuBar::updateLayout()
     {
 //        _layout->push({ .id = &_main });
 //        if ( 0 <= file.select( *_layout, "File", { "Save", "Open", "Import", "Export" } ) )

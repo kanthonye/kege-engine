@@ -10,19 +10,19 @@
 #include "create-mesh-ui.hpp"
 //namespace kege::ui{
 //
-//    typedef void (*generateMeshFnPtr)(kege::GUI* gui);
+//    typedef void (*generateMeshFnPtr)(kege::UI* ui);
 //
 //    struct MeshShapeGenerator : public kege::RefCounter
 //    {
 //        enum GenState{EDITING, GENERATE, COMPLETE};
-//        virtual void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity)
+//        virtual void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity)
 //        {
-//            gui->push({.style = &gui->theme().row, .single_click = ui::ClickTrigger::Continuous});
-//            gui->put({.text = text, .rect = {.width = 100, .height = 20} });
-//            gui->put({.style = &gui->theme().x_seperator});
-//            gui->put({.color = 0x00FF00FF, .rect = {.width = 10, .height = 10} });
-//            gui->put({.color = 0xFF0000FF, .rect = {.width = 10, .height = 10} });
-//            gui->pop();
+//            ui->push({.style = &ui->theme().row, .single_click = ui::ClickTrigger::Continuous});
+//            ui->put({.text = text, .rect = {.width = 100, .height = 20} });
+//            ui->put({.style = &ui->theme().x_seperator});
+//            ui->put({.color = 0x00FF00FF, .rect = {.width = 10, .height = 10} });
+//            ui->put({.color = 0xFF0000FF, .rect = {.width = 10, .height = 10} });
+//            ui->pop();
 //        }
 //        MeshShapeGenerator(){}
 //
@@ -32,7 +32,7 @@
 //
 //    struct ShapeSelectGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity)
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity)
 //        {}
 //        ShapeSelectGenerator()
 //        {
@@ -41,21 +41,21 @@
 //
 //    struct ShapeCubeGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity)
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity)
 //        {
 //            kege::Renderable* comp = ecs->get< kege::Renderable >( entity );
 //
 //            if ( gen_state == EDITING )
 //            {
-//                gui->push({.layer = layer, .style = &gui->theme().column});
-//                gui->scrubber(layer, gui->getAddressAsInt(lengths.x), text_width,  lengths.x);
-//                gui->scrubber(layer, gui->getAddressAsInt(lengths.y), text_height, lengths.y);
-//                gui->scrubber(layer, gui->getAddressAsInt(lengths.z), text_depth,  lengths.z);
-//                if( gui->button(layer, butn_id, text_butn) )
+//                ui->push({.style = &ui->theme().column});
+//                ui->scrubber(layer, ui->getAddressAsInt(lengths.x), text_width,  lengths.x);
+//                ui->scrubber(layer, ui->getAddressAsInt(lengths.y), text_height, lengths.y);
+//                ui->scrubber(layer, ui->getAddressAsInt(lengths.z), text_depth,  lengths.z);
+//                if( ui->button(layer, butn_id, text_butn) )
 //                {
 //                    gen_state = GENERATE;
 //                }
-//                gui->pop();
+//                ui->pop();
 //            }
 //
 //            if ( gen_state == GENERATE )
@@ -119,7 +119,7 @@
 //
 //    struct ShapeEllipsoidGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity){}
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeEllipsoidGenerator()
 //        {
 //            text.ptr = "Ellipsoid";
@@ -132,7 +132,7 @@
 //
 //    struct ShapeCylinderGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity){}
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeCylinderGenerator()
 //        {
 //            text.ptr = "Cylinder";
@@ -145,7 +145,7 @@
 //
 //    struct ShapeConeGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity){}
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeConeGenerator()
 //        {
 //            text.ptr = "Cone";
@@ -158,7 +158,7 @@
 //
 //    struct ShapePlaneGenerator : public ui::MeshShapeGenerator
 //    {
-//        void update(kege::AssetManager* am, int16_t layer, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity){}
+//        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapePlaneGenerator()
 //        {
 //            text.ptr = "Plane";

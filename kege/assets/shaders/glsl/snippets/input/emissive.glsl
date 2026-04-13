@@ -1,1 +1,1 @@
-layout(location = INPUT_EMISSIVE ) out vec4 in_emissive;
+layout(location = IN_EMISSIVE ) out vec4 in_emissive;

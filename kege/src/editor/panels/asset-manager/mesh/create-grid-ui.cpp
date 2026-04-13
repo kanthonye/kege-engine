@@ -11,17 +11,15 @@
 
 namespace kege::ui{
 
-    bool CreateGridMeshUI::create(GUI* gui)
+    bool CreateGridMeshUI::create(UI* ui)
     {
-        int16_t layer = 2;
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "grid-mesh-%i", _count++);
-            _text = gui->layout()->text(_asset_name, 20);
+            _text = ui->layout()->text(_asset_name, 20);
         }
-        gui->push
+        ui->push
         ({
-            .layer = 2,
             .rect = {0,0,0,0},
             .color = 0xFFFFFF00,
             .padding = {20,20,20,20},
@@ -35,16 +33,23 @@ namespace kege::ui{
             .height = ui::extend(),
         });
         {
-            gui->labelInput("Name:", _uid[1], layer, _text_input_mode, _text);
-            gui->put({.rect = {0,0,50,20}});
-            gui->labelScrubber(_uid[1], layer, "Width:", _width);
-            gui->labelScrubber(_uid[2], layer, "Height:", _height);
-            gui->labelScrubber(_uid[3], layer, "Columns:", _cols);
-            gui->labelScrubber(_uid[4], layer, "Rows:", _rows);
+            ui->labelInput("Name:", _uid[1], _text_input_mode, _text);
+            ui->put({.rect = {0,0,50,20}});
 
-            gui->put({.style = &gui->theme().y_seperator});
+            ui::Text text = {.width = 50, .height = 20, .font_size = 20};
 
-            if( gui->submit(_uid[5], "Submit") )
+            text.ptr = "Width:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[1], text, _width);
+            text.ptr = "Height:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[2], text, _height);
+            text.ptr = "Columns:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _cols);
+            text.ptr = "Rows:";
+            ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _rows);
+
+            ui->put({.style = &ui->theme().y_seperator});
+
+            if( ui->submit(_uid[5], "Submit") )
             {
                 ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                 kege::Ref<kege::MeshPrimitive> mesh = new GridMesh( _width, _height, _cols, _rows );
@@ -68,7 +73,7 @@ namespace kege::ui{
                 return true;
             }
         }
-        gui->pop();
+        ui->pop();
         return false;
     }
 

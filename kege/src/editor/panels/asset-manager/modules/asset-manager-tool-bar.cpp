@@ -23,42 +23,42 @@ namespace kege::ui{
     void AssetManagerToolBar::update()
     {
         // Start a row for navigation controls
-        _gui->push({.layer = 0, .style = &_gui->theme().navbar});
+        _ui->push({.style = &_ui->theme().navbar});
         {
-            if ( _gui->charButn(_uid[0], "+",7,2) )
+            if ( _ui->charButn(_uid[0], "+",7,2) )
             {
                 //Communication::broadcast<const OpenAddAssetWindow&>({});
                 _manager->handle(this, "OpenAddAssetWindow",nullptr);
             }
 
-            if ( _gui->charButn(_uid[1], "^",7, 2) )
+            if ( _ui->charButn(_uid[1], "^",7, 2) )
             {
                 _manager->handle(this, "OpenFileBrowser",nullptr);
             }
 
             // Search field
-//            uint64_t search_id = _gui->getAddressAsInt(&_search_buffer);// + _ref_counter;
-//            if (_gui->textField(_uid[2], search_id, _search_buffer, 255, _search_size))
+//            uint64_t search_id = _ui->getAddressAsInt(&_search_buffer);// + _ref_counter;
+//            if (_ui->textField(_uid[2], search_id, _search_buffer, 255, _search_size))
 //            {
 //                _manager->handle(this, "UpdateFilteredAssets",_search_buffer);
 //            }
 
-            if (_gui->input(_uid[2], 0, ui::Cursor::InputType::Any, mode, text))
+            if (_ui->input(_uid[2], ui::Cursor::InputType::Any, mode, text))
             {
-                memcpy(_search_buffer, _gui->getCharBufr(), _gui->getCharBufrLen());
+                memcpy(_search_buffer, _ui->getCharBufr(), _ui->getCharBufrLen());
             }
-            //bool GUI::input(const ui::ID& user_id, uint16_t layer, TextFieldMode& mode, ui::Text& text )
+            //bool UI::input(const ui::ID& user_id, uTextFieldMode& mode, ui::Text& text )
 
 
             // Refresh button
-            if ( _gui->charButn(_uid[3], "@",7,0) )
+            if ( _ui->charButn(_uid[3], "@",7,0) )
             {
                 _manager->handle(this, "RefreshAssetList",nullptr);
             }
 
             // View mode toggle
             const char* str =  (_view_mode == ViewMode::GRID) ? "#" : "=";
-            if ( _gui->charButn(_uid[4], str, 7, 2) )
+            if ( _ui->charButn(_uid[4], str, 7, 2) )
             {
                 ViewMode view_mode = (_view_mode == ViewMode::GRID)
                 ? ViewMode::LIST : ViewMode::GRID;
@@ -69,10 +69,10 @@ namespace kege::ui{
                 }
             }
         }
-        _gui->pop();
+        _ui->pop();
     }
 
-    AssetManagerToolBar::AssetManagerToolBar(AssetManagerUI* m,kege::GUI* g)
+    AssetManagerToolBar::AssetManagerToolBar(AssetManagerUI* m,kege::UI* g)
     :   AssetManagerModule(m,g)
     ,   _search_size(0)
     {

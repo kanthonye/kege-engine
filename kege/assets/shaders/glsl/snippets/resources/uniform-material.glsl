@@ -52,3 +52,4 @@ material;
 
 // Texture samplers for the material properties
 layout(set = MATERIAL_SET, binding = 1) uniform sampler2D MaterialTextures[8];
+

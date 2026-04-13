@@ -10,14 +10,14 @@
 
 namespace kege::ui
 {
-//    bool transform( const ui::UID& uid, int16_t layer, kege::AssetManager* am, kege::GUI* gui, kege::ECS* ecs, ecs::Entity& entity )
+//    bool transform( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
 //    {
 //        Transform* transform = ecs->get< kege::Transform >( entity );
 //
-//        gui->push({ .layer = layer, .style = &gui->theme().padded_list });
+//        ui->push({ .layer = layer, .style = &ui->theme().padded_list });
 //
 ////        ui::ID id_position[3] = {uid[1], uid[2], uid[3]};
-////        gui->scrubber3
+////        ui->scrubber3
 ////        (
 ////            id_position,
 ////            layer,
@@ -35,7 +35,7 @@ namespace kege::ui
 ////        );
 ////
 ////        ui::ID id_scale[3] = {uid[4], uid[5], uid[6]};
-////        gui->scrubber3
+////        ui->scrubber3
 ////        (
 ////            id_scale,
 ////            layer,
@@ -53,7 +53,7 @@ namespace kege::ui
 ////        );
 ////
 ////        ui::ID id_orientation[4] = {uid[7], uid[8], uid[9], uid[10]};
-////        gui->scrubber4
+////        ui->scrubber4
 ////        (
 ////            id_orientation,
 ////            layer,
@@ -70,7 +70,7 @@ namespace kege::ui
 ////            transform->orientation.z,
 ////            transform->orientation.w
 ////        );
-////        gui->pop();
+////        ui->pop();
 //        return false;
 //    }
 }

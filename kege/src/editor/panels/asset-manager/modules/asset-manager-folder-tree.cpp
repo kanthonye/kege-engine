@@ -165,11 +165,11 @@ namespace kege::ui{
     void AssetManagerFolderTree::update()
     {
         // Create a split view with folder tree on left
-        _gui->beginRow(0);
+        _ui->beginRow(0);
 
         // Folder tree panel (20% width)
-        //_gui->beginColumn(0);
-        //_gui->putSpacer(0);
+        //_ui->beginColumn(0);
+        //_ui->putSpacer(0);
 
         // TODO: Implement collapsible tree view for folders
         // For now, simple category list
@@ -180,25 +180,25 @@ namespace kege::ui{
 //            ui::WidgetDesc category_desc;
 //            category_desc.user_id = &category.uid;
 //            category_desc.text = category.text;
-//            category_desc.style = (_current_category == category.text.ptr) ? &_gui->theme().selected_item : &_gui->theme().button;
+//            category_desc.style = (_current_category == category.text.ptr) ? &_ui->theme().selected_item : &_ui->theme().button;
 //            category_desc.single_click = ui::ClickTrigger::OnRelease;
 //
-//            _gui->put(category_desc);
+//            _ui->put(category_desc);
 //
-//            if (_gui->click(category.uid))
+//            if (_ui->click(category.uid))
 //            {
 //                _current_category = category.uid;
 //                updateFilteredAssets();
 //            }
 //        }
 
-        //_gui->endColumn(0);
+        //_ui->endColumn(0);
 
         // Main asset view area (80% width)
-        //_gui->beginColumn(0);
-        //_gui->endColumn(0);
+        //_ui->beginColumn(0);
+        //_ui->endColumn(0);
 
-        _gui->endRow();
+        _ui->endRow();
     }
 
 }

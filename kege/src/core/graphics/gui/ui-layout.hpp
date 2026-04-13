@@ -1,6 +1,6 @@
 //
 //  ui-layout.hpp
-//  gui
+//  ui
 //
 //  Created by Kenneth Esdaile on 8/5/25.
 //
@@ -8,6 +8,7 @@
 #ifndef ui_layout_hpp
 #define ui_layout_hpp
 
+#include <stack>
 #include "../../input/input-manager.hpp"
 #include "../font/font.hpp"
 #include "ui-resizer.hpp"
@@ -20,8 +21,6 @@
 namespace kege::ui{
 
     class Input;
-
-
 
     struct Record
     {
@@ -107,6 +106,9 @@ namespace kege::ui{
 
         void onWindowResize(int width, int height);
 
+        void pushLayer( uint32_t index );
+        bool popLayer();
+
         /**
          * Creates a parent UI element with the give info.
          *
@@ -146,6 +148,7 @@ namespace kege::ui{
          * @return reference to the ui element.
          */
         WidgetId put( const WidgetDesc& desc );
+        WidgetId text( const Text& text );
 
 
         uint32_t computeExtent( int font_size, const char* text, float& width, float& height );
@@ -337,8 +340,8 @@ namespace kege::ui{
         const kege::InputManager* inputManager()const;
         Cursor* cursor();
 
-        uint32_t getHeight()const;
-        uint32_t getWidth()const;
+        const kege::ui::Rect& getRect()const;
+
         uint32_t count()const;
 
         bool hasHit()const;
@@ -368,7 +371,7 @@ namespace kege::ui{
 
         void setWidgetParameters(uint32_t index, const WidgetDesc& desc);
         void resolveParentChildRelation(uint32_t index);
-        void addToDesignatedLayer(uint32_t index, const WidgetDesc& desc);
+        void resetLayer();
 
         Record getHotElem(uint32_t root, bool button = false);
         Record getHotElem(bool button = false);
@@ -387,6 +390,7 @@ namespace kege::ui{
         ui::PostLayoutOpsExecutor _deferred_operations;
 
         // used for ording widget render order
+        std::stack< ui::Layer* > _layer_stack;
         kege::array< ui::Layer > _layers;
 
         kege::array< uint32_t > _roots;
@@ -408,8 +412,7 @@ namespace kege::ui{
         
         uint32_t _current_parent;
 
-        uint32_t _height;
-        uint32_t _width;
+        kege::ui::Rect _rect;
 
         bool _click_registered;
         bool _left_click_down;

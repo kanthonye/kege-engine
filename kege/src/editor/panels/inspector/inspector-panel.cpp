@@ -19,13 +19,13 @@
 
 namespace kege{
 
-    void InspectorPanel::updateLayout( int16_t layer )
+    void InspectorPanel::updateLayout()
     {
         updateRemoveComponent();
         if ( _selected_entity )
         {
-            updateAddComponent(layer);
-            updateComponents(layer);
+            updateAddComponent();
+            updateComponents();
         }
     }
 
@@ -38,9 +38,9 @@ namespace kege{
         _deleted_components.clear();
     }
 
-    void InspectorPanel::updateAddComponent(int16_t layer)
+    void InspectorPanel::updateAddComponent()
     {
-        if( _gui->button(_uid_main[7], layer, _text_add) )
+        if( _ui->button(_uid_main[7], _text_add) )
         {
             _show_component_selections = !_show_component_selections;
         }
@@ -48,7 +48,7 @@ namespace kege{
         if ( _show_component_selections )
         {
             int selection;
-            if ( _gui->select(_uid_selection, layer, _listed_component, selection) )
+            if ( _ui->select(_uid_selection, _listed_component, selection) )
             {
                 if (selection < _infos.size())
                 {
@@ -59,21 +59,21 @@ namespace kege{
         }
     }
 
-    void InspectorPanel::updateComponents(int16_t layer)
+    void InspectorPanel::updateComponents()
     {
         kege::AssetManager* am = _manager->getEditor()->getProjectManager()->getAssetManager().ref();
         const ecs::Component::Layout& layout = _ecs->getLayout( _selected_entity );
 
         ui::ID id[2] = {_uid_main[0], _uid_main[2]};
-        _gui->beginScrollContainer(id, layer);
+        _ui->beginScrollContainer(id);
         for (int i = 0; i < layout.attributes.size(); ++i)
         {
-            updateUI( layer, layout.attributes[i].info->type, layout, am );
+            updateUI( layout.attributes[i].info->type, layout, am );
         }
-        _gui->endScrollContainer();
+        _ui->endScrollContainer();
     }
 
-    void InspectorPanel::updateUI(int16_t layer, int32_t comp_type, const ecs::Component::Layout& layout, kege::AssetManager* am)
+    void InspectorPanel::updateUI(int32_t comp_type, const ecs::Component::Layout& layout, kege::AssetManager* am)
     {
         auto itr = _component_adder_registry.find( comp_type );
         if ( itr == _component_adder_registry.end() )
@@ -83,13 +83,13 @@ namespace kege{
 
         const CompInfo& info = _infos[ itr->second ];
 
-        _gui->push({ .layer = layer, .style = &_gui->theme().card });
+        _ui->push({ .style = &_ui->theme().card });
         ui::ID id[4] = {info.uid[0], info.uid[1], info.uid[2], info.uid[3]};
-        switch ( _gui->removableHeader(id, layer, _listed_component[info.index]) )
+        switch ( _ui->removableHeader(id, _listed_component[info.index]) )
         {
             case 1: // update component
             {
-                info.buildUI( info.uid_comp, layer, am, _gui, _ecs, _selected_entity );
+                info.buildUI( info.uid_comp, am, _ui, _ecs, _selected_entity );
             }
             break;
 
@@ -101,7 +101,7 @@ namespace kege{
 
             default: break;
         }
-        _gui->pop();
+        _ui->pop();
     }
 
     void InspectorPanel::handle(const kege::ui::AssetMetadataDropOff& event)
@@ -179,7 +179,7 @@ namespace kege{
         _listed_component.resize(_infos.size());
         for (int i=0; i<_infos.size(); ++i)
         {
-            _listed_component[i] = _gui->layout()->text(_infos[i].name.c_str(), 20);
+            _listed_component[i] = _ui->layout()->text(_infos[i].name.c_str(), 20);
         }
     }
 
@@ -190,7 +190,7 @@ namespace kege{
     ,   _scroll_amount( 0.f )
     ,   _ecs(dm->getEditor()->getECS())
     {
-        _text_add = _gui->layout()->text("Add Component", 20);
+        _text_add = _ui->layout()->text("Add Component", 20);
 
         _styles[1] = kege::ui::Style
         {

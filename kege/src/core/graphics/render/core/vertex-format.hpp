@@ -36,6 +36,7 @@ namespace kege{
 
     int sizeOf( ShaderVar t );
     std::string shaderVarToString( ShaderVar t );
+    kege::ShaderVar stringToShaderVarType( const std::string& str );
 
     enum VertexBit
     {
@@ -48,6 +49,9 @@ namespace kege{
         WEIGHTS     = 1 << 5,   // Billboard particles/quads
         JOINTS      = 1 << 6,   // GPU instancing
         COLOR       = 1 << 7,   // Use vertex color attribute
+
+        ALBEDO      = 1 << 8,
+        EMISSIVE    = 1 << 9,
     };
 
     typedef int VertexSignature;
