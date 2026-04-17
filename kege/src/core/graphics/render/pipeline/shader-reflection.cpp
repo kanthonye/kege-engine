@@ -100,6 +100,7 @@ namespace kege {
         ts.pos = 0;
         while (!ts.eof())
         {
+            size_t save = ts.pos;
             if (ts.match("struct"))
             {
                 parse_structs(ts);
@@ -124,7 +125,7 @@ namespace kege {
                 else if (ts.match("uniform"))
                 {
                     ts.skip_ws();
-                    size_t save = ts.pos;
+                    save = ts.pos;
                     std::string next = ts.read_identifier();
                     ts.pos = save;
 
@@ -138,6 +139,11 @@ namespace kege {
                         parse_uniform_block(ts, set, binding);
                     }
                 }
+            }
+            else if (ts.match("#define"))
+            {
+                ts.pos = save;
+                parse_preprocessor(ts);
             }
             else
             {
@@ -220,6 +226,7 @@ namespace kege {
 
             ts.skip_ws();
             if (ts.match_char('[')) {
+                ts.pos--;
                 std::string arr = ts.read_balanced('[', ']');
                 m.array_expr = arr;
                 m.array_size = resolve_int(arr);
@@ -246,6 +253,11 @@ namespace kege {
             TokenStream body_ts{body};
             res.members = parse_member_list(body_ts);
             res.name = ts.read_identifier(); // instance name
+            if (ts.match_char('['))
+            {
+                ts.pos--;
+                res.count = ts.read_balanced('[', ']');
+            }
             ts.match_char(';');
             _resources.push_back(std::move(res));
         }
@@ -259,6 +271,12 @@ namespace kege {
         res.binding = binding;
         res.struct_type = ts.read_identifier(); // sampler2D
         res.name = ts.read_identifier(); // u_albedo
+        ts.skip_ws();
+        if (ts.match_char('['))
+        {
+            ts.pos--;
+            res.count = ts.read_balanced('[', ']');
+        }
         ts.match_char(';');
         _resources.push_back(std::move(res));
     }
@@ -278,6 +296,121 @@ namespace kege {
         return io;
     }
 
+    // Add these to ShaderReflection class
+    uint32_t ShaderReflection::align_to(uint32_t offset, uint32_t alignment) const {
+        return (offset + alignment - 1) & ~(alignment - 1);
+    }
+
+    uint32_t ShaderReflection::get_base_alignment(const std::string& type) const {
+        if (type == "bool" || type == "int" || type == "uint" || type == "float") return 4;
+        if (type == "vec2") return 8;
+        if (type == "vec3" || type == "vec4") return 16; // vec3 aligns to 16 in std140
+        if (type == "mat2") return 16; // 2 * vec2, vec2 aligns to 8 but mat2 to 16
+        if (type == "mat3") return 16; // 3 * vec3
+        if (type == "mat4") return 16; // 4 * vec4
+        if (type == "double") return 8;
+        if (type == "dvec2") return 16;
+        if (type == "dvec3" || type == "dvec4") return 32;
+
+        // Nested struct: alignment = max member alignment, rounded to 16
+        auto it = _structs.find(type);
+        if (it!= _structs.end()) {
+            uint32_t max_align = 16; // std140 minimum
+            for (const auto& m : it->second.members) {
+                max_align = std::max(max_align, get_base_alignment(m.type));
+            }
+            return align_to(max_align, 16);
+        }
+        return 16;
+    }
+
+    uint32_t ShaderReflection::get_type_size(const std::string& type) const {
+        if (type == "bool" || type == "int" || type == "uint" || type == "float") return 4;
+        if (type == "vec2") return 8;
+        if (type == "vec3") return 12; // size 12, but alignment 16
+        if (type == "vec4") return 16;
+        if (type == "mat2") return 32; // 2 * vec4, std140 promotes vec2 to vec4
+        if (type == "mat3") return 48; // 3 * vec4
+        if (type == "mat4") return 64; // 4 * vec4
+        if (type == "double") return 8;
+        if (type == "dvec2") return 16;
+        if (type == "dvec3") return 24;
+        if (type == "dvec4") return 32;
+
+        // Nested struct: layout members and return total
+        auto it = _structs.find(type);
+        if (it!= _structs.end())
+        {
+            uint32_t offset = 0;
+            for (const auto& m : it->second.members)
+            {
+                uint32_t base_align = get_base_alignment(m.type);
+                uint32_t base_size = get_type_size(m.type);
+
+                if (m.array_size > 0)
+                {
+                    uint32_t elem_stride = align_to(base_size, 16); // arrays stride by vec4
+                    offset = align_to(offset, align_to(base_align, 16));
+                    offset += elem_stride * static_cast<uint32_t>(m.array_size);
+                }
+                else
+                {
+                    offset = align_to(offset, base_align);
+                    offset += base_size;
+                }
+            }
+            return align_to(offset, 16); // struct size rounded to vec4
+        }
+        return 16;
+    }
+
+    void ShaderReflection::layout_struct_members(std::vector<ShaderMember>& members, uint32_t& current_offset) {
+        for (auto& m : members) {
+            uint32_t base_align = get_base_alignment(m.type);
+            uint32_t base_size = get_type_size(m.type);
+
+            if (m.array_size > 0) {
+                // std140: array stride = align(base_size, 16), each element aligned to max(16, base_align)
+                uint32_t elem_align = align_to(base_align, 16);
+                uint32_t elem_stride = align_to(base_size, 16);
+
+                current_offset = align_to(current_offset, elem_align);
+                m.offset = current_offset;
+                m.alignment = elem_align;
+                m.size = base_size;
+                m.stride = elem_stride;
+                current_offset += elem_stride * static_cast<uint32_t>(m.array_size);
+            } else {
+                current_offset = align_to(current_offset, base_align);
+                m.offset = current_offset;
+                m.alignment = base_align;
+                m.size = base_size;
+                m.stride = 0;
+                current_offset += base_size;
+            }
+        }
+    }
+
+    void ShaderReflection::calculate_layouts() {
+        // First layout all structs so nested structs have correct sizes
+        for (auto& [name, s] : _structs) {
+            uint32_t offset = 0;
+            layout_struct_members(s.members, offset);
+            s.size = align_to(offset, 16);
+        }
+
+        // Then layout UBO/SSBO/PushConstant blocks
+        for (auto& res : _resources) {
+            if (res.type == ShaderResourceType::UniformBuffer ||
+                res.type == ShaderResourceType::StorageBuffer ||
+                res.type == ShaderResourceType::PushConstant) {
+
+                uint32_t offset = 0;
+                layout_struct_members(res.members, offset);
+                res.block_size = align_to(offset, 16);
+            }
+        }
+    }
     void ShaderReflection::clear() {
         _structs.clear();
         _resources.clear();

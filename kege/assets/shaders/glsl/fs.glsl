@@ -16,7 +16,10 @@ layout(location = IN_TANGENT) in vec3 in_tangent;
 layout(location = IN_BITANGENT) in vec3 in_bitangent;
 
 
+#define OUT_COLOR 5
+layout(location = OUT_COLOR) out vec4 out_color;
 
+#define CAMERA_SET 0
 #define CAMERA_BINDING 0
 // This file defines the camera data uniform buffer for the PBR shader
 layout(std140, set = CAMERA_SET, binding = CAMERA_BINDING) uniform CameraData
@@ -28,7 +31,8 @@ layout(std140, set = CAMERA_SET, binding = CAMERA_BINDING) uniform CameraData
 }
 camera;
 
-#define OBJECT_BINDING 1
+#define OBJECT_SET 1
+#define OBJECT_BINDING 0
 // This defines the uniform buffer for object data in the PBR shader, including the model matrix and normal matrix
 layout(std140, set = OBJECT_SET, binding = OBJECT_BINDING) uniform ObjectData
 {
@@ -94,7 +98,7 @@ material;
 layout(set = MATERIAL_SET, binding = 1) uniform sampler2D MaterialTextures[8];
 
 #define DIRECTIONAL_LIGHT_SET 3
-#define DIRECTIONAL_LIGHT_BINDING 4
+#define DIRECTIONAL_LIGHT_BINDING 0
 // This defines the uniform buffer for directional lights in the PBR shader
 struct DirectionalLight
 {
@@ -110,7 +114,8 @@ layout(std140, set = DIRECTIONAL_LIGHT_SET, binding = DIRECTIONAL_LIGHT_BINDING)
 };
 
 #define POINT_LIGHTS_SET 4
-#define POINT_LIGHTS_BINDING 5
+#define POINT_LIGHTS_BINDING 0
+#define MAX_POINT_LIGHTS 20
 /**
  * This defines the uniform buffer for point lights in the PBR shader, including
  * the properties of each point light and an array to hold multiple point lights
@@ -142,50 +147,6 @@ vec3 getAlbedo()
     }
     return albedo;
 }
-// Function to decode a normal map value into a world space normal vector
-vec3 getNormal()
-{
-    vec3 world_normal = in_normal;
-    if ( 0 <= material.normal_map )
-    {
-        // Transform from tangent space to world space
-        vec3 T = normalize(in_tangent);
-        vec3 B = normalize(in_bitangent);
-        vec3 N = normalize(in_normal);
-        mat3 TBN = mat3(T, B, N);
-
-        // Decode normal from [0,1] to [-1,1]
-        vec3 encoded_normal = texture(MaterialTextures[ material.normal_map ], in_texcoord).rgb;
-        vec3 tangent_normal = normalize( encoded_normal * 2.0 - 1.0 );
-
-        // Transform to world space
-        world_normal = TBN * tangent_normal;
-    }
-    return world_normal;
-}
-
-float getOpacity()
-{    
-    float opacity = material.albedo.a;
-    // Sample opacity texture if available
-    if (0 <= material.opacity_map) 
-    {
-        ivec2 texture_id = material.opacity_map;
-        opacity = texture(MaterialTextures[ texture_id.x ], in_texcoord)[ texture_id.y ];
-    }
-    return opacity;
-}
-float getAmbientOcclusion()
-{    
-    float ambient_occlusion = material.ambient_occlusion;
-    // Sample ambient occlusion texture if available
-    if (0 <= material.ambient_occlusion_map) 
-    {
-        ivec2 texture_id = material.ambient_occlusion_map;
-        ambient_occlusion = texture(MaterialTextures[ texture_id.x ], in_texcoord)[ texture_id.y ];
-    }
-    return ambient_occlusion;
-}
 float getRoughness()
 {
     float roughness = material.roughness;
@@ -209,17 +170,28 @@ float getMetallic()
     }
     return metallic;
 }
-vec3 getAlbedo()
-{
-    vec3 albedo = material.albedo.rgb;
-    // Sample diffuse texture if available
-    if (0 <= material.albedo_map) 
+float getOpacity()
+{    
+    float opacity = material.albedo.a;
+    // Sample opacity texture if available
+    if (0 <= material.opacity_map) 
     {
-        albedo = texture(MaterialTextures[ material.albedo_map ], in_texcoord).rgb;
+        ivec2 texture_id = material.opacity_map;
+        opacity = texture(MaterialTextures[ texture_id.x ], in_texcoord)[ texture_id.y ];
     }
-    return albedo;
+    return opacity;
 }
-
+float getAmbientOcclusion()
+{    
+    float ambient_occlusion = material.ambient_occlusion;
+    // Sample ambient occlusion texture if available
+    if (0 <= material.ambient_occlusion_map) 
+    {
+        ivec2 texture_id = material.ambient_occlusion_map;
+        ambient_occlusion = texture(MaterialTextures[ texture_id.x ], in_texcoord)[ texture_id.y ];
+    }
+    return ambient_occlusion;
+}
 vec3 getEmissive()
 {    
     vec3 emissive = material.emissive;
@@ -229,6 +201,28 @@ vec3 getEmissive()
         emissive = texture(MaterialTextures[ material.emissive_map ], in_texcoord).rgb;
     }
     return emissive;
+}
+
+// Function to decode a normal map value into a world space normal vector
+vec3 getNormal()
+{
+    vec3 world_normal = in_normal;
+    if ( 0 <= material.normal_map )
+    {
+        // Transform from tangent space to world space
+        vec3 T = normalize(in_tangent);
+        vec3 B = normalize(in_bitangent);
+        vec3 N = normalize(in_normal);
+        mat3 TBN = mat3(T, B, N);
+
+        // Decode normal from [0,1] to [-1,1]
+        vec3 encoded_normal = texture(MaterialTextures[ material.normal_map ], in_texcoord).rgb;
+        vec3 tangent_normal = normalize( encoded_normal * 2.0 - 1.0 );
+
+        // Transform to world space
+        world_normal = TBN * tangent_normal;
+    }
+    return world_normal;
 }
 
 // GGX/Trowbridge-Reitz normal distribution function
@@ -332,9 +326,12 @@ vec3 pbrLighting //calculatePBR_Metallic
 }
 
 
-
-
 void main() {
+    vec3 final_color = vec3(0.0);
+
+    vec3 lighting = vec3(0.0);
+
+    vec3 position = in_position;
     vec3 albedo = getAlbedo();
 
     vec3 normal = getNormal();
@@ -347,9 +344,11 @@ void main() {
 
     float metallic = getMetallic();
 
+    vec3 normal = getNormal();
 
     vec3 emissive = getEmissive();
 
+    vec3 view_dir = normalize(camera.cameraPosition - in_position);
     // Integrate the contribution of all directional lights in the scene using the PBR lighting model
     lighting = vec3(0.0);
     for (int i = 0; i < directional_light_count && i < MAX_DIRECTIONAL_LIGHTS; i++)
@@ -398,5 +397,34 @@ void main() {
     final_color += lighting;
 
 
+    out_color = vec3(final_color, 1.f);
 
 }
+
+
+struct MeshBatch
+{
+    map<Mesh*, vector<Tansform>> batchs;
+    StorageBuffer ssbo;
+    DescriptorSet set;
+};
+
+struct MaterialBatch
+{
+    map<Material*, MeshBatch*> batchs;
+    StorageBuffer ssbo;
+    DescriptorSet set;
+};
+
+struct TextureBatch
+{
+    map<Image*, MaterialBatch*> batchs;
+    array< ImageHandle > handles;
+    DescriptorSet set;
+    bool modified;
+};
+
+struct PipelineBatch
+{
+    map<Pipeline*, TextureBatch> images;
+};

@@ -170,7 +170,7 @@ namespace kege{
         }
         else
         {
-            kege::Log::error << "system create function for -> " << name <<" dont exist." <<kege::Log::nl;
+            kege::Log::warning << "system create function for -> " << name <<" dont exist." <<kege::Log::nl;
         }
     }
 

@@ -42,7 +42,7 @@ layout(std140, set = CAMERA_SET, binding = CAMERA_BINDING) uniform CameraData
 camera;
 
 #define OBJECT_SET 1
-#define OBJECT_BINDING 1
+#define OBJECT_BINDING 0
 // This defines the uniform buffer for object data in the PBR shader, including the model matrix and normal matrix
 layout(std140, set = OBJECT_SET, binding = OBJECT_BINDING) uniform ObjectData
 {

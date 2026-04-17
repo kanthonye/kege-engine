@@ -29,8 +29,9 @@ namespace kege {
     struct ShaderMember {
         std::string type;
         std::string name;
-        size_t array_size = 0;
         std::string array_expr;
+        
+        uint32_t array_size;
 
         uint32_t offset = 0;
         uint32_t size = 0;
@@ -47,6 +48,7 @@ namespace kege {
     struct ShaderStruct {
         std::string name;
         std::vector<ShaderMember> members;
+        uint32_t size = 0;
     };
 
     struct ShaderResource {
@@ -56,6 +58,7 @@ namespace kege {
         std::string struct_type;
         std::string set;
         std::string binding;
+        std::string count;
         std::vector<ShaderMember> members;
         uint32_t block_size = 0;
     };
@@ -76,10 +79,11 @@ namespace kege {
 
         const std::unordered_map<std::string, ShaderStruct>& get_structs() const { return _structs; }
         const std::vector<ShaderResource>& get_resources() const { return _resources; }
-        const std::vector<ShaderDefine>& get_defines() const { return _defines_found; } // defines parsed from file
+        const std::unordered_map<std::string, std::string>& get_defines() const { return _define_map; } // defines parsed from file
         const std::vector<ShaderIO>& get_outputs() const { return _outputs; }
         const std::vector<ShaderIO>& get_inputs() const { return _inputs; }
 
+        uint32_t resolve_int(const std::string& expr) const;
         void calculate_layouts();
         void clear();
 
@@ -106,14 +110,19 @@ namespace kege {
         ShaderIO parse_io(TokenStream& ts, std::string& location);
         std::vector<ShaderMember> parse_member_list(TokenStream& ts);
 
-        std::string resolve_value(const std::string& expr) const;
-        uint32_t resolve_int(const std::string& expr) const;
-        std::string strip_comments(const std::string& src) const;
-
+        // Add these to ShaderReflection class
+        uint32_t align_to(uint32_t offset, uint32_t alignment) const;
         uint32_t get_base_alignment(const std::string& type) const;
         uint32_t get_type_size(const std::string& type) const;
-        uint32_t align_to(uint32_t offset, uint32_t alignment) const;
         void layout_struct_members(std::vector<ShaderMember>& members, uint32_t& current_offset);
+
+        std::string resolve_value(const std::string& expr) const;
+        std::string strip_comments(const std::string& src) const;
+
+//        uint32_t get_base_alignment(const std::string& type) const;
+//        uint32_t get_type_size(const std::string& type) const;
+//        uint32_t align_to(uint32_t offset, uint32_t alignment) const;
+//        void layout_struct_members(std::vector<ShaderMember>& members, uint32_t& current_offset);
 
     private:
 

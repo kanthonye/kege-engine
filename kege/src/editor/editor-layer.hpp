@@ -8,6 +8,7 @@
 #ifndef editor_hpp
 #define editor_hpp
 
+#include "shader-compiler.hpp"
 #include "ui-executor.hpp"
 #include "dock/ui-dock-manager.hpp"
 

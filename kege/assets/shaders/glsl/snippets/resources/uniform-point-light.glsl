@@ -1,3 +1,4 @@
+#define MAX_POINT_LIGHTS 20
 /**
  * This defines the uniform buffer for point lights in the PBR shader, including
  * the properties of each point light and an array to hold multiple point lights

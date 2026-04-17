@@ -47,7 +47,9 @@ namespace kege{
         kege::VirtualDirectory::instance().add( "config", "/Users/kae/Developer/vscode/kege-engine/kege/assets/config" );
         kege::VirtualDirectory::instance().add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );
         kege::VirtualDirectory::instance().add( "compute-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/compute" );
- 
+        kege::VirtualDirectory::instance().add( "snippets", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/snippets" );
+
+
         //-----------------------------------------------------------------------//
         // Create Asset Manager
         //-----------------------------------------------------------------------//

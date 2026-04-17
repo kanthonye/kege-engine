@@ -26,17 +26,12 @@
 #include "shader.hpp"
 #include "shader-io.hpp"
 #include "shader-reflection.hpp"
+#include "shader-pipeline.hpp"
 
 namespace kege{
 
     class ShaderCompiler
     {
-    public:
-
-        void compileVariant(const kege::PipelineKey& key);
-        void getVariant(const kege::PipelineKey& key);
-        ShaderCompiler(kege::Graphics* graphics);
-
     private:
 
         struct VertexInfo
@@ -57,17 +52,26 @@ namespace kege{
             std::vector< Define > defs;
         };
 
-        struct Pair
-        {
-            uint32_t set, binding;
-        };
-
         struct Stage
         {
+            std::set<std::string> defined_sets;
             std::map< std::string, int > defines;
             std::vector< ShaderIO > output;
             std::vector< ShaderIO > input;
+            ShaderStageFlag type;
         };
+
+    public:
+
+        void addDefine(Defines& defines, const std::string& name, int index = 1);
+        ref::ShaderPipeline compileVariant(const kege::PipelineKey& key);
+        void getVariant(const kege::PipelineKey& key);
+        ShaderCompiler(kege::Graphics* graphics, const std::string& filepath);
+
+    private:
+
+        ref::ShaderPipeline compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs);
+
 
         void addAttribute(kege::VertexBit semantic, int location, kege::ShaderVar type, const char* name );
 
@@ -95,56 +99,52 @@ namespace kege{
         std::string writeVertexShader();
         std::string writeFragmentShader();
 
-        void compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs);
-
         std::string include(const std::string& fname );
-        std::string process(const std::string& fname );
 
         void define(std::stringstream& source, const std::string& name, int index = 1);
-        std::string parseDefineName(const std::string& line);
-        void addDefine(Defines& defines, const std::string& name, int index = 1);
+
+
+        int resolveDefnInt(Stage* stage, const std::string& str);
+        kege::VertexBit resolveVertexBitType( const std::string& str );
 
         bool checkFeatures(uint64_t signature) { return (_key.features & signature); }
         bool hasInput(int signature);
         void writeFeatures();
 
-        void processShadingModel(std::stringstream& source, const kege::ShadingModel& key);
-        void processMeshType(std::stringstream& source, const kege::PipelineKey& key);
-
     private:
-//        std::map<std::string, kege::BindSetDesc> _sets;
 
+        std::string _filepath;
 
         std::map< kege::ShaderStageFlag, Stage > _stages;
         Stage* _curr_stage;
 
-        std::vector< std::string > _output_fnames;
 
-        std::map< kege::ShaderStageFlag, Defines > _defines;
-        Defines _global_defines;
+        struct SetMeta
+        {
+            int set;
+            std::map< std::string, uint32_t > bindings;
+        };
 
-        std::map< std::string, Pair > _defs;
+        std::map< std::string, SetMeta > _set_meta_map;
 
-        ShaderStageFlag _current_stage;
-
-        kege::PipelineKey _key;
-        //std::vector<VertexInfo> _inputs;
-        //std::vector<VertexInfo> _outputs;
-
-//        kege::PipelineRendering _pipeline_rendering;
-//        kege::VertexLayout _vertex_layout;
-
-
-        //std::map< std::string, size_t > _shader_set_index_map;
-        kege::BindSetDescs _shader_sets;
+        //std::map< std::string, Pair > _set_qualifiers;
+        std::map<int, BindSetDesc> _bind_set_descs;
         kege::PushBlockDescs _push_blocks;
 
+        std::map< std::string, int > _io_defs;
+        std::vector< std::string > _output_fnames;
+
+        std::map< std::string, kege::VertexBit > _vertex_bit_string_map;
+
+        Defines _global_defines;
+
+        kege::PipelineKey _key;
+
         kege::Graphics* _graphics;
-        int _binding_index = 0;
-        int _set_index = 0;
 
         int _output_location = 0;
         int _input_location = 0;
+        int _set_count = 0;
 
         bool _has_lights;
         bool _has_material;

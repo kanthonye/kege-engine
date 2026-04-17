@@ -35,6 +35,19 @@ namespace kege{
         ref::RenderGraph _render_graph;
     };
 
+//    class RenderLayer : AppLayer
+//    {
+//    public:
+//
+//        RenderLayer(kege::Renderer* renderer, kege::ECS* ecs);
+//        bool render();
+//
+//    private:
+//
+//        Renderer* renderer;
+//        ECS* ecs;
+//    };
+
 }
 namespace kege::ref{
     typedef kege::Ref< kege::RenderLayer > RenderLayer;

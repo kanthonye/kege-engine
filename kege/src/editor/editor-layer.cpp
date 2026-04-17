@@ -16,6 +16,7 @@
 
 #include "editor-layer.hpp"
 #include "../core/graphics/render/graph/render-graph.hpp"
+
 //#include "bench.h"
 //
 //using Clock = std::chrono::high_resolution_clock;
@@ -159,7 +160,6 @@ namespace kege{
 
         _dock_manager = new kege::ui::DockManager(this, window_size.width, window_size.height);
         // TODO: SettingPanel, ConsolePanel
-
 
 //        _context.ui = &_ui;
 //        _context.bindings.add("apple", ui::Binding{

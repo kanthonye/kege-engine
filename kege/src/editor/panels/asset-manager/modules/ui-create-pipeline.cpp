@@ -63,7 +63,7 @@ namespace kege::ui{
                     ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
                     kege::Graphics* graphics = _manager->getManager()->getEditor()->getRenderGraph()->getGraphics();
 
-                    ShaderCompiler compiler(graphics);
+                    ShaderCompiler compiler(graphics, "");
                     kege::Ref< kege::ShaderPipeline > pipeline = compiler.compileVariant(_pipeline_key);
                     uint64_t handle = asset_manager->add< kege::Ref< kege::ShaderPipeline > >(_asset_name, pipeline);
 

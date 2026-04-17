@@ -10,16 +10,21 @@
 
 namespace kege{
 
-    void ShaderCompiler::compileVariant(const kege::PipelineKey& key)
+    bool isNumeric(const std::string& str)
+    {
+        return std::all_of( str.begin(), str.end(), ::isdigit );
+    }
+    
+    ref::ShaderPipeline ShaderCompiler::compileVariant(const kege::PipelineKey& key)
     {
         _key = key;
-        _set_index = 0;
-        _binding_index = 0;
+        _set_count = 0;
+        //_binding_index = 0;
         
         writeFeatures();
         std::string vs = writeVertexShader();
         std::string fs = writeFragmentShader();
-        compileShader(key, vs, fs);
+        return compileShader(key, vs, fs);
     }
 
     void ShaderCompiler::getVariant(const kege::PipelineKey& key)
@@ -68,7 +73,7 @@ namespace kege{
         return source.str();
     }
 
-    void ShaderCompiler::compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs)
+    ref::ShaderPipeline ShaderCompiler::compileShader(const kege::PipelineKey& key, const std::string& vs, const std::string& fs)
     {
         const std::string path = "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/";
 
@@ -114,18 +119,72 @@ namespace kege{
 //            }),
 //        };
 //
-//        description.features = key.features;
-//        description.depth_stencil = key.depth_state;
 //        description.input_assembly.topology = key.topology;
+//        description.depth_stencil = key.depth_state;
 //        description.rasterizer = key.raster_state;
-//        description.vertex_layout = _vertex_layout;
-//        description.pipeline_rendering = _pipeline_rendering;
-//        description.shader_layout = _shader_layout;
+//        description.features = key.features;
 //
-//        if(key.blend_state.enable) description.color_blend.attachments.push_back(key.blend_state);
+//        _curr_stage = &_stages[ kege::ShaderStageFlag::Vertex ];
+//        description.vertex_layout.signature = 0;
+//        uint32_t stride = 0;
+//        for (auto a : _curr_stage->input)
+//        {
+//            VertexAttribute va;
+//            va.name = a.name;
+//            va.binding = 0;
+//            va.semantic = resolveVertexBitType( a.name );
+//            va.location = resolveDefnInt(_curr_stage, a.location);
+//            va.type = stringToShaderVarType(a.type);
 //
-//        _graphics->createShaderPipeline(description);
-//        return nullptr;
+//            description.vertex_layout.attributes.push_back(va);
+//            description.vertex_layout.signature |= va.semantic;
+//
+//            stride += sizeOf( va.type );
+//        }
+//        description.vertex_layout.input_rates.push_back({
+//            .index = 0,
+//            .stride = stride,
+//            .input_rate = kege::VertexInputRate::Vertex,
+//        });
+//
+//        for (auto m = _bind_set_descs.begin(); m != _bind_set_descs.end(); m++)
+//        {
+//            description.shader_layout.bind_sets.push_back( m->second );
+//        }
+//
+//        switch ( _key.render_pass )
+//        {
+//            default:
+//            {
+//                description.pipeline_rendering.color_attachment_formats.push_back(kege::Format::bgra_8_srbg);
+//                description.pipeline_rendering.depth_attachment_format = kege::Format::depth_32;
+//                description.color_blend.attachments.push_back( kege::BlendStatePreset::alphaBlend() );
+//                description.color_blend.logic_op_enable = true;
+//                break;
+//            }
+//            case kege::RenderPass::GBuffer:
+//            {
+//                // position.x | position.y | position.z | metallic
+//                description.pipeline_rendering.color_attachment_formats.push_back(kege::Format::rgba_f32);
+//                // normal.x   | normal.y   | normal.z   | roughness
+//                description.pipeline_rendering.color_attachment_formats.push_back(kege::Format::rgba_f16);
+//                // albedo.x   | albedo.y   | albedo.z   | ambient-occlusion
+//                description.pipeline_rendering.color_attachment_formats.push_back(kege::Format::rgba_u8_norm);
+//                description.pipeline_rendering.depth_attachment_format = kege::Format::depth_32;
+//
+//                description.color_blend.logic_op_enable = false;
+//                break;
+//            }
+//            case kege::RenderPass::Lighting:
+//            {
+//                description.pipeline_rendering.color_attachment_formats.push_back(kege::Format::rgba_f16);
+//                description.color_blend.attachments.push_back( kege::BlendStatePreset::alphaBlend() );
+//                description.color_blend.logic_op_enable = true;
+//                break;
+//            }
+//        }
+//        return _graphics->createShaderPipeline(description);
+        return nullptr;
     }
 
     void ShaderCompiler::addAttribute(kege::VertexBit vertex_bit, int location, kege::ShaderVar type, const char* name )
@@ -143,8 +202,8 @@ namespace kege{
     void ShaderCompiler::beginVertexShader(std::stringstream& source)
     {
         source << "// Vertex Shader: automatically generated by KEGE based on pipeline key.\n\n";
-        _current_stage = kege::ShaderStageFlag::Vertex;
-        _curr_stage = &_stages[ _current_stage ];
+        _curr_stage = &_stages[ kege::ShaderStageFlag::Vertex ];
+        _curr_stage->type = kege::ShaderStageFlag::Vertex;
     }
 
     void ShaderCompiler::endVertexShader(std::stringstream& source){
@@ -155,8 +214,8 @@ namespace kege{
     void ShaderCompiler::beginFragmentShader(std::stringstream& source)
     {
         source << "// Fragment Shader: automatically generated by KEGE based on pipeline key.\n\n";
-        _current_stage = kege::ShaderStageFlag::Fragment;
-        _curr_stage = &_stages[ _current_stage ];
+        _curr_stage = &_stages[ kege::ShaderStageFlag::Fragment ];
+        _curr_stage->type = kege::ShaderStageFlag::Fragment;
 
         _has_normal_mapping = (_key.features & kege::FeatureFlag::NORMAL_MAPPING);
         _has_material = (_key.features & kege::FeatureFlag::MATERIAL);
@@ -194,24 +253,86 @@ namespace kege{
     {
         const std::string& snippet = include(fname);
 
+        uint32_t binding_index = 0;
+        SetMeta* meta = nullptr;
+
         ShaderReflection sr;
+        //sr.add_define("", 0)
         sr.parse_source( snippet );
 
         const std::vector<ShaderResource>& resources = sr.get_resources();
         for (const ShaderResource& res : resources)
         {
+            auto iset = _set_meta_map.find( res.set );
+            if (iset == _set_meta_map.end())
+            {
+                meta = &_set_meta_map[ res.set ];
+                // if the set index is a numeric value, get index.
+                if ( isNumeric(res.set) )
+                {
+                    meta->set = static_cast< uint32_t >( std::stoul( res.set ) );
+                }
+                else
+                {
+                    meta->set = _set_count++;
+                }
+                // define it in the shader to prevent duplicate macros
+                _curr_stage->defined_sets.insert( res.set );
+                define(source, res.set, meta->set);
+            }
+            else
+            {
+                meta = &iset->second;
+                // if the set was not define in the current shader stage define add it.
+                if(_curr_stage->defined_sets.end() == _curr_stage->defined_sets.find( res.set ))
+                {
+                    define( source, res.set, meta->set );
+                }
+            }
+
+            // if the set binding index is a numeric value, get binding index.
+            if ( !isNumeric( res.binding ) )
+            {
+                auto b = meta->bindings.find(res.binding);
+                if (b == meta->bindings.end())
+                {
+                    uint32_t next_index = static_cast< uint32_t >( meta->bindings.size() );
+                    uint32_t* binding = &meta->bindings[ res.binding ];
+                    // if the set binding index is a numeric value, get binding index.
+                    if (isNumeric(res.binding))
+                    {
+                        *binding = static_cast< uint32_t >( std::stoul( res.binding ) );
+                    }
+                    else
+                    {
+                        *binding = next_index;
+                    }
+                    define(source, res.binding, *binding);
+                }
+                else
+                {
+                    define(source, res.binding, b->second);
+                }
+                binding_index = b->second;
+            }
+            else
+            {
+                binding_index = static_cast< uint32_t >( std::stoul( res.binding ) );
+            }
+
+            
             kege::Ref< kege::ShaderStructBlock > block;
             if( !res.members.empty() )
             {
                 std::vector<kege::ShaderStructField> fields;
-                for (auto& mem : res.members)
+                for (auto& m : res.members)
                 {
                     fields.push_back
                     ({
-                        .count = 1,
-                        .type = mem.type,
-                        .name = mem.name,
-                        .size = static_cast<uint32_t>( kege::sizeOf( kege::stringToShaderVarType(mem.type) ) )
+                        .count = (m.array_size != 0)? m.array_size : 1,
+                        .type = m.type,
+                        .name = m.name,
+                        .size = static_cast<uint32_t>( kege::sizeOf( kege::stringToShaderVarType(m.type) ) )
                     });
                 }
                 block = new ShaderStructBlock(ShaderStructType::Buffer, res.struct_type, fields);
@@ -221,9 +342,10 @@ namespace kege{
             {
                 BindPointDesc bind_point;
                 bind_point.name = res.name;
-                bind_point.count = 1;
-                bind_point.stages |= _current_stage;
+                bind_point.stages |= _curr_stage->type;
                 bind_point.block = block;
+                bind_point.index = binding_index;
+                bind_point.count = kege::max<uint32_t>(1, sr.resolve_int(res.count));
 
                 switch (res.type)
                 {
@@ -239,63 +361,18 @@ namespace kege{
                         break;
                     default: break;
                 }
-
-                std::set<std::string> set;
-                auto it = _defs.find(res.set);
-                if (it == _defs.end())
+                
+                auto m = _bind_set_descs.find( meta->set );
+                if (m == _bind_set_descs.end())
                 {
-                    uint32_t set_index;
-                    if (std::all_of(res.set.begin(), res.set.end(), ::isdigit))
-                    {
-                        set_index = static_cast<uint32_t>(std::stoul(res.set));
-                    }
-                    else
-                    {
-                        set_index = _set_index++;
-                    }
-
-                    define(source, res.set, set_index);
-                    if (std::all_of(res.binding.begin(), res.binding.end(), ::isdigit))
-                    {
-                        bind_point.index = static_cast<uint32_t>(std::stoul(res.binding));
-                    }
-                    else
-                    {
-                        bind_point.index = _binding_index++;
-                        define(source, res.binding, bind_point.index);
-                    }
-
-                    _defs[res.set] = {set_index, bind_point.index};
-
-                    _shader_sets.push_back
-                    ({
-                        .index = set_index,
-                        .name = res.block_name,
-                        .bindings = {{bind_point}}
-                    });
+                    BindSetDesc& bind_set = _bind_set_descs[ meta->set ];
+                    bind_set.bindings.push_back(bind_point);
+                    bind_set.name = res.block_name;
+                    bind_set.index = meta->set;
                 }
                 else
                 {
-                    if (std::all_of(res.binding.begin(), res.binding.end(), ::isdigit))
-                    {
-                        bind_point.index = static_cast<uint32_t>(std::stoul(res.binding));
-                    }
-                    else
-                    {
-                        define(source, res.binding, it->second.binding);
-                        bind_point.index = _binding_index++;
-                    }
-
-                    if (!std::all_of(res.set.begin(), res.set.end(), ::isdigit))
-                    {
-                        // ensure that the set macro is defined once per shader that uses it
-                        if(set.find(res.set) != set.end())
-                        {
-                            set.insert(res.set);
-                            define(source, res.set, it->second.set);
-                        }
-                    }
-                    _shader_sets[ it->second.set ].bindings.push_back(bind_point);
+                    m->second.bindings.push_back(bind_point);
                 }
             }
             else
@@ -303,9 +380,9 @@ namespace kege{
                 PushBlockDesc push_block = {};
                 push_block.name = res.name;
                 push_block.size = res.block_size;
-                push_block.count = 1;
-                push_block.stages = _current_stage;
+                push_block.stages = _curr_stage->type;
                 push_block.block = block;
+                push_block.count = 1;
                 _push_blocks.push_back(push_block);
             }
         }
@@ -322,9 +399,9 @@ namespace kege{
         const std::vector<ShaderIO>& outputs = sr.get_outputs();
         for (const ShaderIO& io : outputs)
         {
+            _curr_stage->output.push_back(io);
             if (!std::all_of(io.location.begin(), io.location.end(), ::isdigit))
             {
-                _curr_stage->output.push_back(io);
                 define(source, io.location, _output_location);
 
                 if(io.location.compare(0, 3, "OUT_"))
@@ -332,8 +409,7 @@ namespace kege{
                     const char* str = io.location.c_str();
                     str += 4;
                     std::string in = std::string("IN_") + str;
-                    _defs[ in ].set = _output_location;
-                    //define(source, std::string("IN_") + str, _output_location);
+                    _io_defs[ in ] = _output_location;
                 }
                 _output_location += 1;
             }
@@ -346,21 +422,27 @@ namespace kege{
     void ShaderCompiler::writeInputs(std::stringstream& source, const std::string& fname)
     {
         const std::string& snippet = include("input/" + fname);
-
-        ShaderReflection sr;
-        sr.parse_source( snippet );
-
-        const std::vector<ShaderIO>& inputs = sr.get_inputs();
-        for (const ShaderIO& io : inputs)
         {
-            if (!std::all_of(io.location.begin(), io.location.end(), ::isdigit))
+            ShaderReflection sr;
+            sr.parse_source( snippet );
+
+            const std::vector<ShaderIO>& inputs = sr.get_inputs();
+            for (const ShaderIO& io : inputs)
             {
-                _curr_stage->input.push_back(io);
-                auto a = _defs.find(io.location);
-                if(a == _defs.end())
-                    define(source, io.location, _input_location++);
-                else
-                    define(source, io.location, a->second.set);
+                if (!std::all_of(io.location.begin(), io.location.end(), ::isdigit))
+                {
+                    _curr_stage->input.push_back(io);
+                    auto a = _io_defs.find(io.location);
+                    if(a == _io_defs.end())
+                    {
+                        _curr_stage->defines[ io.location ] = _input_location;
+                        define(source, io.location, _input_location++);
+                    }
+                    else
+                    {
+                        define(source, io.location, a->second);
+                    }
+                }
             }
         }
         source << snippet;
@@ -368,7 +450,7 @@ namespace kege{
 
     void ShaderCompiler::processInput(std::stringstream& source)
     {
-        if(_current_stage == kege::ShaderStageFlag::Vertex)
+        if(_curr_stage->type == kege::ShaderStageFlag::Vertex)
         {
             switch (_key.renderer_type)
             {
@@ -412,19 +494,20 @@ namespace kege{
                 writeInputs(source, "vertex-color.glsl");
             }
         }
-        else if(_current_stage == kege::ShaderStageFlag::Fragment)
+        else if(_curr_stage->type == kege::ShaderStageFlag::Fragment)
         {
             for(const std::string& input : _output_fnames)
             {
                 writeInputs(source, input);
             }
+            _output_fnames = {};
         }
         source << "\n";
     }
 
     void ShaderCompiler::processOutput(std::stringstream& source)
     {
-        if(_current_stage == kege::ShaderStageFlag::Vertex)
+        if(_curr_stage->type == kege::ShaderStageFlag::Vertex)
         {
             switch (_key.renderer_type)
             {
@@ -464,23 +547,23 @@ namespace kege{
                 writeOutputs(source, "vertex-color.glsl");
             }
         }
-        else if(_current_stage == kege::ShaderStageFlag::Fragment)
+        else if(_curr_stage->type == kege::ShaderStageFlag::Fragment)
         {
             switch ( _key.render_pass )
             {
                 default:
                 {
-                    writeOutputs(source, "write-color-buffer.glsl");
+                    writeOutputs(source, "color-buffer.glsl");
                     break;
                 }
                 case kege::RenderPass::GBuffer:
                 {
-                    writeOutputs(source, "write-geometry-buffer.glsl");
+                    writeOutputs(source, "geometry-buffer.glsl");
                     break;
                 }
                 case kege::RenderPass::Lighting:
                 {
-                    writeOutputs(source, "write-hd-color-buffer.glsl");
+                    writeOutputs(source, "hd-color-buffer.glsl");
                     break;
                 }
             }
@@ -493,7 +576,7 @@ namespace kege{
         writeResource(source, "resources/uniform-camera-data.glsl");
         writeResource(source, "resources/uniform-object-data.glsl");
 
-        if(_current_stage == kege::ShaderStageFlag::Fragment)
+        if(_curr_stage->type == kege::ShaderStageFlag::Fragment)
         {
             if ((_key.features & kege::FeatureFlag::MATERIAL))
             {
@@ -502,7 +585,7 @@ namespace kege{
 
             if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
             {
-                writeResource(source, "resources/textures-ibl.glsl");
+                writeResource(source, "resources/uniform-textures-ibl.glsl");
             }
 
             if ((_key.features & kege::FeatureFlag::DIRECTIONAL_LIGHT))
@@ -522,30 +605,40 @@ namespace kege{
 
     void ShaderCompiler::writeFunctions(std::stringstream& source)
     {
-        if(_current_stage == kege::ShaderStageFlag::Fragment)
+        if(_curr_stage->type == kege::ShaderStageFlag::Fragment)
         {
             if( _has_material )
             {
-                source << include( "resources/fn-get-albedo.glsl") <<"\n";
+                source << include( "functions/fn-get-albedo.glsl") <<"\n";
+                source << include( "functions/fn-get-roughness.glsl") <<"\n";
+                source << include( "functions/fn-get-metallic.glsl") <<"\n";
+                source << include( "functions/fn-get-opacity.glsl") <<"\n";
+                source << include( "functions/fn-get-ambient-occlusion.glsl") <<"\n";
+                source << include( "functions/fn-get-emissive.glsl") <<"\n";
+
                 if (_has_normal_mapping)
                 {
-                    source << include( "resources/fn-get-tbn-normal.glsl") <<"\n";
+                    source << include( "functions/fn-get-tbn-normal.glsl") <<"\n";
                 }
-            }
-            if( _has_material && _has_light_funct && _has_lights )
-            {
-                source << include( "resources/fn-get-opacity.glsl") <<"\n";
-                source << include( "resources/fn-get-ambient-occlusion.glsl") <<"\n";
-                source << include( "resources/fn-get-roughness.glsl") <<"\n";
-                source << include( "resources/fn-get-metallic.glsl") <<"\n";
-                source << include( "resources/fn-get-albedo.glsl") <<"\n";
-                source << include( "resources/fn-get-normal.glsl") <<"\n";
-                source << include( "resources/fn-get-emissive.glsl") <<"\n";
+                else
+                {
+                    source << include( "functions/fn-get-normal.glsl") <<"\n";
+                }
+
+                if ((_key.features & kege::FeatureFlag::ANISOTROPIC_REFLECTION))
+                {
+                    source << include( "functions/fn-anisotropy.glsl") <<"\n";
+                }
+
+                if ((_key.features & kege::FeatureFlag::CLEAR_COAT))
+                {
+                    source << include( "functions/fn-clear-coat.glsl") <<"\n";
+                }
             }
 
             if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
             {
-                source << include( "shading-model/fn-calc-ambient-ibl.glsl") <<"\n";
+                source << include( "functions/fn-calc-ambient-ibl.glsl") <<"\n";
             }
 
             if (_key.shading_model == kege::ShadingModel::LitPBR_Metallic ||
@@ -555,35 +648,17 @@ namespace kege{
                 _key.shading_model == kege::ShadingModel::LitPBR_Subsurface ||
                 _key.shading_model == kege::ShadingModel::LitPBR_Clearcoat )
             {
-                source << include( "shading-model/fn-brdf.glsl") <<"\n";
+                source << include( "functions/fn-brdf.glsl") <<"\n";
             }
 
             if (_key.shading_model == kege::ShadingModel::LitPBR_Metallic)
             {
-                source << include( "shading-model/fn-lighting.glsl") <<"\n";
+                source << include( "functions/fn-lighting.glsl") <<"\n";
             }
 
             if ((_key.features & kege::FeatureFlag::IMAGE_BASE_LIGHTING))
             {
-                source << include( "shading-model/fn-calc-ambient-ibl.glsl") <<"\n";
-            }
-            if ((_key.features & kege::FeatureFlag::MATERIAL))
-            {
-                source << include( "resources/fn-material.glsl") <<"\n";
-                if ((_key.features & kege::FeatureFlag::NORMAL_MAPPING))
-                {
-                    source << include( "resources/fn-normal-mapping.glsl") <<"\n";
-                }
-
-                if ((_key.features & kege::FeatureFlag::ANISOTROPIC_REFLECTION))
-                {
-                    source << include( "resources/fn-anisotropy.glsl") <<"\n";
-                }
-
-                if ((_key.features & kege::FeatureFlag::CLEAR_COAT))
-                {
-                    source << include( "resources/fn-clear-coat.glsl") <<"\n";
-                }
+                source << include( "functions/fn-calc-ambient-ibl.glsl") <<"\n";
             }
         }
     }
@@ -592,7 +667,7 @@ namespace kege{
     {
         source <<"\n";
         source << "void main() {\n";
-        switch ( _current_stage )
+        switch ( _curr_stage->type )
         {
             case kege::ShaderStageFlag::Vertex:
             {
@@ -600,18 +675,19 @@ namespace kege{
 
                 if (_key.renderer_type == kege::MeshType::StaticMesh && (_key.features & kege::FeatureFlag::GPU_SKINNING))
                 {
-                    source << include( "renderer-type/gpu-skinning.glsl") <<"\n";
+                    source << include( "procedures/calc-skin-matrix.glsl") <<"\n";
+                    source << include( "procedures/write-skin-pnt.glsl") <<"\n";
                     if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
                     {
-                        source << include( "renderer-type/gpu-skinning-normal-mapping.glsl") <<"\n";
+                        source << include( "procedures/write-skin-tang-bitang.glsl") <<"\n";
                     }
                 }
                 else if (_key.renderer_type == kege::MeshType::StaticMesh)
                 {
-                    source << include( "renderer-type/static-mesh.glsl") <<"\n";
+                    source << include( "procedures/write-pos-norm-texc.glsl") <<"\n";
                     if (_key.features & kege::FeatureFlag::NORMAL_MAPPING)
                     {
-                        source << include( "renderer-type/static-mesh-normal-mapping.glsl") <<"\n";
+                        source << include( "procedures/write-tang-bitang.glsl") <<"\n";
                     }
                 }
                 else if (_key.renderer_type == kege::MeshType::FlatTerrain)
@@ -626,41 +702,46 @@ namespace kege{
 
                 if (_key.features == kege::FeatureFlag::VERTEX_COLOR)
                 {
-                    source << include( "main/vertex/static-color.glsl") <<"\n";
+                    source << include( "procedures/write-vertex-color.glsl") <<"\n";
                 }
 
-                source << include( "renderer-type/final-vertex-output.glsl") <<"\n";
+                source << include( "procedures/write-vertex-position.glsl") <<"\n";
             }
             break;
 
             case kege::ShaderStageFlag::Fragment:
             {
+                source << include( "procedures/def-v3-final-color.glsl") <<"\n";
+                if( _has_light_funct )
+                {
+                    source << include( "procedures/def-v3-lighting.glsl") <<"\n";
+                }
                 if(( _input_signature & VertexBit::POSITION ))
                 {
                     source << "    vec3 position = in_position;\n";
                 }
                 if( _has_material )
                 {
-                    source << include( "resources/get-albedo.glsl") <<"\n";
+                    source << include( "procedures/get-albedo.glsl") <<"\n";
                     if (_has_normal_mapping)
                     {
-                        source << include( "resources/get-tbn-normal.glsl") <<"\n";
+                        source << include( "procedures/get-normal.glsl") <<"\n";
                     }
                 }
                 if( _has_light_funct )
                 {
                     if( _has_material && _has_lights )
                     {
-                        source << include( "resources/get-opacity.glsl") <<"\n";
-                        source << include( "resources/get-ambient-occlusion.glsl") <<"\n";
-                        source << include( "resources/get-roughness.glsl") <<"\n";
-                        source << include( "resources/get-metallic.glsl") <<"\n";
-                        source << include( "resources/get-normal.glsl") <<"\n";
-                        source << include( "resources/get-emissive.glsl") <<"\n";
+                        source << include( "procedures/get-opacity.glsl") <<"\n";
+                        source << include( "procedures/get-ambient-occlusion.glsl") <<"\n";
+                        source << include( "procedures/get-roughness.glsl") <<"\n";
+                        source << include( "procedures/get-metallic.glsl") <<"\n";
+                        source << include( "procedures/get-normal.glsl") <<"\n";
+                        source << include( "procedures/get-emissive.glsl") <<"\n";
                     }
                     else
                     {
-                        source << include( "resources/use-internal-material.glsl") <<"\n";
+                        source << include( "procedures/use-internal-material.glsl") <<"\n";
                         if(( _input_signature & (1 << VertexBit::NORMAL) ))
                         {
                             source << include( "resources/get-input-normal.glsl") <<"\n";
@@ -676,20 +757,20 @@ namespace kege{
                     {
                         if ((_key.features & kege::FeatureFlag::DIRECTIONAL_LIGHT))
                         {
-                            source << include( "resources/integrate-directional-light.glsl") <<"\n";
+                            source << include( "procedures/integrate-directional-light.glsl") <<"\n";
                         }
                         if ((_key.features & kege::FeatureFlag::POINT_LIGHT))
                         {
-                            source << include( "resources/integrate-point-light.glsl") <<"\n\n";
+                            source << include( "procedures/integrate-point-light.glsl") <<"\n\n";
                         }
                         if ((_key.features & kege::FeatureFlag::SPOT_LIGHT))
                         {
-                            source << include( "resources/integrate-spot-light.glsl") <<"\n\n";
+                            source << include( "procedures/integrate-spot-light.glsl") <<"\n\n";
                         }
                     }
                     else
                     {
-                        source << include( "resources/use-internal-light.glsl") <<"\n";
+                        source << include( "procedures/use-internal-light.glsl") <<"\n";
                     }
                 }
                 else if (_key.shading_model == kege::ShadingModel::Unlit)
@@ -706,31 +787,31 @@ namespace kege{
 
                 if ((_key.features & kege::FeatureFlag::TONE_MAPPING))
                 {
-                    source << include( "features/tone-mapping.glsl") <<"\n\n";
+                    source << include( "procedures/tone-mapping.glsl") <<"\n\n";
                 }
                 
                 if ((_key.features & kege::FeatureFlag::GAMMA))
                 {
-                    source << include( "features/gamma.glsl") <<"\n\n";
+                    source << include( "procedures/gamma.glsl") <<"\n\n";
                 }
 
                 switch (_key.render_pass)
                 {
                     default:
                     case RenderPass::Forward:
-                        source << include( "render-pass/to-color-buffer.glsl") <<"\n";
+                        source << include( "procedures/write-to-color-buffer.glsl") <<"\n";
                         break;
 
                     case RenderPass::GBuffer:
-                        source << include( "render-pass/to-geometry-buffer.glsl") <<"\n";
+                        source << include( "procedures/write-to-geometry-buffer.glsl") <<"\n";
                         break;
 
                     case RenderPass::Shadow:
-                        source << include( "render-pass/to-depth-buffer.glsl") <<"\n";
+                        source << include( "procedures/write-to-depth-buffer.glsl") <<"\n";
                         break;
 
                     case RenderPass::DepthPrePass:
-                        source << include( "render-pass/to-depth-buffer.glsl") <<"\n";
+                        source << include( "procedures/write-to-depth-buffer.glsl") <<"\n";
                         break;
                 }
             }
@@ -743,109 +824,20 @@ namespace kege{
 
     std::string ShaderCompiler::include(const std::string& fname )
     {
-        const std::string filename = "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/snippets/" + fname;
+        const std::string filename = _filepath + fname;
         std::ifstream file(filename);
         std::string loaded_source((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         file.close();
-//        if(loaded_source.length() >= 1)
-//        {
-//            size_t i = loaded_source.length() - 1;
-//            if(loaded_source[ i ] == '\n')
-//                loaded_source[ i ] = ' ';
-//        }
+        if (loaded_source.empty())
+        {
+            kege::Log::error <<"file not found " << fname <<"\n";
+        }
         return loaded_source;
-    }
-
-    std::string ShaderCompiler::process(const std::string& fname )
-    {
-        std::string source = include( fname );
-
-        ShaderReflection refl;
-        refl.parse_file( fname );
-
-        return source;
-    }
-
-    void ShaderCompiler::processShadingModel(std::stringstream& source, const kege::ShadingModel& model)
-    {
-        switch(model)
-        {
-            default:
-            case kege::ShadingModel::Unlit:
-            {
-                source << include("shading-model/unlit.glsl");
-                break;
-            }
-
-            case kege::ShadingModel::LitPBR_Metallic:
-            {
-                source << include("shading-model/lit-pbr-metallic.glsl");
-                break;
-            }
-        }
-    }
-
-    void ShaderCompiler::processMeshType(std::stringstream& source, const kege::PipelineKey& key)
-    {
-        switch(key.renderer_type)
-        {
-            default:
-            case kege::MeshType::Point:
-            {
-                source << include("renderer-type/point.glsl");
-                break;
-            }
-            case kege::MeshType::StaticMesh:
-            {
-                source << include("renderer-type/static-mesh.glsl");
-                break;
-            }
-        }
-
-        if (key.features & kege::FeatureFlag::NORMAL_MAPPING)
-        {
-            source << include("feature/vertex/normal-mapping.glsl");
-        }
-
-        if (key.features & kege::FeatureFlag::GPU_SKINNING)
-        {
-            source << include("feature/vertex/gpu-skinning.glsl");
-        }
-
-        if (key.features & kege::FeatureFlag::VERTEX_COLOR)
-        {
-            source << include("feature/vertex/vertex-color.glsl");
-        }
     }
 
     void ShaderCompiler::define(std::stringstream& source, const std::string& name, int index)
     {
         source << "#define " << name <<" " << index << "\n";
-    }
-
-    std::string ShaderCompiler::parseDefineName(const std::string& line) {
-        size_t pos = 0;
-
-        // Skip leading whitespace
-        while (pos < line.size() && std::isspace(line[pos])) pos++;
-
-        // Must start with #define
-        if (line.compare(pos, 7, "#define")!= 0) return "";
-        pos += 7;
-
-        // Skip whitespace after #define
-        while (pos < line.size() && std::isspace(line[pos])) pos++;
-
-        // Read identifier: [A-Za-z_][A-Za-z0-9_]*
-        size_t start = pos;
-        if (pos < line.size() && (std::isalpha(line[pos]) || line[pos] == '_')) {
-            pos++;
-            while (pos < line.size() && (std::isalnum(line[pos]) || line[pos] == '_')) {
-                pos++;
-            }
-            return line.substr(start, pos - start);
-        }
-        return "";
     }
 
     void ShaderCompiler::addDefine(Defines& defines, const std::string& name, int index)
@@ -855,8 +847,36 @@ namespace kege{
         defines.defs.push_back({name, index});
     }
 
+    kege::VertexBit ShaderCompiler::resolveVertexBitType( const std::string& str )
+    {
+        auto it = _vertex_bit_string_map.find( str );
+        if (it != _vertex_bit_string_map.end()) return it->second;
+        return kege::VertexBit::POSITION;
+    }
+
+    int ShaderCompiler::resolveDefnInt(Stage* stage, const std::string& str)
+    {
+        std::string e = str;
+        if (isNumeric(str)) {
+            return static_cast<uint32_t>( std::stoul( str ) );
+        }
+        auto it = stage->defines.find(e);
+        if (it != stage->defines.end()) return it->second;
+        return 0;
+    }
+
+
     void ShaderCompiler::writeFeatures()
     {
+        _vertex_bit_string_map["in_position"] = kege::VertexBit::POSITION;
+        _vertex_bit_string_map["in_texcoord"] = kege::VertexBit::TEXCOORD;
+        _vertex_bit_string_map["in_normal"] = kege::VertexBit::NORMAL;
+        _vertex_bit_string_map["in_tangent"] = kege::VertexBit::TANGENT;
+        _vertex_bit_string_map["in_bitangent"] = kege::VertexBit::BITANGENT;
+        _vertex_bit_string_map["in_weights"] = kege::VertexBit::WEIGHTS;
+        _vertex_bit_string_map["in_joints"] = kege::VertexBit::JOINTS;
+        _vertex_bit_string_map["in_color"] = kege::VertexBit::COLOR;
+
         // ====== VERTEX SHADER FEATURES ======
         if (_key.features & kege::FeatureFlag::VERTEX_ANIMATION)
             addDefine(_global_defines, "FEATURE_VERTEX_ANIMATION");
@@ -1001,7 +1021,8 @@ namespace kege{
             addDefine(_global_defines, "FEATURE_DETAIL_NORMAL");
     }
 
-    ShaderCompiler::ShaderCompiler(kege::Graphics* graphics)
+    ShaderCompiler::ShaderCompiler(kege::Graphics* graphics, const std::string& filepath)
     :   _graphics(graphics)
+    ,   _filepath(filepath)
     {}
 }
