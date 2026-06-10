@@ -16,14 +16,30 @@ namespace kege{
         if ( types.empty() )
         {
             types[ "UI" ] = RenderPassType::UI;
-            types[ "ShadowMap" ] = RenderPassType::ShadowMap;
+            types[ "ShadowMap" ] = RenderPassType::Shadow;
             types[ "DepthPrePass" ] = RenderPassType::DepthPrePass;
             types[ "Geometry" ] = RenderPassType::Geometry;
             types[ "Lighting" ] = RenderPassType::Lighting;
             types[ "Forward" ] = RenderPassType::Forward;
-            types[ "ForwardTransparent" ] = RenderPassType::ForwardTransparent;
             types[ "PostProcess" ] = RenderPassType::PostProcess;
-            types[ "BarrierTransition" ] = RenderPassType::BarrierTransition;
+            types[ "Sky" ] = RenderPassType::Sky;
+            types[ "Forward" ] = RenderPassType::Forward;
+            types[ "VolumetricFog" ] = RenderPassType::VolumetricFog;
+            types[ "Transparent" ] = RenderPassType::Transparent;
+            types[ "Particles" ] = RenderPassType::Particles;
+            types[ "Debug" ] = RenderPassType::Debug;
+            types[ "Compute" ] = RenderPassType::Compute;
+            types[ "SSAO" ] = RenderPassType::SSAO;
+            types[ "SSAOBlur" ] = RenderPassType::SSAOBlur;
+            types[ "DepthOfField" ] = RenderPassType::DepthOfField;
+            types[ "DepthOfFieldCoC" ] = RenderPassType::DepthOfFieldCoC;
+            types[ "BloomHighpass" ] = RenderPassType::BloomHighpass;
+            types[ "BloomDownsample" ] = RenderPassType::BloomDownsample;
+            types[ "BloomUpsample" ] = RenderPassType::BloomUpsample;
+            types[ "BloomCombine" ] = RenderPassType::BloomCombine;
+            types[ "TemporalAA" ] = RenderPassType::TemporalAA;
+            types[ "Tonemapping" ] = RenderPassType::Tonemapping;
+            types[ "Present" ] = RenderPassType::Present;
         }
         auto m = types.find( name );
         if ( m != types.end() )
@@ -32,73 +48,6 @@ namespace kege{
         }
         kege::Log::error << "unsupported BarrierTransition -> " <<name <<kege::Log::nl;
         return RenderPassType::BarrierTransition;
-    }
-
-    struct RGParser
-    {
-        typedef std::function< void( kege::RenderGraph&, Json ) > Function;
-        typedef std::map< std::string, Function > FunctionMap;
-
-        typedef std::function< int( kege::RenderGraph&, Json ) > IntFunct;
-        typedef std::map< std::string, IntFunct > IntFunctMap;
-
-        void parse( std::string type, kege::RenderGraph& graph, Json& json )
-        {
-            FunctionMap::iterator parser = parsers.find( type );
-            if ( parser != parsers.end() )
-            {
-                parser->second( graph, json );
-            }
-        }
-
-        static RGParser& instance()
-        {
-            static RGParser instance;
-            return instance;
-        }
-
-        RGParser();
-
-        FunctionMap parsers;
-        IntFunctMap int_funct_maps;
-    };
-
-    int parseInt( kege::RenderGraph& graph, Json json )
-    {
-        RGParser::IntFunctMap::iterator m = RGParser::instance().int_funct_maps.find( json.value() );
-        if ( m != RGParser::instance().int_funct_maps.end() )
-        {
-            return m->second( graph, json );
-        }
-        return json.toInt();
-    }
-
-    Format getFormat( kege::RenderGraph& graph, const std::string& name )
-    {
-        if ( name == "SWAPCHAIN_DEPTH_FORMAT()" )
-        {
-            return graph.getGraphics()->getSwapchain()->getDepthFormat();
-        }
-        else if ( name == "SWAPCHAIN_COLOR_FORMAT()" )
-        {
-            return graph.getGraphics()->getSwapchain()->getColorFormat();
-        }
-        return stringToFormat( name );
-    }
-
-    int getSwapchainImageCount( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getImageCount();
-    }
-
-    int getSwapchainExtentHeight( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getExtent().height;
-    }
-
-    int getSwapchainExtentWidth( kege::RenderGraph& graph, Json json )
-    {
-        return graph.getGraphics()->getSwapchain()->getExtent().width;
     }
 
     RgResrcType stringToRgResrcType( const std::string& name )
@@ -121,7 +70,17 @@ namespace kege{
         return RgResrcType::Invalid;
     }
 
-    ImageUsage parseImageUsage( Json json )
+    int parseInt( const RenderGraphLoader::StringToIntMap& intmap, const std::string& str )
+    {
+        auto i = intmap.find( str );
+        if ( i != intmap.end() )
+        {
+            return i->second;
+        }
+        return 0;
+    }
+
+    ImageUsage parseImageUsage( const Json& json )
     {
         ImageUsage usage = stringToImageUsage( json[ 0 ].value() );
         for (int i=1; i<json.count(); ++i)
@@ -131,7 +90,7 @@ namespace kege{
         return usage;
     }
 
-    PipelineStageFlag parsePipelineStageFlags( Json json )
+    PipelineStageFlag parsePipelineStageFlags( const Json& json )
     {
         if( !json )
             return PipelineStageFlag::None;
@@ -144,34 +103,16 @@ namespace kege{
         return stages;
     }
 
-    kege::SamplerDesc parseSamplerDesc( const Json& json )
-    {
-        Json info = json[ "info" ];
-        return  kege::SamplerDesc
-        {
-            .name = json[ "name" ].value(),
-            .mag_filter = info[ "mag_filter" ]( stringToFilter, Filter::Linear ),
-            .min_filter = info[ "min_filter" ]( stringToFilter, Filter::Linear ),
-            .mipmap_mode = info[ "mipmap_mode" ]( stringToMipmapMode, MipmapMode::Linear ),
-            .address_mode_u = info[ "address_mode_u" ]( stringToAddressMode, AddressMode::Repeat ),
-            .address_mode_v = info[ "address_mode_v" ]( stringToAddressMode, AddressMode::Repeat ),
-            .address_mode_w = info[ "address_mode_w" ]( stringToAddressMode, AddressMode::Repeat )
-        };
-    }
-
     RgReadResrcDesc parseReadResrcDesc( const Json& json )
     {
         return RgReadResrcDesc
         {
             .name = json[ "name" ].value(),
             .type = json[ "type" ]( stringToRgResrcType, RgResrcType::Invalid ),
-            .usage =
-            {
-                .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
-                .stage = parsePipelineStageFlags( json[ "stage" ] ),
-                .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
-                .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear )
-            }
+            .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
+            .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
+            .stage = parsePipelineStageFlags( json[ "stage" ] ),
+            .semantic = stringToSemantic( json.getStr( "semantic" ) )
         };
     }
 
@@ -196,13 +137,10 @@ namespace kege{
         {
             .name = json[ "name" ].value(),
             .type = json[ "type" ]( stringToRgResrcType, RgResrcType::Invalid ),
-            .usage =
-            {
-                .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
-                .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
-                .stage = parsePipelineStageFlags( json[ "stage" ] ),
-                .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear )
-            },
+            .access = json[ "access" ]( stringToAccessFlags, AccessFlags::None ),
+            .stage = parsePipelineStageFlags( json[ "stage" ] ),
+            .layout = json[ "layout" ]( stringToImageLayout, ImageLayout::Undefined ),
+            .load_op = json[ "load_op" ]( stringToAttachmentLoadOp, AttachmentLoadOp::Clear ),
             .clear_value = clear_value,
         };
     }
@@ -221,142 +159,110 @@ namespace kege{
         return writes;
     }
 
-    std::vector< ShaderPipeline > parseShaderPipelines( const Json& json )
+    void parseRenderStage( const RenderGraphLoader::StringToIntMap& intmap, kege::RenderGraphDescriptor& graph, const Json& json )
     {
-        return {};
-    }
-
-    void parseRenderStage( kege::RenderGraph& graph, Json json )
-    {
-        graph.addPass
-        ({
+        graph.insert(kege::RgRenderPassDesc{
             .name = json[ "name" ].value(),
             .type = stringToQueueType( json[ "type" ].value() ),
             .pass = stringToRenderPass( json[ "pass" ].value() ),
             .reads = parseReadResrcDescs( json[ "reads" ] ),
             .writes = parseWriteResrcDescs( json[ "writes" ] ),
-            .pipelines = parseShaderPipelines( json[ "shaders" ] ),
+            .execute = renderDeferredStaticGeometry, // getExeFn( json[ "execute" ] ),
+            //.bindings = parseWriteResrcDescs( json[ "writes" ] ),
         });
     }
 
-    void parseShaderResourceDefn( kege::RenderGraph& graph, Json json )
+    void parseSamplerDefn( const RenderGraphLoader::StringToIntMap& intmap, kege::RenderGraphDescriptor& graph, const Json& json )
     {
-//        uint32_t frames_in_flight = getInt( graph, json[ "frames_in_flight" ] );
-//        Json json_bindings = json[ "bindings" ];
-//        Json json_targets = json[ "targets" ];
-
-//        std::vector< kege::UniformDesc > bindings;
-//        std::vector< kege::RgShaderResource > targets;
-//
-//        for( uint32_t i = 0; i < json_bindings.count(); ++i )
-//        {
-//            Json binding = json_bindings[ i ];
-//
-//            kege::UniformDesc layout;
-//            layout.name = binding[ "name" ].value();
-//            layout.count = binding[ "count" ].getInt();
-//            layout.binding = binding[ "binding" ].getInt();
-//            layout.descriptor_type = getDescriptorType( binding[ "descriptor_type" ] );
-//            layout.stage_flags = getShaderStageFlag( binding[ "stage_flags" ] );
-//
-//            bindings.push_back( layout );
-//        }
-//
-//        for( uint32_t i = 0; i < json_targets.count(); ++i )
-//        {
-//            Json target = json_targets[ i ];
-//            targets.push_back( getRgShaderResource( target[ "type" ] ) );
-//        }
-
-        //kege::RgResrcHandle handle = graph.defineShaderResource( json[ "id" ].value(), frames_in_flight, bindings );
-        //graph.updateShaderResource( handle, targets );
-    }
-
-    void parseSamplerDefn( kege::RenderGraph& graph, Json json )
-    {
-        graph.defnSampler
-        ({
-            .name = json[ "name" ].value(),
-            .desc = parseSamplerDesc( json )
-        });
-    }
-
-    void parseBufferDefn( kege::RenderGraph& graph, Json json )
-    {
-        Json info = json[ "info" ];
-        graph.defnBuffer
-        ({
-            .name              = json[ "name" ].value(),
-            .frames            = (uint32_t) json.getInt( "frames" ),
-            .info.size         = (uint32_t) info.getInt( "size" ),
-            .info.usage        = stringToBufferUsage( info.getStr( "usage" ) ),
-            .info.memory_usage = stringToMemoryUsage( info.getStr( "memory_usage" ) ),
-            .info.data         = nullptr,
-        });
-    }
-
-    void parseImageDefn( kege::RenderGraph& graph, Json json )
-    {
-        kege::ImageDefn desc = {};
-        Json info = json[ "info" ];
-
-        desc.name = json[ "name" ].value();
-        desc.usages = parseImageUsage( json[ "usages" ] );
-
-        Json physical_handle = json[ "physical_handle" ];
-        if ( physical_handle )
+        graph.insert( kege::RgSamplerDesc
         {
-            kege::Swapchain* swapchain = graph.getGraphics()->getSwapchain();
-            if ( strcmp( physical_handle.value(), "SWAPCHAIN_COLOR_IMAGES" ) == 0 )
+            .name = json[ "name" ].value(),
+            .mag_filter = json[ "mag_filter" ]( stringToFilter, Filter::Linear ),
+            .min_filter = json[ "min_filter" ]( stringToFilter, Filter::Linear ),
+            .mipmap_mode = json[ "mipmap_mode" ]( stringToMipmapMode, MipmapMode::Linear ),
+            .address_mode_u = json[ "address_mode_u" ]( stringToAddressMode, AddressMode::Repeat ),
+            .address_mode_v = json[ "address_mode_v" ]( stringToAddressMode, AddressMode::Repeat ),
+            .address_mode_w = json[ "address_mode_w" ]( stringToAddressMode, AddressMode::Repeat )
+        });
+    }
+
+    void parseBufferDefn( const RenderGraphLoader::StringToIntMap& intmap, kege::RenderGraphDescriptor& graph, const Json& json )
+    {
+        graph.insert( kege::RgBufferDesc
+        {
+            .name               = json[ "name" ].value(),
+            .frames_in_flight   = (uint32_t) json.getInt( "frames" ),
+            .size               = (uint32_t) json.getInt( "size" ),
+            .usage              = stringToBufferUsage( json.getStr( "usage" ) ),
+            .memory_usage       = stringToMemoryUsage( json.getStr( "memory_usage" ) ),
+        });
+    }
+
+    void parseImageDefn( const RenderGraphLoader::StringToIntMap& intmap, kege::RenderGraphDescriptor& graph, const Json& json )
+    {
+        kege::RgImageDesc desc = {};
+
+        desc.name      = json[ "name" ].value();
+        desc.usages    = parseImageUsage( json[ "usages" ] );
+        desc.width     = parseInt( intmap, json[ "width" ].toStr() );
+        desc.height    = parseInt( intmap, json[ "height" ].toStr() );
+        desc.depth     = parseInt( intmap, json[ "depth" ].toStr() );
+        desc.type      = stringToImageType( json.getStr( "type" ) );
+        desc.format    = stringToFormat( json.getStr( "format" ) );
+        desc.frames_in_flight = json.getInt( "frames" );
+        desc.is_swapcain_color = false;
+        desc.is_swapcain_depth = false;
+
+        if( desc.depth == 0 ) desc.depth = 1;
+        if( desc.array_layers == 0 ) desc.array_layers = 1;
+
+        Json target = json[ "target" ];
+        if ( target )
+        {
+            if (strcmp(target.value(),"SWAPCHAIN_COLOR_IMAGES") == 0)
             {
-                desc.physical_handle = swapchain->getColorImages();
-                desc.frames         = swapchain->getImageCount();
-                desc.info.format    = swapchain->getColorFormat();
-                desc.info.width     = swapchain->getExtent().width;
-                desc.info.height    = swapchain->getExtent().height;
-                desc.info.type      = ImageType::Type2D;
-                desc.info.depth     = 1;
+                desc.is_swapcain_color = true;
             }
-            else if ( strcmp( physical_handle.value(), "SWAPCHAIN_DEPTH_IMAGES" ) == 0 )
+            else if (strcmp(target.value(),"SWAPCHAIN_DEPTH_IMAGES") == 0)
             {
-                desc.physical_handle = graph.getGraphics()->getSwapchain()->getDepthImages();
-                desc.frames         = swapchain->getImageCount();
-                desc.info.format    = swapchain->getDepthFormat();
-                desc.info.width     = swapchain->getExtent().width;
-                desc.info.height    = swapchain->getExtent().height;
-                desc.info.type      = ImageType::Type2D;
-                desc.info.depth     = 1;
+                desc.is_swapcain_depth = true;
             }
         }
         else
         {
-            desc.frames         = json.getInt( "frames" );
-            desc.info.width     = parseInt( graph, info[ "width" ] );
-            desc.info.height    = parseInt( graph, info[ "width" ] );
-            desc.info.depth     = parseInt( graph, info[ "depth" ] );
-            desc.info.type      = stringToImageType( info.getStr( "type" ) );
-            desc.info.format    = getFormat( graph, info.getStr( "format" ) );
+            if (desc.frames_in_flight == 0)
+            {
+                desc.frames_in_flight = 1;
+                kege::Log::error << "render graph image resource -> '" <<desc.name;
+                kege::Log::error <<"' parameter 'frames' must be a value greater than 0." << kege::Log::nl;
+            }
         }
-
-        graph.defnImage( desc );
+        graph.insert( desc );
     }
 
-    RGParser::RGParser()
+    void parseJons
+    (
+        kege::RenderGraphLoader::Function parser,
+        const RenderGraphLoader::StringToIntMap& intmap,
+        kege::RenderGraphDescriptor& graph,
+        Json json
+    )
     {
-        parsers[ "GRAPHICS" ] = parseRenderStage;
-        parsers[ "COMPUTE" ] = parseRenderStage;
+        if ( parser != nullptr )
+        {
+            for( uint32_t i = 0; i < json.count(); ++i )
+            {
+                parser( intmap, graph, json[i] );
+            }
+        }
+    }
 
-        parsers[ "shader_resource" ] = parseShaderResourceDefn;
-        parsers[ "sampler" ] = parseSamplerDefn;
-        parsers[ "buffer" ] = parseBufferDefn;
-        parsers[ "image" ] = parseImageDefn;
-
-        int_funct_maps[ "SWAPCHAIN_IMAGE_COUNT" ] = getSwapchainImageCount;
-        int_funct_maps[ "SWAPCHAIN_IMAGE_HEIGHT" ] = getSwapchainExtentHeight;
-        int_funct_maps[ "SWAPCHAIN_IMAGE_WIDTH" ] = getSwapchainExtentWidth;
-    };
-
-    bool RenderGraphLoader::load( kege::RenderGraph& graph, const std::string& filename )
+    bool RenderGraphLoader::load
+    (
+        kege::RenderGraphDescriptor& graph,
+        const kege::Swapchain* swapchain,
+        const std::string& filename
+    )
     {
         Json json = kege::JsonParser::load( filename.c_str() );
         if ( !json )
@@ -364,26 +270,31 @@ namespace kege{
             return false;
         }
 
-        Json resources = json[ "resources" ];
-        Json stages = json[ "stages" ];
-        if ( !resources || !stages )
-        {
-            return false;
-        }
+        kege::RenderGraphLoader::FunctionMap callbacks;
+        callbacks[ "GRAPHICS" ] = parseRenderStage;
+        callbacks[ "COMPUTE" ] = parseRenderStage;
+        callbacks[ "sampler" ] = parseSamplerDefn;
+        callbacks[ "buffer" ] = parseBufferDefn;
+        callbacks[ "image" ] = parseImageDefn;
 
-        RGParser& parser = RGParser::instance();
-        for( uint32_t i = 0; i < resources.count(); ++i )
-        {
-            Json res = resources[i];
-            std::string type = res[ "type" ].value();
-            parser.parse( type, graph, res );
-        }
-        for( uint32_t i = 0; i < stages.count(); ++i )
-        {
-            Json res = stages[i];
-            std::string type = res[ "type" ].value();
-            parser.parse( type, graph, res );
-        }
+        kege::RenderGraphLoader::StringToIntMap intmap;
+        intmap[ "SWAPCHAIN_IMAGE_COUNT" ] = swapchain->getImageCount();
+        intmap[ "SWAPCHAIN_IMAGE_WIDTH" ] = swapchain->getViewport().width;
+        intmap[ "SWAPCHAIN_IMAGE_HEIGHT" ] = swapchain->getViewport().height;
+        intmap[ "SWAPCHAIN_IMAGE_WIDTH_HALF" ] = swapchain->getViewport().width * 0.5;
+        intmap[ "SWAPCHAIN_IMAGE_HEIGHT_HALF" ] = swapchain->getViewport().height * 0.5;
+        intmap[ "SWAPCHAIN_IMAGE_WIDTH_QUARTER" ] = swapchain->getViewport().width * 0.25;
+        intmap[ "SWAPCHAIN_IMAGE_HEIGHT_QUARTER" ] = swapchain->getViewport().height * 0.25;
+        intmap[ "SWAPCHAIN_IMAGE_WIDTH_EIGHTH" ] = swapchain->getViewport().width * 0.125;
+        intmap[ "SWAPCHAIN_IMAGE_HEIGHT_EIGHTH" ] = swapchain->getViewport().height * 0.125;
+
+        kege::Json resources = json[ "resources" ];
+        kege::Json passes = json[ "passes" ];
+
+        parseJons( parseSamplerDefn, intmap, graph, resources[ "samplers" ] );
+        parseJons( parseBufferDefn, intmap, graph, resources[ "buffers" ] );
+        parseJons( parseImageDefn, intmap, graph, resources[ "images" ] );
+        parseJons( parseRenderStage, intmap, graph, passes );
 
         return true;
     }

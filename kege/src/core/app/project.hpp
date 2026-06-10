@@ -17,8 +17,10 @@ namespace kege{
 
     struct Project : public kege::RefCounter
     {
-        Project( const std::string& name, ref::ECS& ecs, ref::RenderGraph rg );
+        Project( const std::string& name, ref::ECS& ecs );
         ~Project();
+
+        kege::SceneManager* getSceneManager();
 
         ref::AssetManager asset_manager;
         ref::SceneManager scene_manager;

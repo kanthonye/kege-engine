@@ -40,11 +40,6 @@ namespace kege{
         return _asset_manager;
     }
 
-    kege::RenderGraph* Scene::getRenderGraph()
-    {
-        return _render_graph;
-    }
-
     void Scene::setCameraEntity( const ecs::Entity& entity )
     {
         _camera = entity;
@@ -170,10 +165,9 @@ namespace kege{
         shutdown();
     }
 
-    Scene::Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am, kege::RenderGraph* rg )
+    Scene::Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am )
     :   kege::ecs::EntityRegistry( ecs )
     ,   _asset_manager( am )
-    ,   _render_graph( rg )
     ,   _name( name )
     ,   _ready( false )
     {

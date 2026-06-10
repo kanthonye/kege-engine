@@ -76,10 +76,7 @@ namespace kege{
         std::vector< CompInfo > _infos;
 
         //ui::ID _add_component;
-        ui::Tree _tree;
-
-
-        kege::ECS* _ecs;
+        //ui::Tree _tree;
 
         ui::UID _uid_selection;
         ui::UID _add_component;

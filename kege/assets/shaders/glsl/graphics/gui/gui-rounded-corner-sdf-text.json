@@ -47,7 +47,7 @@
         {
             "id": "Camera",
             "stages": ["vertex", "fragment"],
-            "size": 128,
+            "size": 256,
             "count": 1,
             "fields":
             [
@@ -57,8 +57,18 @@
                     "count": 1
                 },
                 {
-                    "name": "resolution",
-                    "type": "vec4",
+                    "name": "transform",
+                    "type": "mat4",
+                    "count": 1
+                },
+                {
+                    "name": "position",
+                    "type": "vec3",
+                    "count": 1
+                },
+                {
+                    "name": "screen_info",
+                    "type": "vec2",
                     "count": 1
                 }
             ]
@@ -71,7 +81,7 @@
             "bindings": 
             [
                 {
-                    "id": "UIViewBuffer",
+                    "id": "UiBuffer",
                     "stages": ["vertex"],
                     "usage": "storage_buffer",
                     "binding": "0",
@@ -88,40 +98,28 @@
         },
         {
             "set": "1",
-            "bindings": 
+            "bindings":
             [
                 {
-                    "id": "_theme",
+                    "id": "Textures",
                     "stages": ["fragment"],
                     "usage": "combined_image_sampler",
+                    "array_type": "static",
                     "binding": "0",
-                    "count": 1,
+                    "count": 2,
                     "fields": []
                 }
             ]
         },
         {
             "set": "2",
-            "bindings": 
+            "bindings":
             [
                 {
-                    "id": "_font",
+                    "id": "SceneColor",
                     "stages": ["fragment"],
                     "usage": "combined_image_sampler",
-                    "binding": "0",
-                    "count": 1,
-                    "fields": []
-                }
-            ]
-        },
-        {
-            "set": "3",
-            "bindings": 
-            [
-                {
-                    "id": "_scene",
-                    "stages": ["fragment"],
-                    "usage": "combined_image_sampler",
+                    "array_type": "none",
                     "binding": "0",
                     "count": 1,
                     "fields": []
@@ -148,7 +146,10 @@
     [
         {
             "blocks": [0],
-            "sets": [0,1,2,3]
+            "sets": [0,1,2],
+            "global-bindings": [
+                { "set": 2, "binding": 0, "semantic": "SceneColor" }
+            ],
         }
     ],
     "pipeline_outputs":

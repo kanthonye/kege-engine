@@ -1,221 +1,1044 @@
 {
-    "resources": 
-    [
-        {
-            "type": "sampler",
-            "name": "sampler-nearest-norep",
-            "info":
+    "resources":
+    {
+        "samplers":
+        [
             {
-                "mag_filter": "Nearest",
-                "min_filter": "Nearest",
-                "mipmap_mode": "Nearest",
-                "address_mode_u": "ClampToEdge",
-                "address_mode_v": "ClampToEdge",
-                "address_mode_w": "ClampToEdge"
-            }
-        },
-        {
-            "type": "sampler",
-            "name": "sampler-nearest-rep",
-            "info":
-            {
-                "mag_filter": "Nearest",
-                "min_filter": "Nearest",
-                "mipmap_mode": "Nearest",
-                "address_mode_u": "Repeat",
-                "address_mode_v": "Repeat",
-                "address_mode_w": "Repeat"
-            }
-        },
-        {
-            "type": "sampler",
-            "name": "sampler-linear-norep",
-            "info":
-            {
-                "mag_filter": "Nearest",
-                "min_filter": "Nearest",
-                "mipmap_mode": "Nearest",
-                "address_mode_u": "ClampToEdge",
-                "address_mode_v": "ClampToEdge",
-                "address_mode_w": "ClampToEdge"
-            }
-        },
-        {
-            "type": "sampler",
-            "name": "sampler-linear-rep",
-            "info":
-            {
-                "mag_filter": "Nearest",
-                "min_filter": "Nearest",
-                "mipmap_mode": "Nearest",
-                "address_mode_u": "Repeat",
-                "address_mode_v": "Repeat",
-                "address_mode_w": "Repeat"
-            }
-        },
-
-        {
-            "type":             "image",
-            "name":             "swapchain_color",
-            "physical_handle":  "SWAPCHAIN_COLOR_IMAGES",
-            "usages":           [ "Color", "ShaderRead" ],
-        },
-        {
-            "type":             "image",
-            "name":             "swapchain_depth",
-            "physical_handle":  "SWAPCHAIN_DEPTH_IMAGES",
-            "usages":           [ "Depth", "ShaderRead" ],
-        },
-
-        {
-            "type":             "image",
-            "name":             "color",
-            "frames":           "2",
-
-            "info":
-            {
-                "type":         "Type2D",
-                "format":       "rgba_u8_norm",
-                "width":        "SWAPCHAIN_IMAGE_WIDTH",
-                "height":       "SWAPCHAIN_IMAGE_HEIGHT",
-                "depth":        1,
+                "name": "sampler-linear-clamp",
+                "info": {
+                    "mag_filter": "Linear",
+                    "min_filter": "Linear",
+                    "mipmap_mode": "Linear",
+                    "address_mode_u": "ClampToEdge",
+                    "address_mode_v": "ClampToEdge",
+                    "address_mode_w": "ClampToEdge"
+                }
             },
-
-            "usages":           [ "Color", "ShaderRead" ],
-        },
-        {
-            "type":             "image",
-            "name":             "depth",
-            "frames":           "2",
-
-            "info":
             {
-                "type":         "Type2D",
-                "format":       "depth_32",
-                "width":        "SWAPCHAIN_IMAGE_WIDTH",
-                "height":       "SWAPCHAIN_IMAGE_HEIGHT",
-                "depth":        1,
+                "name": "sampler-linear-wrap",
+                "info": {
+                    "mag_filter": "Linear",
+                    "min_filter": "Linear",
+                    "mipmap_mode": "Linear",
+                    "address_mode_u": "Repeat",
+                    "address_mode_v": "Repeat",
+                    "address_mode_w": "Repeat"
+                }
             },
-
-            "usages":           [ "Depth", "ShaderRead" ],
-        },
-
-        {
-            "type":             "buffer",
-            "name":             "camera-buffer",
-            "frames":           "2",
-
-            "info":
             {
-                "size":         256,
-                "data":         "nullptr",
-                "usage":        "UniformBuffer",
-                "memory_usage": "CpuToGpu",
-            }
-        },
-        {
-            "type":             "buffer",
-            "name":             "light-buffer",
-            "frames":           "2",
-
-            "info":
+                "name": "sampler-point-clamp",
+                "info": {
+                    "mag_filter": "Nearest",
+                    "min_filter": "Nearest",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "ClampToEdge",
+                    "address_mode_v": "ClampToEdge",
+                    "address_mode_w": "ClampToEdge"
+                }
+            },
             {
-                "size":         65536,
-                "data":         "nullptr",
-                "usage":        "StorageBuffer",
-                "memory_usage": "CpuToGpu",
+                "name": "sampler-bilinear-border",
+                "info": {
+                    "mag_filter": "Linear",
+                    "min_filter": "Linear",
+                    "mipmap_mode": "Nearest",
+                    "address_mode_u": "ClampToBorder",
+                    "address_mode_v": "ClampToBorder",
+                    "address_mode_w": "ClampToBorder",
+                    "border_color": [0, 0, 0, 1]
+                }
+            },
+        ],
+        "images":
+        [
+            {
+                "type": "Type2D",
+                "name": "swapchain_color",
+                "target": "SWAPCHAIN_COLOR_IMAGES",
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "type": "Type2D",
+                "name": "swapchain_depth",
+                "target": "SWAPCHAIN_DEPTH_IMAGES",
+                "usages": ["Depth", "ShaderRead"]
+            },
+            {
+                "name": "gbuffer_albedo",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_u8_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "gbuffer_normal",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_u16_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "gbuffer_position",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_f32",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "gbuffer_material",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_u8_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "depth_prepass",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "depth_32",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Depth", "ShaderRead"]
+            },
+            {
+                "name": "shadow_map",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "depth_32",
+                "width": 2048,
+                "height": 2048,
+                "depth": 1,
+                "usages": ["Depth", "ShaderRead"]
+            },
+            {
+                "name": "lighting_output",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_highpass",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_downsample_1",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH_HALF",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT_HALF",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_downsample_2",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH_QUARTER",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT_QUARTER",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_downsample_3",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH_EIGHTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT_EIGHTH",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_upsample_1",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH_QUARTER",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT_QUARTER",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "bloom_upsample_2",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH_HALF",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT_HALF",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "ssao_output",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "r_u8_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "ssao_blurred",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "r_u8_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "postprocess_hdr",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "postprocess_ldr",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_u8_norm",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "depth_of_field_coc",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "r_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "dof_near_field",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "dof_far_field",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "motion_vectors",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "temporal_aa_history",
+                "frames": "2",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": "SWAPCHAIN_IMAGE_WIDTH",
+                "height": "SWAPCHAIN_IMAGE_HEIGHT",
+                "depth": 1,
+                "usages": ["Color", "ShaderRead"]
+            },
+            {
+                "name": "environment_cubemap",
+                "frames": "1",
+                "type": "TypeCube",
+                "format": "rgba_f16",
+                "width": 512,
+                "height": 512,
+                "depth": 6,
+                "usages": ["ShaderRead"]
+            },
+            {
+                "name": "irradiance_cubemap",
+                "frames": "1",
+                "type": "TypeCube",
+                "format": "rgba_f16",
+                "width": 32,
+                "height": 32,
+                "depth": 6,
+                "usages": ["ShaderRead"]
+            },
+            {
+                "name": "brdf_lut",
+                "frames": "1",
+                "type": "Type2D",
+                "format": "rgba_f16",
+                "width": 512,
+                "height": 512,
+                "depth": 1,
+                "usages": ["ShaderRead"]
             }
-        }
-    ],
+        ],
+        "buffers":
+        [
+            {
+                "name": "camera-buffer",
+                "frames": "2",
+                "size": 256,
+                "usage": "UniformBuffer",
+                "memory_usage": "CpuToGpu"
+            },
+            {
+                "name": "light-buffer",
+                "frames": "2",
+                "size": 65536,
+                "data": "nullptr",
+                "usage": "StorageBuffer",
+                "memory_usage": "CpuToGpu"
+            },
+            {
+                "name": "shadow-buffer",
+                "frames": "2",
+                "size": 4096,
+                "data": "nullptr",
+                "usage": "UniformBuffer",
+                "memory_usage": "CpuToGpu"
+            },
+            {
+                "name": "postprocess-buffer",
+                "frames": "2",
+                "size": 128,
+                "data": "nullptr",
+                "usage": "UniformBuffer",
+                "memory_usage": "CpuToGpu"
+            },
+        ]
+    },
 
-    "stages":
+    "passes":
     [
         {
             "type": "GRAPHICS",
-            "name": "geometry",
-            "reads":
-            [
-                { 
-                    "type":         "buffer", 
-                    "name":         "camera-buffer", 
-                    "access":       "ShaderRead", 
+            "pass": "ShadowMap",
+            "name": "shadow_map_pass",
+            "reads": [
+                {
+                    "type": "buffer",
+                    "name": "camera-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "CameraBuffer"
+                },
+                {
+                    "type": "buffer",
+                    "name": "shadow-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "ShadowMap"
                 }
             ],
-            "writes":
-            [
-                { 
-                    "type":         "image", 
-                    "name":         "color", 
-                    "layout":       "Color", 
-                    "access":       "ColorWrite",        
-                    "stage":        ["ColorOutput"], 
-                    "clear_color":  [0,0,0,1], 
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "shadow_map",
+                    "layout": "Depth",
+                    "access": "DepthStencilWrite",
+                    "stage": ["EarlyFragmentTests", "LateFragmentTests"],
+                    "clear_depth": 1.0
+                }
+            ]
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "DepthPrePass",
+            "name": "depth_prepass",
+            "reads": [
+                {
+                    "type": "buffer",
+                    "name": "camera-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "CameraBuffer"
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "depth_prepass",
+                    "layout": "Depth",
+                    "access": "DepthStencilWrite",
+                    "stage": ["EarlyFragmentTests", "LateFragmentTests"],
+                    "clear_depth": 1.0
                 },
-                { 
-                    "type":         "image", 
-                    "name":         "depth", 
-                    "layout":       "Depth", 
-                    "access":       "DepthStencilWrite", 
-                    "stage":        ["EarlyFragmentTests", "LateFragmentTests"], 
-                    "clear_color":  [0,0,0,1], 
+                {
+                    "type": "image",
+                    "name": "motion_vectors",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "Geometry",
+            "name": "geometry_pass",
+            "reads": [
+                {
+                    "type": "buffer",
+                    "name": "camera-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "CameraBuffer"
+                },
+                {
+                    "type": "image",
+                    "name": "depth_prepass",
+                    "layout": "DepthStencilRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "gbuffer_albedo",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_normal",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_position",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_material",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
                 }
             ],
             "enable": "true"
         },
-
         {
-            "type": "GRAPHICS",
-            "name": "final",
-            "reads":
-            [
-                { 
-                    "name":     "color", 
-                    "type":     "image", 
-                    "layout":   "ShaderRead",      
-                    "access":   "ShaderRead", 
-                    "stage":    ["VertexShader", "FragmentShader"]
+            "type": "COMPUTE",
+            "pass": "SSAO",
+            "name": "ssao_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "gbuffer_normal",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "semantic": "NORMAL"
                 },
-                { 
-                    "name":     "depth", 
-                    "type":     "image", 
-                    "layout":   "DepthStencilRead", 
-                    "access":   "ShaderRead", 
-                    "stage":    ["VertexShader", "FragmentShader"]
+                {
+                    "type": "image",
+                    "name": "gbuffer_position",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "semantic": "POSITION"
+                },
+                {
+                    "type": "buffer",
+                    "name": "camera-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "CAMERA"
                 }
             ],
-            "writes":
-            [
-                { 
-                    "name":         "swapchain_color", 
-                    "type":         "image", 
-                    "layout":       "Color", 
-                    "access":       "ColorWrite",        
-                    "stage":        ["ColorOutput"], 
-                    "clear_color":  [0,0,0,1] 
-                },
-                { 
-                    "name":         "swapchain_depth", 
-                    "type":         "image", 
-                    "layout":       "Depth", 
-                    "access":       "DepthStencilWrite", 
-                    "stage":        ["EarlyFragmentTests", "LateFragmentTests"], 
-                    "clear_depth":  1.0 
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "ssao_output",
+                    "layout": "General",
+                    "access": "ShaderWrite"
                 }
-            ]
+            ],
+            "enable": "true"
         },
-
         {
             "type": "GRAPHICS",
-            "name": "present",
-            "barriers":
-            [
-                { 
-                    "type":       "image", 
-                    "name":       "swapchain_color", 
-                    "old_layout": "Color",
-                    "new_layout": "Present"
+            "pass": "SSAOBlur",
+            "name": "ssao_blur_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "ssao_output",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "SSAO_OUTPUT"
                 }
-            ]
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "ssao_blurred",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [1, 1, 1, 1]
+                }
+            ],
+            "enable": "true"
         },
-    ],
+        {
+            "type": "GRAPHICS",
+            "pass": "Lighting",
+            "name": "lighting_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "gbuffer_albedo",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "ALBEDO"
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_normal",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "NORMAL"
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_position",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "POSITION"
+                },
+                {
+                    "type": "image",
+                    "name": "gbuffer_material",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "MATERIAL"
+                },
+                {
+                    "type": "image",
+                    "name": "ssao_blurred",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "SSAO_BLURRED"
+                },
+                {
+                    "type": "image",
+                    "name": "shadow_map",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "SHADOW_MAP"
+                },
+                {
+                    "type": "image",
+                    "name": "environment_cubemap",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "irradiance_cubemap",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "IrradianceCubemap"
+                },
+                {
+                    "type": "image",
+                    "name": "brdf_lut",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "BRDF_LUT"
+                },
+                {
+                    "type": "buffer",
+                    "name": "light-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "Light"
+                },
+                {
+                    "type": "buffer",
+                    "name": "camera-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "Camera"
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "lighting_output",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "DepthOfFieldCoC",
+            "name": "dof_coc_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "depth_prepass",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"],
+                    "semantic": "DepthMap"
+                },
+                {
+                    "type": "buffer",
+                    "name": "postprocess-buffer",
+                    "access": "ShaderRead",
+                    "semantic": "PostProcessBuffer"
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "depth_of_field_coc",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "DepthOfField",
+            "name": "dof_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "lighting_output",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "depth_of_field_coc",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "dof_near_field",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"]
+                },
+                {
+                    "type": "image",
+                    "name": "dof_far_field",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomHighpass",
+            "name": "bloom_highpass_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "lighting_output",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_highpass",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomDownsample",
+            "name": "bloom_downsample_pass_1",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "bloom_highpass",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_1",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomDownsample",
+            "name": "bloom_downsample_pass_2",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_1",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_2",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomDownsample",
+            "name": "bloom_downsample_pass_3",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_2",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_3",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomUpsample",
+            "name": "bloom_upsample_pass_1",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_3",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_2",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_upsample_1",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomUpsample",
+            "name": "bloom_upsample_pass_2",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "bloom_upsample_1",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "bloom_downsample_1",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "bloom_upsample_2",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "BloomCombine",
+            "name": "bloom_combine_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "lighting_output",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "bloom_upsample_2",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "postprocess_hdr",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "TemporalAA",
+            "name": "temporal_aa_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "postprocess_hdr",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "temporal_aa_history",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "motion_vectors",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "image",
+                    "name": "depth_prepass",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "buffer",
+                    "name": "postprocess-buffer",
+                    "access": "ShaderRead"
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "temporal_aa_history",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 0]
+                },
+                {
+                    "type": "image",
+                    "name": "postprocess_ldr",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "Tonemapping",
+            "name": "tonemapping_pass",
+            "reads": [
+                {
+                    "type": "image",
+                    "name": "postprocess_hdr",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "type": "buffer",
+                    "name": "postprocess-buffer",
+                    "access": "ShaderRead"
+                }
+            ],
+            "writes": [
+                {
+                    "type": "image",
+                    "name": "postprocess_ldr",
+                    "layout": "Color",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                }
+            ],
+            "enable": "false",
+            "note": "Disabled when TemporalAA is enabled"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "UI",
+            "name": "ui_pass",
+            "reads": [
+                {
+                    "name": "postprocess_ldr",
+                    "type": "image",
+                    "layout": "ShaderRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                },
+                {
+                    "name": "depth_prepass",
+                    "type": "image",
+                    "layout": "DepthStencilRead",
+                    "access": "ShaderRead",
+                    "stage": ["FragmentShader"]
+                }
+            ],
+            "writes": [
+                {
+                    "name": "swapchain_color",
+                    "type": "image",
+                    "layout": "Present",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"],
+                    "clear_color": [0, 0, 0, 1]
+                },
+                {
+                    "name": "swapchain_depth",
+                    "type": "image",
+                    "layout": "Depth",
+                    "access": "DepthStencilWrite",
+                    "stage": ["EarlyFragmentTests", "LateFragmentTests"],
+                    "clear_depth": 1.0
+                }
+            ],
+            "enable": "true"
+        },
+        {
+            "type": "GRAPHICS",
+            "pass": "Present",
+            "name": "present_pass",
+            "reads": [
+                {
+                    "name": "swapchain_color",
+                    "type": "image",
+                    "layout": "Present",
+                    "access": "ColorWrite",
+                    "stage": ["ColorOutput"]
+                }
+            ],
+            "enable": "true"
+        }
+    ]
 }

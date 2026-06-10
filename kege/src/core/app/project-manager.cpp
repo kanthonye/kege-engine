@@ -11,7 +11,7 @@ namespace kege{
 
     bool ProjectManager::createProject( const std::string& filepath )
     {
-        _current_project = new kege::Project( filepath, _ecs, _render_graph );
+        _current_project = new kege::Project( filepath, _ecs );
         return true;
     }
     
@@ -25,24 +25,9 @@ namespace kege{
         return true;
     }
 
-    ref::AssetManager ProjectManager::getAssetManager()
+    kege::Project* ProjectManager::getProject()
     {
-        return _current_project->asset_manager;
-    }
-
-    ref::SceneManager ProjectManager::getSceneManager()
-    {
-        return _current_project->scene_manager;
-    }
-
-    ref::RenderGraph ProjectManager::getRenderGraph()
-    {
-        return _render_graph;
-    }
-
-    ref::Graphics ProjectManager::getGraphics()
-    {
-        return _graphics;
+        return _current_project.ref();
     }
 
     bool ProjectManager::empty()const
@@ -56,10 +41,10 @@ namespace kege{
         _current_project.clear();
     }
 
-    ProjectManager::ProjectManager( ref::Graphics graphics, kege::InputManager* im, ref::ECS& ecs, ref::RenderGraph rg )
-    :   _graphics( graphics )
-    ,   _render_graph( rg )
-    ,   _ecs( ecs )
-    {}
+    ProjectManager::ProjectManager( ref::ECS& ecs )
+    :   _ecs( ecs )
+    {
+        createProject( "new-project" );
+    }
 
 }

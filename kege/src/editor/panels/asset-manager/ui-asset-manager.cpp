@@ -14,6 +14,7 @@
 #include "modules/ui-create-material.hpp"
 #include "modules/ui-create-pipeline.hpp"
 #include "ui-asset-manager.hpp"
+#include "../../dock/ui-dock-manager.hpp"
 
 
 
@@ -67,6 +68,7 @@ namespace kege::ui{
     ,   _string_categories({{"All"}, {"Textures"}, {"Models"}, {"Material"}, {"Shaders"}, {"Sounds"}, {"Scripts"}})
     ,   _category_index(0)
     ,   _show_generate_window(false)
+    ,   _dock_manager(dm)
     {
         _categories.resize(_string_categories.size());
         for (int i=0; i<_string_categories.size(); ++i)
@@ -183,4 +185,15 @@ namespace kege::ui{
         std::cout << event.handle[0]->name << " DROPOFF\n";
         return;
     }
+
+    kege::GraphicsDevice* AssetManagerUI::getGraphicsDevice()
+    {
+        return _dock_manager->getGraphicsDevice();
+    }
+
+    kege::AssetManager* AssetManagerUI::getAssetManager()
+    {
+        return _dock_manager->getAssetManager();
+    }
+
 }

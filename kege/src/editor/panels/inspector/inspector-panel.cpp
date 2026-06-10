@@ -31,9 +31,10 @@ namespace kege{
 
     void InspectorPanel::updateRemoveComponent()
     {
+        kege::ECS* ecs = _manager->getECS();
         for(int i=0; i<_deleted_components.size(); ++i)
         {
-            _ecs->remove( _deleted_components[ i ], _selected_entity );
+            ecs->remove( _deleted_components[ i ], _selected_entity );
         }
         _deleted_components.clear();
     }
@@ -52,7 +53,8 @@ namespace kege{
             {
                 if (selection < _infos.size())
                 {
-                    _infos[selection].addComponent( _ecs, _selected_entity );
+                    kege::ECS* ecs = _manager->getECS();
+                    _infos[selection].addComponent( ecs, _selected_entity );
                     _show_component_selections = false;
                 }
             }
@@ -61,8 +63,9 @@ namespace kege{
 
     void InspectorPanel::updateComponents()
     {
-        kege::AssetManager* am = _manager->getEditor()->getProjectManager()->getAssetManager().ref();
-        const ecs::Component::Layout& layout = _ecs->getLayout( _selected_entity );
+        kege::ECS* ecs = _manager->getECS();
+        kege::AssetManager* am = _manager->getAssetManager();
+        const ecs::Component::Layout& layout = ecs->getLayout( _selected_entity );
 
         ui::ID id[2] = {_uid_main[0], _uid_main[2]};
         _ui->beginScrollContainer(id);
@@ -83,13 +86,14 @@ namespace kege{
 
         const CompInfo& info = _infos[ itr->second ];
 
-        _ui->push({ .style = &_ui->theme().card });
+        _ui->push({ .style = &_ui->theme()->card });
         ui::ID id[4] = {info.uid[0], info.uid[1], info.uid[2], info.uid[3]};
         switch ( _ui->removableHeader(id, _listed_component[info.index]) )
         {
             case 1: // update component
             {
-                info.buildUI( info.uid_comp, am, _ui, _ecs, _selected_entity );
+                kege::ECS* ecs = _manager->getECS();
+                info.buildUI( info.uid_comp, am, _ui, ecs, _selected_entity );
             }
             break;
 
@@ -107,18 +111,19 @@ namespace kege{
     void InspectorPanel::handle(const kege::ui::AssetMetadataDropOff& event)
     {
         if( !_selected_entity ) return;
+        kege::ECS* ecs = _manager->getECS();
         for(const auto& a : event.handle)
         {
             switch (a->type)
             {
                 case kege::ui::AssetType::MODEL:
                 {
-                    kege::Renderable* renderable = _ecs->get< kege::Renderable >( _selected_entity );
+                    kege::Renderable* renderable = ecs->get< kege::Renderable >( _selected_entity );
                     if (renderable == nullptr) {
-                        renderable = _ecs->add< kege::Renderable >( _selected_entity );
+                        renderable = ecs->add< kege::Renderable >( _selected_entity );
                     }
-                    renderable->mesh_handle = event.handle[0]->handle;
-                    strncpy(renderable->fname, event.handle[0]->name.c_str(), kege::min<uint64_t>(63, event.handle[0]->name.length()));
+                    //renderable->mesh_handle = event.handle[0]->handle;
+                    //strncpy(renderable->fname, event.handle[0]->name.c_str(), kege::min<uint64_t>(63, event.handle[0]->name.length()));
                     break;
                 }
 
@@ -153,10 +158,10 @@ namespace kege{
     {
         _infos.push_back
         ({
-            .addComponent = add_funct,
             .buildUI = build_funct,
+            .addComponent = add_funct,
+            .name = stype,
             .type = comp_type,
-            .name = stype
         });
 
         uint32_t index = static_cast<uint32_t>((_infos.size() - 1));
@@ -179,7 +184,7 @@ namespace kege{
         _listed_component.resize(_infos.size());
         for (int i=0; i<_infos.size(); ++i)
         {
-            _listed_component[i] = _ui->layout()->text(_infos[i].name.c_str(), 20);
+            _listed_component[i] = _ui->gui()->text(_infos[i].name.c_str(), 20);
         }
     }
 
@@ -188,23 +193,23 @@ namespace kege{
     ,   _show_component_selections( false )
     ,   _selected_entity{}
     ,   _scroll_amount( 0.f )
-    ,   _ecs(dm->getEditor()->getECS())
+    //,   _ecs(dm->getEditor()->getECS())
     {
-        _text_add = _ui->layout()->text("Add Component", 20);
+        _text_add = _ui->gui()->text("Add Component", 20);
 
         _styles[1] = kege::ui::Style
         {
             .background = ui::Background(0xFFFFFF10),
-            .height = ui::flexible(),
             .width = ui::extend(),
-            .padding = {10,10,10,10},
-            .gap = {2,2},
+            .height = ui::flexible(),
             .alignment =
             {
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .direction = ui::AlignDir::DOWN
-            }
+            },
+            .padding = {10,10,10,10},
+            .gap = {2,2},
         };
 
         Communication::add< const ui::SetSelectedEntity&, InspectorPanel >( this );

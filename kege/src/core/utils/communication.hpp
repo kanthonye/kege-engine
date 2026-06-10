@@ -100,12 +100,12 @@ namespace kege{
 
     template< typename T > struct Request
     {
-        T request;
+        T* request;
     };
     
     template< typename T > struct Response
     {
-        T response;
+        T* response;
     };
 
 

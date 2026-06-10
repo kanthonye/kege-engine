@@ -21,6 +21,15 @@ namespace kege::ui{
 
         void operator()(const kege::ui::AssetMetadataDropOff& event);
 
+        void operator()(const kege::WindowFrameBufferSizeEvent& event);
+        void operator()(const kege::WindowSizeEvent& event);
+
+        kege::ProjectManager* getProjectManager();
+        kege::GraphicsDevice* getGraphicsDevice();
+        kege::AssetManager* getAssetManager();
+        kege::ECS* getECS();
+        kege::UI* getUI();
+
         std::vector< int32_t > getPanelIndice( const std::vector< std::string >& names);
         kege::ui::Dock* getDock(const kege::dvec2& pointer);
         int32_t getPanelIndex( const std::string& name );
@@ -30,22 +39,27 @@ namespace kege::ui{
         void addPanel( Ref< ui::Panel > panel );
         void onWindowResize(int width, int height);
         void displayPanel( uint32_t index );
+        
         void update();
 
-        kege::EditorLayer* getEditor();
-
+        DockManager(const kege::Extent2D& extent, kege::GUI* gui, kege::UI* ui, kege::ProjectManager* pm, kege::ECS* ecs);
         ~DockManager();
-        DockManager(kege::EditorLayer* editor, int width, int height);
 
     private:
 
         std::map< std::string, int32_t > _panel_name_index_map;
         std::vector< Ref< ui::Panel > > _panels;
+        kege::ProjectManager* _project_manager;
 
         ui::GhostObject _ghost;
 
-        kege::EditorLayer* _editor;
         ui::Dock _root;
+
+        kege::GUI* _gui;
+        kege::ECS* _ecs;
+        kege::UI* _ui;
+        
+        kege::ui::Rect _rect;
     };
 }
 #endif /* ui_dock_manager_hpp */

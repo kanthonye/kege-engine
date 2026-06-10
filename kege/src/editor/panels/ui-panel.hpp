@@ -16,7 +16,7 @@ namespace kege::ui{
 
     struct Panel : public kege::RefCounter
     {
-        static void updateRectOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        static void updateRectOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data);
         virtual void operator()(const kege::ui::AssetMetadataDropOff& event);
         virtual void handle(const kege::ui::AssetMetadataDropOff& event){}
 

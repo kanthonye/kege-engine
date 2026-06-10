@@ -11,7 +11,6 @@
 #include "../app/app-layer.hpp"
 #include "mouse.hpp"
 #include "keyboard.hpp"
-#include "../app/app-window.hpp"
 
 namespace kege{
 

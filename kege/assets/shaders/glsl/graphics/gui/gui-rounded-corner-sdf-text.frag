@@ -11,25 +11,29 @@ layout(location = 7) in float border_width;  // already unpacked (px)
 
 layout(location = 0) out vec4 final_color;
 
-
-
-// New texture sampler for UI textures
-layout(set = 1, binding = 0) uniform sampler2D _theme;
-
-// Texture samplers
-layout(set = 2, binding = 0) uniform sampler2D _font;
-
-// New texture sampler for UI textures
-layout(set = 3, binding = 0) uniform sampler2D _scene;
+layout(set = 1, binding = 0) uniform sampler2D Textures[2];
+layout(set = 2, binding = 0) uniform sampler2D SceneColor;
 
 // Camera uniform for 2D rendering
 layout(push_constant) uniform Camera2D
 {
     mat4 projection;
-    vec4 resolution;
+    mat4 transform;
+    vec4 position;
+    vec4 screen_info;
 };
 
-
+vec4 getColor()
+{
+    switch (text_info.x)
+    {
+        case 0: return texture( Textures[ 0 ], text_uv );
+        case 1: return texture( Textures[ 1 ], text_uv );
+        case 2: return texture( SceneColor, text_uv );
+        default: break;
+    }
+    return vec4(1);
+}
 
 // p: fragment position relative to rect center
 // size: full width/height
@@ -52,17 +56,11 @@ float sdRoundedRect(vec2 p, vec2 size, vec4 r)
     return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
 }
 
-vec4 sampleTexture(int texr_id)
-{
-    if (texr_id == 0) return texture(_theme, text_uv);
-    if (texr_id == 1) return texture(_font,  text_uv);
-    if (texr_id == 2) return texture(_scene, text_uv);
-    return vec4(1.0);
-}
 
 void main()
 {
-    vec2 frag = gl_FragCoord.xy;
+    vec2 scale_factor = screen_info.zw;
+    vec2 frag = gl_FragCoord.xy * scale_factor;
 
     // -----------------------------
     // Clip rectangle
@@ -81,7 +79,7 @@ void main()
     // -----------------------------
     vec2 size   = rect.zw;
     vec2 center = rect.xy + size * 0.5;
-    vec2 p      = frag * vec2(1536.0, 896.0) - center;
+    vec2 p      = frag - center;
 
     // Clamp radii to sane values
     vec4 r = min(border_radius, min(size.x, size.y) * 0.5);
@@ -115,10 +113,9 @@ void main()
     // -----------------------------
     // Text rendering (your logic)
     // -----------------------------
-    int texr_id = text_info.x;
-
-    vec4 texr_color = sampleTexture(texr_id);
-    if (texr_id == 1) // font
+    int texr_id = int(text_info.x);
+    vec4 texr_color = getColor();//texture( Textures[ texr_id ], text_uv );
+    if (text_info.y == 1) // font
     {
         float width = 0.05;
         float edge  = 0.07;
@@ -128,7 +125,7 @@ void main()
 
         fill_alpha *= text_alpha;
     }
-    else// if (texr_id >= 0)
+    else
     {
         rgb *= texr_color.rgb;
     }
@@ -141,7 +138,6 @@ void main()
     if (fill_alpha <= 0.0)
         discard;
 
-//    final_color = vec4(rgb, A);
+    //final_color = vec4(vec3(texr_color.xyz), 0.5);
     final_color = vec4(rgb, fill_alpha);
 }
-

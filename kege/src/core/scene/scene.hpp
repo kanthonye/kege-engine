@@ -26,7 +26,6 @@ namespace kege{
 
 
         kege::AssetManager* getAssetManager();
-        kege::RenderGraph* getRenderGraph();
 
         /**
          * @fn setSceneRay
@@ -127,7 +126,7 @@ namespace kege{
          */
         bool ready()const;
 
-        Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am, kege::RenderGraph* rg );
+        Scene( const std::string& name, ecs::EntityManager &ecs, kege::AssetManager* am );
         ~Scene();
 
     protected:
@@ -135,7 +134,6 @@ namespace kege{
         void registerEntities( const ecs::Entity& entity );
 
         kege::AssetManager* _asset_manager;
-        kege::RenderGraph* _render_graph;
 
         /**
          * The camera entity

@@ -13,14 +13,23 @@
 #include <vector>
 #include <functional>
 #include "../../../utils/json-parser.hpp"
-#include "../core/string-to-enum-types.hpp"
+#include "../../../graphics/core/device/core/device.hpp"
+#include "render-pass-desc.hpp"
 
 namespace kege{
 
-    class RenderGraph;
-    class RenderGraphLoader
+    struct RenderGraphLoader
     {
-        public: static bool load( kege::RenderGraph& graph, const std::string& filename );
+        typedef std::map< std::string, uint32_t > StringToIntMap;
+        typedef std::function< void( const StringToIntMap&, kege::RenderGraphDescriptor&, Json ) > Function;
+        typedef std::map< std::string, Function > FunctionMap;
+        
+        public: static bool load
+        (
+            kege::RenderGraphDescriptor& graph,
+            const kege::Swapchain* swapchain,
+            const std::string& filename
+        );
     };
 }
 

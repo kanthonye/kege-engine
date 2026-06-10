@@ -8,31 +8,31 @@
 #include "ui-components.hpp"
 
 namespace kege::ui{
-
+    PropertyMeta k;
     const kege::ui::Property<kege::Perspective> PerspectiveProperties[3] =
     {
         UI_PROP
         (
             kege::Perspective, fov, kege::ui::PropertyMeta{
-                .text = {.ptr = "FOV:", 0.f, 0.f, 90.0, 20.0 },
-                .hint = {kege::ui::UIHint::DragNum, false, 10.0, 160.0},
-                .type = PropertyType::Double
+                .type = PropertyType::Double,
+                .hint = { kege::ui::UIHint::DragNum, false, 10.0, 160.0 },
+                .text = { .ptr = "FOV:", .x = 0.f, .y = 0.f, .width = 90.0, .height = 20.0 }
             }
         ),
         UI_PROP
         (
             kege::Perspective, znear, kege::ui::PropertyMeta{
-                .text = {.ptr = "Near:", 0.f, 0.f, 90.0f, 20.0f },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 0.001, 999'999'999.0},
-                .type = PropertyType::Double
+                .text = { "Near:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::Perspective, zfar, kege::ui::PropertyMeta{
-                .text = {.ptr = "Far:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 0.001, 999'999'999.0},
-                .type = PropertyType::Double
+                .text = {"Far:", 0.f, 0.f, 90.f, 20.f },
             }
         ),
     };
@@ -42,49 +42,49 @@ namespace kege::ui{
         UI_PROP
         (
             kege::Orthographic, left, kege::ui::PropertyMeta{
-                .text = {.ptr = "Left:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 10.0, 160.0},
-                .type = PropertyType::Double
+                .text = {"Left:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::Orthographic, right, kege::ui::PropertyMeta{
-                .text = {.ptr = "Right:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 10.0, 160.0},
-                .type = PropertyType::Double
+                .text = {"Right:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::Orthographic, above, kege::ui::PropertyMeta{
-                .text = {.ptr = "Top:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 10.0, 160.0},
-                .type = PropertyType::Double
+                .text = {"Top:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::Orthographic, below, kege::ui::PropertyMeta{
-                .text = {.ptr = "Bottom:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 10.0, 160.0},
-                .type = PropertyType::Double
+                .text = {"Bottom:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::Orthographic, znear, kege::ui::PropertyMeta{
-                .text = {.ptr = "Near:", 0.f, 0.f, 90.0f, 20.0f },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 0.001, 999'999'999.0},
-                .type = PropertyType::Double
+                .text = {"Near:", 0.f, 0.f, 90.0f, 20.0f },
             }
         ),
         UI_PROP
         (
             kege::Orthographic, zfar, kege::ui::PropertyMeta{
-                .text = {.ptr = "Far:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, false, 0.001, 999'999'999.0},
-                .type = PropertyType::Double
+                .text = {"Far:", 0.f, 0.f, 90.f, 20.f },
             }
         ),
     };
@@ -94,49 +94,49 @@ namespace kege::ui{
         UI_PROP
         (
             kege::Rigidbody, linear.velocity, kege::ui::PropertyMeta{
-                .text = {.ptr = "Velocity:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Vec3
+                .text = {"Velocity:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Rigidbody, linear.invmass, kege::ui::PropertyMeta{
-                .text = {.ptr = "Linear InvMass:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Double,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 3'999'999'999 },
-                .type = PropertyType::Double
+                .text = {"Linear InvMass:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Rigidbody, linear.damping, kege::ui::PropertyMeta{
-                .text = {.ptr = "Linear Damping:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Linear Damping:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Rigidbody, cor, kege::ui::PropertyMeta{
-                .text = {.ptr = "COR:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 3'999'999'999 },
-                .type = PropertyType::Float
+                .text = {"COR:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Rigidbody, friction, kege::ui::PropertyMeta{
-                .text = {.ptr = "Friction:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Friction:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Rigidbody, immovable, kege::ui::PropertyMeta{
-                .text = {.ptr = "Immovable:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Bool,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Bool
+                .text = {"Immovable:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
     };
@@ -146,25 +146,25 @@ namespace kege::ui{
         UI_PROP
         (
             kege::Transform, position, kege::ui::PropertyMeta{
-                .text = {.ptr = "Position:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Vec3
+                .text = {"Position:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Transform, scale, kege::ui::PropertyMeta{
-                .text = {.ptr = "Scale:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 3'999'999'999 },
-                .type = PropertyType::Vec3
+                .text = {"Scale:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
         UI_PROP
         (
             kege::Transform, orientation, kege::ui::PropertyMeta{
-                .text = {.ptr = "Orientation:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Quat,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Quat
+                .text = {"Orientation:", 0.f, 0.f, 100.f, 20.f },
             }
         ),
     };
@@ -174,25 +174,25 @@ namespace kege::ui{
         UI_PROP
         (
             kege::DirectionalLight, color, kege::ui::PropertyMeta{
-                .text = {.ptr = "Color:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Color:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::DirectionalLight, intensity, kege::ui::PropertyMeta{
-                .text = {.ptr = "Intensity:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Intensity:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::DirectionalLight, direction, kege::ui::PropertyMeta{
-                .text = {.ptr = "Direction:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Direction:", 0.f, 0.f, 90.0, 20.0 },
             }
         )
     };
@@ -203,41 +203,41 @@ namespace kege::ui{
         UI_PROP
         (
             kege::PointLight, color, kege::ui::PropertyMeta{
-                .text = {.ptr = "Color:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Color:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::PointLight, intensity, kege::ui::PropertyMeta{
-                .text = {.ptr = "Intensity:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Intensity:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::PointLight, position, kege::ui::PropertyMeta{
-                .text = {.ptr = "Position:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Position:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::PointLight, linear_attenuation, kege::ui::PropertyMeta{
-                .text = {.ptr = "Linear Attenuation:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Linear Attenuation:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::PointLight, quadratic_attenuation, kege::ui::PropertyMeta{
-                .text = {.ptr = "Quadratic Attenuation:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Quadratic Attenuation:", 0.f, 0.f, 90.0, 20.0 },
             }
         )
     };
@@ -248,65 +248,65 @@ namespace kege::ui{
         UI_PROP
         (
             kege::SpotLight, color, kege::ui::PropertyMeta{
-                .text = {.ptr = "Color:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Color:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, intensity, kege::ui::PropertyMeta{
-                .text = {.ptr = "Intensity:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Intensity:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, position, kege::ui::PropertyMeta{
-                .text = {.ptr = "Position:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Position:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, direction, kege::ui::PropertyMeta{
-                .text = {.ptr = "Direction:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Vec3
+                .text = {"Direction:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, spot_exponent, kege::ui::PropertyMeta{
-                .text = {.ptr = "Spot Exponent:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Spot Exponent:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, spot_cutoff, kege::ui::PropertyMeta{
-                .text = {.ptr = "Spot Cutoff:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Spot Cutoff:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, linear_attenuation, kege::ui::PropertyMeta{
-                .text = {.ptr = "Linear Attenuation:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Linear Attenuation:", 0.f, 0.f, 90.0, 20.0 },
             }
         ),
         UI_PROP
         (
             kege::SpotLight, quadratic_attenuation, kege::ui::PropertyMeta{
-                .text = {.ptr = "Quadratic Attenuation:", 0.f, 0.f, 90.0, 20.0 },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0},
-                .type = PropertyType::Float
+                .text = {"Quadratic Attenuation:", 0.f, 0.f, 90.0, 20.0 },
             }
         )
     };
@@ -316,7 +316,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         kege::Perspective* projection = ecs->get< kege::Perspective >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *projection, PerspectiveProperties);
         ui->pop();
         return false;
@@ -326,7 +326,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         kege::Orthographic* projection = ecs->get< kege::Orthographic >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *projection, OrthographicProperties);
         ui->pop();
         return false;
@@ -336,7 +336,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         kege::Rigidbody* rigidbody = ecs->get< kege::Rigidbody >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *rigidbody, RigidbodyProperties);
         ui->pop();
         return false;
@@ -346,7 +346,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         Transform* transform = ecs->get< kege::Transform >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *transform, TransformProperties);
         ui->pop();
         return false;
@@ -356,7 +356,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         DirectionalLight* light = ecs->get< kege::DirectionalLight >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *light, DirectionalLightProperties);
         ui->pop();
         return false;
@@ -366,7 +366,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         PointLight* light = ecs->get< kege::PointLight >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *light, PointLightProperties);
         ui->pop();
         return false;
@@ -376,7 +376,7 @@ namespace kege::ui{
     {
         uint32_t id_offset = 0;
         SpotLight* light = ecs->get< kege::SpotLight >( entity );
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         drawProperties(ui, uid, id_offset, *light, SpotLightProperties);
         ui->pop();
         return false;
@@ -384,23 +384,23 @@ namespace kege::ui{
 
     bool renderable( const ui::UID& uid, kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity )
     {
-        Renderable* component = ecs->get< kege::Renderable >( entity );
+        //Renderable* component = ecs->get< kege::Renderable >( entity );
         ui::Text text
         {
             .width = 64,
-            .font_size = 20,
             .height = 15,
+            .font_size = 20,
             .color = 0xFFFFFFFF
         };
 
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         {
             text.width = 150;
             text.ptr = "Geometry:";
-            ui->put({.text = text, .rect = {.width = 55, .height = 20} });
+            ui->put({.rect = {.width = 55, .height = 20}, .text = text});
 
-            text.ptr = component->fname;
-            ui->put({.text = text, .rect = {.width = 55, .height = 20} });
+            //text.ptr = component->fname;
+            ui->put({.rect = {.width = 55, .height = 20}, .text = text});
         }
         ui->pop();
         return false;
@@ -412,8 +412,8 @@ namespace kege::ui{
         {
             .ptr = "Particle Effect",
             .width = 64,
-            .font_size = 20,
             .height = 15,
+            .font_size = 20,
             .color = 0xFFFFFFFF
         };
 
@@ -461,15 +461,15 @@ namespace kege::ui{
 
         int selection;
         text.ptr = "Emitters:";
-        ui->push({.style = &ui->theme().row});
-        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+        ui->push({.style = &ui->theme()->row});
+        ui->put({.rect = {.width = 45, .height = 20}, .text = text});
         ui->options(uid, list, selection);
         ui->pop();
 
         //float emissions_per_second, bool burst
         //max particle quantity
         //rate_of_deterioration
-        ui->push({.style = &ui->theme().padded_list});
+        ui->push({.style = &ui->theme()->padded_list});
         ui->pop();
 
         return false;
@@ -478,7 +478,7 @@ namespace kege::ui{
 //    {
 //        uint32_t id_offset = 0;
 //        Transform* transform = ecs->get< kege::Transform >( entity );
-//        ui->push({.style = &ui->theme().padded_list});
+//        ui->push({.style = &ui->theme()->padded_list});
 //        drawProperties(ui, uid, id_offset, *transform, TransformProperties);
 //        ui->pop();
 //        return false;

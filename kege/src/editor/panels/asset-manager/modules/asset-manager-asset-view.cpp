@@ -139,7 +139,7 @@ namespace kege::ui{
         _ui->beginScrollContainer(_scroll_container);
 
         // Calculate grid layout
-        //float available_width = _ui->layout()->getWidth();
+        //float available_width = _ui->gui()->getWidth();
         const float ICON_SIZE = 80.0f;
         const float ITEM_W = 120.0f;
         const float ITEM_H = 120.0f;
@@ -200,17 +200,17 @@ namespace kege::ui{
 
                 // Use put for the icon (no container)
                 _ui->put(icon_desc);
-                _ui->put({.style = &_ui->theme().y_seperator});
+                _ui->put({.style = &_ui->theme()->y_seperator});
 
                 // Check for interactions
                 if (_ui->click( asset.uid[0] ))
                 {
-                    Modifiers modifiers = _ui->layout()->inputManager()->getMouse()->getModifiers();
+                    Modifiers modifiers = _ui->gui()->getInputManager()->getMouse()->getModifiers();
                     handleAssetClick(visible_idx, modifiers);
                     selection = visible_idx;
                 }
 
-//                if (_ui->layout()->doubleClick(asset.asset_uid))
+//                if (_ui->gui()->doubleClick(asset.asset_uid))
 //                {
 //                    if (file.is_directory)
 //                    {
@@ -245,7 +245,7 @@ namespace kege::ui{
 //                    display_name = display_name.substr(0, font_size) + "...";
 //                }
 //
-//                ui::Text name_text = _ui->layout()->text(display_name.c_str(), font_size);
+//                ui::Text name_text = _ui->gui()->text(display_name.c_str(), font_size);
 //                _ui->label(0, name_text);
 //
 //

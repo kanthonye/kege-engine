@@ -6,7 +6,7 @@
 //
 
 #include "../../../../core/math/algebra/vmath.hpp"
-#include "../../../graphics/particle/effect/particle.hpp"
+#include "../../../graphics/components/particle/effect/particle.hpp"
 #include "cloth.hpp"
 
 namespace kege{

@@ -23,7 +23,7 @@ namespace kege::ui{
 //            .color = 0xFFFFFFFF
 //        };
 //
-//        ui->push({.layer = layer, .style = &ui->theme().padded_list});
+//        ui->push({.layer = layer, .style = &ui->theme()->padded_list});
 //
 //        ui::Text text;
 //        text.font_size = 20;

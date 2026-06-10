@@ -13,14 +13,14 @@ namespace kege::ui{
 
     struct PanelPtr{ Panel* panel; };
 
-    void Panel::updateRectOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void Panel::updateRectOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
-        ((PanelPtr*)data)->panel->_rect = layout->elem( widget_id )->rect;
+        ((PanelPtr*)data)->panel->_rect = gui->elem( widget_id )->rect;
     }
 
     void Panel::operator()(const kege::ui::AssetMetadataDropOff& event)
     {
-        if ( _ui->testPointVsRect(event.position, _rect) )
+        if ( kege::ui::testPointVsRect(event.position, _rect) )
         {
             handle( event );
         }
@@ -31,7 +31,7 @@ namespace kege::ui{
         _widget_index = _ui->push
         ({
             .user_id = _uid[0],
-            .style = &_ui->theme().panel
+            .style = &_ui->theme()->panel
         });
         updateLayout();
         _ui->pop();
@@ -42,7 +42,7 @@ namespace kege::ui{
     Panel::Panel( const std::string& name, kege::ui::DockManager* dm )
     :   _name( name  )
     ,   _manager( dm )
-    ,   _ui(dm->getEditor()->getGUI())
+    ,   _ui(dm->getUI())
     {
     }
 }

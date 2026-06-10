@@ -12,7 +12,7 @@
 #include <vector>
 #include "asset-manager.hpp"
 #include "../utils/communication.hpp"
-#include "../graphics/render/core/graphics.hpp"
+#include "../graphics/core/all.hpp"
 
 namespace kege{
 
@@ -21,16 +21,16 @@ namespace kege{
     public:
 
         static std::vector<uint8_t> load( int* width,int* height, int* channels, int req_chan, const std::string& filename );
-        static ref::Image load( kege::Graphics* graphics, const std::string& filename );
+        static ref::Image load( kege::GraphicsDevice* graphics, const std::string& filename );
 
         ref::Image load( const std::string& filename );
-        void operator()( kege::Graphics* response );
+        void operator()( kege::GraphicsDevice* response );
 
         ImageLoader( AssetManager* am = nullptr );
         
     private:
 
-        kege::Graphics* _graphics;
+        kege::GraphicsDevice* _graphics;
     };
 
 }

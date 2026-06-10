@@ -14,7 +14,7 @@ namespace kege::ui
 //    {
 //        Transform* transform = ecs->get< kege::Transform >( entity );
 //
-//        ui->push({ .layer = layer, .style = &ui->theme().padded_list });
+//        ui->push({ .layer = layer, .style = &ui->theme()->padded_list });
 //
 ////        ui::ID id_position[3] = {uid[1], uid[2], uid[3]};
 ////        ui->scrubber3

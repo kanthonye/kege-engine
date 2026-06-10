@@ -16,7 +16,7 @@ namespace kege::ui{
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "grid-mesh-%i", _count++);
-            _text = ui->layout()->text(_asset_name, 20);
+            _text = ui->gui()->text(_asset_name, 20);
         }
         ui->push
         ({
@@ -47,16 +47,16 @@ namespace kege::ui{
             text.ptr = "Rows:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _rows);
 
-            ui->put({.style = &ui->theme().y_seperator});
+            ui->put({.style = &ui->theme()->y_seperator});
 
             if( ui->submit(_uid[5], "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
-                kege::Ref<kege::MeshPrimitive> mesh = new GridMesh( _width, _height, _cols, _rows );
+                ref::AssetManager asset_manager = _manager->getAssetManager();
+                kege::Ref<kege::Mesh> mesh = new GridMesh( _width, _height, _cols, _rows );
 
                 // Create metadata
                 AssetMetadata metadata;
-                metadata.handle         = asset_manager->add< kege::Ref<kege::MeshPrimitive> >(_asset_name, mesh);
+                metadata.handle         = asset_manager->add< kege::Ref<kege::Mesh> >(_asset_name, mesh);
                 metadata.name           = _asset_name;
                 metadata.display_name   = metadata.name;
                 metadata.original_path  = "";

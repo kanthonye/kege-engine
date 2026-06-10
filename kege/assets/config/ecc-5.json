@@ -69,3 +69,32 @@
    ],
 }
 
+
+functionalities:
+create project
+save project
+create scene
+delete scene
+slected entity
+create entity
+delete entity
+add component
+remove component
+
+
+dragging_manager
+if( button_down && dragging_manager->idle() )
+    dragging_manager->start( start_position, payload );
+else if( !button_down && !dragging_manager->idle() )
+    dragging_manager->end();
+
+
+
+
+    if( !dragging )
+        dragging = true
+        beginDrag( start_position )
+    if( dragging )
+        updateDragging();
+else if( release && dragging )
+    dragging = false

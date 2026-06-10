@@ -11,7 +11,7 @@
 #include "project.hpp"
 #include "../input/input-manager.hpp"
 #include "../input/input-context-manager.hpp"
-#include "../graphics/render/core/graphics.hpp"
+//#include "../graphics/core/core.hpp"
 
 namespace kege{
 
@@ -23,23 +23,16 @@ namespace kege{
         bool openProject( const std::string& filepath );
         bool saveProject();
 
-        ref::InputContextManager getInputContextManager();
-        ref::AssetManager getAssetManager();
-        ref::SceneManager getSceneManager();
-        ref::RenderGraph getRenderGraph();
-        ref::Graphics getGraphics();
+        kege::Project* getProject();
 
         bool empty()const;
 
-        ProjectManager( ref::Graphics graphics, kege::InputManager* im, ref::ECS& ecs, ref::RenderGraph rg );
+        ProjectManager( ref::ECS& ecs );
         ~ProjectManager();
 
     private:
 
-        ref::InputContextManager _input_context_manager;
-        ref::RenderGraph _render_graph;
         ref::Project _current_project;
-        ref::Graphics _graphics;
         ref::ECS _ecs;
     };
 

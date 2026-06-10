@@ -5,13 +5,16 @@
 //  Created by Kenneth Esdaile on 10/22/25.
 //
 
-#include "app.hpp"
 
 #include "../resource/image-loader.hpp"
 #include "../resource/input-context-loader.hpp"
-#include "../graphics/render/window/glfw-window.hpp"
-#include "../graphics/shader-system/json-shader-loader.hpp"
-#include "../graphics/shader-system/shader-pipeline-loader.hpp"
+#include "../graphics/render/renderer.hpp"
+#include "../graphics/core/pipeline/shader-system/json-shader-loader.hpp"
+//#include "../graphics/shader-system/shader-pipeline-loader.hpp"
+
+#include "app.hpp"
+#include "render-layer.hpp"
+#include "ecs-layer.hpp"
 
 namespace kege{
 
@@ -20,19 +23,19 @@ namespace kege{
         request.callback( _project_manager.ref() );
     }
 
-    void Application::operator()( kege::CallbackRequest< kege::Graphics >& request )
+    void Application::operator()( kege::CallbackRequest< kege::GraphicsDevice >& request )
     {
-        request.callback( _graphics.ref() );
+        request.callback( _renderer->getDevice() );
     }
 
     void Application::operator()( const kege::Request< kege::ProjectManager >& )
     {
-        Communication::broadcast< const kege::Response< kege::ProjectManager* > >({ _project_manager.ref() });
+        Communication::broadcast< const kege::Response< kege::ProjectManager > >({ _project_manager.ref() });
     }
 
-    void Application::operator()( const kege::Request< kege::Graphics >& )
+    void Application::operator()( const kege::Request< kege::GraphicsDevice >& )
     {
-        Communication::broadcast< const kege::Response< kege::Graphics* >& >({ _graphics.ref() });
+        Communication::broadcast< const kege::Response< kege::GraphicsDevice >& >({ _renderer->getDevice() });
     }
 
     bool Application::initialize()
@@ -45,26 +48,22 @@ namespace kege{
         kege::VirtualDirectory::instance().add( "root", "/Users/kae/Developer/vscode/kege-engine/kege" );
         kege::VirtualDirectory::instance().add( "assets", "/Users/kae/Developer/vscode/kege-engine/kege/assets" );
         kege::VirtualDirectory::instance().add( "config", "/Users/kae/Developer/vscode/kege-engine/kege/assets/config" );
+        kege::VirtualDirectory::instance().add( "fonts", "/Users/kae/Developer/vscode/kege-engine/kege/assets/fonts" );
         kege::VirtualDirectory::instance().add( "graphics-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/graphics" );
         kege::VirtualDirectory::instance().add( "compute-shaders", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/compute" );
         kege::VirtualDirectory::instance().add( "snippets", "/Users/kae/Developer/vscode/kege-engine/kege/assets/shaders/glsl/snippets" );
 
-
         //-----------------------------------------------------------------------//
         // Create Asset Manager
         //-----------------------------------------------------------------------//
-
+        
         _asset_manager = new kege::AssetManager();
+        _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
+        _asset_manager->addLoader< ref::ShaderPipeline, kege::JsonShaderLoader >( ".json" );
 
         //-----------------------------------------------------------------------//
         // Create Application Window
         //-----------------------------------------------------------------------//
-
-        if ( !kege::GlfwWindow::init() )
-        {
-            kege::Log::error << "Failed to initialize GlfwWindow."<<Log::nl;
-            return false;
-        }
 
         kege::WindowCreateInfo create_window_info = {};
         create_window_info.title = "KEGE";
@@ -77,6 +76,12 @@ namespace kege{
         create_window_info.decorated = true;
         create_window_info.vsync = false;
 
+        if ( !kege::GlfwWindow::init() )
+        {
+            kege::Log::error << "Failed to initialize GlfwWindow."<<Log::nl;
+            return false;
+        }
+        
         _window = new kege::GlfwWindow();
         if ( !_window->create( create_window_info ) )
         {
@@ -85,40 +90,17 @@ namespace kege{
         }
 
         //-----------------------------------------------------------------------//
-        // Create Graphics
+        // Create Renderer
         //-----------------------------------------------------------------------//
 
-        kege::DeviceInitializationInfo device_init_info = {};
-        device_init_info.window = _window.ref();
-        device_init_info.preferred_API = kege::GraphicsAPI::Vulkan;
-        device_init_info.enable_raytracing = false;
-        device_init_info.prefer_discrete_gpu = true;
-        device_init_info.prefer_higher_api_version = true;
-        device_init_info.require_shader_float64 = false;
-        device_init_info.engine = "KEGE";
-        device_init_info.name = "dev";
-        device_init_info.enable_debug_validation = true;
-        //device_init_info.enable_debug_general = true;
-        //device_init_info.enable_debug_performance = true;
-
-        Extent2D window_size = _window->getSize();
-        kege::SwapchainDesc swapchain_create_info = {};
-        swapchain_create_info.image_count = kege::MAX_FRAMES_IN_FLIGHT + 1;
-        swapchain_create_info.name = "swapchain";
-        swapchain_create_info.width = window_size.width;
-        swapchain_create_info.height = window_size.height;
-        swapchain_create_info.color_format = kege::Format::bgra_u8_norm;
-        swapchain_create_info.depth_format = kege::Format::depth_32;
-        swapchain_create_info.present_mode = kege::PresentMode::Fifo;
-        swapchain_create_info.present_queue_type = kege::QueueType::Graphics;
-        swapchain_create_info.image_usage = kege::ImageUsage::Color | kege::ImageUsage::TransferDst;
-
-        _graphics = new kege::Graphics();
-        if( !_graphics->initalize( device_init_info, swapchain_create_info ) )
+        _renderer = new kege::Renderer();
+        if( !_renderer->initialize( _window.ref(), _asset_manager.ref() ) )
         {
-            kege::Log::error << "( INITIALIZATION_FAILED ) -> Graphics" << Log::nl;
+            kege::Log::error << "Failed to initialize Renderer."<<Log::nl;
             return false;
         }
+
+        ref::GraphicsDevice graphics = _renderer->getDevice();
 
         //-----------------------------------------------------------------------//
         // Create Input Context Manager
@@ -132,78 +114,50 @@ namespace kege{
         }
 
         //-----------------------------------------------------------------------//
-        // Add Asset Loaders
-        //-----------------------------------------------------------------------//
-
-        _asset_manager->addLoader< ref::ShaderPipeline, kege::KMSLShaderLoader >( ".kmsl" );
-        _asset_manager->addLoader< ref::ShaderPipeline, kege::JsonShaderLoader >( ".json" );
-        _asset_manager->addLoader< ref::InputContext, kege::InputContextLoader >( ".json" );
-        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".jpg" );
-        _asset_manager->addLoader< ref::Image, kege::ImageLoader >( ".png" );
-
-        //-----------------------------------------------------------------------//
-        // Create RenderGraph
-        //-----------------------------------------------------------------------//
-
-        _render_graph = new kege::RenderGraph( _graphics.ref(), _asset_manager.ref() );
-        if( !_render_graph->load( vfs("config/render-graph.json").str() ) ) return false;
-        if( !_render_graph->compile() ) return false;
-
-        //-----------------------------------------------------------------------//
-        // Create Default Resources add them to AssetManager so they can be accessed
-        //-----------------------------------------------------------------------//
-
-        uint32_t color[] = {0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF};
-        ref::Image default_image = _graphics->createImage
-        ({
-            .debug_name = "default-image",
-            .extent  = {2,2,1},
-            .array_layers = 1,
-            .mip_levels = 1,
-            .memory_usage = MemoryUsage::GpuOnly,
-            .samples = SampleCount::Count1,
-            .format = Format::rgba_u8_norm,
-            .data = &color,
-            .usage = ImageUsage::Color | ImageUsage::Sampled
-        });
-        _asset_manager->add< ref::Image >( "default", default_image );
-
-        ref::Sampler default_sampler = _graphics->createSampler
-        ({
-            .name = "default-sampler",
-            .address_mode_u = AddressMode::ClampToEdge,
-            .address_mode_v = AddressMode::ClampToEdge,
-            .address_mode_w = AddressMode::ClampToEdge,
-            .min_filter = Filter::Linear,
-            .mag_filter = Filter::Linear,
-        });
-        _asset_manager->add< ref::Sampler >( "default", default_sampler );
-
-        // fallback shader
-        uint64_t error_shader_handle = _asset_manager->load< ref::ShaderPipeline >( "error-shader", "graphics-shaders/error/error.kmsl" );
-        if( error_shader_handle == 0 )
-        {
-            return false;
-        }
-        //_asset_manager->setLibrary< ref::ShaderPipeline >( new kege::ShaderLibrary( _graphics.ref(), error_shader_handle ) );
-
-//        // load shader library
-//        if( !_asset_manager->loadLibrary<ref::ShaderPipeline>( kege::vfs( "graphics-shaders/shader-library.json" ).c_str() ) )
-//        {
-//            kege::Log::error << "LOAD_FAILED -> _asset_manager->loadLibrary< ref::ShaderPipeline >(...)" << Log::nl;
-//            return false;
-//        }
-
-        //-----------------------------------------------------------------------//
         // Create Project Manager
         //-----------------------------------------------------------------------//
 
         _ecs = new kege::ECS;
-        
+
+        //-----------------------------------------------------------------------//
+        // GUI: creation & Initialization
+        //-----------------------------------------------------------------------//
+
+        _gui = new kege::GUI( graphics.ref(), _window.ref(), _input_manager.ref(), _asset_manager.ref() );
+        kege::Extent2D extent = _renderer->getWindow()->getSize();
+
+        GuiConfig config;
+        config.layout_rects[ 0 ] = kege::ui::Rect{0.f, 0.f, float(extent.width), float(extent.height)};
+        config.layout_transforms[ 0 ] = kege::mat44(1.0);
+        // Capacity --- --- --- --- --- --- --- ---
+        config.max_layers_per_layout = 8;
+        config.max_widgets = 10000;
+        config.max_layouts = 1;
+        config.target_extent = extent;
+        config.font_size = 16;
+        config.icon_theme_path = "";
+        config.font_path = "fonts/monaco.tga";
+        config.pipeline_filename = "graphics-shaders/gui/gui-rounded-corner-sdf-text.json";
+        // Performance --- --- --- --- --- --- --- ---
+        config.enable_batching = true;
+        config.vertex_buffer_size_mb = 4;
+        // Editor specific (ignored by Runtime)
+        config.enable_debug_overlays = false;
+        config.enable_imgui_style_panels = false;
+
+        if( !_gui->initialize(config) )
+        {
+            return false;
+        }
+
+        //-----------------------------------------------------------------------//
+        // ProjectManager
+        //-----------------------------------------------------------------------//
+
         /**
          * Next step, create our project manager
          */
-        _project_manager = new ProjectManager( _graphics, _input_manager.ref(), _ecs, _render_graph );
+        _project_manager = new ProjectManager( _ecs );
 
         //-----------------------------------------------------------------------//
         // AppLayerStack
@@ -215,10 +169,10 @@ namespace kege{
         // Create and Add Application Layers
         //-----------------------------------------------------------------------//
 
-        success = _app_layer_stack->push( new kege::RenderLayer( _asset_manager.ref(), _render_graph, _project_manager.ref() ) );
+        success = _app_layer_stack->push( new kege::RenderLayer( _renderer.ref(), _project_manager.ref(), _gui.ref() ) );
         if( !success ) return false;
 
-        success = _app_layer_stack->push( new kege::ECSLayer( _ecs, _asset_manager, _render_graph, _project_manager ) );
+        success = _app_layer_stack->push( new kege::ECSLayer( _ecs, _asset_manager, _project_manager ) );
         if( !success ) return false;
 
         _running = success;
@@ -228,11 +182,11 @@ namespace kege{
     void Application::shutdown()
     {
         _app_layer_stack.clear();
-        _render_graph.clear();
+        _gui.clear();
         _project_manager.clear();
-        _asset_manager.clear();
         _input_manager.clear();
-        _graphics.clear();
+        _asset_manager.clear();
+        _renderer.clear();
         _window.clear();
         kege::GlfwWindow::terminate();
     }
@@ -260,10 +214,10 @@ namespace kege{
     :   _running( false )
     {
         Communication::add< kege::Request< kege::ProjectManager >&, kege::Application >( this );
-        Communication::add< kege::Request< kege::Graphics >&, kege::Application >( this );
+        Communication::add< kege::Request< kege::GraphicsDevice >&, kege::Application >( this );
 
-        Communication::add< CallbackRequest< kege::ProjectManager >& >( this );
-        Communication::add< CallbackRequest< kege::Graphics >& >( this );
+        Communication::add< kege::CallbackRequest< kege::ProjectManager >& >( this );
+        Communication::add< kege::CallbackRequest< kege::GraphicsDevice >& >( this );
     }
 
     Application:: ~Application()

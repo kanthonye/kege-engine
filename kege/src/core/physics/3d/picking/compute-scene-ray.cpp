@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 9/30/24.
 //
 
-#include "../../../../core/graphics/camera/camera.hpp"
+#include "../../../../core/graphics/components/camera/camera.hpp"
 #include "compute-scene-ray.hpp"
 
 namespace kege{

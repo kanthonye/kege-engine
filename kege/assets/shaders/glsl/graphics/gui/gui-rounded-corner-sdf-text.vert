@@ -9,7 +9,7 @@ struct DrawElem
     ivec4 combo;
 };
 
-layout( set = 0, binding = 0 ) buffer UIViewBuffer
+layout( set = 0, binding = 0 ) buffer UiBuffer
 {
     DrawElem instances[];
 };
@@ -17,7 +17,9 @@ layout( set = 0, binding = 0 ) buffer UIViewBuffer
 layout( push_constant ) uniform Camera
 {
     mat4 projection;
-    vec4 resolution;
+    mat4 transform;
+    vec4 position;
+    vec4 screen_info;
 };
 
 const vec2 vertex_position[ 4 ] = vec2[]

@@ -22,34 +22,12 @@ namespace kege{
             }
             kege::ref::AppLayer ui_app_layer = new EditorLayer
             (
-                _asset_manager.ref(),
-                _render_graph.ref(),
+                _renderer.ref(),
                 _project_manager.ref(),
-                _input_manager.ref(),
+                _gui.ref(),
                 _ecs.ref()
             );
             _running = _app_layer_stack->push( ui_app_layer );
-
-
-            ShaderCompiler compiler(_graphics.ref(), (vfs("snippets") + "/").c_str());
-            ref::ShaderPipeline pipeline = compiler.compileVariant
-            ({
-                .shading_model = kege::ShadingModel::LitPBR_Metallic,
-                .render_pass = kege::RenderPass::Forward,
-                .renderer_type = kege::MeshType::StaticMesh,
-                .topology = kege::PrimitiveTopology::TriangleStrip,
-                .features = (
-                    kege::FeatureFlag::POINT_LIGHT | kege::FeatureFlag::DIRECTIONAL_LIGHT |
-                    kege::FeatureFlag::NORMAL_MAPPING |
-                    kege::FeatureFlag::MATERIAL
-                ),
-                .sample_count = 1,
-                .blend_state = kege::BlendStatePreset::alphaBlend(),
-                .depth_state = kege::DepthStencilPresets::depthTestWrite(),
-                .raster_state = kege::RasterizerStatePresets::cullBack()
-            });
-
-            _running = false;
             return _running;
         }
     };
@@ -59,5 +37,3 @@ namespace kege{
         return new TestEditor;
     }
 }
-
-

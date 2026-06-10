@@ -1,0 +1,179 @@
+//
+//  app-window.hpp
+//  ecs
+//
+//  Created by Kenneth Esdaile on 4/27/25.
+//
+
+#ifndef graphics_window_hpp
+#define graphics_window_hpp
+
+#include "../device/core/common/graphics-common.h"
+
+typedef struct GLFWwindow GLFWwindow;
+
+namespace kege{
+
+    struct KeyboardEvent
+    {
+        void* window;
+
+        int code;
+        int scancode;
+        int action;
+        int mods;
+    };
+
+    struct ButtonEvent
+    {
+        void* window;
+
+        int code;
+        int action;
+        int mods;
+    };
+
+    struct PointerEvent
+    {
+        void* window;
+        double x;
+        double y;
+    };
+
+    struct ScrollEvent
+    {
+        void* window;
+        double x;
+        double y;
+    };
+
+    struct WindowSizeEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowFrameBufferSizeEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowContentScaleEvent
+    {
+        void* window;
+        float xscale;
+        float yscale;
+    };
+
+    struct WindowPositionEvent
+    {
+        void* window;
+        int width;
+        int height;
+    };
+
+    struct WindowMaximizeEvent
+    {
+        void* window;
+        int state;
+    };
+
+    struct WindowFocusEvent
+    {
+        void* window;
+        int state;
+    };
+
+    struct WindowRefreshEvent
+    {
+        void* window;
+    };
+
+    // WindowCreateInfo structure
+    struct WindowCreateInfo
+    {
+        std::string title = "Untitled Window";
+        uint32_t width = 1280;
+        uint32_t height = 720;
+        bool visible = true;
+        bool resizable = true;
+        bool fullscreen = false;
+        bool maximized = false;
+        bool decorated = true;
+        bool vsync = false;    // VSync on or off
+    };
+
+
+    class WindowListener;
+
+
+    // Abstract AppWindow interface
+    class AppWindow : public RefCounter
+    {
+    public:
+
+        // Surface creation (for Vulkan, DirectX, etc.)
+        //virtual GraphicsSurface createSurface( GraphicsInstance* instance ) = 0;
+
+        virtual std::vector< const char* > getRequiredInstanceExtensions() = 0;
+
+        // Window lifecycle
+        virtual bool create(const WindowCreateInfo& info) = 0;
+        virtual void destroy() = 0;
+
+        // Framebuffer / DPI
+        virtual Extent2D getFramebufferSize() const = 0;
+        virtual vec2 getContentScale() const = 0;
+
+        // Frame lifecycle
+        virtual bool shouldClose() const = 0;
+        virtual void pollEvents() = 0;
+
+        // Window state control
+        virtual void show() = 0;
+        virtual void hide() = 0;
+        virtual void minimize() = 0;
+        virtual void maximize() = 0;
+        virtual void restore() = 0; // un-minimize or un-maximize
+        virtual void requestAttention() = 0; // flash the window on taskbar (optional)
+
+        // Window properties
+        virtual void setTitle(const std::string& title) = 0;
+        virtual void setSize(uint32_t width, uint32_t height) = 0;
+        virtual void setPosition(int x, int y) = 0;
+        virtual void setResizable(bool resizable) = 0;
+        virtual void setDecorated(bool decorated) = 0; // Borderless toggle
+        virtual void setFullscreen(bool fullscreen) = 0;
+        virtual void setVSync(bool enabled) = 0;
+
+        // Window queries
+        virtual Extent2D getSize() const = 0;
+        //virtual ivec2 getPosition() const = 0;
+        virtual bool isVisible() const = 0;
+        virtual bool isResizable() const = 0;
+        virtual bool isFullscreen() const = 0;
+        virtual bool isVSyncEnabled() const = 0;
+
+        //void onKeyboard( int key, int scancode, int action, int mods );
+        //void onMouseButton( int button, int action, int mods );
+        //void onCursorPosition( double xpos, double ypos );
+        //void onScroll( double xoffset, double yoffset );
+
+        //void removeListener( WindowListener* listener );
+        //void addListener( WindowListener* listener );
+
+        virtual void* getHandle(){ return nullptr; }
+
+        virtual ~AppWindow() = default;
+    };
+
+}
+
+namespace kege::ref
+{
+    typedef kege::Ref< kege::AppWindow > AppWindow;
+}
+#endif /* graphics_window_hpp */

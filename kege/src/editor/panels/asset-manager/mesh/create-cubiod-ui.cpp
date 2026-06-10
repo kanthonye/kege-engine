@@ -38,7 +38,7 @@ namespace kege::ui{
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "cube-mesh-%i", _count++);
-            _text = ui->layout()->text(_asset_name, 20);
+            _text = ui->gui()->text(_asset_name, 20);
         }
         ui->push
         ({
@@ -67,16 +67,16 @@ namespace kege::ui{
             text.ptr = "Depth:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _depth);
 
-            ui->put({.style = &ui->theme().y_seperator});
+            ui->put({.style = &ui->theme()->y_seperator});
 
             if( submit(ui, "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
-                kege::Ref<kege::MeshPrimitive> mesh = new CuboidMesh( kege::vec3(0.0), kege::vec3(_width, _height, _depth) );
+                ref::AssetManager asset_manager = _manager->getAssetManager();
+                kege::Ref<kege::Mesh> mesh = new CuboidMesh( kege::vec3(0.0), kege::vec3(_width, _height, _depth) );
 
                 // Create metadata
                 AssetMetadata metadata;
-                metadata.handle         = asset_manager->add< kege::Ref<kege::MeshPrimitive> >(_asset_name, mesh);
+                metadata.handle         = asset_manager->add< kege::Ref<kege::Mesh> >(_asset_name, mesh);
                 metadata.name           = _asset_name;
                 metadata.display_name   = metadata.name;
                 metadata.original_path  = "";

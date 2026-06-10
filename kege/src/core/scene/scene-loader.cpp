@@ -61,7 +61,7 @@ namespace kege{
             return {};
         }
 
-        kege::Ref< kege::Scene > scene = new kege::Scene( "", *ecs.getEntityManager(), am, rg );
+        kege::Ref< kege::Scene > scene = new kege::Scene( "", *ecs.getEntityManager(), am );
 
         Params params;
 //        params.scene = scene.ref();
@@ -423,7 +423,7 @@ namespace kege{
 //                        1, // .instance_count
 //                        0, // .first_instance =
 //                        0, // .first_index =
-//                        primative->drawcount // .index_count
+//                        primative->total_indices // .index_count
 //                    )
 //                }}
 //            });
@@ -439,7 +439,7 @@ namespace kege{
 //                        1, // .instance_count
 //                        0, // .first_instance =
 //                        0, // .first_index =
-//                        primative->drawcount // .index_count
+//                        primative->total_indices // .index_count
 //                    }
 //                }}
 //            });

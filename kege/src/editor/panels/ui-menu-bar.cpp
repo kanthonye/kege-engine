@@ -13,16 +13,40 @@ namespace kege::ui{
     MenuBar::MenuBar( kege::ui::DockManager* dm )
     :   kege::ui::Panel( "MenuBar", dm )
     {
-//        _main = _layout->make({ .style = _layout->getStyleByName( "navbar" ) });
     }
 
     void MenuBar::updateLayout()
     {
-//        _layout->push({ .id = &_main });
-//        if ( 0 <= file.select( *_layout, "File", { "Save", "Open", "Import", "Export" } ) )
-//        {
-//            std::cout <<"selection: " << file.index[0] <<"\n";
-//        }
-//        _layout->pop();
+        _ui->push({});
+        updateFileMenu();
+        updateSettingMenu();
+        _ui->pop();
     }
+
+    void MenuBar::updateFileMenu()
+    {
+        _ui->push({});
+        if ( _ui->button( _uid[0], {"New"} ) )
+        {
+            //Communication::broadcast<const OpenAddAssetWindow&>({});
+        }
+        if ( _ui->button(_uid[0], {"Open"}) )
+        {
+            //Communication::broadcast<const OpenAddAssetWindow&>({});
+        }
+        if ( _ui->button(_uid[0], {"Save"}) )
+        {
+            //Communication::broadcast<const OpenAddAssetWindow&>({});
+        }
+        if ( _ui->button(_uid[0], {"Quit"}) )
+        {
+            //Communication::broadcast<const OpenAddAssetWindow&>({});
+        }
+        _ui->pop();
+    }
+
+    void MenuBar::updateSettingMenu()
+    {
+    }
+
 }

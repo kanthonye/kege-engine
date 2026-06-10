@@ -308,7 +308,7 @@
     ],
     "storages": [
         {
-            "name": "UIViewBuffer",
+            "name": "UiBuffer",
             "fields": [
                 {
                     "type": "DrawElem",

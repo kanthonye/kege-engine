@@ -31,14 +31,14 @@ namespace kege::ui{
         if (type == "OpenCreateShaderWindow")
         {
             snprintf(_asset_name, 31, "pipeline-%i", _created_counter++);
-            _asset_label = _ui->layout()->text(_asset_name, 20);
+            _asset_label = _ui->gui()->text(_asset_name, 20);
             _name.ptr = _asset_name;
 
             _open_window = true;
             _window_rect.width = 600;
             _window_rect.height = 400;
-            _window_rect.x = (_ui->layout()->getRect().width - _window_rect.width) * 0.5;
-            _window_rect.y = (_ui->layout()->getRect().height - _window_rect.height) * 0.5;
+            _window_rect.x = (_ui->gui()->getRect().width - _window_rect.width) * 0.5;
+            _window_rect.y = (_ui->gui()->getRect().height - _window_rect.height) * 0.5;
         }
     }
 
@@ -49,7 +49,7 @@ namespace kege::ui{
         ui::ID id[3] = {_uid[0], _uid[1], _uid[2]};
         _ui->beginWindow(id, _window_rect, "Create Pipeline", _open_window);
         {
-            _ui->push({.style = &_ui->theme().card2});
+            _ui->push({.style = &_ui->theme()->card2});
             {
                 if( _ui->labelInput("Name:", _uid[3], _textmode, _name) )
                 {
@@ -60,8 +60,8 @@ namespace kege::ui{
 
                 if( _ui->submit(_uid[4], "Submit") )
                 {
-                    ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
-                    kege::Graphics* graphics = _manager->getManager()->getEditor()->getRenderGraph()->getGraphics();
+                    ref::AssetManager asset_manager = _manager->getAssetManager();
+                    kege::GraphicsDevice* graphics = _manager->getGraphicsDevice();
 
                     ShaderCompiler compiler(graphics, "");
                     kege::Ref< kege::ShaderPipeline > pipeline = compiler.compileVariant(_pipeline_key);
@@ -94,16 +94,16 @@ namespace kege::ui{
             ui::ID scroller[3] = {_uid[10], _uid[11], _uid[12]};
             _ui->beginScrollContainer(scroller);
             {
-                _ui->push({.style = &_ui->theme().row});
+                _ui->push({.style = &_ui->theme()->row});
                 {
-                    _ui->push({.style = &_ui->theme().column});
+                    _ui->push({.style = &_ui->theme()->column});
                     {
                         _render_passes.update(_ui, _pipeline_key);
                         _shader_model_ui.update(_ui, _pipeline_key);
                     }
                     _ui->pop();
 
-                    _ui->push({.style = &_ui->theme().column});
+                    _ui->push({.style = &_ui->theme()->column});
                     {
                         _mesh_type_ui.update(_ui, _pipeline_key);
                         _primitive_topology_ui.update(_ui, _pipeline_key);

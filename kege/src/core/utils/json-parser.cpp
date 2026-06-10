@@ -563,7 +563,7 @@ namespace kege
 
                         default:
                         {
-                            throw std::runtime_error( "[ JsonParser ] : unexpected token #" + std::to_string( lexer.getCurrLine() ) + " (" + name + " : " + value + ")" );
+                            throw std::runtime_error( "[ Error: JsonParser ] : unexpected token #" + std::to_string( lexer.getCurrLine() ) + " (" + name + " : " + value + ")" );
                         }
                         break;
                     }

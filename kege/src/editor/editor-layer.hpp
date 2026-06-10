@@ -11,6 +11,7 @@
 #include "shader-compiler.hpp"
 #include "ui-executor.hpp"
 #include "dock/ui-dock-manager.hpp"
+#include "renderer.hpp"
 
 namespace kege{
 
@@ -18,21 +19,22 @@ namespace kege{
     {
     public:
 
-        void operator()(const kege::WindowFrameBufferSizeEvent& event);
-        void operator()(const kege::WindowSizeEvent& event);
+        //void operator()(const kege::WindowFrameBufferSizeEvent& event);
+        //void operator()(const kege::WindowSizeEvent& event);
 
-        kege::ProjectManager* getProjectManager();
-        kege::InputManager* getInputManager();
-        kege::AssetManager* getAssetManager();
-        kege::RenderGraph* getRenderGraph();
-        kege::ECS* getECS();
-        kege::UI* getGUI();
+        //kege::ProjectManager* getProjectManager();
+        //kege::InputManager* getInputManager();
+        //kege::AssetManager* getAssetManager();
+        //kege::Renderer* getRenderer();
+        //kege::ECS* getECS();
+        kege::UI* getUI();
 
         bool initialize();
         void shutdown();
+
         bool update();
 
-        EditorLayer( kege::AssetManager* am, kege::RenderGraph* rg, kege::ProjectManager* pm, kege::InputManager* im, kege::ECS* ecs );
+        EditorLayer(kege::Renderer* r, kege::ProjectManager* pm, kege::GUI* ui, kege::ECS* ecs);
         ~EditorLayer();
         
     public:
@@ -41,24 +43,11 @@ namespace kege{
 
     public:
 
-        kege::array<ui::Command> _commands;
-        ui::Context _context;
-
         kege::Ref< kege::ui::DockManager > _dock_manager;
-        kege::ProjectManager* _project_manager;
-        kege::InputManager* _input_manager;
-        kege::AssetManager* _asset_manager;
-        kege::RenderGraph* _render_graph;
-        kege::ECS* _ecs;
+        kege::array< ui::Command > _commands;
 
-        kege::Ref< ui::Layout > _layout;
+        kege::Theme _theme;
         kege::UI _ui;
-
-        ui::Viewer _viewer;
-
-        const ImageDefn* _color_image_defn;
-        ref::Sampler _sampler;
-        bool _paused;
     };
 }
 

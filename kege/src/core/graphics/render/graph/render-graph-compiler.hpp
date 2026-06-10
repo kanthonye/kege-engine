@@ -9,41 +9,81 @@
 #define render_graph_compiler_hpp
 
 #include <set>
-#include "render-pass-context.hpp"
+#include "render-pass-desc.hpp"
 
-namespace kege {
-
-    typedef std::unordered_map< int, std::unordered_set< int > > DependencyGraph;
+namespace kege{
     
     class RenderGraphCompiler
     {
+    private:
+
+        struct ResourceState
+        {
+            PipelineStageFlag stage = PipelineStageFlag::None;
+            AccessFlags access = AccessFlags::None;
+            ImageLayout layout = ImageLayout::Undefined;
+            bool first_use_found = false;
+        };
+        
+        typedef std::unordered_map< kege::PassId, std::unordered_set< kege::PassId > > DependencyGraph;
+
     public:
 
-        bool compile( RenderGraph* graph );
+        kege::RenderGraphExecutionPlan compile
+        (
+            const kege::RenderGraphFrame& frame,
+            const std::vector< kege::RgHandle >& root
+        );
+
+        kege::RenderPassExecutionSequence compile
+        (
+            const kege::ActiveRenderPassDescs& active_passes,
+            const std::vector< kege::RgHandle >& root
+        );
 
     private:
 
-        bool doKahnsTopologicalSort( const DependencyGraph& dependency_graph, std::vector< int >& sorted_pass_indices );
-        void buildDependencyGraph( DependencyGraph& dependency_graph );
+        DependencyGraph buildDependencyGraph( kege::RenderPassNodes& nodes );
 
-        void generateSubmitInfo( DependencyGraph& dependency_graph );
-        bool resolvePhysicalResosurces( const std::vector< int >& sorted_pass_indices );
-        void updateExecutionOrder( const std::vector< int >& sorted_pass_indices );
-        void transitionToInitialImageLayout( const std::vector< int >& sorted_pass_indices );
-        void emitBarriers( const std::vector< int >& sorted_pass_indices );
-        void generateBarriers( const std::vector< int >& sorted_pass_indices );
-        ImageLayout inferLayout( AccessFlags access );
-        bool resolveResosurceLinks();
-        Graphics* getGraphics();
+        std::vector< int > doKahnsTopologicalSort
+        (
+            const kege::RenderPassNodes& nodes,
+            const DependencyGraph& dependency_graph
+        );
+
+        void cullUnusedPasses
+        (
+            const std::vector< kege::RgHandle >& root,
+            kege::RenderPassNodes& nodes
+        );
+
+        void generateBarriers
+        (
+            kege::RenderPassNodes& nodes
+        );
+
+        void processUsage
+        (
+            std::unordered_map<RgHandle, ResourceState> current_states,
+            const AccessFlags& access,
+            const ImageLayout& layout,
+            const PipelineStageFlag& stage,
+            const RgHandle& resource,
+            bool is_write,
+            RenderPassNode& node
+        );
+
+        void generateSubmitInfo
+        (
+            DependencyGraph& dependency_graph,
+            kege::RenderPassExecutionSequence& execution_sequence
+        );
 
     private:
 
-        std::vector< RenderStage >* _passes;
-        std::vector< RenderStage* >* _execution_order;
-        std::queue< int > _ready_queue;
-        RenderGraph* _graph;
+        std::unordered_map< kege::RgHandle, std::vector< kege::PassId > > _writes;
     };
 
-} // namespace kege
-
+}
+// namespace kege
 #endif /* render_graph_compiler_hpp */

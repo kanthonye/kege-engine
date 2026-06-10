@@ -27,15 +27,15 @@
 #include "../../core/input/input-context-manager.hpp"
 
 #include "../../core/scene/ecs.hpp"
-#include "../../core/graphics/camera/camera.hpp"
-#include "../../core/graphics/mesh/mesh-primitives.hpp"
-#include "../../core/graphics/light/light.hpp"
 #include "../../core/physics/3d/bodies/rigidbody.hpp"
-#include "../../core/graphics/mesh/mesh-cylinder.hpp"
-#include "../../core/graphics/mesh/mesh-cuboid.hpp"
-#include "../../core/graphics/mesh/mesh-rect.hpp"
-#include "../../core/graphics/mesh/mesh-cylinder.hpp"
-#include "../../core/graphics/particle/effect/particle-effect.hpp"
+#include "../../core/graphics/components/camera/camera.hpp"
+#include "../../core/graphics/components/mesh/mesh-primitives.hpp"
+#include "../../core/graphics/components/light/light.hpp"
+#include "../../core/graphics/components/mesh/mesh-cylinder.hpp"
+#include "../../core/graphics/components/mesh/mesh-cuboid.hpp"
+#include "../../core/graphics/components/mesh/mesh-rect.hpp"
+#include "../../core/graphics/components/mesh/mesh-cylinder.hpp"
+#include "../../core/graphics/components/particle/effect/particle-effect.hpp"
 
 #include "ui-schema.hpp"
 

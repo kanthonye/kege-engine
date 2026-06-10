@@ -24,9 +24,9 @@ namespace kege{
         ({
             .user_id = _uid[0],
             .style = &_style,
-            .mouseover = false,
-            .texr_info = ui::TexrInfo{.id = 2, .index = 2},
             .texel = ui::Rect{0.f,0.f,1.f,1.f},
+            .texr_info = ui::TexrInfo{.id = 2, .index = 2},
+            .mouseover = false,
         });
     }
 

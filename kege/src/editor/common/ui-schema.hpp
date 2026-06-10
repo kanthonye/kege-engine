@@ -79,8 +79,8 @@ namespace kege::ui{
 
 #define UI_PROP(classname, member, ...) \
     kege::ui::Property<classname>{ \
+        .meta = __VA_ARGS__, \
         .get = [](classname& p) -> void* { return &p.member; },\
-        .meta = __VA_ARGS__\
     }
 
 
@@ -99,7 +99,7 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        ui->push({.style = &ui->theme().column});
+        ui->push({.style = &ui->theme()->column});
         ui->label(meta.text);
         bool active = ui->slider< DataType >(id, value, meta.hint.min, meta.hint.max);
         ui->pop();
@@ -119,7 +119,7 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        ui->push({.style = &ui->theme().column});
+        ui->push({.style = &ui->theme()->column});
         ui->label(meta.text);
         bool active = ui->slidebar< DataType >(id, value, meta.hint.min, meta.hint.max);
         ui->pop();
@@ -136,11 +136,11 @@ namespace kege::ui{
         const PropertyMeta& meta
     )
     {
-        ui->push({.style = &ui->theme().row});
+        ui->push({.style = &ui->theme()->row});
         ui->put
         ({
             .rect = {meta.text.x, meta.text.y, meta.text.width, meta.text.height},
-            .text = meta.text.ptr,
+            .text = {meta.text.ptr},
             .color = 0xFFFFFF00,
             .mouseover = false
         });
@@ -282,65 +282,73 @@ namespace kege::ui{
 
             case PropertyType::Vec2:
             {
-                ui->push({.style = &ui->theme().group});
-                ui->label(p.meta.text);
-                modified = drawProperties
-                (
-                    ui,
-                    uid,
-                    id_offset,
-                    *((kege::vec2*)(data)),
-                    Vec2Properties
-                );
-                ui->pop();
+                if( ui->beginDropdown( uid[ id_offset++ ], p.meta.text ) )
+                {
+                    id_offset = 1;
+                    modified = drawProperties
+                    (
+                        ui,
+                        uid,
+                        id_offset,
+                        *((kege::vec2*)(data)),
+                        Vec2Properties
+                    );
+                }
+                ui->endDropdown();
                 break;
             }
 
             case PropertyType::Vec3:
             {
-                //ui->push({.style = &ui->theme().group});
-                ui->label(p.meta.text);
-                modified = drawProperties
-                (
-                    ui,
-                    uid,
-                    id_offset,
-                    *((kege::vec3*)(data)),
-                    Vec3Properties
-                );
-                //ui->pop();
+                if( ui->beginDropdown( uid[ id_offset++ ], p.meta.text ) )
+                {
+                    //id_offset += 1;
+                    modified = drawProperties
+                    (
+                        ui,
+                        uid,
+                        id_offset,
+                        *((kege::vec3*)(data)),
+                        Vec3Properties
+                    );
+                }
+                ui->endDropdown();
                 break;
             }
 
             case PropertyType::Vec4:
             {
-                //ui->push({.style = &ui->theme().group});
-                ui->label(p.meta.text);
-                modified = drawProperties
-                (
-                    ui,
-                    uid,
-                    id_offset,
-                    *((kege::vec4*)(data)),
-                    Vec4Properties
-                );
-                //ui->pop();
+                if( ui->beginDropdown( uid[ id_offset++ ], p.meta.text ) )
+                {
+                    id_offset = 1;
+                    modified = drawProperties
+                    (
+                        ui,
+                        uid,
+                        id_offset,
+                        *((kege::vec4*)(data)),
+                        Vec4Properties
+                    );
+                }
+                ui->endDropdown();
                 break;
             }
 
             case PropertyType::Quat:
             {
-                //ui->push({.style = &ui->theme().group});
-                ui->label(p.meta.text);
-                modified = drawProperties
-                (
-                    ui,
-                    uid,
-                    id_offset,
-                    *((kege::quat*)(data)),
-                    QuatProperties
-                );
-                //ui->pop();
+                if( ui->beginDropdown( uid[ id_offset++ ], p.meta.text ) )
+                {
+                    id_offset = 1;
+                    modified = drawProperties
+                    (
+                        ui,
+                        uid,
+                        id_offset,
+                        *((kege::quat*)(data)),
+                        QuatProperties
+                    );
+                }
+                ui->endDropdown();
                 break;
             }
 
@@ -385,7 +393,7 @@ namespace kege::ui{
         const Property<Component>(&props)[N]
     )
     {
-        ui->push({.style = &ui->theme().group});
+        ui->push({.style = &ui->theme()->group});
         bool modified = false;
         for ( auto& p : props)
         {

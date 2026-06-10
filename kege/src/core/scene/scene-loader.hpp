@@ -12,27 +12,7 @@
 #include "../math/algebra/vmath.hpp"
 #include "../utils/json-parser.hpp"
 
-#include "../graphics/light/light.hpp"
-#include "../graphics/mesh/mesh-loader.hpp"
-#include "../graphics/mesh/mesh-cuboid.hpp"
-#include "../graphics/mesh/mesh-cone.hpp"
-#include "../graphics/mesh/mesh-rect.hpp"
-#include "../graphics/mesh/mesh-grid.hpp"
-#include "../graphics/mesh/mesh-circle.hpp"
-#include "../graphics/mesh/mesh-cylinder.hpp"
-#include "../graphics/mesh/mesh-ellipsoid.hpp"
-#include "../graphics/mesh/mesh-capsule.hpp"
-#include "../graphics/mesh/mesh-icosahedron.hpp"
-
-#include "../graphics/camera/frustum.hpp"
-#include "../graphics/camera/camera.hpp"
-#include "../graphics/camera/movement-controls.hpp"
-
-#include "../graphics/atmosphere/atmosphere.hpp"
-
-#include "../graphics/particle/effect/particle-effect.hpp"
-#include "../graphics/particle/behaviors/behaviors.hpp"
-#include "../graphics/particle/emitter/emitters.hpp"
+#include "../graphics/components/all.hpp"
 
 #include "../physics/3d/bodies/rigidbody.hpp"
 #include "../physics/3d/bodies/rigid-shapes.hpp"

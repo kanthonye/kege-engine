@@ -31,25 +31,25 @@
 
 namespace kege
 {
-    template<typename T> struct Frames
-    {
-        Frames(const std::initializer_list<T>& a)
-        :   frames( static_cast< int >( a.size() ) )
-        {
-            size_t size = (a.size() > kege::MAX_FRAMES_IN_FLIGHT)
-            ? kege::MAX_FRAMES_IN_FLIGHT
-            : a.size();
-
-            const T* data = a.begin();
-            for (int i = 0; i < size; ++i) sources[i] = data[i];
-        }
-
-        Frames(): frames( 0 ) {}
-
-        T& get(int i){ return sources[ i % frames ]; }
-
-        T sources[ kege::MAX_FRAMES_IN_FLIGHT ];
-        uint32_t frames;
-    };
+//    template<typename T> struct Frames
+//    {
+//        Frames(const std::initializer_list<T>& a)
+//        :   frames( static_cast< int >( a.size() ) )
+//        {
+//            size_t size = (a.size() > kege::MAX_FRAMES_IN_FLIGHT)
+//            ? kege::MAX_FRAMES_IN_FLIGHT
+//            : a.size();
+//
+//            const T* data = a.begin();
+//            for (int i = 0; i < size; ++i) sources[i] = data[i];
+//        }
+//
+//        Frames(): frames( 0 ) {}
+//
+//        T& get(int i){ return sources[ i % frames ]; }
+//
+//        T sources[ kege::MAX_FRAMES_IN_FLIGHT ];
+//        uint32_t frames;
+//    };
 }
 #endif // kege_frames_hpp

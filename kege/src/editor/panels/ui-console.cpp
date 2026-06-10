@@ -149,19 +149,19 @@ namespace kege::ui{
     :   ui::Panel( "Console", dm )
     {
         // Generate persistent UIDs
-//            _log_area_uid = _ui->layout()->generateUID();
-//            _input_field_uid = _ui->layout()->generateUID();
-//            _clear_button_uid = _ui->layout()->generateUID();
-//            _export_button_uid = _ui->layout()->generateUID();
-//            _scroll_container_uid = _ui->layout()->generateUID();
+//            _log_area_uid = _ui->gui()->generateUID();
+//            _input_field_uid = _ui->gui()->generateUID();
+//            _clear_button_uid = _ui->gui()->generateUID();
+//            _export_button_uid = _ui->gui()->generateUID();
+//            _scroll_container_uid = _ui->gui()->generateUID();
 //
 //            // Generate filter UIDs
-//            _filter_debug_uid = _ui->layout()->generateUID();
-//            _filter_info_uid = _ui->layout()->generateUID();
-//            _filter_warning_uid = _ui->layout()->generateUID();
-//            _filter_error_uid = _ui->layout()->generateUID();
-//            _filter_command_uid = _ui->layout()->generateUID();
-//            _filter_system_uid = _ui->layout()->generateUID();
+//            _filter_debug_uid = _ui->gui()->generateUID();
+//            _filter_info_uid = _ui->gui()->generateUID();
+//            _filter_warning_uid = _ui->gui()->generateUID();
+//            _filter_error_uid = _ui->gui()->generateUID();
+//            _filter_command_uid = _ui->gui()->generateUID();
+//            _filter_system_uid = _ui->gui()->generateUID();
 
         // Initialize filter states (all enabled by default)
         _filter_enabled[LogLevel::Debug] = true;
@@ -350,14 +350,14 @@ namespace kege::ui{
 
         text.width = 50;
         text.ptr = "Clear";
-        if (_ui->button(_uid[0], text, &_ui->theme().button)) {
+        if (_ui->button(_uid[0], text, &_ui->theme()->button)) {
             clearLogs();
         }
 
         // Export button
         text.width = 50;
         text.ptr = "Export";
-        if (_ui->button(_uid[1], text, &_ui->theme().button))
+        if (_ui->button(_uid[1], text, &_ui->theme()->button))
         {
             exportLogs();
         }
@@ -429,7 +429,7 @@ namespace kege::ui{
         // Auto-scroll toggle
         text.width = 50;
         text.ptr = _auto_scroll ? "Auto" : "Manual";
-        if (_ui->button(_uid[0], text, &_ui->theme().button))
+        if (_ui->button(_uid[0], text, &_ui->theme()->button))
         {
             _auto_scroll = !_auto_scroll;
             if (_auto_scroll)
@@ -450,12 +450,12 @@ namespace kege::ui{
         _ui->beginScrollContainer(id);
 
         // Set special style if new logs are available while not auto-scrolling
-        const ui::Style* container_style = &_ui->theme().panel;
+        const ui::Style* container_style = &_ui->theme()->panel;
         if (_new_logs_available && !_auto_scroll)
         {
             // TODO: You might want to create a special style for this state
             // For now, we'll just modify the border color
-            container_style = &_ui->theme().button;  // Temporary, you should create proper style
+            container_style = &_ui->theme()->button;  // Temporary, you should create proper style
         }
 
         // Display visible log entries
@@ -472,7 +472,7 @@ namespace kege::ui{
                  << entry.message;
 
             // Generate unique WidgetHandle for this log line
-            //ui::WidgetHandle line_uid = _ui->layout()->generateUID();
+            //ui::WidgetHandle line_uid = _ui->gui()->generateUID();
 
             if ( line.str().empty()) continue;
             if ( line.str()[0] < 32 ) continue;
@@ -484,9 +484,9 @@ namespace kege::ui{
             line_desc.text.font_size = 18;
             line_desc.text.color = 0xFFFFFFFF;
             line_desc.text.ptr = line.str().c_str();
-            //line_desc.text = _ui->layout()->text(line.str().c_str(), 12);
+            //line_desc.text = _ui->gui()->text(line.str().c_str(), 12);
             line_desc.color = entry.color();
-            line_desc.style = &_ui->theme().label;
+            line_desc.style = &_ui->theme()->label;
 
             // Highlight if search text matches
             if (!_search_text.empty())
@@ -515,7 +515,7 @@ namespace kege::ui{
         _ui->beginRow(0);
 
         // Command prompt
-        _ui->label(_ui->layout()->text("#", 20));
+        _ui->label(_ui->gui()->text("#", 20));
 
         // Command input field
         char input_buffer[256] = "";
@@ -525,11 +525,11 @@ namespace kege::ui{
 //        if (_ui->textField(0, _ui->getAddressAsInt(*this), input_buffer, input_size)) {
 //            _input_buffer = input_buffer;
 //        }
-
+//
         // Execute button
-        ui::WidgetHandle execute_uid;// = _ui->layout()->generateUID();
-        ui::Text execute_text = _ui->layout()->text("Execute", 20);
-        if (_ui->button(_uid[0], execute_text, &_ui->theme().button)) {
+        ui::WidgetHandle execute_uid;// = _ui->gui()->generateUID();
+        ui::Text execute_text = _ui->gui()->text("Execute", 20);
+        if (_ui->button(_uid[0], execute_text, &_ui->theme()->button)) {
             if (!_input_buffer.empty()) {
                 executeCommand(_input_buffer);
                 _input_buffer.clear();
@@ -547,7 +547,7 @@ namespace kege::ui{
         if (_auto_scroll) {
             // TODO: Scroll to bottom
             // This would require calling a method on the scroll container
-            // _ui->layout()->scrollToBottom(_scroll_container_uid);
+            // _ui->gui()->scrollToBottom(_scroll_container_uid);
         }
 
         // Check if user scrolled manually

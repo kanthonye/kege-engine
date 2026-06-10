@@ -874,7 +874,7 @@ namespace kege{
     }
 
     /** @brief build perspective projection matrix */
-    template< typename var > Mat44< var > perspproj(var fov, var aspect, var znear, var zfar)
+    template< typename var > Mat44< var > perspproj(var aspect, var fov, var znear, var zfar)
     {
         var ymax = znear * tan(deg2rad(fov/2.0));
         var xmax = ymax * aspect;

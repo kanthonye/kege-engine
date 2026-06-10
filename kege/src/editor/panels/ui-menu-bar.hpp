@@ -19,7 +19,12 @@ namespace kege::ui{
         MenuBar( kege::ui::DockManager* dm );
         void updateLayout();
 
-    public:
+    private:
+
+        void updateFileMenu();
+        void updateSettingMenu();
+
+    private:
 
         ui::WidgetHandle _main;
     };

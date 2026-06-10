@@ -12,7 +12,11 @@ namespace kege{
     ref::Scene SceneManager::createScene( const std::string& name )
     {
         _scene_fast_index_lookup[ name ] = _scenes.size();
-        _scenes.push_back( new kege::Scene( name, *_ecs->getEntityManager(), _asset_manager.ref(), _render_graph.ref() ) );
+        _scenes.push_back( new kege::Scene( name, *_ecs->getEntityManager(), _asset_manager.ref() ) );
+        if( _curr_scene == nullptr )
+        {
+            setScene( _scenes[ _scenes.size() - 1 ] );
+        }
         return _scenes[ _scenes.size() - 1 ];
     }
 
@@ -96,11 +100,12 @@ namespace kege{
     }
 
 
-    SceneManager::SceneManager( ref::RenderGraph rg, ref::ECS& ecs, ref::AssetManager am )
+    SceneManager::SceneManager( ref::ECS& ecs, ref::AssetManager am )
     :   _asset_manager( am )
-    ,   _render_graph( rg )
     ,   _ecs( ecs )
-    {}
+    {
+        createScene( "untitled" );
+    }
 
     SceneManager::~SceneManager()
     {

@@ -17,8 +17,6 @@ namespace kege::ui{
     {
     public:
 
-        void handle(const void* sender, const std::string& type, void* data);
-
         enum class ImportStatus { PENDING, PROCESSING, COMPLETE, FAILED };
         std::vector<std::string> _string_categories;
         std::vector<kege::ui::Text> _categories;
@@ -63,11 +61,16 @@ namespace kege::ui{
         // Public API for importing assets
         bool importAsset(const fs::path& file_path, const std::string& target_category = "");
 
+        void handle(const void* sender, const std::string& type, void* data);
+
         // Public API for batch operations
         void deleteAssets(const std::vector<uint64_t>& asset_handles);
         void addAsset(const AssetMetadata& amd);
 
         void handle(const kege::ui::AssetMetadataDropOff& event)override;
+
+        kege::GraphicsDevice* getGraphicsDevice();
+        kege::AssetManager* getAssetManager();
 
         void updateLayout()override;
 
@@ -135,6 +138,7 @@ namespace kege::ui{
 
         std::vector< Ref<AssetManagerModule> > _modules;
         Communication _communication;
+        kege::ui::DockManager* _dock_manager;
 
         // Asset storage
         std::vector<AssetMetadata> _assets;

@@ -20,7 +20,7 @@ namespace kege::ui{
         void operator()(kege::UI* ui, const char* name, kege::ShadingModel model)
         {
             _shader_models.push_back(model);
-            _list.push_back(ui->layout()->text(name, 20));
+            _list.push_back(ui->gui()->text(name, 20));
         }
 
         void update(kege::UI* ui, kege::PipelineKey& key)
@@ -66,10 +66,10 @@ namespace kege::ui{
     {
     public:
     
-        void operator()(kege::UI* ui, const char* name, kege::RenderPass model)
+        void operator()(kege::UI* ui, const char* name, kege::RenderPassType model)
         {
             _render_passes.push_back(model);
-            _list.push_back(ui->layout()->text(name, 20));
+            _list.push_back( ui->gui()->text(name, 20) );
         }
 
         void update(kege::UI* ui, kege::PipelineKey& key)
@@ -84,19 +84,19 @@ namespace kege::ui{
         {
             _selection = 0;
             _title = kege::ui::Text{ .ptr = "Render Passes:", .x = 0, .y = 0, .width = 90, .height = 20, .color = 0xFFFFFF50 };
-            operator()(ui, "DepthPrePass", kege::RenderPass::DepthPrePass);
-            operator()(ui, "GBuffer", kege::RenderPass::GBuffer);
-            operator()(ui, "Lighting", kege::RenderPass::Lighting);
-            operator()(ui, "Shadow", kege::RenderPass::Shadow);
-            operator()(ui, "Forward", kege::RenderPass::Forward);
-            operator()(ui, "Sky", kege::RenderPass::Sky);
-            operator()(ui, "VolumetricFog", kege::RenderPass::VolumetricFog);
-            operator()(ui, "Particles", kege::RenderPass::Particles);
-            operator()(ui, "PostProcess", kege::RenderPass::PostProcess);
-            operator()(ui, "UI", kege::RenderPass::UI);
-            operator()(ui, "Debug", kege::RenderPass::Debug);
+            operator()(ui, "DepthPrePass", kege::RenderPassType::DepthPrePass);
+            operator()(ui, "Geometry", kege::RenderPassType::Geometry);
+            operator()(ui, "Lighting", kege::RenderPassType::Lighting);
+            operator()(ui, "Shadow", kege::RenderPassType::Shadow);
+            operator()(ui, "Forward", kege::RenderPassType::Forward);
+            operator()(ui, "Sky", kege::RenderPassType::Sky);
+            operator()(ui, "VolumetricFog", kege::RenderPassType::VolumetricFog);
+            operator()(ui, "Particles", kege::RenderPassType::Particles);
+            operator()(ui, "PostProcess", kege::RenderPassType::PostProcess);
+            operator()(ui, "UI", kege::RenderPassType::UI);
+            operator()(ui, "Debug", kege::RenderPassType::Debug);
         }
-        std::vector< kege::RenderPass > _render_passes;
+        std::vector< kege::RenderPassType > _render_passes;
         std::vector< ui::Text > _list;
         kege::ui::Text _title;
         kege::ui::UID _uid;
@@ -110,17 +110,17 @@ namespace kege::ui{
         void operator()(kege::UI* ui, const char* name, kege::ComparisonFunc model)
         {
             _comparison_functs.push_back(model);
-            _list.push_back(ui->layout()->text(name, 20));
+            _list.push_back(ui->gui()->text(name, 20));
         }
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme().card });
+            ui->push({ .style = &ui->theme()->card });
             if( ui->collapsableHeader(_uid[0][0], _expand, _depth_stencil_label) )
             {
-                ui->push({ .style = &ui->theme().card });
+                ui->push({ .style = &ui->theme()->card });
                 {
-                    ui->push({ .style = &ui->theme().card });
+                    ui->push({ .style = &ui->theme()->card });
                     ui->checkbox( _uid[0][1], _depth_enable_label, key.depth_state.depth.enable);
                     ui->checkbox( _uid[0][2], _depth_write_enable_label, key.depth_state.depth.write);
                     ui->pop();
@@ -173,7 +173,7 @@ namespace kege::ui{
         void operator()(kege::UI* ui, const char* name, kege::MeshType model)
         {
             _mesh_types.push_back(model);
-            _list.push_back(ui->layout()->text(name, 20));
+            _list.push_back(ui->gui()->text(name, 20));
         }
 
         void update(kege::UI* ui, kege::PipelineKey& key)
@@ -264,19 +264,30 @@ namespace kege::ui{
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-             ui->push({ .style = &ui->theme().card });
+             ui->push({ .style = &ui->theme()->card });
             // ui->label(kege::ui::Text{ .ptr = "Mesh Type:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 }, nullptr);
             int id_offset = 0;
-            ui::Text text_feature = {.ptr = "Feature:", 0.f, 0.f, 100.f, 20.f };
+            kege::ui::Text text_feature = kege::ui::Text{ "Feature:", 0.f, 0.f, 100.f, 20.f };
+
+
+                const char* ptr = nullptr;   // 8 bytes
+                float x = 0.f;
+                float y = 0.f;
+                float width = 0.f;
+                float height = 20.f;
+                uint16_t font_size = 20;
+                uint32_t color = 0xFFFFFFFF;
+                AlignText align = AlignText::Left;
+
             if( ui->collapsableHeader(_uid[ id_offset++ ], _expand_feature, text_feature) )
             {
                 for(auto& features : _features)
                 {
                     features.title.ptr = features.name.c_str();
-                    ui->push({ .style = &ui->theme().card });
+                    ui->push({ .style = &ui->theme()->card });
                     if( ui->collapsableHeader(_uid[ id_offset++ ], features.expand, features.title) )
                     {
-                        ui->push({ .style = &ui->theme().card });
+                        ui->push({ .style = &ui->theme()->card });
                         for(Feature& feature : features.list)
                         {
                             feature.label.ptr = feature.name.c_str();
@@ -403,13 +414,13 @@ namespace kege::ui{
     
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme().card });
+            ui->push({ .style = &ui->theme()->card });
             kege::ui::Text text_rasterizer = { .ptr = "Rasterizer State:", .x = 0, .y = 0, .width = 100, .height = 30, .color = 0xFFFFFF50 };
             if( ui->collapsableHeader(_uid[3][11], _expand, text_rasterizer) )
             {
-                ui->push({ .style = &ui->theme().card });
+                ui->push({ .style = &ui->theme()->card });
                 {
-                    ui->push({ .style = &ui->theme().row });
+                    ui->push({ .style = &ui->theme()->row });
                     {
                         kege::ui::Text text_polymode = { .ptr = "Polygon Mode:", .x = 0, .y = 0, .width = 85, .height = 20, .color = 0xFFFFFF50 };
                         kege::ui::Text text_cullmode = { .ptr = "Cull Mode:", .x = 0, .y = 0, .width = 65, .height = 20, .color = 0xFFFFFF50 };
@@ -434,9 +445,9 @@ namespace kege::ui{
                     kege::ui::Text text_lw = { .ptr = "Line Width:", .x = 0, .y = 0, .width = 75, .height = 20, .color = 0xFFFFFF50 };
                     ui->labelScrubber< float >(ScrubberState::Type::F32, _uid[3][6], text_lw, key.raster_state.line_width);
 
-                    ui->push({ .style = &ui->theme().row });
+                    ui->push({ .style = &ui->theme()->row });
                     {
-                        ui->push({ .style = &ui->theme().card });
+                        ui->push({ .style = &ui->theme()->card });
                         {
                             kege::ui::Text depth_clip_enable_label = { .ptr = "Depth Clip Enable", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
                             kege::ui::Text depth_clamp_enable_label = { .ptr = "Depth Clamp Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
@@ -446,7 +457,7 @@ namespace kege::ui{
                             ui->checkbox( _uid[3][2], scissor_enable_label, key.raster_state.scissor_enable);
                         }
                         ui->pop();
-                        ui->push({ .style = &ui->theme().card });
+                        ui->push({ .style = &ui->theme()->card });
                         {
                             kege::ui::Text multisample_enable_label = { .ptr = "Multisample Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
                             kege::ui::Text antialiased_line_enable_label = { .ptr = "Antialiased Line Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
@@ -459,7 +470,7 @@ namespace kege::ui{
                     }
                     ui->pop();
 
-                    ui->push({ .style = &ui->theme().card });
+                    ui->push({ .style = &ui->theme()->card });
                     {
                         kege::ui::Text text = { .ptr = "Depth Bias Enable", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
                         ui->checkbox( _uid[3][7], text, key.raster_state.depth_bias.enable);
@@ -488,21 +499,21 @@ namespace kege::ui{
             _fill_modes.push_back( kege::FillMode::Fill );
             _fill_modes.push_back( kege::FillMode::Line );
             _fill_modes.push_back( kege::FillMode::Point );
-            _fill_list.push_back( ui->layout()->text("Fill", 20) );
-            _fill_list.push_back( ui->layout()->text("Line", 20) );
-            _fill_list.push_back( ui->layout()->text("Point", 20) );
+            _fill_list.push_back( ui->gui()->text("Fill", 20) );
+            _fill_list.push_back( ui->gui()->text("Line", 20) );
+            _fill_list.push_back( ui->gui()->text("Point", 20) );
 
             _cull_modes.push_back( kege::CullMode::None );
             _cull_modes.push_back( kege::CullMode::Front );
             _cull_modes.push_back( kege::CullMode::Back );
-            _cull_list.push_back( ui->layout()->text("None", 20) );
-            _cull_list.push_back( ui->layout()->text("Front", 20) );
-            _cull_list.push_back( ui->layout()->text("Back", 20) );
+            _cull_list.push_back( ui->gui()->text("None", 20) );
+            _cull_list.push_back( ui->gui()->text("Front", 20) );
+            _cull_list.push_back( ui->gui()->text("Back", 20) );
 
             _front_faces.push_back( kege::FrontFace::Clockwise );
             _front_faces.push_back( kege::FrontFace::CounterClockwise );
-            _front_list.push_back( ui->layout()->text("CW", 20) );
-            _front_list.push_back( ui->layout()->text("CCW", 20) );
+            _front_list.push_back( ui->gui()->text("CW", 20) );
+            _front_list.push_back( ui->gui()->text("CCW", 20) );
         }
         std::vector< kege::FillMode > _fill_modes;
         std::vector< kege::CullMode > _cull_modes;
@@ -526,7 +537,7 @@ namespace kege::ui{
             _strlist.push_back(name);
 
             _primitive_topologys.push_back(model);
-            _list.push_back(ui->layout()->text(_strlist[ _strlist.size() - 1 ].c_str(), 20));
+            _list.push_back(ui->gui()->text(_strlist[ _strlist.size() - 1 ].c_str(), 20));
         }
 
         void update(kege::UI* ui, kege::PipelineKey& key)
@@ -573,18 +584,18 @@ namespace kege::ui{
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme().card });
+            ui->push({ .style = &ui->theme()->card });
             kege::ui::Text text = kege::ui::Text{ .ptr = "Blend State:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
             if( ui->collapsableHeader(_uid[3][11], _expand, text) )
             {
-                ui->push({ .style = &ui->theme().card });
+                ui->push({ .style = &ui->theme()->card });
                 {
                     text.width = 100;
                     text.ptr = "Enable Blend:";
                     ui->checkbox( _uid[0][0], text, key.blend_state.enable);
 
                     text.width = 60;
-                    ui->push({ .style = &ui->theme().card2 });
+                    ui->push({ .style = &ui->theme()->card2 });
                     {
                         text.ptr = "Src Color:";
                         if( ui->labelOptions(_uid[3], text, _blend_factor_list, _selection_src_color_blend))
@@ -600,7 +611,7 @@ namespace kege::ui{
                     }
                     ui->pop();
 
-                    ui->push({ .style = &ui->theme().card2 });
+                    ui->push({ .style = &ui->theme()->card2 });
                     {
                         text.ptr = "Dst Color:";
                         if( ui->labelOptions(_uid[2], text, _blend_factor_list, _selection_dst_color_blend))
@@ -617,7 +628,7 @@ namespace kege::ui{
                     ui->pop();
 
                     text.width = 95;
-                    ui->push({ .style = &ui->theme().card2 });
+                    ui->push({ .style = &ui->theme()->card2 });
                     {
                         text.ptr = "Color Blend Op:";
                         if( ui->labelOptions(_uid[6], text, _blend_op_list, _selection_color_blend_op))
@@ -650,7 +661,7 @@ namespace kege::ui{
             _strlist_blend_factor.push_back(name);
             const char* str = _strlist_blend_factor[ _strlist_blend_factor.size() - 1 ].c_str();
             _blend_factors.push_back(model);
-            _blend_factor_list.push_back(ui->layout()->text(str, 20));
+            _blend_factor_list.push_back(ui->gui()->text(str, 20));
         }
 
         void setBlendOp(kege::UI* ui, const std::string& name, kege::BlendOp blend_op)
@@ -658,7 +669,7 @@ namespace kege::ui{
             _strlist_blend_op.push_back(name);
             const char* str = _strlist_blend_op[ _strlist_blend_op.size() - 1 ].c_str();
             _blend_ops.push_back( blend_op );
-            _blend_op_list.push_back( ui->layout()->text(str, 20) );
+            _blend_op_list.push_back( ui->gui()->text(str, 20) );
         }
 
         void setBlendStatePreset(kege::UI* ui, const std::string& name, const kege::BlendState& blend_state)
@@ -666,7 +677,7 @@ namespace kege::ui{
             _strlist_blend_presets.push_back(name);
             const char* str = _strlist_blend_presets[ _strlist_blend_presets.size() - 1 ].c_str();
             _blend_state_presets.push_back(blend_state);
-            _blend_state_presets_list.push_back( ui->layout()->text(str, 20) );
+            _blend_state_presets_list.push_back( ui->gui()->text(str, 20) );
         }
 
         void insertColorWriteMask(kege::UI* ui, const std::string& name, const kege::ColorWriteMask& color_write_mask)
@@ -674,7 +685,7 @@ namespace kege::ui{
             _strlist_color_write_mask.push_back(name);
             const char* str = _strlist_color_write_mask[ _strlist_color_write_mask.size() - 1 ].c_str();
             _color_write_masks.push_back(color_write_mask);
-            _color_write_mask_list.push_back( ui->layout()->text(str, 20) );
+            _color_write_mask_list.push_back( ui->gui()->text(str, 20) );
         }
 
         BlendState(kege::UI* ui)
@@ -776,7 +787,7 @@ namespace kege::ui{
     private:
 
         kege::PipelineKey _pipeline_key;
-        kege::Material::Parameters _parameters;
+        kege::MaterialParams _parameters;
 
         PrimitiveTopology _primitive_topology_ui;
         RasterizerState _rasterizer_state_ui;

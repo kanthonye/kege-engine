@@ -27,7 +27,7 @@ namespace kege{
         return img;
     }
 
-    ref::Image ImageLoader::load( kege::Graphics* graphics, const std::string& filename )
+    ref::Image ImageLoader::load( kege::GraphicsDevice* graphics, const std::string& filename )
     {
         int width;
         int height;
@@ -50,7 +50,7 @@ namespace kege{
             .samples        = SampleCount::Count1,
             .usage          = ImageUsage::TransferDst,
             .memory_usage   = MemoryUsage::GpuOnly,
-            .debug_name     = "image",
+            .name           = "image",
             .data           = data
         });
         stbi_image_free( data );
@@ -62,7 +62,7 @@ namespace kege{
         return load( _graphics, filename );
     }
 
-    void ImageLoader::operator()( kege::Graphics* graphics )
+    void ImageLoader::operator()( kege::GraphicsDevice* graphics )
     {
         _graphics = graphics;
     }
@@ -70,7 +70,7 @@ namespace kege{
     ImageLoader::ImageLoader( AssetManager* am )
     :   kege::AssetLoaderT< ref::Image >( am )
     {
-        CallbackRequest< kege::Graphics > request(this, &ImageLoader::operator() );
-        Communication::broadcast< CallbackRequest< kege::Graphics >& >( request );
+        CallbackRequest< kege::GraphicsDevice > request(this, &ImageLoader::operator() );
+        Communication::broadcast< CallbackRequest< kege::GraphicsDevice >& >( request );
     }
 }

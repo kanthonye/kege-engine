@@ -34,7 +34,7 @@ namespace kege::ui{
             _shape_labels.resize(_create_mesh_uis.size());
             for (int i=0; i<_create_mesh_uis.size(); ++i)
             {
-                _shape_labels[i] = _ui->layout()->text(_create_mesh_uis[i]->getName().c_str(), 20);
+                _shape_labels[i] = _ui->gui()->text(_create_mesh_uis[i]->getName().c_str(), 20);
                 _shape_labels[i].color = 0xFFFFFF70;
             }
         }
@@ -49,8 +49,8 @@ namespace kege::ui{
             _open_window = true;
             _rect.width = 600;
             _rect.height = 400;
-            _rect.x = (_ui->layout()->getRect().width - _rect.width) * 0.5;
-            _rect.y = (_ui->layout()->getRect().height - _rect.height) * 0.5;
+            _rect.x = (_ui->gui()->getRect().width - _rect.width) * 0.5;
+            _rect.y = (_ui->gui()->getRect().height - _rect.height) * 0.5;
         }
     }
     
@@ -62,8 +62,8 @@ namespace kege::ui{
         _open_window = true;
         _rect.width = 600;
         _rect.height = 400;
-        _rect.x = (_ui->layout()->getRect().width - _rect.width) * 0.5;
-        _rect.y = (_ui->layout()->getRect().height - _rect.height) * 0.5;
+        _rect.x = (_ui->gui()->getRect().width - _rect.width) * 0.5;
+        _rect.y = (_ui->gui()->getRect().height - _rect.height) * 0.5;
 
         // Generate the outter container for the create mesh window
         _ui->push
@@ -177,7 +177,7 @@ namespace kege::ui{
                         .color = 0xFFFFFF00,
                         .padding = {10,5,5,10},
                     });
-                    _ui->put({.style = &_ui->theme().x_seperator});
+                    _ui->put({.style = &_ui->theme()->x_seperator});
                     _ui->charButn(_uid[ _id_offset ], "x", 7, 0);
                 }
                 _ui->pop();

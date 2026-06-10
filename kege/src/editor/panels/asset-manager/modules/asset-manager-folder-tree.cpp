@@ -180,7 +180,7 @@ namespace kege::ui{
 //            ui::WidgetDesc category_desc;
 //            category_desc.user_id = &category.uid;
 //            category_desc.text = category.text;
-//            category_desc.style = (_current_category == category.text.ptr) ? &_ui->theme().selected_item : &_ui->theme().button;
+//            category_desc.style = (_current_category == category.text.ptr) ? &_ui->theme()->selected_item : &_ui->theme()->button;
 //            category_desc.single_click = ui::ClickTrigger::OnRelease;
 //
 //            _ui->put(category_desc);

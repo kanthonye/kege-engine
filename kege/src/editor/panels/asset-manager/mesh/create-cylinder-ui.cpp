@@ -16,7 +16,7 @@ namespace kege::ui{
         if (_asset_name[0] == 0)
         {
             snprintf(_asset_name, 31, "cylinder-mesh-%i", _count++);
-            _text = ui->layout()->text(_asset_name, 20);
+            _text = ui->gui()->text(_asset_name, 20);
         }
         ui->push
         ({
@@ -45,17 +45,17 @@ namespace kege::ui{
             text.ptr = "Rings:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _rings);
 
-            ui->put({.style = &ui->theme().y_seperator});
+            ui->put({.style = &ui->theme()->y_seperator});
 
             //uint64_t user_id = UI_BASE_ID();
             if( ui->submit(_uid[4], "Submit") )
             {
-                ref::AssetManager asset_manager = _manager->getManager()->getEditor()->getAssetManager();
-                kege::Ref<kege::MeshPrimitive> mesh = new CylinderMesh( _radius, _height, _rings );
+                ref::AssetManager asset_manager = _manager->getAssetManager();
+                kege::Ref<kege::Mesh> mesh = new CylinderMesh( _radius, _height, _rings );
 
                 // Create metadata
                 AssetMetadata metadata;
-                metadata.handle         = asset_manager->add< kege::Ref<kege::MeshPrimitive> >(_asset_name, mesh);
+                metadata.handle         = asset_manager->add< kege::Ref<kege::Mesh> >(_asset_name, mesh);
                 metadata.name           = _asset_name;
                 metadata.display_name   = metadata.name;
                 metadata.original_path  = "";

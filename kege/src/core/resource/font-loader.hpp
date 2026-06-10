@@ -10,7 +10,7 @@
 
 #include "asset-manager.hpp"
 #include "../utils/communication.hpp"
-#include "../graphics/font/font.hpp"
+#include "../graphics/components/font/font.hpp"
 
 namespace kege{
 
@@ -19,11 +19,11 @@ namespace kege{
     public:
 
         ref::Font load( const std::string& filename );
-        void operator()( kege::Graphics* response );
+        void operator()( kege::GraphicsDevice* response );
 
         FontLoader( AssetManager* am );
 
-        kege::Graphics* _graphics;
+        kege::GraphicsDevice* _graphics;
     };
 }
 

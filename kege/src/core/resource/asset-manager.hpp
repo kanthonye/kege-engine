@@ -130,7 +130,11 @@ namespace kege{
 
             std::string ext  = p.extension().string();
             Ref< AssetLoaderT< Item > >* loader = this->fetch< Ref< AssetLoaderT< Item > > >( ext );
-            if( loader == nullptr ) return 0;
+            if( loader == nullptr )
+            {
+                kege::Log::error << "No loaders exist to load (" << name << ") with file with ext -> ("<< ext.c_str() <<")" << Log::nl;
+                return 0;
+            }
 
             Item asset = (*loader)->load( p.string() );
             if( asset == nullptr )

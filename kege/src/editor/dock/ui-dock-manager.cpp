@@ -88,6 +88,16 @@ namespace kege::ui{
         }
     }
 
+    void DockManager::operator()(const kege::WindowFrameBufferSizeEvent& event)
+    {
+        //_gui->onWindowFrameBufferResize(event.width, event.height);
+    }
+
+    void DockManager::operator()(const kege::WindowSizeEvent& event)
+    {
+        _gui->onWindowResize(event.width, event.height);
+    }
+
     void DockManager::addPanel( Ref< ui::Panel > panel )
     {
         _panel_name_index_map[ panel->getName() ] = (int32_t)_panels.size();
@@ -107,7 +117,6 @@ namespace kege::ui{
         return &_ghost;
     }
 
-
     kege::ui::Dock* DockManager::getDock(const kege::dvec2& pointer)
     {
         return _root.getDock( pointer );
@@ -120,25 +129,61 @@ namespace kege::ui{
 
     void DockManager::update()
     {
-        _root.update();
+        _gui->begin( 0.016 );
+        {
+            _gui->pushRoot({ .rect = _rect });
+            {
+                _root.update();
+            }
+            _gui->popRoot();
+        }
+        _gui->end();
     }
 
-    kege::EditorLayer* DockManager::getEditor()
+    kege::GraphicsDevice* DockManager::getGraphicsDevice()
     {
-        return _editor;
+        return _gui->getGraphicsDevice();
+    }
+
+    kege::ProjectManager* DockManager::getProjectManager()
+    {
+        return _project_manager;
+    }
+
+    kege::AssetManager* DockManager::getAssetManager()
+    {
+        return _gui->getAssetManager();
+    }
+
+    kege::ECS* DockManager::getECS()
+    {
+        return _ecs;
     }
     
+    kege::UI* DockManager::getUI()
+    {
+        return _ui;
+    }
+
     DockManager::~DockManager()
     {
         _panel_name_index_map.clear();
         _panels.clear();
         kege::Communication::remove< const kege::ui::AssetMetadataDropOff&, DockManager >( this );
+        kege::Communication::remove<const kege::WindowFrameBufferSizeEvent&, DockManager>(this);
+        kege::Communication::remove<const kege::WindowSizeEvent&, DockManager>(this);
     }
 
-    DockManager::DockManager(kege::EditorLayer* editor, int width, int height)
-    :   _editor( editor )
+    DockManager::DockManager(const kege::Extent2D& extent, kege::GUI* gui, kege::UI* ui, kege::ProjectManager* pm, kege::ECS* ecs)
+    :   _gui( gui )
+    ,   _rect{ 0.f, 0.f, float(extent.width), float(extent.height) }
+    ,   _project_manager( pm )
+    ,   _ecs( ecs )
+    ,   _ui( ui )
     {
         kege::Communication::add< const kege::ui::AssetMetadataDropOff&, DockManager >( this );
+        kege::Communication::add<const kege::WindowFrameBufferSizeEvent&, DockManager>(this);
+        kege::Communication::add<const kege::WindowSizeEvent&, DockManager>(this);
 
         addPanel(new ui::HierarchyPanel( this ));
         addPanel(new kege::InspectorPanel( this ));
@@ -148,7 +193,7 @@ namespace kege::ui{
         addPanel(new ui::Console( this ));
         addPanel(new ui::MenuBar( this ));
 
-        _root = ui::Dock(this, width, height);
+        _root = ui::Dock(this, extent.width, extent.height);
 
         ui::DockSplit* split[2];
 

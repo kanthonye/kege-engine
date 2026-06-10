@@ -38,7 +38,7 @@ namespace kege::ui{
 //            .color = 0xFFFFFFFF
 //        };
 //
-//        ui->push({.style = &ui->theme().padded_list});
+//        ui->push({.style = &ui->theme()->padded_list});
 //        {
 //            static std::vector< kege::ui::Text > list;
 //            if (list.empty())
@@ -55,7 +55,7 @@ namespace kege::ui{
 //                list[1].width = 150;
 //            }
 //
-//            ui->push({.style = &ui->theme().column});
+//            ui->push({.style = &ui->theme()->column});
 //            {
 //                text.width = 150;
 //                text.ptr = "Geometry:";
@@ -64,7 +64,7 @@ namespace kege::ui{
 //                int mesh_option;
 //                text.width = 150;
 //                text.ptr = "Source:";
-//                ui->push({.style = &ui->theme().row});
+//                ui->push({.style = &ui->theme()->row});
 //                ui->put({.text = text, .rect = {.width = 45, .height = 20} });
 //                ui->options(uid, layer, list, mesh_option);
 //                ui->pop();
@@ -75,7 +75,7 @@ namespace kege::ui{
 //                        kege::Renderable* comp = ecs->get< kege::Renderable >( entity );
 //                        text.ptr = "Target:";
 //                        text.width = 55;
-//                        ui->push({.style = &ui->theme().row});
+//                        ui->push({.style = &ui->theme()->row});
 //                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
 //                        if(ui->textField( uid[10], layer, comp->fname, 64, comp->size ))
 //                        {
@@ -110,7 +110,7 @@ namespace kege::ui{
 ////
 ////                        text.ptr = "Target:";
 ////                        text.width = 55;
-////                        ui->push({.style = &ui->theme().row});
+////                        ui->push({.style = &ui->theme()->row});
 ////                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
 ////                        ui->options(layer, ui->getAddressAsInt(generators[mesh_option]), mesh_types, mesh_option);
 ////                        ui->pop();

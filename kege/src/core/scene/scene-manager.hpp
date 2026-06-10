@@ -33,7 +33,7 @@ namespace kege{
         bool initialize();
         void shutdown();
 
-        SceneManager(ref::RenderGraph rg, ref::ECS& ecs, ref::AssetManager asset_manager );
+        SceneManager( ref::ECS& ecs, ref::AssetManager asset_manager );
 
         ~SceneManager();
         
@@ -43,9 +43,9 @@ namespace kege{
         std::vector< ref::Scene > _scenes;
 
         ref::AssetManager _asset_manager;
-        ref::RenderGraph _render_graph;
         ref::Scene _curr_scene;
         ref::ECS _ecs;
+        
         kege::Communication _communication;
     };
 

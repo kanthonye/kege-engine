@@ -202,8 +202,8 @@ namespace kege::ui{
 
     bool DockSplit::update(UI* ui)
     {
-        if (!ui->layout()->inputManager()->getMouse()->isDown(MouseButtonCode::Left))
-            show_drag_knob = ui->testPointVsRect(ui->pointer(), drag_rect);
+        if (!ui->gui()->getInputManager()->getMouse()->isDown(MouseButtonCode::Left))
+            show_drag_knob = kege::ui::testPointVsRect(ui->pointer(), drag_rect);
 
         else if (show_drag_knob)
         {

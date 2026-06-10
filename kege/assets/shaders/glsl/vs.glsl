@@ -3,68 +3,10 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
-#define IN_POSITION 0
-#define IN_TEXCOORD 1
-#define IN_NORMAL 2
-layout(location = IN_POSITION) in vec3 in_position;
-layout(location = IN_TEXCOORD) in vec2 in_texcoord;
-layout(location = IN_NORMAL) in vec3 in_normal;
 
-#define IN_TANGENT 3
-#define IN_BITANGENT 4
-layout(location = IN_TANGENT) in vec3 in_tangent;
-layout(location = IN_BITANGENT) in vec3 in_bitangent;
-
-
-#define OUT_POSITION 0
-#define OUT_TEXCOORD 1
-#define OUT_NORMAL 2
-layout(location = OUT_POSITION) out vec3 out_position;
-layout(location = OUT_TEXCOORD) out vec2 out_texcoord;
-layout(location = OUT_NORMAL) out vec3 out_normal;
-
-#define OUT_TANGENT 3
-#define OUT_BITANGENT 4
-layout(location = OUT_TANGENT) out vec3 out_tangent;
-layout(location = OUT_BITANGENT) out vec3 out_bitangent;
-
-
-#define CAMERA_SET 0
-#define CAMERA_BINDING 0
-// This file defines the camera data uniform buffer for the PBR shader
-layout(std140, set = CAMERA_SET, binding = CAMERA_BINDING) uniform CameraData
-{
-    mat4 view_matrix;
-    mat4 projection_matrix;
-    mat4 view_projection_matrix;
-    vec3 camera_position;
-}
-camera;
-
-#define OBJECT_SET 1
-#define OBJECT_BINDING 0
-// This defines the uniform buffer for object data in the PBR shader, including the model matrix and normal matrix
-layout(std140, set = OBJECT_SET, binding = OBJECT_BINDING) uniform ObjectData
-{
-    mat4 model_matrix;
-    mat4 normal_matrix;
-}
-object;
 
 
 void main() {
     // Process vertex based on renderer type
-    // Transform the vertex position, normal, and texture coordinates by the object's model matrix and normal matrix
-    out_position = object.model_matrix * vec4(in_position, 1.0);
-    out_normal = normalize(object.normal_matrix * in_normal);
-    out_texcoord = in_texcoord;
-
-
-    // Apply the object's normal matrix to the bitangent and tangent vectors
-    out_bitangent = normalize(object.normal_matrix * in_bitangent);
-    out_tangent = normalize(object.normal_matrix * in_tangent);
-
-    // Final vertex output, this is the last step of the vertex shader, it will output the final position of the vertex in clip space.
-    gl_Position = camera.projection * camera.view * vec4(out_position, 1.0);
 
 }

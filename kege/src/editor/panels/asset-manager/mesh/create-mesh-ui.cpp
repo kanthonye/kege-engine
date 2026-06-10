@@ -17,9 +17,9 @@
 //        enum GenState{EDITING, GENERATE, COMPLETE};
 //        virtual void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity)
 //        {
-//            ui->push({.style = &ui->theme().row, .single_click = ui::ClickTrigger::Continuous});
+//            ui->push({.style = &ui->theme()->row, .single_click = ui::ClickTrigger::Continuous});
 //            ui->put({.text = text, .rect = {.width = 100, .height = 20} });
-//            ui->put({.style = &ui->theme().x_seperator});
+//            ui->put({.style = &ui->theme()->x_seperator});
 //            ui->put({.color = 0x00FF00FF, .rect = {.width = 10, .height = 10} });
 //            ui->put({.color = 0xFF0000FF, .rect = {.width = 10, .height = 10} });
 //            ui->pop();
@@ -47,7 +47,7 @@
 //
 //            if ( gen_state == EDITING )
 //            {
-//                ui->push({.style = &ui->theme().column});
+//                ui->push({.style = &ui->theme()->column});
 //                ui->scrubber(layer, ui->getAddressAsInt(lengths.x), text_width,  lengths.x);
 //                ui->scrubber(layer, ui->getAddressAsInt(lengths.y), text_height, lengths.y);
 //                ui->scrubber(layer, ui->getAddressAsInt(lengths.z), text_depth,  lengths.z);

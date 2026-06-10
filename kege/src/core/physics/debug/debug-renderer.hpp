@@ -46,7 +46,7 @@ namespace kege {
         void pushVertices( uint32_t count, size_t size, const void* data );
         void pushIndices( uint32_t count, size_t size, const void* data );
 
-        kege::Graphics* _graphics;
+        kege::GraphicsDevice* _graphics;
         uint64_t _vbo_capacity;
         uint64_t _ibo_capacity;
         

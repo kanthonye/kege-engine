@@ -113,20 +113,20 @@ namespace kege::ui{
         if (type == "OpenCreateMaterialWindow")
         {
             snprintf(_asset_name, 31, "material-%i", _count);
-            _text = _ui->layout()->text(_asset_name, 20);
+            _text = _ui->gui()->text(_asset_name, 20);
 
             _open_window = true;
             _window_rect.width = 600;
             _window_rect.height = 400;
-            _window_rect.x = (_ui->layout()->getRect().width - _window_rect.width) * 0.5;
-            _window_rect.y = (_ui->layout()->getRect().height - _window_rect.height) * 0.5;
+            _window_rect.x = (_ui->gui()->getRect().width - _window_rect.width) * 0.5;
+            _window_rect.y = (_ui->gui()->getRect().height - _window_rect.height) * 0.5;
         }
     }
 
-    const kege::ui::Property< kege::Material::Parameters > MaterialParameters[5] = {
+    const kege::ui::Property< kege::MaterialParams > MaterialParameters[5] = {
         UI_PROP
         (
-            kege::Material::Parameters, albedo, kege::ui::PropertyMeta{
+            kege::MaterialParams, albedo, kege::ui::PropertyMeta{
                 .text = {.ptr = "Color:", 0.f, 0.f, 100.f, 20.f },
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
                 .type = PropertyType::Vec4
@@ -134,7 +134,7 @@ namespace kege::ui{
         ),
         UI_PROP
         (
-            kege::Material::Parameters, roughness, kege::ui::PropertyMeta{
+            kege::MaterialParams, roughness, kege::ui::PropertyMeta{
                 .text = {.ptr = "Roughness:", 0.f, 0.f, 90.f, 20.f },
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
                 .type = PropertyType::Float
@@ -142,7 +142,7 @@ namespace kege::ui{
         ),
         UI_PROP
         (
-            kege::Material::Parameters, metallic, kege::ui::PropertyMeta{
+            kege::MaterialParams, metallic, kege::ui::PropertyMeta{
                 .text = {.ptr = "Metallic:", 0.f, 0.f, 90.f, 20.f },
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
                 .type = PropertyType::Float
@@ -150,16 +150,16 @@ namespace kege::ui{
         ),
         UI_PROP
         (
-            kege::Material::Parameters, reflectance, kege::ui::PropertyMeta{
-                .text = {.ptr = "Reflectance:", 0.f, 0.f, 90.f, 20.f },
+            kege::MaterialParams, ao, kege::ui::PropertyMeta{
+                .text = {.ptr = "AO:", 0.f, 0.f, 90.f, 20.f },
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
                 .type = PropertyType::Float
             }
         ),
         UI_PROP
         (
-            kege::Material::Parameters, ao, kege::ui::PropertyMeta{
-                .text = {.ptr = "AO:", 0.f, 0.f, 90.f, 20.f },
+            kege::MaterialParams, alpha_cutoff, kege::ui::PropertyMeta{
+                .text = {.ptr = "Alpha Cutoff:", 0.f, 0.f, 90.f, 20.f },
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
                 .type = PropertyType::Float
             }

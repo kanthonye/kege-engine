@@ -60,7 +60,7 @@ namespace kege{
         return new kege::Font( glyphs, metrics, { .image = image, .sampler = sampler, .layout = kege::ImageLayout::ShaderRead });
     };
 
-    void FontLoader::operator()( kege::Graphics* graphics )
+    void FontLoader::operator()( kege::GraphicsDevice* graphics )
     {
         _graphics = graphics;
     }
@@ -68,8 +68,8 @@ namespace kege{
     FontLoader::FontLoader( AssetManager* am )
     : kege::AssetLoaderT< ref::Font >( am )
     {
-        CallbackRequest< kege::Graphics > request(this, &FontLoader::operator() );
-        Communication::broadcast< CallbackRequest< kege::Graphics >& >( request );
+        CallbackRequest< kege::GraphicsDevice > request(this, &FontLoader::operator() );
+        Communication::broadcast< CallbackRequest< kege::GraphicsDevice >& >( request );
     }
 
 }

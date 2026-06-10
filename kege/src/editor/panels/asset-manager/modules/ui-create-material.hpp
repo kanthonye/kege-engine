@@ -43,7 +43,7 @@ namespace kege::ui{
 
         void setFeature( std::vector<Feature>& list, kege::FeatureFlag flag );
         Features* getFeatures( const std::string& name );
-        kege::Material::Parameters _parameters;
+        kege::MaterialParams _parameters;
 
         std::vector< Features > _features;
         bool _expand_feature;

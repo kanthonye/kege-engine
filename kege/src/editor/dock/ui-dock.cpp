@@ -26,7 +26,7 @@ namespace kege::ui{
     kege::ui::Dock* Dock::getDock(Dock& dock, const kege::dvec2& pointer)
     {
         kege::ui::Dock* res = nullptr;
-        if( _ui->testPointVsRect(pointer, dock._rect) )
+        if( kege::ui::testPointVsRect(pointer, dock._rect) )
         {
             if (dock._split)
             {
@@ -45,12 +45,12 @@ namespace kege::ui{
 
     void Dock::displayTabs()
     {
-        _ui->push({.style = &_ui->theme().dock});
+        _ui->push({.style = &_ui->theme()->dock});
         {
             _ui->push
             ({
                 .user_id = _uid_tab[0],
-                .style = &_ui->theme().tab
+                .style = &_ui->theme()->tab
             });
             for (int i=0; i<_tab.list.size(); ++i)
             {
@@ -59,28 +59,26 @@ namespace kege::ui{
 
                 _ui->push
                 ({
-                    .style = &_ui->theme().tab_elem,
                     .user_id = id[0],
+                    .border = {.corner_curves = {8,8,0,0}},
+                    .style = &_ui->theme()->tab_elem,
                     .single_click = ui::ClickTrigger::Continuous,
-                    .border.corner_curves = {8,8,0,0},
                 });
                 _ui->put
                 ({
-                    .style = &_ui->theme().tab_label,
                     .user_id = id[1],
                     .text = elem.text,
+                    .style = &_ui->theme()->tab_label,
                     .mouseover = false,
                 });
                 _ui->put
                 ({
                     .user_id = id[2],
-                    .rect.height = 10,
-                    .rect.width = 10,
-                    .rect.y = 4,
+                    .rect = { .y = 4, .width = 10, .height = 10 },
+                    .border = {.corner_curves = {8,8,8,8}},
                     .color = _ui->mouseover( id[2] ) ? 0xEE2200FF : 0xEE220050,
                     .single_click = ui::ClickTrigger::OnRelease,
                     .double_click = ui::ClickTrigger::Immediate,
-                    .border.corner_curves = {8,8,8,8}
                 });
                 _ui->pop();
 
@@ -111,18 +109,18 @@ namespace kege::ui{
         ({
             .user_id = _uid_dock[0],
             .rect = _rect,
-            .position = ui::Positioning::Independent,
-            .color = color,
+            .border = {.corner_curves = {8,8,8,8}},
             .padding = _padding,
+            .color = color,
+            .gap = {6,6},
+            .position = ui::Positioning::Independent,
             .clip_overflow = true,
-            .border.corner_curves = {8,8,8,8},
-            .gap = {6,6}
         });
         if ( _split )
         {
             if ( _split->update(_ui) )
             {
-                _ui->layout()->putRoot
+                _ui->gui()->putRoot
                 ({
                     //.layer = 1,
                     .rect = _split->drag_rect,
@@ -148,11 +146,10 @@ namespace kege::ui{
             ({
                 //.layer = 1,
                 .user_id = _uid_ghost[0],
+                .rect = {.x = _manager->getGhostObject()->rect.x, .y = _manager->getGhostObject()->rect.y },
+                .border = {.corner_curves = {8,8,8,8}},
                 .text = _manager->getGhostObject()->dock->_tab.list[ _manager->getGhostObject()->tab_selection ].text,
-                .rect.x = _manager->getGhostObject()->rect.x,
-                .rect.y = _manager->getGhostObject()->rect.y,
-                .border.corner_curves = {8,8,8,8},
-                .style = &_ui->theme().ghost,
+                .style = &_ui->theme()->ghost,
             });
         }
         if( _manager->getGhostObject()->dragging )
@@ -259,14 +256,14 @@ namespace kege::ui{
         for (int i=0; i<panel_ids.size(); ++i)
         {
             ui::Panel* panel = _manager->getPanel( panel_ids[i] );
-            _tab.list.push_back( TabElem({ .text = _ui->layout()->text( panel->_name.c_str(), 20 ) }));
+            _tab.list.push_back( TabElem({ .text = _ui->gui()->text( panel->_name.c_str(), 20 ) }));
         }
     }
 
 //    void Dock::addPanelToDock(const Ref< ui::Panel >& panel)
 //    {
 //        _tab.panel_ids.push_back( panel );
-//        _tab.list.push_back(TabElem({ .text = _ui->layout()->text(panel->_name.c_str(), 20) }));
+//        _tab.list.push_back(TabElem({ .text = _ui->gui()->text(panel->_name.c_str(), 20) }));
 //    }
 
     void swap(ui::Dock& a, ui::Dock& b)
@@ -276,14 +273,14 @@ namespace kege::ui{
         b._tab = tab;
     }
 
-    void Dock::ghostDraggingOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void Dock::ghostDraggingOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
         GhostParam* params = reinterpret_cast<GhostParam*>(data);
         if (!params->ghost->visible)
         {
             const WidgetId& elem = params->ghost->dock->_tab.list[ params->ghost->tab_selection ].uids[0];
-            Widget* target = layout->elem(elem);
-            Widget* ghost  = layout->elem(widget_id);
+            Widget* target = gui->elem(elem);
+            Widget* ghost  = gui->elem(widget_id);
 
             params->ghost->visible = true;
             params->ghost->rect.x = target->rect.x;
@@ -291,11 +288,11 @@ namespace kege::ui{
             params->ghost->rect.width = ghost->rect.width;
             params->ghost->rect.height = ghost->rect.height;
         }
-        params->ghost->rect.x += layout->getPointerDelta().x;
-        params->ghost->rect.y += layout->getPointerDelta().y;
+        params->ghost->rect.x += gui->getPointerDelta().x;
+        params->ghost->rect.y += gui->getPointerDelta().y;
     }
 
-    void Dock::ghostDropoffOp(ui::Layout* layout,  ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void Dock::ghostDropoffOp(kege::GUI* gui,  ui::ID user_id, ui::WidgetId widget_id, void* data)
     {
         GhostDropoff* params = reinterpret_cast<GhostDropoff*>(data);
         params->dock->handleDropOff(*params->dock);
@@ -343,7 +340,7 @@ namespace kege::ui{
     ui::Dock* Dock::findDropTarget(ui::Dock& dock)
     {
 
-        if ( _ui->layout()->testPointVsRect(_ui->pointer(), dock._rect) )
+        if ( kege::ui::testPointVsRect(_ui->pointer(), dock._rect) )
         {
             if ( dock._split )
             {
@@ -622,7 +619,7 @@ namespace kege::ui{
         }
 
         const Rect& tab_area = _ui->get( target->_tab.widget_id )->rect;
-        if ( _ui->layout()->testPointVsRect(_ui->pointer(), tab_area) )
+        if ( kege::ui::testPointVsRect(_ui->pointer(), tab_area) )
         {
             resolveTabDropOff( target );
             return true;
@@ -640,7 +637,7 @@ namespace kege::ui{
 
     Dock::Dock(kege::ui::DockManager* manager, int width, int height)
     :   _manager( manager )
-    ,   _ui( manager->getEditor()->getGUI() )
+    ,   _ui( manager->getUI() )
     {
         _padding = {10,10,10,10};
         _parent = nullptr;

@@ -41,8 +41,8 @@ namespace kege::ui{
         void displayContent();
         void displayTabs();
 
-        static void ghostDraggingOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
-        static void ghostDropoffOp(ui::Layout* layout, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        static void ghostDraggingOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        static void ghostDropoffOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data);
 
         void setDockPanels(const std::vector< int >& panels);
         //void addPanelToDock(const Ref< ui::Panel >& panel);
