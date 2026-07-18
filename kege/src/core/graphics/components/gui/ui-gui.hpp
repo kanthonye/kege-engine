@@ -349,6 +349,14 @@ namespace kege{
             uint32_t first_instance
         );
 
+        void renderLayer
+        (
+            kege::ui::DrawBatch* batch,
+            const kege::ui::Layout& layout,
+            const kege::ui::Layer& layer,
+            uint32_t first_instance
+        );
+
         void renderWidget
         (
             kege::ui::DrawBatch* batch,

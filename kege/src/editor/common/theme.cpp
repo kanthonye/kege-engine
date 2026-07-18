@@ -51,8 +51,8 @@ namespace kege{
         scroll_container = kege::ui::Style
         {
             .background = ui::Background(0xFFFFFF00),
-            .height = ui::extend(),
             .width = ui::extend(),
+            .height = ui::extend(),
             .alignment =
             {
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
@@ -65,14 +65,14 @@ namespace kege{
         {
             //.border.corner_curves = {20,20,20,20},
             .background = ui::Background(0xFFFFFF00),
-            .padding = {10, 0, 10, 0},
-            .height = ui::flexible(),
             .width = ui::extend(),
+            .height = ui::flexible(),
             .alignment =
             {
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .direction = ui::AlignDir::DOWN,
             },
+            .padding = {10, 0, 10, 0},
             .gap = {4, 4},
         };
 
@@ -82,30 +82,30 @@ namespace kege{
         dock.background = ui::Background(0x0b090fFF);
         dock.alignment = ui::Alignment
         {
-            .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
             .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+            .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
             .direction = ui::AlignDir::DOWN,
         };
 
         tab = kege::ui::Style
         {
             .background = ui::Background(0x0B090F00),
-            .height = ui::flexible(),
             .width = ui::extend(),
-            .gap = {4,0},
+            .height = ui::flexible(),
             .alignment =
             {
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .direction = ui::AlignDir::RIGHT
-            }
+            },
+            .gap = {4,0},
         };
 
         tab_elem = kege::ui::Style
         {
-            .height = ui::flexible(),
-            .width = ui::flexible(),
             .background = ui::Background(0x171420FF),
+            .width = ui::flexible(),
+            .height = ui::flexible(),
             .align_text =  ui::AlignText::Center,
             .padding = {10,4,10,4},
             .gap = {20,0}
@@ -113,24 +113,24 @@ namespace kege{
 
         tab_label = kege::ui::Style
         {
-            .height = ui::fixed(20),
-            .width = ui::flexible(),
             .background = ui::Background(0xFFFFFF00),
-            .align_text =  ui::AlignText::Left,
             .text_color = 0xBBA0FFFF,
+            .width = ui::flexible(),
+            .height = ui::fixed(20),
+            .align_text =  ui::AlignText::Left,
             .font_size = 20,
         };
 
         ghost = kege::ui::Style
         {
             .background = ui::Background(0xFFFFFF20),
+            .text_color = 0xBBA0FFFF,
+            .width = ui::fixed(100),
+            .height = ui::fixed(40),
+            .border = {.corner_curves = {8,8,8,8}},
             .align_text =  ui::AlignText::Center,
             .position = ui::Positioning::Absolute,
-            .text_color = 0xBBA0FFFF,
-            .height = ui::fixed(40),
-            .width = ui::fixed(100),
             .font_size = 20,
-            .border.corner_curves = {8,8,8,8},
         };
 
 
@@ -138,25 +138,25 @@ namespace kege{
         Theme::y_seperator = kege::ui::Style
         {
             .background = 0xFFFFFF00,
-            .height = ui::extend(),
             .width = ui::fixed(0),
+            .height = ui::extend(),
         };
 
         Theme::x_seperator = kege::ui::Style
         {
             .background = 0xFFFFFF00,
-            .height = ui::fixed(0),
             .width = ui::extend(),
+            .height = ui::fixed(0),
         };
 
         Theme::label = kege::ui::Style
         {
             .background = 0xFFFFFF00,
+            .text_color = 0xFFFFFFFF,
+            .width = ui::extend(),
+            .height = ui::fixed(18),
             .align_text = ui::AlignText::Left,
             .padding = {2,0,0,0},
-            .text_color = 0xFFFFFFFF,
-            .height = ui::fixed(18),
-            .width = ui::extend(),
             .font_size = 20,
         };
 
@@ -776,7 +776,8 @@ namespace kege{
             {
                 .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .direction = ui::AlignDir::RIGHT
-            }
+            },
+            .text_color = 0xBBA0FFFF,
         };
         tab_elem = kege::ui::Style{
             .height = ui::fixed(20),
@@ -792,6 +793,7 @@ namespace kege{
             .background = ui::Background(0x171420FF),
             .align_text = ui::AlignText::Center,
             .border.corner_curves = {4,4,4,4},
+            .text_color = 0xBBA0FFFF,
             .font_size = 20,
         };
 

@@ -43,8 +43,8 @@ namespace kege::ui{
                     {
                         .ptr = names[i].c_str(),
                         .width = 100,
-                        .font_size = 20,
                         .height = 15,
+                        .font_size = 20,
                         .color = 0xFFFFFFFF
                     });
                     creates.push_back("OpenCreate" + names[i] + "Window");

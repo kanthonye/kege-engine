@@ -100,41 +100,15 @@ namespace kege::ui{
     kege::ui::WidgetId Layer::pushRoot( const kege::ui::WidgetDesc& desc )
     {
         if (_root_stack.size() <= _root_stack_count) _root_stack.resize(1 + 2 * _root_stack.size());
-        _root_stack[ _root_stack_count++ ] = _current_parent;
-        _curr_root = _current_parent;
+        _root_stack[ _root_stack_count++ ] = _layout->_curr_parent;
+        _layout->_curr_parent = 0;
 
-        kege::ui::WidgetId id = putRoot( desc );
-        if ( id.id != 0 )
+        kege::ui::WidgetId w = put( desc, true );
+        if ( w.id != 0 )
         {
-            _current_parent = id.index;
+            _layout->_curr_parent = w.index;
         }
-        return id;
-    }
-
-    kege::ui::WidgetId Layer::putRoot( const kege::ui::WidgetDesc& desc )
-    {
-        kege::ui::Widget* widget = _gui->newWidget();
-        init( desc, widget );
-
-        if ( _head_root == 0 )
-        {
-            _tail_root = _head_root = widget->index;
-        }
-        else
-        {
-            kege::ui::Widget* tail = _gui->at( _tail_root );
-            LayerNode& t = tail->layer;
-            LayerNode& w = widget->layer;
-
-            t.next = widget->index;
-            w.prev = tail->index;
-
-            _tail_root = widget->index;
-        }
-
-        _root_count += 1;
-        
-        return kege::ui::WidgetId( widget->index, widget->version );
+        return w;
     }
 
     void Layer::popRoot()
@@ -142,13 +116,8 @@ namespace kege::ui{
         if (0 < _root_stack_count)
         {
             int id = _root_stack_count - 1;
-            if (_curr_root != _root_stack[ id ])
-            {
-                kege::Log::error << "Layer::popRoot(): Attempting to pop a none root element." << kege::Log::nl;
-                return;
-            }
-            _current_parent = _root_stack[ id ];
-            _curr_root = _current_parent;
+            _layout->_curr_parent = _root_stack[ id ];
+            //_curr_root = _layout->_curr_parent;
             _root_stack_count = id;
         }
         pop();
@@ -156,57 +125,86 @@ namespace kege::ui{
 
     kege::ui::WidgetId Layer::push( const kege::ui::WidgetDesc& desc )
     {
-        kege::ui::WidgetId widget_id = put( desc );
+        kege::ui::WidgetId widget_id = put( desc, false );
         if ( widget_id.id != 0 )
         {
-            _current_parent = widget_id.index;
+            _layout->_curr_parent = widget_id.index;
         }
         return widget_id;
     }
 
-    kege::ui::WidgetId Layer::put( const kege::ui::WidgetDesc& desc )
+    kege::ui::WidgetId Layer::put( const kege::ui::WidgetDesc& desc, bool is_root )
     {
         kege::ui::Widget* widget = _gui->newWidget();
         init( desc, widget );
-
-        if ( _current_parent != 0 )
+        if ( _layout->_curr_parent != 0 )
         {
-            kege::ui::Widget* parent = _gui->at( _current_parent );
-            widget->parent = _current_parent;
-
-            if ( parent->head == 0 )
+            insertChild( widget );
+            if ( is_root )
             {
-                parent->tail = parent->head = widget->index;
+                insertRoot( widget );
             }
-            else
-            {
-                kege::ui::Widget* tail = _gui->at( parent->tail );
-
-                tail->next   = widget->index;
-                widget->prev = parent->tail;
-                parent->tail = widget->index;
-            }
-            parent->count++;
         }
         else
         {
-            std::cout << "parent less \n";
+            insertRoot( widget );
         }
         return kege::ui::WidgetId( widget->index, widget->version );
     }
 
     uint32_t Layer::pop()
     {
-        if ( _current_parent )
+        if ( _layout->_curr_parent )
         {
-            _current_parent = _gui->at( _current_parent )->parent;
+            _layout->_curr_parent = _gui->at( _layout->_curr_parent )->parent;
         }
-        return _current_parent;
+        return _layout->_curr_parent;
+    }
+
+    void Layer::insertChild( kege::ui::Widget* widget )
+    {
+        kege::ui::Widget* parent = _gui->at( _layout->_curr_parent );
+        widget->parent = _layout->_curr_parent;
+
+        if ( parent->head == 0 )
+        {
+            parent->tail = parent->head = widget->index;
+        }
+        else
+        {
+            kege::ui::Widget* tail = _gui->at( parent->tail );
+
+            tail->next   = widget->index;
+            widget->prev = parent->tail;
+            parent->tail = widget->index;
+        }
+        parent->count++;
+    }
+
+    void Layer::insertRoot( kege::ui::Widget* root )
+    {
+        if ( _head_root == 0 )
+        {
+            _tail_root = _head_root = root->index;
+        }
+        else
+        {
+            kege::ui::Widget* tail = _gui->at( _tail_root );
+            LayerNode& t = tail->layer;
+            LayerNode& w = root->layer;
+
+            t.next = root->index;
+            w.prev = tail->index;
+
+            _tail_root = root->index;
+        }
+
+        _root_count += 1;
     }
 
     void Layer::init( const kege::ui::WidgetDesc& desc, kege::ui::Widget* widget )
     {
-        _count += 1;
+        //_count += 1;
         widget->user_id      = desc.user_id;
 
         widget->rect         = desc.rect;
@@ -248,17 +246,16 @@ namespace kege::ui{
 
     kege::ui::WidgetId Layer::text( const kege::ui::Text& text )
     {
-        return put({.rect = kege::ui::Rect{.width = text.width, .height = text.height}, .text = text});
+        return put({.rect = kege::ui::Rect{.width = text.width, .height = text.height}, .text = text}, false);
     }
 
     void Layer::begin( double dms )
     {
-        _count = 0;
+        //_count = 0;
         _tail_root = 0;
         _head_root = 0;
-        _curr_root = 0;
+        //_curr_root = 0;
         _root_count = 0;
-        _current_parent = 0;
         _root_stack_count = 0;
     }
 
@@ -304,6 +301,5 @@ namespace kege::ui{
     ,   _tail_root(0)
     ,   _root_count(0)
     ,   _root_stack_count(0)
-    ,   _current_parent(0)
     {}
 }

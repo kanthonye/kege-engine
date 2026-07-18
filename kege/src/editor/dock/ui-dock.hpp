@@ -30,7 +30,7 @@ namespace kege::ui{
         void update();
         void merge();
 
-        Dock(kege::ui::DockManager* manager, int width, int height);
+        Dock(kege::ui::DockManager* manager, const kege::ui::Rect& rect);
 
         ~Dock();
         Dock();

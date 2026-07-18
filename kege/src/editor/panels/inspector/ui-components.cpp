@@ -400,7 +400,7 @@ namespace kege::ui{
             ui->put({.rect = {.width = 55, .height = 20}, .text = text});
 
             //text.ptr = component->fname;
-            ui->put({.rect = {.width = 55, .height = 20}, .text = text});
+            //ui->put({.rect = {.width = 55, .height = 20}, .text = text});
         }
         ui->pop();
         return false;

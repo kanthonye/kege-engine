@@ -34,7 +34,6 @@ namespace kege::ui{
          * @return reference to the ui element.
          */
         kege::ui::WidgetId pushRoot( const kege::ui::WidgetDesc& desc );
-        kege::ui::WidgetId putRoot( const kege::ui::WidgetDesc& desc );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -56,7 +55,7 @@ namespace kege::ui{
          *
          * @return reference to the ui element.
          */
-        kege::ui::WidgetId put( const kege::ui::WidgetDesc& desc );
+        kege::ui::WidgetId put( const kege::ui::WidgetDesc& desc, bool is_root );
         kege::ui::WidgetId text( const kege::ui::Text& text );
 
         /**
@@ -86,7 +85,10 @@ namespace kege::ui{
         uint32_t getPrevRoot( uint32_t root )const;
 
         Layer();
-        
+
+
+        void insertChild( kege::ui::Widget* root );
+        void insertRoot( kege::ui::Widget* root );
     private:
 
         kege::GUI* _gui;
@@ -95,13 +97,12 @@ namespace kege::ui{
         uint32_t _head_root;
         uint32_t _tail_root;
         uint32_t _root_count;
-        uint32_t _count;
+        //uint32_t _count;
 
         kege::array< int32_t > _root_stack;
         int32_t _root_stack_count;
 
-        uint32_t _current_parent;
-        uint32_t _curr_root;
+        //uint32_t _curr_root;
 
         friend kege::ui::Layout;
     };

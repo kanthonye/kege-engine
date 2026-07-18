@@ -692,17 +692,29 @@ namespace kege{
         for (int32_t i = 0; i < layout.getLayerCount(); ++i)
         {
             const kege::ui::Layer& layer = layout.getLayer(i);
-            for (uint32_t root = layer.getHeadRoot(); root != 0; root = layer.getNextRoot( root ))
+            renderLayer( batch, layout, layer, first_instance );
+        }
+    }
+
+    void GUI::renderLayer
+    (
+        kege::ui::DrawBatch* batch,
+        const kege::ui::Layout& layout,
+        const kege::ui::Layer& layer,
+        uint32_t first_instance
+    )
+    {
+        const ui::Widget* widget = nullptr;
+        for (uint32_t root = layer.getHeadRoot(); root != 0; root = layer.getNextRoot( root ))
+        {
+            widget = at( root );
+            if ( kege::ui::checkOverlap( layout.getRect(), widget->rect ))
             {
-                const ui::Widget* widget = at( root );
-                if ( kege::ui::checkOverlap( layout.getRect(), widget->rect ))
-                {
-                    renderWidget( batch, layout, widget, layout.getRect() );
-                }
-                else
-                {
-                    //printf("checkOverlap\n");
-                }
+                renderWidget( batch, layout, widget, layout.getRect() );
+            }
+            else
+            {
+                //printf("checkOverlap\n");
             }
         }
     }

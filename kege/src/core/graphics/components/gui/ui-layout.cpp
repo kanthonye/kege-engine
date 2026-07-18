@@ -47,50 +47,50 @@ namespace kege::ui{
 
     kege::ui::WidgetId Layout::pushRoot( const kege::ui::WidgetDesc& desc )
     {
-        return _layers[ _current_layer ].pushRoot( desc );
+        return _layers[ _curr_layer ].pushRoot( desc );
     }
 
     kege::ui::WidgetId Layout::putRoot( const kege::ui::WidgetDesc& desc )
     {
-        return _layers[ _current_layer ].putRoot( desc );
+        return _layers[ _curr_layer ].put( desc, true );
     }
 
     void Layout::popRoot()
     {
-        return _layers[ _current_layer ].popRoot();
+        return _layers[ _curr_layer ].popRoot();
     }
 
     kege::ui::WidgetId Layout::push( const kege::ui::WidgetDesc& desc )
     {
-        return _layers[ _current_layer ].push( desc );
+        return _layers[ _curr_layer ].push( desc );
     }
 
     uint32_t Layout::pop()
     {
-        return _layers[ _current_layer ].pop();
+        return _layers[ _curr_layer ].pop();
     }
 
     kege::ui::WidgetId Layout::put( const kege::ui::WidgetDesc& desc )
     {
-        return _layers[ _current_layer ].put( desc );
+        return _layers[ _curr_layer ].put( desc, false );
     }
 
     kege::ui::WidgetId Layout::text( const kege::ui::Text& text )
     {
-        return _layers[ _current_layer ].text( text );
+        return _layers[ _curr_layer ].text( text );
     }
 
     void Layout::pushLayer( uint32_t index )
     {
-        _layer_stack.push( index );
-        _current_layer = index;
+        _layer_stack.push( _curr_layer );
+        _curr_layer = index;
     }
 
     bool Layout::popLayer()
     {
         if ( !_layer_stack.empty() )
         {
-            _current_layer = _layer_stack.top();
+            _curr_layer = _layer_stack.top();
             _layer_stack.pop();
             return true;
         }
@@ -150,7 +150,8 @@ namespace kege::ui{
 
     void Layout::begin( double dms )
     {
-        _current_layer = 0;
+        _curr_layer = 0;
+        _curr_parent = 0;
         for (Layer& layer : _layers)
         {
             layer.begin( dms );
@@ -185,5 +186,15 @@ namespace kege::ui{
 
     void Layout::shutdown()
     {}
+
+    Layout::Layout()
+    :   _curr_layer(0)
+    ,   _curr_parent(0)
+    {}
+    
+    Layout::~Layout()
+    {
+        shutdown();
+    }
 
 }

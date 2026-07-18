@@ -14,7 +14,6 @@
 #include "../panels/ui-file-browser.hpp"
 
 #include "../panels/ui-console.hpp"
-#include "../panels/ui-menu-bar.hpp"
 
 #include "../editor-layer.hpp"
 
@@ -129,15 +128,15 @@ namespace kege::ui{
 
     void DockManager::update()
     {
-        _gui->begin( 0.016 );
-        {
-            _gui->pushRoot({ .rect = _rect });
-            {
-                _root.update();
-            }
-            _gui->popRoot();
-        }
-        _gui->end();
+//        _gui->begin( 0.016 );
+//        {
+//            _gui->pushRoot({ .rect = _rect });
+//            {
+        _root.update();
+//            }
+//            _gui->popRoot();
+//        }
+//        _gui->end();
     }
 
     kege::GraphicsDevice* DockManager::getGraphicsDevice()
@@ -174,9 +173,16 @@ namespace kege::ui{
         kege::Communication::remove<const kege::WindowSizeEvent&, DockManager>(this);
     }
 
-    DockManager::DockManager(const kege::Extent2D& extent, kege::GUI* gui, kege::UI* ui, kege::ProjectManager* pm, kege::ECS* ecs)
+    DockManager::DockManager
+    (
+        const kege::ui::Rect& rect,
+        kege::GUI* gui,
+        kege::UI* ui,
+        kege::ProjectManager* pm,
+        kege::ECS* ecs
+    )
     :   _gui( gui )
-    ,   _rect{ 0.f, 0.f, float(extent.width), float(extent.height) }
+    ,   _rect( rect )
     ,   _project_manager( pm )
     ,   _ecs( ecs )
     ,   _ui( ui )
@@ -191,11 +197,13 @@ namespace kege::ui{
         addPanel(new ui::FileBrowser( this, "/Users/kae/Developer/vscode/kege-engine/kege/assets" ));
         addPanel(new ui::AssetManagerUI( this ));
         addPanel(new ui::Console( this ));
-        addPanel(new ui::MenuBar( this ));
+        //addPanel(new ui::MenuBar( this ));
 
-        _root = ui::Dock(this, extent.width, extent.height);
+        _root = ui::Dock(this, _rect);
 
         ui::DockSplit* split[2];
+
+        //split[0] = _root.split( 0.25, ui::Dock::SplitDirection::HORIZONTAL );
 
         split[0] = _root.split( 0.25, ui::Dock::SplitDirection::HORIZONTAL );
         split[0]->nodes[0].split( 0.50, ui::Dock::SplitDirection::VERTICAL, {"Hierarchy"}, {"Properties"} );

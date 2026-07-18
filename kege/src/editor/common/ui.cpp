@@ -263,7 +263,6 @@ namespace kege{
             .color = 0xFFFFFF06,
             .width = ui::extend(),
             .height = ui::fixed(20),
-            //.style = &_theme->collapsable_header,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });

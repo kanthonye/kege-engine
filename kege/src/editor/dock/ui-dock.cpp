@@ -635,16 +635,13 @@ namespace kege::ui{
         return true;
     }
 
-    Dock::Dock(kege::ui::DockManager* manager, int width, int height)
+    Dock::Dock(kege::ui::DockManager* manager, const kege::ui::Rect& rect)
     :   _manager( manager )
     ,   _ui( manager->getUI() )
+    ,   _rect( rect )
     {
         _padding = {10,10,10,10};
         _parent = nullptr;
-        _rect.height = height;
-        _rect.width = width;
-        _rect.x = 0.f;
-        _rect.y = 0.f;
         
 //        _uid_ghost;
 //        _uid_dock;

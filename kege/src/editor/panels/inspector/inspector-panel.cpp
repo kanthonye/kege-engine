@@ -229,7 +229,7 @@ namespace kege{
         registerAddComponentAction("OrthoCamera", ecs::Component::type< kege::Orthographic >(), component_add_fn, ui::orthographicCamera);
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Renderable >(e); };
-        registerAddComponentAction("Renderable", ecs::Component::type< kege::Renderable >(), component_add_fn, ui::renderable);
+        registerAddComponentAction("Mesh", ecs::Component::type< kege::Renderable >(), component_add_fn, ui::renderable);
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::DirectionalLight >(e); };
         registerAddComponentAction("DirectionalLight", ecs::Component::type< kege::DirectionalLight >(), component_add_fn, ui::directionalLight);

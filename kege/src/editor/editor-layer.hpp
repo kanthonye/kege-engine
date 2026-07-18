@@ -11,6 +11,7 @@
 #include "shader-compiler.hpp"
 #include "ui-executor.hpp"
 #include "dock/ui-dock-manager.hpp"
+#include "panels/ui-nav-bar.hpp"
 #include "renderer.hpp"
 
 namespace kege{
@@ -19,14 +20,6 @@ namespace kege{
     {
     public:
 
-        //void operator()(const kege::WindowFrameBufferSizeEvent& event);
-        //void operator()(const kege::WindowSizeEvent& event);
-
-        //kege::ProjectManager* getProjectManager();
-        //kege::InputManager* getInputManager();
-        //kege::AssetManager* getAssetManager();
-        //kege::Renderer* getRenderer();
-        //kege::ECS* getECS();
         kege::UI* getUI();
 
         bool initialize();
@@ -44,8 +37,11 @@ namespace kege{
     public:
 
         kege::Ref< kege::ui::DockManager > _dock_manager;
+        kege::Ref< kege::ui::NavBar > _navbar;
         kege::array< ui::Command > _commands;
+        kege::GUI* _gui;
 
+        kege::Extent2D _extent;
         kege::Theme _theme;
         kege::UI _ui;
     };

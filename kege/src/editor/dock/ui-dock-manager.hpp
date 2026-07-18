@@ -42,7 +42,14 @@ namespace kege::ui{
         
         void update();
 
-        DockManager(const kege::Extent2D& extent, kege::GUI* gui, kege::UI* ui, kege::ProjectManager* pm, kege::ECS* ecs);
+        DockManager
+        (
+            const kege::ui::Rect& rect,
+            kege::GUI* gui,
+            kege::UI* ui,
+            kege::ProjectManager* pm,
+            kege::ECS* ecs
+        );
         ~DockManager();
 
     private:
