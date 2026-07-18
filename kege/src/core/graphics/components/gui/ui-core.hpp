@@ -635,6 +635,16 @@ namespace kege::ui{
     };
 
 
+    struct Node
+    {
+        int32_t head        = 0;
+        int32_t tail        = 0;
+        int32_t count       = 0;
+
+        int32_t curr_parent = 0;
+        int32_t id = 0;
+    };
+
 
     ui::Sizing fixed(float size);
     ui::Sizing extend();

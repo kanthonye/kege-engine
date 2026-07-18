@@ -119,7 +119,7 @@ namespace kege::ui{
             display( _menus[ _selected ] );
             _ui->popRoot();
 
-            _ui->pushDeferredOp(<#const ui::ID &id#>, <#ui::WidgetId index#>, <#ui::DeferredOperation fn#>, <#const Params &params#>);
+            //_ui->pushDeferredOp(<#const ui::ID &id#>, <#ui::WidgetId index#>, <#ui::DeferredOperation fn#>, <#const Params &params#>);
         }
         _ui->popLayer();
     }
