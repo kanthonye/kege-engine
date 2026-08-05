@@ -26,58 +26,16 @@ namespace kege::ui{
         uint32_t find(uint64_t user_id, uint32_t index);
         uint32_t find(uint64_t user_id);
 
-        /**
-         * Creates a parent UI element with the give info.
-         *
-         * @param desc This refers to the ui element id
-         *
-         * @return reference to the ui element.
-         */
-        kege::ui::WidgetId pushRoot( const kege::ui::WidgetDesc& desc );
+        void beginRoot();
+        void endRoot();
 
-        /**
-         * Pops the current parent UI element from the parent stack.
-         */
-        void popRoot();
+        void push( kege::ui::Node* node );
+        void put( kege::ui::Node* node );
+        void pop();
 
-        /**
-         * Creates a parent UI element with the give info.
-         *
-         * @param desc This refers to the ui element id
-         *
-         * @return reference to the ui element.
-         */
-        kege::ui::WidgetId push( const kege::ui::WidgetDesc& desc );
-        /**
-         * Creates a UI element with the give description.
-         *
-         * @param desc Description of the ui element
-         *
-         * @return reference to the ui element.
-         */
-        kege::ui::WidgetId put( const kege::ui::WidgetDesc& desc, bool is_root );
-        kege::ui::WidgetId text( const kege::ui::Text& text );
+        void reset( double dms );
 
-        /**
-         * Pops the current parent UI element from the parent stack.
-         *
-         * @return The index of the popped UI element in the elements array.
-         */
-        uint32_t pop();
-
-        void init( const kege::ui::WidgetDesc& desc, kege::ui::Widget* widget );
-
-        /**
-         * Begins the UI layout construction. Must be called before creating any UI elements.
-         */
-        void begin( double dms );
-
-        /**
-         * Ends the UI layout construction. Must be called after all UI elements are created.
-         */
-        void end();
-
-        void initalize( kege::GUI* gui, kege::ui::Layout* layout );
+        void initalize( kege::GUI* gui );
 
         uint32_t getHeadRoot()const;
         uint32_t getTailRoot()const;
@@ -92,19 +50,17 @@ namespace kege::ui{
     private:
 
         kege::GUI* _gui;
-        kege::ui::Layout* _layout;
 
-        uint32_t _head_root;
-        uint32_t _tail_root;
-        uint32_t _root_count;
-        //uint32_t _count;
+        uint32_t _parent;
+        uint32_t _head;
+        uint32_t _tail;
+        uint32_t _count;
 
         kege::array< int32_t > _root_stack;
         int32_t _root_stack_count;
 
-        //uint32_t _curr_root;
-
         friend kege::ui::Layout;
+        friend kege::GUI;
     };
 
 }

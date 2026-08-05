@@ -30,7 +30,7 @@ namespace kege::ui{
         for (int i=0; i<_op_count; i++)
         {
             void* params = getDst(_operations[i].alloc);
-            _operations[i].fn( gui, _operations[i].user_id, _operations[i].widget_id, params );
+            _operations[i].fn( gui, _operations[i].user_id, _operations[i].node_id, params );
         }
     }
 

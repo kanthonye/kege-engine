@@ -42,12 +42,12 @@ namespace kege{
         return _active_key_count != 0;
     }
 
-    bool Keyboard::isPressed( int key )
+    bool Keyboard::isPressed( int key )const
     {
         return _keys[key].action == KeyState::Pressed;
     }
 
-    bool Keyboard::isDown( int key )
+    bool Keyboard::isDown( int key )const
     {
         return _keys[key].action == KeyState::Pressed || _keys[key].action == KeyState::PressedRepeat;
     }

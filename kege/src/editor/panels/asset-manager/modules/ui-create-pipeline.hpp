@@ -35,11 +35,11 @@ namespace kege::ui{
         {
             _selection = 0;
             _title = kege::ui::Text{
-                .ptr = "Shading Model:",
                 .x = 0, .y = 0,
                 .width = 90,
-                .height = 20,
-                .color = 0xFFFFFF50
+                .font_size = 20,
+                .color = 0xFFFFFF50,
+                .data = "Shading Model:",
             };
 
             operator()(ui, "Unlit", kege::ShadingModel::Unlit);
@@ -83,7 +83,10 @@ namespace kege::ui{
         RenderPasses(kege::UI* ui)
         {
             _selection = 0;
-            _title = kege::ui::Text{ .ptr = "Render Passes:", .x = 0, .y = 0, .width = 90, .height = 20, .color = 0xFFFFFF50 };
+            _title = kege::ui::Text{
+                .x = 0, .y = 0, .width = 90, .font_size = 20,
+                .color = 0xFFFFFF50, .data = "Render Passes:", 
+            };
             operator()(ui, "DepthPrePass", kege::RenderPassType::DepthPrePass);
             operator()(ui, "Geometry", kege::RenderPassType::Geometry);
             operator()(ui, "Lighting", kege::RenderPassType::Lighting);
@@ -115,12 +118,12 @@ namespace kege::ui{
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme()->card });
+            ui->push({ .wid = ui->newElem({ ui->theme()->card }) });
             if( ui->collapsableHeader(_uid[0][0], _expand, _depth_stencil_label) )
             {
-                ui->push({ .style = &ui->theme()->card });
+                ui->push({ .wid = ui->newElem(ui->theme()->card) });
                 {
-                    ui->push({ .style = &ui->theme()->card });
+                    ui->push({ .wid = ui->newElem(ui->theme()->card) });
                     ui->checkbox( _uid[0][1], _depth_enable_label, key.depth_state.depth.enable);
                     ui->checkbox( _uid[0][2], _depth_write_enable_label, key.depth_state.depth.write);
                     ui->pop();
@@ -138,10 +141,10 @@ namespace kege::ui{
         {
             _expand = false;
             _selection = 0;
-            _depth_stencil_label = { .ptr = "Depth Stencil:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
-            _depth_enable_label = { .ptr = "Depth Enable:", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
-            _depth_write_enable_label = { .ptr = "Depth Write Enable:", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
-            _comparison_functs_label = { .ptr = "Comparison Fn:", .x = 0, .y = 0, .width = 80, .height = 20, .color = 0xFFFFFF50 };
+            _depth_stencil_label = { .data = "Depth Stencil:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 200, .font_size = 20 };
+            _depth_enable_label = { .data = "Depth Enable:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 150, .font_size = 20 };
+            _depth_write_enable_label = { .data = "Depth Write Enable:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 150, .font_size = 20 };
+            _comparison_functs_label = { .data = "Comparison Fn:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 80, .font_size = 20 };
             operator()(ui, "Never", kege::ComparisonFunc::Never);
             operator()(ui, "Less", kege::ComparisonFunc::Less);
             operator()(ui, "Equal", kege::ComparisonFunc::Equal);
@@ -188,7 +191,13 @@ namespace kege::ui{
         {
             _selection = 0;
             _list.reserve(11);
-            _title = kege::ui::Text{ .ptr = "Mesh Type:", .x = 0, .y = 0, .width = 70, .height = 20, .color = 0xFFFFFF50 };
+            _title = kege::ui::Text{
+                .x = 0, .y = 0,
+                .width = 70,
+                .font_size = 20,
+                .color = 0xFFFFFF50,
+                .data = "Mesh Type:",
+            };
             operator()(ui, "Point", kege::MeshType::Point);
             operator()(ui, "ScreenRect", kege::MeshType::ScreenRect);
             operator()(ui, "StaticMesh", kege::MeshType::StaticMesh);
@@ -234,10 +243,12 @@ namespace kege::ui{
             feature.name = featureFlagToString( flag );
             feature.label = kege::ui::Text
             {
-                .ptr = feature.name.c_str(),
-                .x = 0.f, .y = 0.f,
-                .width = 90.f, .height = 25.f,
-                .color = 0xFFFFFF50
+                .x = 0.f,
+                .y = 0.f,
+                .width = 90.f,
+                .font_size = 25,
+                .color = 0xFFFFFF50,
+                .data = feature.name.c_str(),
             };
             feature.state = false;
             feature.flag = flag;
@@ -255,8 +266,8 @@ namespace kege::ui{
                     .x = 0.f,
                     .y = 0.f,
                     .width = 150.f,
-                    .height = 25.f,
-                    .color = 0xFFFFFF50
+                    .font_size = 25,
+                    .color = 0xFFFFFF50,
                 }
             });
             return &_features[ _features.size() - 1 ];
@@ -264,10 +275,10 @@ namespace kege::ui{
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-             ui->push({ .style = &ui->theme()->card });
-            // ui->label(kege::ui::Text{ .ptr = "Mesh Type:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 }, nullptr);
+             ui->push({ .wid = ui->newElem(ui->theme()->card) });
+            // ui->label(kege::ui::Text{ .data = "Mesh Type:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 }, nullptr);
             int id_offset = 0;
-            kege::ui::Text text_feature = kege::ui::Text{ "Feature:", 0.f, 0.f, 100.f, 20.f };
+            kege::ui::Text text_feature = kege::ui::Text{ 0.f, 0.f, 100.f, 20, 0xFFFFFF50, "Feature:" };
 
 
                 const char* ptr = nullptr;   // 8 bytes
@@ -283,14 +294,14 @@ namespace kege::ui{
             {
                 for(auto& features : _features)
                 {
-                    features.title.ptr = features.name.c_str();
-                    ui->push({ .style = &ui->theme()->card });
+                    features.title.data = features.name.c_str();
+                    ui->push({ .wid = ui->newElem(ui->theme()->card) });
                     if( ui->collapsableHeader(_uid[ id_offset++ ], features.expand, features.title) )
                     {
-                        ui->push({ .style = &ui->theme()->card });
+                        ui->push({ .wid = ui->newElem(ui->theme()->card) });
                         for(Feature& feature : features.list)
                         {
-                            feature.label.ptr = feature.name.c_str();
+                            feature.label.data = feature.name.c_str();
                             if( ui->checkbox(_uid[ id_offset ], feature.label, feature.state) )
                             {
                             }
@@ -414,17 +425,17 @@ namespace kege::ui{
     
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme()->card });
-            kege::ui::Text text_rasterizer = { .ptr = "Rasterizer State:", .x = 0, .y = 0, .width = 100, .height = 30, .color = 0xFFFFFF50 };
+            ui->push({ .wid = ui->newElem(ui->theme()->card) });
+            kege::ui::Text text_rasterizer = { .data = "Rasterizer State:", .x = 0, .y = 0, .width = 100, .font_size = 30, .color = 0xFFFFFF50 };
             if( ui->collapsableHeader(_uid[3][11], _expand, text_rasterizer) )
             {
-                ui->push({ .style = &ui->theme()->card });
+                ui->push({ .wid = ui->newElem(ui->theme()->card) });
                 {
-                    ui->push({ .style = &ui->theme()->row });
+                    ui->push({ .wid = ui->newElem(ui->theme()->row) });
                     {
-                        kege::ui::Text text_polymode = { .ptr = "Polygon Mode:", .x = 0, .y = 0, .width = 85, .height = 20, .color = 0xFFFFFF50 };
-                        kege::ui::Text text_cullmode = { .ptr = "Cull Mode:", .x = 0, .y = 0, .width = 65, .height = 20, .color = 0xFFFFFF50 };
-                        kege::ui::Text text_front_face = { .ptr = "Front Face:", .x = 0, .y = 0, .width = 70, .height = 20, .color = 0xFFFFFF50 };
+                        kege::ui::Text text_polymode = { .data = "Polygon Mode:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 85, .font_size = 20 };
+                        kege::ui::Text text_cullmode = { .data = "Cull Mode:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 65, .font_size = 20 };
+                        kege::ui::Text text_front_face = { .data = "Front Face:", .color = 0xFFFFFF50, .x = 0, .y = 0, .width = 70, .font_size = 20 };
                         if( ui->labelOptions(_uid[0], text_polymode, _fill_list, _fill_selection))
                         {
                             key.raster_state.fill_mode = _fill_modes[_fill_selection];
@@ -442,26 +453,26 @@ namespace kege::ui{
                     }
                     ui->pop();
 
-                    kege::ui::Text text_lw = { .ptr = "Line Width:", .x = 0, .y = 0, .width = 75, .height = 20, .color = 0xFFFFFF50 };
+                    kege::ui::Text text_lw = { .data = "Line Width:", .x = 0, .y = 0, .width = 75, .font_size = 20, .color = 0xFFFFFF50 };
                     ui->labelScrubber< float >(ScrubberState::Type::F32, _uid[3][6], text_lw, key.raster_state.line_width);
 
-                    ui->push({ .style = &ui->theme()->row });
+                    ui->push({ .wid = ui->newElem(ui->theme()->row) });
                     {
-                        ui->push({ .style = &ui->theme()->card });
+                        ui->push({ .wid = ui->newElem(ui->theme()->card) });
                         {
-                            kege::ui::Text depth_clip_enable_label = { .ptr = "Depth Clip Enable", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
-                            kege::ui::Text depth_clamp_enable_label = { .ptr = "Depth Clamp Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
-                            kege::ui::Text scissor_enable_label = { .ptr = "Scissor Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text depth_clip_enable_label = { .data = "Depth Clip Enable", .x = 0, .y = 0, .width = 200, .font_size = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text depth_clamp_enable_label = { .data = "Depth Clamp Enable", .x = 0, .y = 0, .width = 150, .font_size = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text scissor_enable_label = { .data = "Scissor Enable", .x = 0, .y = 0, .width = 150, .font_size = 20, .color = 0xFFFFFF50 };
                             ui->checkbox( _uid[3][0], depth_clip_enable_label, key.raster_state.depth_clip_enable);
                             ui->checkbox( _uid[3][1], depth_clamp_enable_label, key.raster_state.depth_clamp_enable);
                             ui->checkbox( _uid[3][2], scissor_enable_label, key.raster_state.scissor_enable);
                         }
                         ui->pop();
-                        ui->push({ .style = &ui->theme()->card });
+                        ui->push({ .wid = ui->newElem(ui->theme()->card) });
                         {
-                            kege::ui::Text multisample_enable_label = { .ptr = "Multisample Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
-                            kege::ui::Text antialiased_line_enable_label = { .ptr = "Antialiased Line Enable", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
-                            kege::ui::Text discard_label = { .ptr = "Discard", .x = 0, .y = 0, .width = 150, .height = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text multisample_enable_label = { .data = "Multisample Enable", .x = 0, .y = 0, .width = 150, .font_size = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text antialiased_line_enable_label = { .data = "Antialiased Line Enable", .x = 0, .y = 0, .width = 150, .font_size = 20, .color = 0xFFFFFF50 };
+                            kege::ui::Text discard_label = { .data = "Discard", .x = 0, .y = 0, .width = 150, .font_size = 20, .color = 0xFFFFFF50 };
                             ui->checkbox( _uid[3][3], multisample_enable_label, key.raster_state.multisample_enable);
                             ui->checkbox( _uid[3][4], antialiased_line_enable_label, key.raster_state.antialiased_line_enable);
                             ui->checkbox( _uid[3][5], discard_label, key.raster_state.discard);
@@ -470,17 +481,17 @@ namespace kege::ui{
                     }
                     ui->pop();
 
-                    ui->push({ .style = &ui->theme()->card });
+                    ui->push({ .wid = ui->newElem(ui->theme()->card) });
                     {
-                        kege::ui::Text text = { .ptr = "Depth Bias Enable", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
+                        kege::ui::Text text = { .data = "Depth Bias Enable", .x = 0, .y = 0, .width = 200, .font_size = 20, .color = 0xFFFFFF50 };
                         ui->checkbox( _uid[3][7], text, key.raster_state.depth_bias.enable);
                         if(key.raster_state.depth_bias.enable)
                         {
-                            text.ptr = "Depth Bias Constant Factor:";
+                            text.data = "Depth Bias Constant Factor:";
                             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3][8], text, key.raster_state.depth_bias.constant_factor);
-                            text.ptr = "Depth Bias Slope Factor:";
+                            text.data = "Depth Bias Slope Factor:";
                             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3][9], text, key.raster_state.depth_bias.slope_factor);
-                            text.ptr = "Depth Bias Clamp:";
+                            text.data = "Depth Bias Clamp:";
                             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3][10], text, key.raster_state.depth_bias.clamp);
                         }
                     }
@@ -552,7 +563,7 @@ namespace kege::ui{
         {
             _expand = false;
             _selection = 0;
-            _title = { .ptr = "Primitive Topology:", .x = 0, .y = 0, .width = 122, .height = 20, .color = 0xFFFFFF70 };
+            _title = { .data = "Primitive Topology:", .x = 0, .y = 0, .width = 122, .font_size = 20, .color = 0xFFFFFF70 };
             if(_list.empty())
             {
                 _strlist.reserve(11);
@@ -584,26 +595,26 @@ namespace kege::ui{
 
         void update(kege::UI* ui, kege::PipelineKey& key)
         {
-            ui->push({ .style = &ui->theme()->card });
-            kege::ui::Text text = kege::ui::Text{ .ptr = "Blend State:", .x = 0, .y = 0, .width = 200, .height = 20, .color = 0xFFFFFF50 };
+            ui->push({ .wid = ui->newElem(ui->theme()->card) });
+            kege::ui::Text text = kege::ui::Text{ .data = "Blend State:", .x = 0, .y = 0, .width = 200, .font_size = 20, .color = 0xFFFFFF50 };
             if( ui->collapsableHeader(_uid[3][11], _expand, text) )
             {
-                ui->push({ .style = &ui->theme()->card });
+                ui->push({ .wid = ui->newElem(ui->theme()->card) });
                 {
                     text.width = 100;
-                    text.ptr = "Enable Blend:";
+                    text.data = "Enable Blend:";
                     ui->checkbox( _uid[0][0], text, key.blend_state.enable);
 
                     text.width = 60;
-                    ui->push({ .style = &ui->theme()->card2 });
+                    ui->push({ .wid = ui->newElem(ui->theme()->card2) });
                     {
-                        text.ptr = "Src Color:";
+                        text.data = "Src Color:";
                         if( ui->labelOptions(_uid[3], text, _blend_factor_list, _selection_src_color_blend))
                         {
                             key.blend_state.src_color_blend = _blend_factors[ _selection_src_color_blend ];
                         }
 
-                        text.ptr = "Src Alpha:";
+                        text.data = "Src Alpha:";
                         if( ui->labelOptions(_uid[1], text, _blend_factor_list, _selection_src_alpha_blend))
                         {
                             key.blend_state.src_alpha_blend = _blend_factors[ _selection_src_alpha_blend ];
@@ -611,15 +622,15 @@ namespace kege::ui{
                     }
                     ui->pop();
 
-                    ui->push({ .style = &ui->theme()->card2 });
+                    ui->push({ .wid = ui->newElem(ui->theme()->card2) });
                     {
-                        text.ptr = "Dst Color:";
+                        text.data = "Dst Color:";
                         if( ui->labelOptions(_uid[2], text, _blend_factor_list, _selection_dst_color_blend))
                         {
                             key.blend_state.dst_color_blend = _blend_factors[ _selection_dst_color_blend ];
                         }
 
-                        text.ptr = "Dst Alpha:";
+                        text.data = "Dst Alpha:";
                         if( ui->labelOptions(_uid[4], text, _blend_factor_list, _selection_dst_alpha_blend))
                         {
                             key.blend_state.dst_alpha_blend = _blend_factors[ _selection_dst_alpha_blend ];
@@ -628,15 +639,15 @@ namespace kege::ui{
                     ui->pop();
 
                     text.width = 95;
-                    ui->push({ .style = &ui->theme()->card2 });
+                    ui->push({ .wid = ui->newElem(ui->theme()->card2) });
                     {
-                        text.ptr = "Color Blend Op:";
+                        text.data = "Color Blend Op:";
                         if( ui->labelOptions(_uid[6], text, _blend_op_list, _selection_color_blend_op))
                         {
                             key.blend_state.color_blend_op = _blend_ops[ _selection_color_blend_op ];
                         }
 
-                        text.ptr = "Alpha Blend Op:";
+                        text.data = "Alpha Blend Op:";
                         if( ui->labelOptions(_uid[5], text, _blend_op_list, _selection_alpha_blend_op))
                         {
                             key.blend_state.alpha_blend_op = _blend_ops[ _selection_alpha_blend_op ];
@@ -645,7 +656,7 @@ namespace kege::ui{
                     ui->pop();
 
                     text.width = 90;
-                    text.ptr = "Color Mark:";
+                    text.data = "Color Mark:";
                     if( ui->labelOptions(_uid[7], text, _color_write_mask_list, _selection_color_write_mask))
                     {
                         key.blend_state.color_write_mask = _color_write_masks[ _selection_color_write_mask ];

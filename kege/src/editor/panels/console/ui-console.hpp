@@ -36,6 +36,7 @@ namespace kege::ui{
 
     struct LogEntry
     {
+        std::string log;
         std::string message;
         LogLevel level;
         std::chrono::system_clock::time_point timestamp;

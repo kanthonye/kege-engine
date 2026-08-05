@@ -24,29 +24,27 @@ namespace kege::ui{
         const kege::ui::Layer& getLayer( uint32_t i )const;
         uint32_t getLayerCount()const;
 
+        void beginRoot();
+        void endRoot();
+
         /**
-         * Creates a parent UI element with the give info.
+         * Insert node as a parent UI node. Any nodes insert after this node
+         * will be a child or decendent of this node until it is pop.
          *
-         * @param desc This refers to the ui element id
+         * @param node The node to insert and make into a parent node
          *
          * @return reference to the ui element.
          */
-        kege::ui::WidgetId pushRoot( const kege::ui::WidgetDesc& desc );
-        kege::ui::WidgetId putRoot( const kege::ui::WidgetDesc& desc );
+        kege::ui::NodeId push( kege::ui::Node* node );
 
         /**
-         * Pops the current parent UI element from the parent stack.
-         */
-        void popRoot();
-
-        /**
-         * Creates a parent UI element with the give info.
+         * Creates a UI element with the give description.
          *
-         * @param desc This refers to the ui element id
+         * @param node The node element
          *
          * @return reference to the ui element.
          */
-        kege::ui::WidgetId push( const kege::ui::WidgetDesc& desc );
+        kege::ui::NodeId put( kege::ui::Node* node );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -55,20 +53,18 @@ namespace kege::ui{
          */
         uint32_t pop();
 
-        /**
-         * Creates a UI element with the give description.
-         *
-         * @param desc Description of the ui element
-         *
-         * @return reference to the ui element.
-         */
-        kege::ui::WidgetId put( const kege::ui::WidgetDesc& desc );
-        kege::ui::WidgetId text( const kege::ui::Text& text );
+        kege::ui::NodeId text( const kege::ui::Text& text );
 
         void pushLayer( uint32_t index );
         bool popLayer();
 
         void onWindowResize(int width, int height);
+
+        const kege::ui::Elem* elem( const kege::ui::NodeId& id ) const;
+        kege::ui::Elem* elem( const kege::ui::NodeId& id );
+
+        const kege::ui::Elem* elem( const ui::Node* node )const;
+        kege::ui::Elem* elem( const ui::Node* node );
 
         /**
          * Retrieves a UI element by its index (const version).
@@ -77,7 +73,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* operator[](uint32_t index) const;
+        const kege::ui::Node* operator[](uint32_t index) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
@@ -86,7 +82,7 @@ namespace kege::ui{
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* operator[](uint32_t index);
+        kege::ui::Node* operator[](uint32_t index);
 
         /**
          * Retrieves the parent index of a UI element.
@@ -141,12 +137,24 @@ namespace kege::ui{
         
     private:
 
+        void insert( kege::ui::Node* node );
+
+    private:
+
         std::stack< uint32_t > _layer_stack;
         kege::array< Layer > _layers;
+
+        kege::array< int32_t > _root_stack;
+        int32_t _root_stack_count;
+        
         kege::GUI* _gui;
 
         uint32_t _curr_parent;
         uint32_t _curr_layer;
+        
+        uint32_t _head;
+        uint32_t _tail;
+        uint32_t _count;
 
         kege::mat44 _transform;
 
@@ -155,6 +163,7 @@ namespace kege::ui{
         double _dms;
 
         friend kege::ui::Layer;
+        friend kege::GUI;
     };
 
 

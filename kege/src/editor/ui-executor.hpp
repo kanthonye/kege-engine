@@ -270,7 +270,7 @@ namespace kege::ui{
     struct Context
     {
         std::vector< std::vector< kege::ui::Text > > text_array_lists;
-        std::vector<kege::ui::WidgetDesc> widget_descriptors;
+        std::vector< kege::ui::NodeDesc > widget_descriptors;
         std::vector< kege::ui::Text > textlist;
         BindingContext bindings;
         kege::UI* ui;

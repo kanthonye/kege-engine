@@ -54,7 +54,7 @@
 //            /**
 //             * texr_info hold the texture information for this ui element
 //             */
-//            TexrInfo texr_info;
+//            TexrID texr_info;
 //
 //            float pad[2];
 //        };
@@ -104,7 +104,7 @@
 //            /**
 //             texr_info hold the texture information for this ui element
 //             */
-//            const TexrInfo& texr_info,
+//            const TexrID& texr_info,
 //
 //            /**
 //             texel: hold the uv coordinates for the texture

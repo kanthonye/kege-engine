@@ -11,7 +11,7 @@
 #include "shader-compiler.hpp"
 #include "ui-executor.hpp"
 #include "dock/ui-dock-manager.hpp"
-#include "panels/ui-nav-bar.hpp"
+#include "panels/navbar/ui-nav-bar.hpp"
 #include "renderer.hpp"
 
 namespace kege{

@@ -65,7 +65,7 @@ namespace kege{
             ui::InspectorComponentUIBuilder buildUI
         );
 
-        kege::ui::Style _styles[5];
+        kege::ui::Elem _styles[5];
 
         std::map< uint64_t, int > _string_to_component_type;
         

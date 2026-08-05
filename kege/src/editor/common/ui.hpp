@@ -19,7 +19,7 @@ namespace kege{
         T  min;
         T  max;
         T* val;
-        ui::WidgetId widget_id;
+        ui::NodeId node_id;
         float length;
     };
 
@@ -133,7 +133,7 @@ namespace kege{
 
         struct OptionState
         {
-            ui::WidgetId index;
+            ui::NodeId index;
             int selection = 0;
             bool state;
         };
@@ -166,18 +166,20 @@ namespace kege{
         {
             _gui->push
             ({
-                .padding = {10,5,10,5},
-                //.border.corner_curves = {border_radius,0,0,border_radius},
-                .alignment =
-                {
-                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                    .direction = ui::AlignDir::RIGHT,
-                    .items = ui::AlignItem::CENTER,
-                },
-                .color = 0xFFFFFF08,
-                .gap = {2,2},
-                .width = ui::extend(),
-                .height = ui::fixed(30),
+                .wid = _gui->newElem
+                ({
+                    .width = ui::extend(),
+                    .height = ui::fixed(30),
+                    .quad_color = 0xFFFFFF08,
+                    .padding = {10,5,10,5},
+                    .alignment =
+                    {
+                        .gap = {2,2},
+                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                        .direction = {ui::AlignDir::RIGHT},
+                        //.items = ui::AlignItem::CENTER,
+                    }
+                })
             });
             _gui->text(label);
             this->scrubber< T >( type, user_id, value, clamp, min, max );
@@ -189,12 +191,12 @@ namespace kege{
         void beginWindow(const ui::ID uid[3], ui::Rect& rect, const char* title, bool& close_window);
         void endWindow();
 
-        template<typename Params>void pushDeferredOp(const ui::ID& id, ui::WidgetId index, ui::DeferredOperation fn, const Params& params)
+        template<typename Params>void pushDeferredOp(const ui::ID& id, ui::NodeId index, ui::DeferredOperation fn, const Params& params)
         {
             _gui->pushDeferredOp< Params >( id, index, fn, params );
         }
 
-        template<typename Params>void pushDeferredOpPtr(const ui::ID& id, ui::WidgetId index, ui::DeferredOperation fn, Params* params)
+        template<typename Params>void pushDeferredOpPtr(const ui::ID& id, ui::NodeId index, ui::DeferredOperation fn, Params* params)
         {
             _gui->pushDeferredOpPtr< Params >( id, index, fn, params );
         }
@@ -208,7 +210,7 @@ namespace kege{
         bool clickButton( ui::ID user_id, const ui::Text& text );
 
 
-        bool button( ui::ID user_id, const ui::Text& text, const ui::Style* style = nullptr );
+        bool button( ui::ID user_id, const ui::Text& text, const ui::Elem* elem = nullptr );
         bool button( const kege::ui::WidgetDesc& desc );
 
 
@@ -227,15 +229,38 @@ namespace kege{
         template< typename T >
         bool scrubber( const ui::ID& id, T& num, const T& min, const T& max, ScrubberState* state )
         {
-            state->text_value.ptr = state->str;
-            ui::WidgetId widget_id = _gui->put
+            state->text_value.data = state->str;
+//            ui::NodeId node_id = _gui->put
+//            ({
+//                .user_id = id,
+//                .text = state->text_value,
+//                .style = ( state->mode == TextFieldMode::Editing ) ? &_theme->scrubber_focus : &_theme->scrubber,
+//                .single_click = ui::ClickTrigger::Continuous,
+//                .double_click = ui::ClickTrigger::Immediate,
+//            });
+            ui::NodeId node_id = _gui->push
             ({
                 .user_id = id,
+                .wid = _gui->newElem
+                ({
+                    .width = ui::extend(),
+                    .height = ui::fixed(30),
+                    .quad_color = 0xFFFFFF08,
+                    .padding = {10,5,10,5},
+                    .alignment =
+                    {
+                        .gap = {2,2},
+                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                        .direction = {ui::AlignDir::RIGHT},
+                        //.items = ui::AlignItem::CENTER,
+                    },
+                }),
                 .text = state->text_value,
-                .style = ( state->mode == TextFieldMode::Editing ) ? &_theme->scrubber_focus : &_theme->scrubber,
                 .single_click = ui::ClickTrigger::Continuous,
                 .double_click = ui::ClickTrigger::Immediate,
             });
+
+
 
             bool active = false;
             if ( _gui->click( id ) && state->mode != TextFieldMode::Editing)
@@ -273,7 +298,7 @@ namespace kege{
             }
             else
             {
-                _gui->pushDeferredOp(id, widget_id, editTextOp, TextField
+                _gui->pushDeferredOp(id, node_id, editTextOp, TextField
                 {
                     .type = ui::Cursor::InputType::Numeric,
                     .mode = state->mode,
@@ -370,7 +395,13 @@ namespace kege{
         template< typename T >
         bool scrubber( ScrubberState::Type type, const ui::ID& id, const ui::Text& name, T& num )
         {
-            _gui->push({ .style = &_theme->scrubber_row });
+            _gui->push
+            ({
+                .user_id = id,
+                .wid = _gui->newElem( _theme->scrubber_row ),
+                .text = name
+            });
+
             fittedLabel(name);
             scrubber< T >( type, id, num, 0, 0, false );
             _gui->pop();
@@ -387,10 +418,10 @@ namespace kege{
                 label(name);
 
                 beginColumn();
-                ui::Text x_label{.ptr = "x:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text x_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "x:"};
                 modified[0] = scrubber(type, uid[0], x_label, x);
 
-                ui::Text y_label{.ptr = "y:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text y_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "y:"};
                 modified[1] = scrubber(type, uid[1], y_label, y);
                 endColumn();
             }
@@ -407,13 +438,13 @@ namespace kege{
             beginColumn();
             {
                 beginColumn();
-                ui::Text x_label{.ptr = "x:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text x_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "x:"};
                 modified[0] = scrubber(type, id[0], x_label, x);
 
-                ui::Text y_label{.ptr = "y:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text y_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "y:"};
                 modified[1] = scrubber(type, id[1], y_label, y);
 
-                ui::Text z_label{.ptr = "z:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text z_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "z:"};
                 modified[2] = scrubber(type, id[2], z_label, z);
                 endColumn();
             }
@@ -432,16 +463,16 @@ namespace kege{
                 label(name);
 
                 beginColumn();
-                ui::Text x_label{.ptr = "x:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text x_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "x:"};
                 modified[0] = scrubber(type, uid[0], x_label, x);
 
-                ui::Text y_label{.ptr = "y:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text y_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "y:"};
                 modified[1] = scrubber(type, uid[1], y_label, y);
 
-                ui::Text z_label{.ptr = "z:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text z_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "z:"};
                 modified[2] = scrubber(type, uid[2], z_label, z);
 
-                ui::Text w_label{.ptr = "w:", .width = 10, .height = 15, .font_size = 20, .color = 0xFFFFFFFF};
+                ui::Text w_label{.width = 10, .font_size = 20, .color = 0xFFFFFFFF, .data = "w:"};
                 modified[2] = scrubber(type, uid[3], w_label, w);
                 endColumn();
             }
@@ -455,12 +486,12 @@ namespace kege{
         // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
         template< typename T >
-        static void slidebarOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+        static void slidebarOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
         {
             //gui->elemParent(id)->uid
             RangeParams<T>* params = reinterpret_cast<RangeParams<T>*>(data);
-            float length = gui->elem(widget_id)->rect.width;
-            float& w = gui->elem(params->widget_id)->rect.width;
+            float length = gui->at(node_id)->quad.width;
+            float& w = gui->at(params->node_id)->quad.width;
 
             // calculate where the slider should be (base on the numeric value) before moving it.
             w = (length * (*params->val - params->min)) / (params->max - params->min);
@@ -477,7 +508,7 @@ namespace kege{
             else if( gui->doubleClick( user_id ) )
             {
                 // update slide bar width
-                w = gui->getClickPosition(kege::MouseButtonCode::Left).x - gui->elem(widget_id)->rect.x;
+                w = gui->getClickPosition(kege::MouseButtonCode::Left).x - gui->at(node_id)->quad.x;
                 // clamp slide bar width
                 w = (w < 0)? 0.f : (w > length) ? length: w;
                 // calculate numeric value base on slide bar width
@@ -488,16 +519,16 @@ namespace kege{
         template< typename T >
         bool slidebar( const ui::ID uid[2], T& val, const T& min, const T& max )
         {
-            ui::WidgetId widget_index = _gui->push
-            ({
-                .user_id = uid[0],
-                .style = &_theme->slide_bar_track,
-                .single_click = ui::ClickTrigger::Continuous
-            });
-            ui::WidgetId widget_id = _gui->put({ .user_id = uid[1], .style = &_theme->slide_bar });
-            _gui->pop();
-
-            _gui->pushDeferredOp(uid[1], widget_index, slidebarOp<T>, RangeParams<T>{min, max, &val, widget_id});
+//            ui::NodeId widget_index = _gui->push
+//            ({
+//                .user_id = uid[0],
+//                .style = &_theme->slide_bar_track,
+//                .single_click = ui::ClickTrigger::Continuous
+//            });
+//            ui::NodeId node_id = _gui->put({ .user_id = uid[1], .style = &_theme->slide_bar });
+//            _gui->pop();
+//
+//            _gui->pushDeferredOp(uid[1], widget_index, slidebarOp<T>, RangeParams<T>{min, max, &val, node_id});
 
             return _gui->click( uid[0] );
         }
@@ -519,75 +550,78 @@ namespace kege{
         bool numSlideBar( ui::ID user_id, double* val, double min, double max );
 
         template< typename T >
-        static void sliderOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+        static void sliderOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
         {
-            RangeParams<T>* params = reinterpret_cast<RangeParams<T>*>(data);
-            const ui::Widget* track = gui->elemParent(widget_id);
-            ui::Widget* knob = gui->elem(widget_id);
-
-            float length = track->rect.width - knob->rect.width;
-
-            // calculate where the slider should be (base on the numeric value) before moving it.
-            float pos = (length * (*params->val - params->min)) / (params->max - params->min);
-
-            if( gui->click( user_id ) )
-            {
-                // update slider position
-                pos += gui->getPointerDelta().x;
-                // keep the slider with in bound
-                //pos = kege::min(length, kege::min(0.f, pos));
-                pos = kege::clamp(pos, 0.f, length);
-                // calculate the new numeric value base on the updated position
-                *params->val = (params->max - params->min) * (pos / length) + params->min;
-            }
-
-            knob->rect.x += pos;
+//            RangeParams<T>* params = reinterpret_cast<RangeParams<T>*>(data);
+//            const ui::Elem* track = gui->elem( gui->at(node_id)->parent );
+//            ui::Elem* knob = gui->elem(node_id);
+//
+//            float length = track->traits.rect.width - knob->traits.rect.width;
+//
+//            // calculate where the slider should be (base on the numeric value) before moving it.
+//            float pos = (length * (*params->val - params->min)) / (params->max - params->min);
+//
+//            if( gui->click( user_id ) )
+//            {
+//                // update slider position
+//                pos += gui->getPointerDelta().x;
+//                // keep the slider with in bound
+//                //pos = kege::min(length, kege::min(0.f, pos));
+//                pos = kege::clamp(pos, 0.f, length);
+//                // calculate the new numeric value base on the updated position
+//                *params->val = (params->max - params->min) * (pos / length) + params->min;
+//            }
+//
+//            knob->traits.rect.x += pos;
         }
 
         template< typename T >
         bool slider( const ui::ID uid[2], T& val, const T& min, const T& max )
         {
-            _gui->push({ .user_id = uid[0], .style = &_theme->slider_track });
-            ui::WidgetId widget_index = _gui->put
-            ({
-                .user_id = uid[1],
-                .style = &_theme->slider_knob,
-                .single_click = ui::ClickTrigger::Continuous
-            });
-            _gui->pop();
-            _gui->pushDeferredOp( uid[1], widget_index, sliderOp<T>, RangeParams<T>{min,max,&val} );
+//            _gui->push({ .user_id = uid[0], .style = &_theme->slider_track });
+//            ui::NodeId widget_index = _gui->put
+//            ({
+//                .user_id = uid[1],
+//                .style = &_theme->slider_knob,
+//                .single_click = ui::ClickTrigger::Continuous
+//            });
+//            _gui->pop();
+//            _gui->pushDeferredOp( uid[1], widget_index, sliderOp<T>, RangeParams<T>{min,max,&val} );
             return _gui->click( uid[1] );
         }
 
         bool charButn( ui::ID user_id, const char* label, float x, float y );
         bool dotButn( ui::ID user_id );
 
-        ui::WidgetId fittedLabel( const ui::Text& text, ui::Style* style = nullptr );
-        ui::WidgetId label( const ui::Text& text, ui::Style* style = nullptr );
+        ui::NodeId fittedLabel( const ui::Text& text, ui::Elem* elem = nullptr );
+        ui::NodeId label( const ui::Text& text, ui::Elem* elem = nullptr );
 
         bool radio( ui::ID user_id, const ui::Text& text, bool& state );
         bool radio( ui::ID user_id, bool& state );
         bool radio( ui::ID user_id, int16_t layer );
 
-        ui::WidgetId beginList(int16_t layer);
+        ui::NodeId beginList(int16_t layer);
         void endList();
 
-        ui::WidgetId beginColumn( ui::Style* style = nullptr );
+        ui::NodeId beginColumn( ui::Elem* elem = nullptr );
         void endColumn();
 
-        ui::WidgetId beginRow( ui::Style* style = nullptr );
+        ui::NodeId beginRow( ui::Elem* elem = nullptr );
         void endRow();
 
         void beginScrollContainer( const ui::ID id[2] );
         void endScrollContainer();
 
-        ui::WidgetId pushRoot( const ui::WidgetDesc& desc );
-        ui::WidgetId putRoot( const ui::WidgetDesc& desc );
-        void popRoot();
+        kege::ui::Node* newNode( const kege::ui::NodeDesc& desc );
+        kege::ui::WID newElem( const kege::ui::Elem& desc );
 
-        ui::WidgetId push( const kege::ui::WidgetDesc& desc );
-        ui::WidgetId put( const kege::ui::WidgetDesc& desc );
-        ui::WidgetId text( const kege::ui::Text& text );
+        void beginRoot();
+        void endRoot();
+
+        ui::NodeId push( const kege::ui::NodeDesc& desc );
+        ui::NodeId put( const kege::ui::NodeDesc& desc );
+        
+        ui::NodeId text( const kege::ui::Text& text );
         void pop();
 
         void pushLayer( uint32_t index );
@@ -631,7 +665,8 @@ namespace kege{
             return checkOverlap( m, n );
         }
 
-        ui::Widget* get( ui::WidgetId index );
+        ui::Node* get( ui::NodeId index );
+        ui::Elem* elem( ui::NodeId index );
         //kege::ui::Style* getStyle( int index );
         bool initialize(kege::GUI* layout);
 
@@ -668,7 +703,7 @@ namespace kege{
 
     private:
 
-        static void editTextOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId index, void* data);
+        static void editTextOp(kege::GUI* gui, ui::ID user_id, ui::NodeId index, void* data);
 
     private:
 

@@ -14,27 +14,34 @@ namespace kege{
     {
         if (mode == TextFieldMode::Editing)
         {
-            text.ptr = getCharBufr();
+            text.data = getCharBufr();
         }
 
-        ui::WidgetId widget_id = _gui->put
-        ({
-            .user_id = user_id,
-            .rect = {0, 0, 0, text.height},
-            .text = text,
-            .color = (mode == TextFieldMode::Editing) ? 0x66FFFF35 : (mode == TextFieldMode::Focused) ? 0xFFFFFF18 : 0xFFFFFF05,
-            .width = ui::extend(),
-            .single_click = ui::ClickTrigger::OnRelease,
-            .double_click = ui::ClickTrigger::Immediate,
-        });
+        uint32_t color = (mode == TextFieldMode::Editing)
+        ? 0x66FFFF35 : (mode == TextFieldMode::Focused)
+        ? 0xFFFFFF18 : 0xFFFFFF05;
 
-        _gui->pushDeferredOp(user_id, widget_id, editTextOp, TextField
+        ui::NodeDesc desc = {};
+        desc.user_id = user_id;
+        desc.wid = _gui->newElem
+        ({
+            .width = ui::extend(),
+            .height = ui::fixed( text.font_size ),
+            .quad_color = color,
+            .font_size = text.font_size,
+        });
+        desc.text = text;
+        desc.single_click = ui::ClickTrigger::OnRelease;
+        desc.double_click = ui::ClickTrigger::Immediate;
+        ui::NodeId node_id = _gui->put( desc );
+
+        _gui->pushDeferredOp(user_id, node_id, editTextOp, TextField
         {
             .type = type,
             .mode = mode,
             .str_capacity = CHAR_BUFR_CAPACITY,
             .str_len = _str_len,
-            .str = text.ptr,
+            .str = text.data,
             .editing = _editing,
             .edited = _edited,
         });
@@ -44,26 +51,42 @@ namespace kege{
 
     bool UI::labelInput(const char* label, const ui::ID& user_id, TextFieldMode& mode, ui::Text& text)
     {
-        ui::WidgetDesc desc = {};
-        desc.alignment = ui::Alignment
-        {
-            .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-            .direction = ui::AlignDir::RIGHT,
-            .items = ui::AlignItem::CENTER,
-        };
-        desc.color = 0xFFFFFF08;
-        desc.gap = {2,2};
-        desc.width = ui::extend();
-        desc.height = ui::fixed(30);
-        _gui->push(desc);
+        ui::NodeDesc desc = {};
+        desc.user_id = user_id;
+        desc.wid = _gui->newElem
+        ({
+            .width = ui::extend(),
+            .height = ui::fixed(30),
+            .quad_color = 0xFFFFFF08,
+            .alignment = {
+                .gap = {2,2},
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = {ui::AlignDir::RIGHT},
+                //.items = ui::AlignItem::CENTER,
+            },
+        });
+        _gui->put( desc );
+
 
         desc = {};
-        desc.text = ui::Text{.ptr = label, .width = 60, .height = 20, .font_size = 24, .color = 0xFFFFFF30};
+        desc.user_id = user_id;
+        desc.wid = _gui->newElem
+        ({
+            .width = ui::fixed(60),
+            .height = ui::fixed(30),
+            .quad_color = 0xFFFFFF00,
+            .padding = {10,5,5,10},
+            .alignment = {
+                .gap = {2,2},
+                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                .direction = {ui::AlignDir::RIGHT},
+                //.items = ui::AlignItem::CENTER,
+            },
+            .font_size = 24,
+        });
+        desc.text = {.data = label};
         desc.single_click = ui::ClickTrigger::OnRelease;
-        desc.rect = {0,0, 60, 30};
-        desc.color = 0xFFFFFF00;
-        desc.padding = {10,5,5,10};
-        _gui->put (desc);
+        _gui->put( desc );
 
         bool modified = input(user_id, ui::Cursor::InputType::Any, mode, text);
         _gui->pop();
@@ -73,33 +96,39 @@ namespace kege{
     void UI::beginWindow(const ui::ID uid[3], ui::Rect& rect, const char* title, bool& close_window)
     {
         _gui->pushLayer(ui::LAYER_WINDOW);
-        _gui->pushRoot
+        _gui->beginRoot();
+        _gui->push
         ({
             .user_id = uid[0],
-            .rect = rect,
-            .padding = {10,10,10,10},
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::DOWN,
-            },
-            .color = 0x18141DFF,
-            .position = ui::Positioning::Independent,
+            .wid = _gui->newElem
+            ({                .position = ui::Positioning::Independent,
+                .quad_color = 0x18141DFF,
+                .padding = {10,10,10,10},
+                .alignment = ui::Alignment
+                {
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::DOWN},
+                },
+            }),
+            .quad = {rect.x,rect.y,rect.width,rect.height},
             .clip_overflow = true
         });
 
         _gui->push
         ({
             .user_id = uid[1],
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::RIGHT,
-                .items = ui::AlignItem::CENTER,
-            },
-            .color = 0xFFFFF00,
-            .width = ui::extend(),
-            .height = ui::fixed(30),
+            .wid = _gui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(30),
+                .quad_color = 0xFFFFF00,
+                .alignment = ui::Alignment
+                {
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::RIGHT},
+                    //.items = ui::AlignItem::CENTER,
+                }
+            }),
             .single_click = ui::ClickTrigger::Continuous,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -108,24 +137,35 @@ namespace kege{
             float h = 30;
 
             kege::ui::Text text;
-            text.ptr = title;
+            text.data = title;
             text.width = w;
-            text.height = h;
+            text.font_size = h;
             text.color = 0xFFFFFF30;
             text.font_size = 30;
             _gui->put
             ({
-                .rect = {0,0, w,h},
+                .wid = _gui->newElem
+                ({
+                    .quad_color = 0xFFFFF00,
+                    .padding = {10,5,5,10},
+                    .font_size = text.font_size,
+                    //.text_align = text.align,
+                }),
+                .quad = {0,0, w,h},
                 .text = text,
-                .padding = {10,5,5,10},
-                .color = 0xFFFFFF00,
                 .single_click = ui::ClickTrigger::OnRelease,
             });
-            _gui->put({.style = &_theme->x_seperator});
+            _gui->put
+            ({
+                .wid = _gui->newElem( _theme->x_seperator )
+            });
             charButn(uid[2], "x", 7, 0);
         }
         _gui->pop();
-        _gui->put({.rect = {0,0,10,10}});
+        _gui->put
+        ({
+            .quad = {0,0,10,10,0xFFFFFFFF},
+        });
 
         if( _gui->click(uid[2]) )
         {
@@ -141,12 +181,12 @@ namespace kege{
     
     void UI::endWindow()
     {
-        _gui->popRoot();
+        _gui->endRoot();
         _gui->popLayer();
     }
 
 
-    void UI::editTextOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void UI::editTextOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
     {
         TextField* text = static_cast<TextField*>(data);
         //TextFieldState* state = text->state;
@@ -160,7 +200,7 @@ namespace kege{
         {
             if (text->mode == TextFieldMode::Editing)
             {
-                gui->cursor()->selectAll( widget_id, getCharBufr(), text->str_len );
+                gui->cursor()->selectAll( node_id, getCharBufr(), text->str_len );
             }
             else
             {
@@ -191,15 +231,15 @@ namespace kege{
 
                 gui->cursor()->startEditing
                 (
-                    user_id, widget_id, text->type,
+                    user_id, node_id, text->type,
                     getCharBufr(), text->str_len, CHAR_BUFR_CAPACITY
                 );
-                gui->cursor()->computeCursorPosition( widget_id );
+                gui->cursor()->computeCursorPosition( node_id );
             }
 
             if (text->editing)
             {
-                if (!gui->cursor()->update( widget_id ))
+                if (!gui->cursor()->update( node_id ))
                 {
                     text->mode = TextFieldMode::Idle;
                     text->edited = true;
@@ -214,21 +254,19 @@ namespace kege{
 
     bool UI::submit( ui::ID user_id, const char* label)
     {
+        ui::Elem  desc;
         _gui->put
         ({
             .user_id = user_id,
-            .text = ui::Text{
-                .ptr = label,
-                .width = 50,
-                .height = 20,
-                .font_size = 24,
-                .color = 0xFFFFFF30,
-                .align = ui::AlignText::Center,
-            },
-            .padding = {10,5,5,10},
-            .color = 0xFFFFFF08,
-            .width = ui::extend(),
-            .height = ui::fixed(30),
+            .wid = _gui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(30),
+                .quad_color = 0xFFFFFF30,
+                .padding = {10,5,5,10},
+                //.text_align = ui::AlignText::Center,
+            }),
+            .text = {.font_size = 24, .data = label},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -240,11 +278,16 @@ namespace kege{
         _gui->put
         ({
             .user_id = user_id,
+            .wid = _gui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(30),
+                .quad_color = label.color,
+                .padding = {10,5,5,10},
+                //.font_size = label.font_size,
+                //.text_align = label.align,
+            }),
             .text = label,
-            .padding = {10,5,5,10},
-            .color = 0xFFFFFF08,
-            .width = ui::extend(),
-            .height = ui::fixed(30),
             .single_click = ui::ClickTrigger::Immediate,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -256,37 +299,45 @@ namespace kege{
         _gui->push
         ({
             .user_id = id,
-            .padding = {10, 0, 10, 0,},
-            .alignment = {
-                .direction = ui::AlignDir::DOWN
-            },
-            .color = 0xFFFFFF06,
-            .width = ui::extend(),
-            .height = ui::fixed(20),
+            .wid = _gui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(20),
+                .quad_color = 0xFFFFFF06,
+                .padding = {10, 0, 10, 0,},
+                .alignment = {
+                    .direction = {ui::AlignDir::DOWN}
+                },
+            }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
-        {
-            _gui->push
+
+        _gui->push
+        ({
+            .user_id = id,
+            .wid = _gui->newElem
             ({
-                .user_id = id,
-                .alignment = {
-                    .direction = ui::AlignDir::RIGHT
-                },
-                .gap = {5,0},
                 .width = ui::extend(),
                 .height = ui::fixed(20),
-            });
-            {
-                _gui->put
-                ({
-                    .rect = ui::Rect{.width = 10, .height = 10},
-                    .text = ui::Text{.ptr = (expand) ?"-" : "+", .width = 10, .height = 10}
-                });
-                label(text);
-            }
-            _gui->pop();
-        }
+                .quad_color = 0xFFFFFF06,
+                .padding = {10, 0, 10, 0,},
+                .alignment = {
+                    .gap = {5,0},
+                    .direction = {ui::AlignDir::RIGHT}
+                },
+            }),
+        });
+
+        _gui->put
+        ({
+            .quad = {.width = 10, .height = 10, .color = 0xFFFFFF06},
+            .text = {.data = (expand) ?"-" : "+",}
+        });
+        
+        label(text);
+
+        _gui->pop();
         _gui->pop();
 
         if ( _gui->click( id ) )
@@ -305,41 +356,46 @@ namespace kege{
         _gui->push
         ({
             .user_id = id,
-            .alignment = kege::ui::Alignment
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::RIGHT,
-                .items = ui::AlignItem::CENTER
-            },
-            .color = 0xFFFFFF00,
-            .gap {5,5},
-            .width = ui::extend(),
-            .height = ui::fixed(20),
+            .wid = _gui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(20),
+                .quad_color = 0xFFFFFF00,
+                .alignment = kege::ui::Alignment
+                {
+                    .gap {5,5},
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::RIGHT},
+                    //.items = ui::AlignItem::CENTER
+                },
+            }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
+
         _gui->push
         ({
             .user_id = id,
-            .rect = kege::ui::Rect{0.f, 0.f, 10, 10},
-            .alignment = kege::ui::Alignment
-            {
-                .origin = {ui::AlignX::CENTER, ui::AlignY::CENTER},
-                .direction = ui::AlignDir::CENTER,
-            },
-            .color = ( checked ) ? 0xf71326ff : 0xFFFFFF30,
+            .wid = _gui->newElem
+            ({
+                .quad_color = ( checked ) ? 0xf71326ff : 0xFFFFFF30,
+                .alignment = kege::ui::Alignment
+                {
+                    .origin = {ui::AlignX::CENTER, ui::AlignY::CENTER},
+                    //.direction = ui::AlignDir::CENTER,
+                },
+            }),
+            .quad = kege::ui::Quad{0.f, 0.f, 10, 10},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
-//        if ( checked )
-//        {
-//            _gui->put
-//            ({
-//                .layer = layer,
-//                .rect = kege::ui::Rect{0.f, 0.f, .width = 6, .height = 6},
-//                .color = 0xf71326ff
-//            });
-//        }
+        if ( checked )
+        {
+            _gui->put
+            ({
+                .quad = kege::ui::Quad{.x = 0.f, .y = 0.f, .width = 6, .height = 6, .color = 0xf71326ff},
+            });
+        }
         _gui->pop();
         label(text);
         _gui->pop();
@@ -354,26 +410,29 @@ namespace kege{
         _gui->push
         ({
             .user_id = Id[0],
-            .style = &_theme->collapsable_header,
-            .gap = {10,0},
+            .wid = _gui->newElem({ _theme->collapsable_header }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
         radio( Id[1], header->state );
-        ui::WidgetId widget_id = _gui->put
+
+        ui::NodeId node_id = _gui->put
         ({
             .user_id = Id[2],
-            .text = {.ptr = str},
-            .style = ( header->mode == 2 ) ? &_theme->collapsable_element_hl : &_theme->collapsable_element,
+            .wid = _gui->newElem(( header->mode == 2 ) ? _theme->collapsable_element_hl : _theme->collapsable_element),
+            .text = {.data = str},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
         _gui->put /* remove button */
         ({
             .user_id = Id[3],
-            .rect = {0, 4, 10, 10},
-            .border = {.corner_curves = {8,8,8,8}},
-            .color = _gui->mouseover( Id[3] ) ? 0xEE2200FF : 0xEE220050,
+            .wid = _gui->newElem
+            ({
+                .quad_color = _gui->mouseover( Id[3] ) ? 0xEE2200FF : 0xEE220050,
+                .corner_curves = {8,8,8,8},
+            }),
+            .quad = {0, 4, 10, 10},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -385,7 +444,7 @@ namespace kege{
         }
         if ( header->mode == 2 )
         {
-//            if ( !_gui->onTextInput( widget_id, str, size ) )
+//            if ( !_gui->onTextInput( node_id, str, size ) )
 //            {
 //                header->mode = 0;
 //            }
@@ -410,8 +469,7 @@ namespace kege{
         _gui->push
         ({
             .user_id = Id[0],
-            .style = &_theme->collapsable_removable_header,
-            .gap = {10,0},
+            .wid = _gui->newElem({ _theme->collapsable_removable_header }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -440,24 +498,25 @@ namespace kege{
         _gui->push
         ({
             .user_id = Id[0],
-            .style = &_theme->collapsable_header,
-            .gap = {10,0},
+            .wid = _gui->newElem({ _theme->collapsable_header }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
         _gui->put
         ({
             .user_id = Id[1],
-            .rect = {0, 6, 6, 6},
-            .border = {.corner_curves = {5,5,5,5}},
-            .color = (header->state == 0) ? 0xFFBB0040 : 0xFFBB00FF,
+            .wid = _gui->newElem
+            ({
+                .quad_color = (header->state == 0) ? 0xFFBB0040 : 0xFFBB00FF,
+                .corner_curves = {5,5,5,5},
+            }),
+            .quad = {0, 6, 6, 6},
             .mouseover = false,
         });
         _gui->put
         ({
             .user_id = Id[2],
-            .text = text,
-            .style = &_theme->label,
+            .wid = _gui->newElem({ _theme->label }),
             .mouseover = false,
         });
         _gui->pop();
@@ -476,31 +535,36 @@ namespace kege{
         _gui->push
         ({
             .user_id = id[0],
-            .style = &_theme->collapsable_header,
+            .wid = _gui->newElem({ _theme->collapsable_header }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
         _gui->put
         ({
             .user_id = id[1],
-            .rect = {0 ,6 ,6 ,6 },
-            .border = {.corner_curves = {5,5,5,5}},
-            .color = ((header->state == 0) ? 0xFFBB0040 : 0xFFBB00FF),
+            .wid = _gui->newElem
+            ({
+                .quad_color = ((header->state == 0) ? 0xFFBB0040 : 0xFFBB00FF),
+                .corner_curves = {5,5,5,5},
+            }),
+            .quad = {0 ,6 ,6 ,6 },
             .mouseover = false,
         });
         _gui->put
         ({
             .user_id = id[2],
-            .text = text,
-            .style = &_theme->label,
+            .wid = _gui->newElem({ _theme->label }),
             .mouseover = false,
         });
         _gui->put
         ({
             .user_id = id[3],
-            .rect = {0, 4, 10, 10},
-            .border = {.corner_curves = {8,8,8,8}},
-            .color = _gui->mouseover( id[3] ) ? 0xEE2200FF : 0xEE220050,
+            .wid = _gui->newElem
+            ({
+                .quad_color = _gui->mouseover( id[3] ) ? 0xEE2200FF : 0xEE220050,
+                .corner_curves = {8,8,8,8},
+            }),
+            .quad = {0, 4, 10, 10},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -518,14 +582,14 @@ namespace kege{
     }
 
     struct OptionParam{ UI::OptionState* state; };
-    void repositionOptionListOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void repositionOptionListOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
     {
         OptionParam* state = reinterpret_cast< OptionParam* >(data);
-        ui::Widget* main = gui->elem( widget_id );
+        ui::Node* main = gui->at( node_id );
         if (gui->leftClickDown())
         {
             const kege::dvec2& position = gui->getPointerPosition();
-            if (!kege::ui::testPointVsRect(position, main->rect))
+            if (!kege::ui::testPointVsRect(position, main->quad))
             {
                state->state->state = false;
             }
@@ -538,14 +602,14 @@ namespace kege{
         _gui->push
         ({
             .user_id = id,
-            .style = &theme()->card,
+            .wid = _gui->newElem({ theme()->card }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
-        _gui->push({ .style = &theme()->row });
+        _gui->push({ .wid = _gui->newElem({ theme()->row }) });
         _gui->text( label );
         _gui->pop();
-        //_gui->pushDeferredOp<OptionParam>(id, widget_id, repositionOptionListOp, {&state});
+        //_gui->pushDeferredOp<OptionParam>(id, node_id, repositionOptionListOp, {&state});
         if( _gui->click( id ) )
         {
             state->state = !state->state;
@@ -561,23 +625,25 @@ namespace kege{
     bool UI::labelOptions( const ui::UID& uid, const ui::Text& label, std::vector< ui::Text >& list, int& selection, bool vertical )
     {
         OptionState* state = ui::StateManager::make< OptionState >( uid[0] );
-//        ui::WidgetId widget_id = _gui->push({ .style = (vertical)? &_theme->column : &_theme->row });
+//        ui::NodeId node_id = _gui->push({ .style = (vertical)? &_theme->column : &_theme->row });
 //        _gui->put
 //        ({
 //            .text = label,
-//            .rect = {0,0,label.width, label.height},
-//            .color = 0xFFFFFF06,
+//            .quad = {0,0,label.width, label.height},
+//            .quad_color = 0xFFFFFF06,
 //            .mouseover = false
 //        });
 //        bool result = this->options( uid, list, selection );
 //        _gui->pop();
 //        return result;
 
-        ui::WidgetId widget_id = _gui->push({ .style = &theme()->card });
+        ui::NodeId node_id = _gui->push({
+            .wid = _gui->newElem({ theme()->card })
+        });
         _gui->push
         ({
             .user_id = uid[0],
-            .style = &theme()->row,
+            .wid = _gui->newElem({ theme()->row }),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -595,13 +661,16 @@ namespace kege{
             for (int i=0; i<list.size(); ++i)
             {
                 ui::ID option_id = uid[i + 3];
+
+                ui::Elem& style = (_gui->mouseover( option_id ))
+                ? _theme->option_hot
+                : _theme->option_element;
+
                 _gui->put
                 ({
                     .user_id = option_id,
+                    .wid = _gui->newElem( style ),
                     .text = list[i],
-                    .style = (_gui->mouseover( option_id ))
-                    ? &_theme->option_hot
-                    : &_theme->option_element,
                     .single_click = ui::ClickTrigger::OnRelease,
                 });
 
@@ -615,7 +684,7 @@ namespace kege{
             }
         }
         _gui->pop();
-        _gui->pushDeferredOp<OptionParam>(uid[0], widget_id, repositionOptionListOp, {state});
+        _gui->pushDeferredOp<OptionParam>(uid[0], node_id, repositionOptionListOp, {state});
         return modified;
     }
 
@@ -624,20 +693,18 @@ namespace kege{
         OptionState* state = ui::StateManager::make< OptionState >( uid[0] );
         bool has_selection = false;
 
-        ui::WidgetId widget_id = _gui->push
+        ui::NodeId node_id = _gui->push
         ({
             .user_id = uid[0],
-            .style = &_theme->option,
-            .gap = {10,4},
+            .wid = _gui->newElem({ _theme->option }),
             .single_click = ui::ClickTrigger::Immediate,
             .double_click = ui::ClickTrigger::Immediate,
         });
         _gui->put
         ({
             .user_id = uid[1],
-            .text = list[ state->selection ],
-            .style = &_theme->option_selection,
-            .mouseover = false,
+            .wid = _gui->newElem( _theme->option_selection ),
+            .text = list[ state->selection ]
         });
 
         if ( _gui->click( uid[0] ) || _gui->click( uid[1] ) )
@@ -647,17 +714,25 @@ namespace kege{
 
         if ( state->state )
         {
-            state->index = _gui->push({.user_id = uid[2], .style = &_theme->option_list});
+            state->index = _gui->push
+            ({
+                .user_id = uid[2],
+                .wid = _gui->newElem({ _theme->option_list }),
+            });
+
             for (int i=0; i<list.size(); ++i)
             {
                 ui::ID option_id = uid[i + 3];
+
+                ui::Elem& elem = (_gui->mouseover( option_id ))
+                ? _theme->option_hot
+                : _theme->option_element;
+
                 _gui->put
                 ({
                     .user_id = option_id,
-                    .text = list[i],
-                    .style = (_gui->mouseover( option_id ))
-                    ? &_theme->option_hot
-                    : &_theme->option_element,
+                    .wid = _gui->newElem( elem ),
+                    .text = list[ state->selection ],
                     .single_click = ui::ClickTrigger::OnRelease,
                 });
 
@@ -669,7 +744,7 @@ namespace kege{
                 }
             }
             _gui->pop();
-            _gui->pushDeferredOp<OptionParam>(uid[0], widget_id, repositionOptionListOp, {state});
+            _gui->pushDeferredOp<OptionParam>(uid[0], node_id, repositionOptionListOp, {state});
         }
         _gui->pop();
         selection = state->selection;
@@ -679,18 +754,23 @@ namespace kege{
     bool  UI::select( const ui::UID& uid, std::vector< ui::Text >& list, int& selection )
     {
         bool has_selection = false;
-        _gui->push({ .style = &_theme->select });
+        _gui->push
+        ({
+            .user_id = uid[2],
+            .wid = _gui->newElem({ _theme->select }),
+        });
         for (int i=0; i<list.size(); ++i)
         {
+            ui::Elem& elem = has_selection
+            ? _theme->option_hot
+            : _theme->option_element;
+
             _gui->put
             ({
                 .user_id = uid[i],
-                .text = list[i],
-                .style = (_gui->mouseover( uid[i] ))
-                ? &_theme->option_hot
-                : &_theme->option_element,
+                .wid = _gui->newElem( elem ),
+                .text = list[ selection ],
                 .single_click = ui::ClickTrigger::OnRelease,
-
             });
 
             if( _gui->click( uid[i] ) && !has_selection )
@@ -706,14 +786,21 @@ namespace kege{
     bool UI::tab( const ui::UID& uid, std::vector< ui::Text >& list, int& selection )
     {
         bool active = false;
-        _gui->push({ .style = &_theme->tab });
+        _gui->push
+        ({
+            .wid = _gui->newElem({ _theme->tab }),
+        });
         for (int i=0; i<list.size(); ++i)
         {
+            ui::Elem& elem = active
+            ? _theme->tab_elem_focus
+            : _theme->tab_elem;
+
             _gui->put
             ({
                 .user_id = uid[i],
-                .text = list[i],
-                .style = (selection == i) ? &_theme->tab_elem_focus : &_theme->tab_elem,
+                .wid = _gui->newElem( elem ),
+                .text = list[ i ],
                 .single_click = ui::ClickTrigger::OnRelease,
             });
             if( _gui->click( uid[i] ) )
@@ -728,13 +815,16 @@ namespace kege{
 
     void UI::list( std::vector< ui::Text >& list )
     {
-        _gui->push({ .style = &_theme->list });
+        _gui->push
+        ({
+            .wid = _gui->newElem({ _theme->list }),
+        });
         for (int i=0; i<list.size(); ++i)
         {
             _gui->put
             ({
-                .text = list[i],
-                .style = &_theme->list_elem
+                .wid = _gui->newElem( _theme->list_elem ),
+                .text = list[ i ]
             });
         }
         _gui->pop();
@@ -745,15 +835,23 @@ namespace kege{
         char snum[16];
         snprintf(snum, 16, "%.6g", *val );
 
-        ui::WidgetId widget_index = _gui->push
+        ui::NodeId widget_index = _gui->push
         ({
             .user_id = user_id,
-            .style = &_theme->slide_bar_track,
+            .wid = _gui->newElem({ _theme->slide_bar_track }),
             .single_click = ui::ClickTrigger::Continuous,
             .double_click = ui::ClickTrigger::Immediate
         });
-        _gui->put({ .user_id = user_id, .style = &_theme->slide_bar });
-        _gui->put({ .text = {.ptr = snum}, .style = &_theme->slide_bar_value });
+        _gui->put
+        ({
+            .user_id = user_id,
+            .wid = _gui->newElem({ _theme->slide_bar })
+        });
+        _gui->put
+        ({
+            .wid = _gui->newElem( _theme->slide_bar_value ),
+            .text = {.data = snum}
+        });
         _gui->pop();
 
         _gui->pushDeferredOp(user_id, widget_index, slidebarOp<double>, kege::RangeParams<double>{min, max, val, widget_index});
@@ -765,20 +863,23 @@ namespace kege{
         // Back button
         ui::Text text;
         text.width = 10;
-        text.height = 20;
+        text.font_size = 20;
         text.color = 0xFFFFFFFF;
         text.font_size = 20;
-        text.ptr = label;
+        text.data = label;
         text.x = x;
         text.y = y;
 
         _gui->put
         ({
             .user_id = user_id,
-            .rect = ui::Rect{.x = 0.f, .y = 0.f, .width = 20.f, .height = 20.f},
-            .border = {.corner_curves = {10,10,10,10}},
+            .wid = _gui->newElem
+            ({
+                .quad_color = ( _gui->mouseover(user_id) ) ? 0xFFFFFF3F : 0xFFFFFF1F,
+                .corner_curves = {10,10,10,10},
+            }),
+            .quad = ui::Quad{.x = 0.f, .y = 0.f, .width = 20.f, .height = 20.f},
             .text = text,
-            .color = ( _gui->mouseover(user_id) ) ? 0xFFFFFF3F : 0xFFFFFF1F,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -790,9 +891,12 @@ namespace kege{
         _gui->put
         ({
             .user_id = user_id,
-            .rect = {0, 4, 10, 10},
-            .border = {.corner_curves = {8,8,8,8}},
-            .color = _gui->mouseover( user_id ) ? 0xEE2200FF : 0xEE220050,
+            .wid = _gui->newElem
+            ({
+                .quad_color = _gui->mouseover( user_id ) ? 0xEE2200FF : 0xEE220050,
+                .corner_curves = {8,8,8,8},
+            }),
+            .quad = {0, 4, 10, 10},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -801,45 +905,51 @@ namespace kege{
 
     bool UI::button( const kege::ui::WidgetDesc& desc )
     {
-        _gui->put( desc );
+        //_gui->put( desc );
         return _gui->click( desc.user_id );
     }
 
-    bool UI::button( ui::ID user_id, const ui::Text& text, const ui::Style* style )
+    bool UI::button( ui::ID user_id, const ui::Text& text, const ui::Elem* elem )
     {
-        _gui->put
+        const ui::Elem& s = (elem == nullptr)? _theme->button : *elem;
+        _gui->push
         ({
             .user_id = user_id,
-            .text = text,
-            .style = (style == nullptr)? &_theme->button : style,
+            .wid = _gui->newElem( s ),
             .single_click = ui::ClickTrigger::OnRelease,
         });
+        label( text );
+        _gui->pop();
         return _gui->click( user_id );
     }
 
-    ui::WidgetId UI::fittedLabel( const ui::Text& text, ui::Style* style )
+    ui::NodeId UI::fittedLabel( const ui::Text& text, ui::Elem* elem )
     {
+        elem = (elem == nullptr)? &_theme->fitted_label : elem;
         return _gui->put
         ({
+            .wid = _gui->newElem( *elem ),
             .text = text,
-            .style = (style == nullptr)? &_theme->fitted_label : style,
-            .mouseover = false
         });
     }
 
-    ui::WidgetId UI::label( const ui::Text& text, ui::Style* style )
+    ui::NodeId UI::label( const ui::Text& text, ui::Elem* elem )
     {
+        elem = (elem == nullptr)? &_theme->label : elem;
         return _gui->put
         ({
+            .wid = _gui->newElem( *elem ),
             .text = text,
-            .style = (style == nullptr)? &_theme->label : style,
-            .mouseover = false
         });
     }
 
     bool UI::radio( ui::ID user_id, const ui::Text& text, bool& state )
     {
-        push({.style = &_theme->row });
+        _gui->push
+        ({
+            .wid = _gui->newElem( _theme->row ),
+            .text = text,
+        });
         radio( user_id, state );
         fittedLabel(text);
         pop();
@@ -851,10 +961,7 @@ namespace kege{
         _gui->put
         ({
             .user_id = user_id,
-            .rect = {0,4,0,0},
-            .border = {.corner_curves = {5,5,5,5}},
-            .style = (state)? &_theme->radio_active: &_theme->radio,
-            .color = (state == 0) ? 0xFFBB0040 : 0xFFBB00FF,
+            .wid = _gui->newElem( _theme->radio ),
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -871,9 +978,11 @@ namespace kege{
         return radio(user_id, state->state);
     }
 
-    ui::WidgetId UI::beginList(int16_t layer)
+    ui::NodeId UI::beginList(int16_t layer)
     {
-        return _gui->push({ .style = &_theme->list });
+        return _gui->push({
+            .wid = _gui->newElem({ _theme->list }),
+        });
     }
     
     void UI::endList()
@@ -881,24 +990,21 @@ namespace kege{
         _gui->pop();
     }
 
-    ui::WidgetId UI::beginColumn( ui::Style* style )
+    ui::NodeId UI::beginColumn( ui::Elem* elem )
     {
-        return _gui->push
-        ({
-            .style = (style == nullptr)? &_theme->column : style
-        });
+        elem = (elem == nullptr)? &_theme->column : elem;
+        return _gui->push({ .wid = _gui->newElem( *elem ) });
     }
+
     void UI::endColumn()
     {
         _gui->pop();
     }
 
-    ui::WidgetId UI::beginRow( ui::Style* style )
+    ui::NodeId UI::beginRow( ui::Elem* elem )
     {
-        return _gui->push
-        ({
-            .style = (style == nullptr)? &_theme->row : style
-        });
+        elem = (elem == nullptr)? &_theme->row : elem;
+        return _gui->push({ .wid = _gui->newElem({ *elem }) });
     }
     void UI::endRow()
     {
@@ -908,19 +1014,19 @@ namespace kege{
 
     struct ScrollOp
     {
-        ui::WidgetId widget_id;
+        ui::NodeId node_id;
         float& amount;
     };
-    void scrollingOperation(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void scrollingOperation(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
     {
         ScrollOp* params = reinterpret_cast<ScrollOp*>(data);
 
-        ui::Widget* scrolly = gui->elem(params->widget_id);
-        ui::Widget* clipper = gui->elem(widget_id);
+        ui::Node* scrolly = gui->at(params->node_id);
+        ui::Node* clipper = gui->at(node_id);
 
-        if (kege::ui::testPointVsRect( gui->getPointerPosition(), clipper->rect ))
+        if (kege::ui::testPointVsRect( gui->getPointerPosition(), clipper->quad ))
         {
-            float scroll_length = scrolly->rect.height - clipper->rect.height;
+            float scroll_length = scrolly->quad.height - clipper->quad.height;
 //            if ( 0 < scroll_length)
 //            {
                 params->amount += gui->getScrollOffset().y;
@@ -932,7 +1038,7 @@ namespace kege{
 //                params->amount = 0.f;
 //            }
         }
-        scrolly->rect.y = clipper->rect.y + params->amount;
+        scrolly->quad.y = clipper->quad.y + params->amount;
     }
     
     void UI::beginScrollContainer( const ui::ID id[2] )
@@ -945,23 +1051,23 @@ namespace kege{
             state->frame_id = _frame_index;
         }
 
-        ui::WidgetId clipper = _gui->push /* the clipper is the container the scroller is clipped against */
+        ui::NodeId clipper = _gui->push /* the clipper is the container the scroller is clipped against */
         ({
             .user_id = id[0],
-            .style = &_theme->scroll_container,
-            .clip_overflow = true
+            .wid = _gui->newElem({ _theme->scroll_container }),
+            //.clip_overflow = true
         });
 
-        ui::WidgetId scroller = _gui->push /* the scroller is the container that is scrolled */
+        ui::NodeId scroller = _gui->push /* the scroller is the container that is scrolled */
         ({
             .user_id = id[1],
-            .rect = {0, state->scroll_amount, 0, 0},
-            .style = &_theme->column,
+            .wid = _gui->newElem( _theme->column ),
+            .quad = {0, state->scroll_amount, 0, 0},
             .mouseover = false,
         });
 
         _gui->pushDeferredOp(id[0], clipper, scrollingOperation, ScrollOp{
-            .widget_id = scroller,
+            .node_id = scroller,
             .amount = state->scroll_amount
         });
     }
@@ -972,32 +1078,37 @@ namespace kege{
         _gui->pop(); /* pop the clipper container */
     }
 
-    ui::WidgetId UI::pushRoot( const ui::WidgetDesc& desc )
+    kege::ui::Node* UI::newNode( const kege::ui::NodeDesc& desc )
     {
-        return _gui->pushRoot(desc);
+        return _gui->newNode( desc );
     }
 
-    ui::WidgetId UI::putRoot( const ui::WidgetDesc& desc )
+    kege::ui::WID UI::newElem( const kege::ui::Elem& desc )
     {
-        return _gui->putRoot(desc);
-    }
-    
-    void UI::popRoot()
-    {
-        _gui->popRoot();
+        return _gui->newElem( desc );
     }
 
-    ui::WidgetId UI::push( const kege::ui::WidgetDesc& desc )
+    void UI::beginRoot()
+    {
+        _gui->beginRoot();
+    }
+
+    void UI::endRoot()
+    {
+        _gui->endRoot();
+    }
+
+    ui::NodeId UI::push( const kege::ui::NodeDesc& desc )
     {
         return _gui->push( desc );
     }
 
-    ui::WidgetId UI::put( const kege::ui::WidgetDesc& desc )
+    ui::NodeId UI::put( const kege::ui::NodeDesc& desc )
     {
         return _gui->put( desc );
     }
 
-    ui::WidgetId UI::text( const kege::ui::Text& text )
+    ui::NodeId UI::text( const kege::ui::Text& text )
     {
         return _gui->text( text );
     }
@@ -1046,7 +1157,12 @@ namespace kege{
         return _gui->isPointerDragging();
     }
 
-    ui::Widget* UI::get( ui::WidgetId index )
+    ui::Node* UI::get( ui::NodeId index )
+    {
+        return _gui->at( index );
+    }
+
+    ui::Elem* UI::elem( ui::NodeId index )
     {
         return _gui->elem( index );
     }

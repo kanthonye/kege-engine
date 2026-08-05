@@ -30,7 +30,7 @@ namespace kege::ui{
         void update();
         void merge();
 
-        Dock(kege::ui::DockManager* manager, const kege::ui::Rect& rect);
+        Dock(kege::ui::DockManager* manager, const kege::ui::Quad& quad);
 
         ~Dock();
         Dock();
@@ -41,8 +41,8 @@ namespace kege::ui{
         void displayContent();
         void displayTabs();
 
-        static void ghostDraggingOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data);
-        static void ghostDropoffOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data);
+        static void ghostDraggingOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data);
+        static void ghostDropoffOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data);
 
         void setDockPanels(const std::vector< int >& panels);
         //void addPanelToDock(const Ref< ui::Panel >& panel);
@@ -68,14 +68,14 @@ namespace kege::ui{
         /**
          * rect: hold the position and size of the ui dock element
          */
-        Rect _rect;
+        Quad _quad;
 
         Padding _padding;
 
         /**
          * uid: hold the unique identifier for this dock
          */
-        WidgetId _uid;
+        NodeId _uid;
 
         /**
          * tab: hold the tab list of panels in this dock

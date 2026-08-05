@@ -28,7 +28,7 @@ namespace kege::ui{
 
         NavBar
         (
-            const kege::ui::Rect& rect,
+            const kege::ui::Quad& quad,
             kege::GUI* gui,
             kege::UI* ui,
             kege::ProjectManager* pm,
@@ -41,7 +41,7 @@ namespace kege::ui{
 
     private:
 
-        kege::ui::Rect _rect;
+        kege::ui::Quad _quad;
         ui::WidgetHandle _main;
         kege::GUI* _gui;
         kege::UI* _ui;

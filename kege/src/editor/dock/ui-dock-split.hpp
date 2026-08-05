@@ -21,8 +21,8 @@ namespace kege::ui{
         void updateVerticalDragRect();
         void onReshape();
 
-        void onResizeGrandChild(ui::Dock::SplitDirection direction, const Rect& drag_rect);
-        void onResize(ui::Dock::SplitDirection direction, const Rect& drag_rect);
+        void onResizeGrandChild(ui::Dock::SplitDirection direction, const Quad& drag_rect);
+        void onResize(ui::Dock::SplitDirection direction, const Quad& drag_rect);
         bool update(UI* ui);
 
         /**
@@ -35,7 +35,7 @@ namespace kege::ui{
          * drag_rect: hold the position and size of the ui dock split element,
          * this is the area between two docks that allows resizing
          */
-        ui::Rect drag_rect;
+        ui::Quad drag_quad;
 
         /**
          * slit_ratio: hold the split ratio between the two docks

@@ -127,41 +127,41 @@ namespace kege::ui{
         UI_PROP
         (
             kege::MaterialParams, albedo, kege::ui::PropertyMeta{
-                .text = {.ptr = "Color:", 0.f, 0.f, 100.f, 20.f },
+                .type = PropertyType::Vec4,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
-                .type = PropertyType::Vec4
+                .text = {0.f, 0.f, 100.f, 20, 0xFFFFFFFF, "Color:"},
             }
         ),
         UI_PROP
         (
             kege::MaterialParams, roughness, kege::ui::PropertyMeta{
-                .text = {.ptr = "Roughness:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 90.f, 20, 0xFFFFFFFF, "Roughness:" },
             }
         ),
         UI_PROP
         (
             kege::MaterialParams, metallic, kege::ui::PropertyMeta{
-                .text = {.ptr = "Metallic:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 90.f, 20, 0xFFFFFFFF, "Metallic:" },
             }
         ),
         UI_PROP
         (
             kege::MaterialParams, ao, kege::ui::PropertyMeta{
-                .text = {.ptr = "AO:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 90.f, 20, 0xFFFFFFFF, "AO:", },
             }
         ),
         UI_PROP
         (
             kege::MaterialParams, alpha_cutoff, kege::ui::PropertyMeta{
-                .text = {.ptr = "Alpha Cutoff:", 0.f, 0.f, 90.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, true, 0.0, 1.0 },
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 90.f, 20, 0xFFFFFFFF, "Alpha Cutoff:", },
             }
         )
     };
@@ -181,38 +181,44 @@ namespace kege::ui{
                 ui::drawProperties(_ui, _uid, _id_offset, _parameters, MaterialParameters);
 
                 PipelineKey key;
-                ui::Text text_feature = {.ptr = "Feature", 0.f, 0.f, 100.f, 20.f };
+                ui::Text text_feature = {0.f, 0.f, 100.f, 20, 0xFFFFFFFF, "Feature", };
                 if( _ui->collapsableHeader(_uid[ _id_offset++ ], _expand_feature, text_feature) )
                 {
                     _ui->push
                     ({
-                        .width = ui::extend(),
-                        .height = ui::flexible(),
-                        .padding = {20, 0, 20, 10,},
-                        .color = 0xFFFFFF00,
-                        .alignment = {
-                            .direction = ui::AlignDir::DOWN
-                        },
-                        .gap = {5,5},
+                        .wid = _ui->newElem({
+                            .width = ui::extend(),
+                            .height = ui::flexible(),
+                            .quad_color = 0xFFFFFF00,
+                            .padding = {20, 0, 20, 10,},
+                            .alignment = {
+                                .gap = {5,5},
+                                .direction = {ui::AlignDir::DOWN}
+                            },
+                        })
                     });
                     for(auto& features : _features)
                     {
-                        features.title.ptr = features.name.c_str();
+                        features.title.data = features.name.c_str();
                         if( _ui->collapsableHeader(_uid[ _id_offset++ ], features.expand, features.title) )
                         {
-                            _ui->push({
-                                .width = ui::extend(),
-                                .height = ui::flexible(),
-                                .padding = {20, 0, 20, 10,},
-                                .color = 0xFFFFFF00,
-                                .alignment = {
-                                    .direction = ui::AlignDir::DOWN
-                                },
+                            _ui->push
+                            ({
+                                .wid = _ui->newElem
+                                ({
+                                    .width = ui::extend(),
+                                    .height = ui::flexible(),
+                                    .quad_color = 0xFFFFFF00,
+                                    .padding = {20, 0, 20, 10,},
+                                    .alignment = {
+                                        .direction = {ui::AlignDir::DOWN}
+                                    },
+                                })
                                 //.gap.height = 5,
                             });
                             for(Feature& feature : features.list)
                             {
-                                feature.label.ptr = feature.name.c_str();
+                                feature.label.data = feature.name.c_str();
                                 if( _ui->checkbox(_uid[ _id_offset ], feature.label, feature.state) )
                                 {
                                 }
@@ -262,10 +268,8 @@ namespace kege::ui{
         feature.name = featureFlagToString( flag );
         feature.label = kege::ui::Text
         {
-            .ptr = feature.name.c_str(),
-            .x = 0.f, .y = 0.f,
-            .width = 90.f, .height = 25.f,
-            .color = 0xFFFFFF50
+            .x = 0.f, .y = 0.f, .width = 90.f, .font_size = 25,
+            .color = 0xFFFFFF50, .data = feature.name.c_str(),
         };
         feature.state = false;
         feature.flag = flag;
@@ -283,8 +287,8 @@ namespace kege::ui{
                 .x = 0.f,
                 .y = 0.f,
                 .width = 150.f,
-                .height = 25.f,
-                .color = 0xFFFFFF50
+                .font_size = 25,
+                .color = 0xFFFFFF50,
             }
         });
         return &_features[ _features.size() - 1 ];

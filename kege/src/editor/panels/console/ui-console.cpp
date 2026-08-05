@@ -5,7 +5,7 @@
 //  Created by Kenneth Esdaile on 1/17/26.
 //
 
-#include "../editor-layer.hpp"
+#include "../../editor-layer.hpp"
 #include "ui-console.hpp"
 
 namespace kege::ui{
@@ -346,17 +346,16 @@ namespace kege::ui{
         ui::Text text;
         text.color = 0xFFFFFFFF;
         text.font_size = 15;
-        text.height = 15;
 
         text.width = 50;
-        text.ptr = "Clear";
+        text.data = "Clear";
         if (_ui->button(_uid[0], text, &_ui->theme()->button)) {
             clearLogs();
         }
 
         // Export button
         text.width = 50;
-        text.ptr = "Export";
+        text.data = "Export";
         if (_ui->button(_uid[1], text, &_ui->theme()->button))
         {
             exportLogs();
@@ -380,7 +379,7 @@ namespace kege::ui{
 
         // Debug filter
         text.width = 50;
-        text.ptr = "Debug";
+        text.data = "Debug";
         if (_ui->radio(_uid[2], text, _filter_enabled[LogLevel::Debug]))
         {
             //updateVisibleIndices();
@@ -388,7 +387,7 @@ namespace kege::ui{
 
         // Info filter
         text.width = 40;
-        text.ptr = "Info";
+        text.data = "Info";
         if (_ui->radio(_uid[3], text, _filter_enabled[LogLevel::INFO]))
         {
             //updateVisibleIndices();
@@ -396,7 +395,7 @@ namespace kege::ui{
 
         // Warning filter
         text.width = 50;
-        text.ptr = "Warning";
+        text.data = "Warning";
         if (_ui->radio(_uid[4], text, _filter_enabled[LogLevel::WARNING]))
         {
             //updateVisibleIndices();
@@ -404,7 +403,7 @@ namespace kege::ui{
 
         // Error filter
         text.width = 50;
-        text.ptr = "Error";
+        text.data = "Error";
         if (_ui->radio(_uid[5], text, _filter_enabled[LogLevel::ERROR]))
         {
             //updateVisibleIndices();
@@ -412,7 +411,7 @@ namespace kege::ui{
 
         // Command filter
         text.width = 50;
-        text.ptr = "Cmd";
+        text.data = "Cmd";
         if (_ui->radio(_uid[6], text, _filter_enabled[LogLevel::COMMAND]))
         {
             //updateVisibleIndices();
@@ -420,7 +419,7 @@ namespace kege::ui{
 
         // System filter
         text.width = 50;
-        text.ptr = "Sys";
+        text.data = "Sys";
         if (_ui->radio(_uid[0], text, _filter_enabled[LogLevel::SYSTEM]))
         {
             //updateVisibleIndices();
@@ -428,7 +427,7 @@ namespace kege::ui{
 
         // Auto-scroll toggle
         text.width = 50;
-        text.ptr = _auto_scroll ? "Auto" : "Manual";
+        text.data = _auto_scroll ? "Auto" : "Manual";
         if (_ui->button(_uid[0], text, &_ui->theme()->button))
         {
             _auto_scroll = !_auto_scroll;
@@ -450,7 +449,7 @@ namespace kege::ui{
         _ui->beginScrollContainer(id);
 
         // Set special style if new logs are available while not auto-scrolling
-        const ui::Style* container_style = &_ui->theme()->panel;
+        const ui::Elem* container_style = &_ui->theme()->panel;
         if (_new_logs_available && !_auto_scroll)
         {
             // TODO: You might want to create a special style for this state
@@ -463,7 +462,7 @@ namespace kege::ui{
 
         for (size_t visible_idx : _visible_indices)
         {
-            const LogEntry& entry = _log_entries[visible_idx];
+            LogEntry& entry = _log_entries[visible_idx];
 
             // Create formatted log line
             std::stringstream line;
@@ -471,6 +470,7 @@ namespace kege::ui{
                  << "[" << entry.level_string() << "] "
                  << entry.message;
 
+            entry.log = line.str();
             // Generate unique WidgetHandle for this log line
             //ui::WidgetHandle line_uid = _ui->gui()->generateUID();
 
@@ -478,15 +478,15 @@ namespace kege::ui{
             if ( line.str()[0] < 32 ) continue;
 
             // Create widget description
-            ui::WidgetDesc line_desc;
+            ui::NodeDesc line_desc = {};
             //line_desc.user_id = &line_uid;
             line_desc.text.width = 600;
             line_desc.text.font_size = 18;
             line_desc.text.color = 0xFFFFFFFF;
-            line_desc.text.ptr = line.str().c_str();
+            line_desc.text.data = entry.log.data();
             //line_desc.text = _ui->gui()->text(line.str().c_str(), 12);
-            line_desc.color = entry.color();
-            line_desc.style = &_ui->theme()->label;
+            //line_desc.color = entry.color();
+            //line_desc.style = &_ui->theme()->label;
 
             // Highlight if search text matches
             if (!_search_text.empty())
@@ -499,7 +499,7 @@ namespace kege::ui{
                 if (msg_lower.find(search_lower) != std::string::npos)
                 {
                     // TODO: You might want to create a highlight style
-                    line_desc.color = 0xFFFFFF00;  // Yellow highlight
+                    //line_desc.color = 0xFFFFFF00;  // Yellow highlight
                 }
             }
 

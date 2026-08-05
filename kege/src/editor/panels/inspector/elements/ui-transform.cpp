@@ -23,7 +23,7 @@ namespace kege::ui
 ////            layer,
 ////            ui::Text
 ////            {
-////                .ptr = "Position:",
+////                .data = "Position:",
 ////                .width = 50,
 ////                .font_size = 20,
 ////                .height = 15,
@@ -41,7 +41,7 @@ namespace kege::ui
 ////            layer,
 ////            ui::Text
 ////            {
-////                .ptr = "Scale:",
+////                .data = "Scale:",
 ////                .width = 50,
 ////                .font_size = 20,
 ////                .height = 15,
@@ -59,7 +59,7 @@ namespace kege::ui
 ////            layer,
 ////            ui::Text
 ////            {
-////                .ptr = "Orientation:",
+////                .data = "Orientation:",
 ////                .width = 50,
 ////                .font_size = 20,
 ////                .height = 15,

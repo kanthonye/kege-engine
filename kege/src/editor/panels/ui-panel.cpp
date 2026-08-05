@@ -13,9 +13,9 @@ namespace kege::ui{
 
     struct PanelPtr{ Panel* panel; };
 
-    void Panel::updateRectOp(kege::GUI* gui, ui::ID user_id, ui::WidgetId widget_id, void* data)
+    void Panel::updateRectOp(kege::GUI* gui, ui::ID user_id, ui::NodeId node_id, void* data)
     {
-        ((PanelPtr*)data)->panel->_rect = gui->elem( widget_id )->rect;
+        ((PanelPtr*)data)->panel->_rect = gui->at( node_id )->quad;
     }
 
     void Panel::operator()(const kege::ui::AssetMetadataDropOff& event)
@@ -31,7 +31,7 @@ namespace kege::ui{
         _widget_index = _ui->push
         ({
             .user_id = _uid[0],
-            .style = &_ui->theme()->panel
+            .wid = _ui->newElem(_ui->theme()->panel)
         });
         updateLayout();
         _ui->pop();

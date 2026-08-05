@@ -97,89 +97,89 @@ namespace kege::ui{
         kege::ui::Rect clip_rect
     )
     {
-        draw
-        ({
-            .rect = widget->rect,
-            .texel = widget->texel,
-            .border = widget->border,
-            .clip_rect = clip_rect,
-            .color = widget->color,
-            .texr_info = widget->texr_info,
-         });
-
-        if ( widget->clip_overflow )
-        {
-            clip_rect = widget->rect;
-            clip_rect.x += widget->padding.left;
-            clip_rect.y += widget->padding.above;
-            clip_rect.width -= widget->padding.left + widget->padding.right;
-            clip_rect.height -= widget->padding.above + widget->padding.below;
-        }
-
-        if ( widget->text.ptr && _font )
-        {
-            kege::vec2 start = { widget->rect.x, widget->rect.y };
-            const Padding& padding = ((widget->style) ? widget->style->padding : widget->padding);
-            
-            switch ( ((widget->style) ? widget->style->align_text : widget->text.align) )
-            {
-                case AlignText::Center:
-                {
-                    start.x += (widget->rect.width  - widget->text.width) * 0.5;
-                    start.y += (widget->rect.height - widget->text.height) * 0.5;
-                    break;
-                }
-
-                case AlignText::Right:
-                {
-                    if ( widget->text.width != 0 )
-                    {
-                        start.x += ( widget->rect.width - widget->text.width - padding.right);
-                    }
-                    if ( widget->text.height != 0 )
-                    {
-                        start.y +=  widget->text.y + padding.above;
-                    }
-                    break;
-                }
-
-                case AlignText::Left:
-                default:
-                {
-                    if ( widget->text.width != 0 )
-                    {
-                        start.x += widget->text.x + padding.left;
-                    }
-                    if ( widget->text.height != 0 )
-                    {
-                        start.y += widget->text.y + padding.above;
-                    }
-                    break;
-                };
-            }
-
-            rendererText
-            (
-                start,
-                widget->rect.width - padding.left - padding.right,
-                widget->text.font_size,
-                widget->text.color,
-                widget->alignment.wrap.enable,
-                widget->text.ptr,
-                clip_rect
-            );
-        }
-
-        if ( clip_rect.width > 0 && clip_rect.height > 0 )
-        {
-            for ( int eid = layout.head( widget->head ); eid != 0; eid = layout.next( eid )  )
-            {
-                if ( kege::ui::checkOverlap( widget->rect, layout[ eid ]->rect ) )
-                {
-                    renderWidget( layout, layout[ eid ], clip_rect );
-                }
-            }
-        }
+//        draw
+//        ({
+//            .rect = widget->rect,
+//            .texel = widget->texel,
+//            .border = widget->border,
+//            .clip_rect = clip_rect,
+//            .color = widget->color,
+//            .texr_info = widget->texr_info,
+//         });
+//
+//        if ( widget->clip_overflow )
+//        {
+//            clip_rect = widget->rect;
+//            clip_rect.x += widget->padding.left;
+//            clip_rect.y += widget->padding.above;
+//            clip_rect.width -= widget->padding.left + widget->padding.right;
+//            clip_rect.height -= widget->padding.above + widget->padding.below;
+//        }
+//
+//        if ( widget->text.data && _font )
+//        {
+//            kege::vec2 start = { widget->rect.x, widget->rect.y };
+//            const Padding& padding = ((widget->style) ? widget->style->padding : widget->padding);
+//            
+//            switch ( ((widget->style) ? widget->style->align_text : widget->text.align) )
+//            {
+//                case AlignText::Center:
+//                {
+//                    start.x += (widget->rect.width  - widget->text.width) * 0.5;
+//                    start.y += (widget->rect.height - widget->text.height) * 0.5;
+//                    break;
+//                }
+//
+//                case AlignText::Right:
+//                {
+//                    if ( widget->text.width != 0 )
+//                    {
+//                        start.x += ( widget->rect.width - widget->text.width - padding.right);
+//                    }
+//                    if ( widget->text.height != 0 )
+//                    {
+//                        start.y +=  widget->text.y + padding.above;
+//                    }
+//                    break;
+//                }
+//
+//                case AlignText::Left:
+//                default:
+//                {
+//                    if ( widget->text.width != 0 )
+//                    {
+//                        start.x += widget->text.x + padding.left;
+//                    }
+//                    if ( widget->text.height != 0 )
+//                    {
+//                        start.y += widget->text.y + padding.above;
+//                    }
+//                    break;
+//                };
+//            }
+//
+//            rendererText
+//            (
+//                start,
+//                widget->rect.width - padding.left - padding.right,
+//                widget->text.font_size,
+//                widget->text.color,
+//                widget->alignment.wrap.enable,
+//                widget->text.data,
+//                clip_rect
+//            );
+//        }
+//
+//        if ( clip_rect.width > 0 && clip_rect.height > 0 )
+//        {
+//            for ( int eid = layout.head( widget->head ); eid != 0; eid = layout.next( eid )  )
+//            {
+//                if ( kege::ui::checkOverlap( widget->rect, layout[ eid ]->rect ) )
+//                {
+//                    renderWidget( layout, layout[ eid ], clip_rect );
+//                }
+//            }
+//        }
     }
 
     void Renderer::render( const ui::Layout& layout )

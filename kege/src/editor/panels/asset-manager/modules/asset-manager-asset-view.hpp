@@ -49,7 +49,8 @@ namespace kege::ui{
         bool _butn_down;
 
 
-        ui::WidgetDesc _drag_element;
+        ui::NodeDesc _drag_node;
+        ui::Elem _drag_elem;
     };
 }
 

@@ -81,7 +81,7 @@ namespace kege::ui{
         bool is_favorite = false;
 
         ui::UID uid = ui::UID::create();
-        ui::WidgetId widget_id;
+        ui::NodeId node_id;
 
         // Import settings (type-specific)
         struct ImportSettings
@@ -213,7 +213,7 @@ namespace kege::ui{
 
     struct TabElem
     {
-        ui::WidgetId uids[3];
+        ui::NodeId uids[3];
         ui::Text text;
     };
 
@@ -225,7 +225,7 @@ namespace kege::ui{
         std::vector< int > panel_indices;
         std::vector< TabElem > list;
         int selection = 0;
-        WidgetId widget_id;
+        NodeId node_id;
     };
 
     struct ResizeHandler
@@ -235,7 +235,7 @@ namespace kege::ui{
 
     struct GhostObject
     {
-        Rect rect;
+        Quad quad;
         bool visible = false;
         bool dragging = false;
         int tab_selection;

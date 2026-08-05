@@ -11,9 +11,9 @@
 #include "../panels/hierarchy/hierarchy-panel.hpp"
 #include "../panels/inspector/inspector-panel.hpp"
 #include "../panels/viewport/viewport-panel.hpp"
-#include "../panels/ui-file-browser.hpp"
+#include "../panels/file-browser/ui-file-browser.hpp"
 
-#include "../panels/ui-console.hpp"
+#include "../panels/console/ui-console.hpp"
 
 #include "../editor-layer.hpp"
 
@@ -130,13 +130,41 @@ namespace kege::ui{
     {
 //        _gui->begin( 0.016 );
 //        {
-//            _gui->pushRoot({ .rect = _rect });
+//            _gui->pushRoot({ .quad = _quad });
 //            {
         _root.update();
 //            }
 //            _gui->popRoot();
 //        }
 //        _gui->end();
+        _dragdrop.update();
+        if ( _dragdrop.isDragging() )
+        {
+            kege::dvec2 mouse = _gui->getInputManager()->getMouse()->getPosition();
+            drawDragGhost({}, mouse); // your own overlay render, top layer
+        }
+    }
+
+    void DockManager::drawDragGhost(const kege::ui::DragPayload& payload, const kege::dvec2& position)
+    {
+        _gui->pushLayer(LAYER_DRAGGING_OVERLAY);
+        _ui->put
+        ({
+            //.layer = 1,
+            .user_id = _uid[0],
+            .wid = _ui->newElem( _ui->theme()->ghost ),
+            .quad = {
+                .x = static_cast<float>(position.x),
+                .y = static_cast<float>(position.y)
+            },
+
+        });
+        _gui->popLayer();
+    }
+
+    kege::ui::SelectionController* DockManager::getSelectionController()
+    {
+        return &_dragdrop;
     }
 
     kege::GraphicsDevice* DockManager::getGraphicsDevice()
@@ -175,17 +203,18 @@ namespace kege::ui{
 
     DockManager::DockManager
     (
-        const kege::ui::Rect& rect,
+        const kege::ui::Quad& quad,
         kege::GUI* gui,
         kege::UI* ui,
         kege::ProjectManager* pm,
         kege::ECS* ecs
     )
     :   _gui( gui )
-    ,   _rect( rect )
+    ,   _quad( quad )
     ,   _project_manager( pm )
     ,   _ecs( ecs )
     ,   _ui( ui )
+    ,   _dragdrop( gui )
     {
         kege::Communication::add< const kege::ui::AssetMetadataDropOff&, DockManager >( this );
         kege::Communication::add<const kege::WindowFrameBufferSizeEvent&, DockManager>(this);
@@ -199,7 +228,7 @@ namespace kege::ui{
         addPanel(new ui::Console( this ));
         //addPanel(new ui::MenuBar( this ));
 
-        _root = ui::Dock(this, _rect);
+        _root = ui::Dock(this, _quad);
 
         ui::DockSplit* split[2];
 

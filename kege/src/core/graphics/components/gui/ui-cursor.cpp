@@ -10,33 +10,33 @@
 
 namespace kege::ui{
 
-    bool Cursor::update(const ui::WidgetId& widget_id)
+    bool Cursor::update(const ui::NodeId& node_id)
     {
-        if (!widget_id.id) return false;
+        if (!node_id.id) return false;
 
-        Widget* widget = _gui->elem(widget_id);
-        if (!widget) return false;
+        ui::Node* node = _gui->at(node_id);
+        if (!node) return false;
 
         updateBlinker();
-        handleClickAndSelection(widget_id, widget);
-        processKeyboardInputs(widget_id, widget->text.font_size);
+        handleClickAndSelection(node_id, node);
+        processKeyboardInputs(node_id, node->text.font_size);
 
         return _current_edit.active;
     }
 
-    void Cursor::handleClickAndSelection(const ui::WidgetId& widget_id, Widget* widget)
+    void Cursor::handleClickAndSelection(const ui::NodeId& node_id, ui::Node* widget)
     {
         // Handle mouse interaction
         if ( _mouse->isDown(MouseButtonCode::Left) )
         {
             if ( !_initial_click_processed )
             {
-                computeCursorPosition( widget_id );
+                computeCursorPosition( node_id );
             }
 
             if ( _mouse->moved() )
             {
-                float drag_x = _mouse->getPosition().x - widget->rect.x;
+                float drag_x = _mouse->getPosition().x - widget->quad.x;
                 Cursor::PositionFromClick drag = getPositionFromClick(drag_x, _gui->getFont(), widget->text.font_size, _current_edit.buffer, *_current_edit.buffer_size);
 
                 if (drag.pos != _position)
@@ -47,7 +47,7 @@ namespace kege::ui{
 
                     float min_length = kege::min(drag.length, _click.length);
 
-                    _rect_selection.x = widget->rect.x + min_length;
+                    _rect_selection.x = widget->quad.x + min_length;
                     _rect_selection.y = _rect_cursor.y;
                     _rect_selection.height = _rect_cursor.height;
                     _rect_selection.width = kege::max(drag.length, _click.length) - kege::min(drag.length, _click.length);
@@ -62,7 +62,7 @@ namespace kege::ui{
         }
     }
 
-    void Cursor::processKeyboardInputs(const ui::WidgetId& widget_id, int font_size)
+    void Cursor::processKeyboardInputs(const ui::NodeId& node_id, int font_size)
     {
         Key const* keys = _keyboard->getActiveKeys();
         int key_count = _keyboard->getActiveKeyCount();
@@ -77,7 +77,7 @@ namespace kege::ui{
                 *_current_edit.buffer_size,
                 _current_edit.buffer_capacity,
                 _gui->getFont(),
-                font_size, widget_id
+                font_size, node_id
             );
         }
     }
@@ -91,7 +91,7 @@ namespace kege::ui{
         size_t& buffer_capacity,
         const ref::Font& font,
         int font_size,
-        const ui::WidgetId& widget_id
+        const ui::NodeId& node_id
     )
     {
         if (key.action == KeyState::Release)
@@ -239,7 +239,7 @@ namespace kege::ui{
             case kege::KEY_A:
                 if (_control || _super) // Ctrl+A to select all
                 {
-                    selectAll(widget_id, buffer, buffer_size);
+                    selectAll(node_id, buffer, buffer_size);
                 }
                 else
                 {
@@ -438,7 +438,7 @@ namespace kege::ui{
 //
 //        _position = 0;
 //        float char_width;
-//        float max_length = _gui->_input->_current_position.x - _gui->elem( uid )->rect.x;
+//        float max_length = _gui->_input->_current_position.x - _gui->elem( uid )->quad.x;
 //        for ( const char* s = str; *s != 0; ++s )
 //        {
 //            char_width = font->getCharWidth( font_size, *s );
@@ -489,14 +489,14 @@ namespace kege::ui{
         }
     }
 
-    void Cursor::startEditing(const ui::ID user_id, const WidgetId& widget_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity)
+    void Cursor::startEditing(const ui::ID user_id, const NodeId& node_id, InputType type, char* buffer, size_t& buffer_size, size_t buffer_capacity)
     {
-        Widget* widget = _gui->elem(widget_id);
+        ui::Node* widget = _gui->at(node_id);
         if (!widget) return;
 
-        if (widget->rect.height > 0) _rect_cursor.height = widget->rect.height;
-        _rect_cursor.x = widget->rect.x;
-        _rect_cursor.y = widget->rect.y;
+        if (widget->quad.height > 0) _rect_cursor.height = widget->quad.height;
+        _rect_cursor.x = widget->quad.x;
+        _rect_cursor.y = widget->quad.y;
 
         _current_edit.user_id = user_id;
         _current_edit.buffer_capacity = buffer_capacity;
@@ -516,38 +516,38 @@ namespace kege::ui{
         _visible = false;
     }
     
-    void Cursor::selectAll(const ui::WidgetId& widget_id, const char* str, size_t size)
+    void Cursor::selectAll(const ui::NodeId& node_id, const char* str, size_t size)
     {
         _selection_anchor = 0;
         _position = size;
         _selection_active = true;
         _visible = true;
 
-        Widget* widget = _gui->elem(widget_id);
+        ui::Node* widget = _gui->at(node_id);
         if (widget)
         {
             Cursor::PositionFromClick result = getPositionFromClick
             (
-                widget->rect.x + widget->rect.width,
+                widget->quad.x + widget->quad.width,
                 _gui->getFont(),
                 widget->text.font_size,
                 str,
                 size
             );
 
-            _rect_selection.x = widget->rect.x;
-            _rect_selection.y = widget->rect.y;
-            _rect_selection.height = widget->rect.height;
+            _rect_selection.x = widget->quad.x;
+            _rect_selection.y = widget->quad.y;
+            _rect_selection.height = widget->quad.height;
             _rect_selection.width = result.length;
         }
     }
 
-    void Cursor::computeCursorPosition(const ui::WidgetId& widget_id)
+    void Cursor::computeCursorPosition(const ui::NodeId& node_id)
     {
-        Widget* widget = _gui->elem(widget_id);
+        ui::Node* widget = _gui->at(node_id);
         if (!widget) return;
 
-        float click_x = _mouse->getPosition().x - widget->rect.x;
+        float click_x = _mouse->getPosition().x - widget->quad.x;
         _click = getPositionFromClick
         (
             click_x,
@@ -561,7 +561,7 @@ namespace kege::ui{
         _selection_active = false;
         _initial_click_processed = true;
 
-        _rect_cursor.x = widget->rect.x + _click.length;
+        _rect_cursor.x = widget->quad.x + _click.length;
     }
 
     const ui::Rect& Cursor::getSelectionRect()const

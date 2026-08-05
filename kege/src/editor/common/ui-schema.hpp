@@ -99,7 +99,7 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        ui->push({.style = &ui->theme()->column});
+        ui->push({ .wid = ui->newElem(ui->theme()->column) });
         ui->label(meta.text);
         bool active = ui->slider< DataType >(id, value, meta.hint.min, meta.hint.max);
         ui->pop();
@@ -119,7 +119,7 @@ namespace kege::ui{
         ui::ID id[2];
         id[0] = uid[ id_offset++ ];
         id[1] = uid[ id_offset++ ];
-        ui->push({.style = &ui->theme()->column});
+        ui->push({ .wid = ui->newElem(ui->theme()->column) });
         ui->label(meta.text);
         bool active = ui->slidebar< DataType >(id, value, meta.hint.min, meta.hint.max);
         ui->pop();
@@ -136,12 +136,12 @@ namespace kege::ui{
         const PropertyMeta& meta
     )
     {
-        ui->push({.style = &ui->theme()->row});
+        ui->push({ .wid = ui->newElem(ui->theme()->row) });
         ui->put
         ({
-            .rect = {meta.text.x, meta.text.y, meta.text.width, meta.text.height},
-            .text = {meta.text.ptr},
-            .color = 0xFFFFFF00,
+            .wid = ui->newElem({.quad_color = 0xFFFFFF00}),
+            .quad = {meta.text.x, meta.text.y, meta.text.width, static_cast<float>(meta.text.font_size)},
+            .text = meta.text,
             .mouseover = false
         });
         bool active = ui->scrubber< DataType >(type, uid[ id_offset++ ], value, meta.hint.min, meta.hint.max);
@@ -275,7 +275,7 @@ namespace kege::ui{
             case PropertyType::String:
             {
                 //const std::string& str = *(std::string*)data;
-                //p.label.ptr = str.c_str();
+                //p.label.data = str.c_str();
                 //ui->label(p.label);
                 break;
             }
@@ -393,7 +393,7 @@ namespace kege::ui{
         const Property<Component>(&props)[N]
     )
     {
-        ui->push({.style = &ui->theme()->group});
+        ui->push({ .wid = ui->newElem(ui->theme()->group) });
         bool modified = false;
         for ( auto& p : props)
         {

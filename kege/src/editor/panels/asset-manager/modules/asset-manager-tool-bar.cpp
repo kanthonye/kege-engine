@@ -23,7 +23,7 @@ namespace kege::ui{
     void AssetManagerToolBar::update()
     {
         // Start a row for navigation controls
-        _ui->push({.style = &_ui->theme()->navbar});
+        _ui->push({.wid = _ui->newElem(_ui->theme()->navbar) });
         {
             if ( _ui->charButn(_uid[0], "+",7,2) )
             {
@@ -77,9 +77,9 @@ namespace kege::ui{
     ,   _search_size(0)
     {
         _search_buffer[0] = 0;
-        text.ptr = _search_buffer;
+        text.data = _search_buffer;
         text.width = 100;
-        text.height = 20;
+        text.font_size = 20;
         text.x = 0;
         text.y = 0;
         text.color = 0xffffffff;

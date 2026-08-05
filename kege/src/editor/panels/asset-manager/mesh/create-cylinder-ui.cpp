@@ -20,32 +20,35 @@ namespace kege::ui{
         }
         ui->push
         ({
-            .rect = {0,0,0,0},
-            .color = 0xFFFFFF00,
-            .padding = {20,20,20,20},
-            .gap = {2,2},
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::DOWN,
-            },
-            .width = ui::extend(),
-            .height = ui::extend(),
+            .wid = ui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0xFFFFFF00,
+                .padding = {20,20,20,20},
+                .alignment =
+                {
+                    .gap = {2,2},
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = ui::AlignDir::DOWN,
+                },
+            }),
+            .quad = {0,0,0,0},
         });
         {
             ui->labelInput("Name:", _uid[1], _text_input_mode, _text);
-            ui->put({.rect = {0,0,50,20}});
+            ui->put({.quad = {0,0,50,20}});
 
-            ui::Text text = {.width = 50, .height = 20, .font_size = 20};
+            ui::Text text = {.width = 50, .font_size = 20};
 
-            text.ptr = "Radius:";
+            text.data = "Radius:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _radius);
-            text.ptr = "Height:";
+            text.data = "Height:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _height);
-            text.ptr = "Rings:";
+            text.data = "Rings:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _rings);
 
-            ui->put({.style = &ui->theme()->y_seperator});
+            ui->put({.wid = ui->newElem(ui->theme()->y_seperator)});
 
             //uint64_t user_id = UI_BASE_ID();
             if( ui->submit(_uid[4], "Submit") )

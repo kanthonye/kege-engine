@@ -28,9 +28,10 @@ namespace kege{
     kege::ui::Text GUI::text( const char* str, int font_size )
     {
         kege::ui::Text text;
-        computeExtent(font_size, str, text.width, text.height);
+        float text_height = font_size;
+        computeExtent(font_size, str, text.width, text_height);
         text.font_size = font_size;
-        text.ptr = str;
+        text.data = str;
         return text;
     }
 
@@ -44,24 +45,41 @@ namespace kege{
         }
     }
 
-    kege::ui::WidgetId GUI::pushRoot( const kege::ui::WidgetDesc& desc )
+//    kege::ui::NodeId GUI::pushRootStyle( const kege::ui::Style& style )
+//    {
+//        kege::ui::Node* node = newNode({ .wid = newElem({ .style = style }) });
+//        return _layouts[ _layout_index ].pushRoot( node );
+//    }
+//
+//    kege::ui::NodeId GUI::putRootStyle( const kege::ui::Style& style )
+//    {
+//        kege::ui::Node* node = newNode({ .wid = newElem({ .style = style }) });
+//        return _layouts[ _layout_index ].putRoot( node );
+//    }
+//    kege::ui::NodeId GUI::pushStyle( const kege::ui::Style& style )
+//    {
+//        kege::ui::Node* node = newNode({ .wid = newElem({ .style = style }) });
+//        return _layouts[ _layout_index ].push( node );
+//    }
+//    kege::ui::NodeId GUI::putStyle( const kege::ui::Style& style )
+//    {
+//        kege::ui::Node* node = newNode({ .wid = newElem({ .style = style }) });
+//        return _layouts[ _layout_index ].put( node );
+//    }
+
+    void GUI::beginRoot()
     {
-        return _layouts[ _layout_index ].pushRoot( desc );
+        _layouts[ _layout_index ].beginRoot();
     }
 
-    kege::ui::WidgetId GUI::putRoot( const kege::ui::WidgetDesc& desc )
+    void GUI::endRoot()
     {
-        return _layouts[ _layout_index ].putRoot( desc );
+        _layouts[ _layout_index ].endRoot();
     }
 
-    void GUI::popRoot()
+    kege::ui::NodeId GUI::push( const kege::ui::NodeDesc& desc )
     {
-        return _layouts[ _layout_index ].popRoot();
-    }
-
-    kege::ui::WidgetId GUI::push( const kege::ui::WidgetDesc& desc )
-    {
-        return _layouts[ _layout_index ].push( desc );
+        return _layouts[ _layout_index ].push( newNode( desc ) );
     }
 
     uint32_t GUI::pop()
@@ -69,12 +87,12 @@ namespace kege{
         return _layouts[ _layout_index ].pop();
     }
 
-    kege::ui::WidgetId GUI::put( const kege::ui::WidgetDesc& desc )
+    kege::ui::NodeId GUI::put( const kege::ui::NodeDesc& desc )
     {
-        return _layouts[ _layout_index ].put( desc );
+        return _layouts[ _layout_index ].put( newNode( desc ) );
     }
 
-    kege::ui::WidgetId GUI::text( const kege::ui::Text& text )
+    kege::ui::NodeId GUI::text( const kege::ui::Text& text )
     {
         return _layouts[ _layout_index ].text( text );
     }
@@ -139,78 +157,75 @@ namespace kege{
         return _curr.focus.user_id == uid && _curr.focus.user_id != 0;
     }
 
-    const kege::ui::Widget* GUI::elem( const kege::ui::WidgetId& widget_id ) const
+//    kege::ui::Widget* GUI::elemParent( const kege::ui::NodeId& node_id )
+//    {
+//        if ( _nodes.size() <= node_id.index)
+//        {
+//            kege::Log::error << "out of bound NodeId index" <<kege::Log::nl;
+//            return nullptr;
+//        }
+//        if ( _nodes[ node_id.index ].version != node_id.version ) return nullptr;
+//        return &_nodes[ _nodes[ node_id.index ].parent ];
+//    }
+
+    const kege::ui::Elem* GUI::elem( const kege::ui::Node* node ) const
     {
-        if ( _widgets.size() <= widget_id.index)
-        {
-            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
-            return nullptr;
-        }
-        if ( _widgets[ widget_id.index ].user_id != widget_id.id) return nullptr;
-        return &_widgets[ widget_id.index ];
+        return &_elements[ node->wid.index ];
     }
 
-    kege::ui::Widget* GUI::elem( const kege::ui::WidgetId& widget_id )
+    kege::ui::Elem* GUI::elem( const kege::ui::Node* node )
     {
-        if ( _widgets.size() <= widget_id.index)
-        {
-            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
-            return nullptr;
-        }
-        if ( _widgets[ widget_id.index ].version != widget_id.version ) return nullptr;
-        return &_widgets[ widget_id.index ];
+        return &_elements[ node->wid.index ];
     }
 
-    kege::ui::Widget* GUI::elemParent( const kege::ui::WidgetId& widget_id )
+    const kege::ui::Elem* GUI::elem( const kege::ui::NodeId& id ) const
     {
-        if ( _widgets.size() <= widget_id.index)
-        {
-            kege::Log::error << "out of bound WidgetId index" <<kege::Log::nl;
-            return nullptr;
-        }
-        if ( _widgets[ widget_id.index ].version != widget_id.version ) return nullptr;
-        return &_widgets[ _widgets[ widget_id.index ].parent ];
+        return &_elements[ _nodes[ id.index ].wid.index ];
     }
 
-    const kege::ui::Widget* GUI::at( uint32_t node_id )const
+    kege::ui::Elem* GUI::elem( const kege::ui::NodeId& id )
     {
-        return &_widgets[ node_id ];
+        return &_elements[ _nodes[ id.index ].wid.index ];
     }
 
-    kege::ui::Widget* GUI::at( uint32_t index )
+    const kege::ui::Node* GUI::at( const kege::ui::NodeId& id )const
     {
-        return &_widgets[ index ];
+        return &_nodes[ id.index ];
+    }
+
+    kege::ui::Node* GUI::at( const kege::ui::NodeId& id )
+    {
+        return &_nodes[ id.index ];
     }
 
     uint32_t GUI::parent( uint32_t index )const
     {
-        return _widgets[ index ].parent;
+        return _nodes[ index ].parent;
     }
 
     uint32_t GUI::head( uint32_t index )const
     {
-        return _widgets[ index ].head;
+        return _nodes[ index ].head;
     }
 
     uint32_t GUI::tail( uint32_t index )const
     {
-        return _widgets[ index ].tail;
+        return _nodes[ index ].tail;
     }
 
     uint32_t GUI::next( uint32_t index )const
     {
-        const ui::Widget& w = _widgets[ index ];
-        return w.next;
+        return _nodes[ index ].next;
     }
 
     uint32_t GUI::prev( uint32_t index )const
     {
-        return _widgets[ index ].next;
+        return _nodes[ index ].prev;
     }
 
     uint32_t GUI::count( uint32_t index )const
     {
-        return _widgets[ index ].count;
+        return _nodes[ index ].count;
     }
 
     void GUI::setFont( const kege::ref::Font& font )
@@ -273,9 +288,77 @@ namespace kege{
         return _rect;
     }
 
+    ui::Record GUI::getHitRecord()const
+    {
+        return _curr.hit;
+    }
+
+    ui::Record GUI::getHotRecord()const
+    {
+        return _curr.hot;
+    }
+
+    ui::ID GUI::getHitId()const
+    {
+        return _nodes[ _curr.hit.index ].user_id;
+    }
+
     bool GUI::hasHit()const
     {
         return _curr.hit.user_id != 0;
+    }
+
+//    kege::ui::Record GUI::getHotElem( bool button )
+//    {
+//        for (int layer_index = int(_layers.size() - 1); 0 <= layer_index; --layer_index)
+//        {
+//            kege::ui::Record result = _layers[ layer_index ].getHotElem( button );
+//            if ( result.user_id != 0 )
+//            {
+//                return result;
+//            }
+//        }
+//        return {};
+//    }
+    kege::ui::Record GUI::getHotElem(uint32_t node_index, bool button)
+    {
+        const kege::ui::Node* node = &_nodes[ node_index ];
+        if ( !node->visible || node->inactive )
+            return {};
+
+        for (uint32_t child_index = _nodes[ node_index ].head; child_index != 0; child_index = _nodes[ child_index ].next)
+        {
+            kege::ui::Record record = getHotElem( child_index, button );
+            if ( record.user_id != 0 )
+            {
+                return record;
+            }
+        }
+
+        if ( node->quad.width == 0.f || node->quad.height == 0.f )
+            return {};
+
+        if (button)
+        {
+            if (node->single_click == kege::ui::ClickTrigger::Disable &&
+                node->double_click == kege::ui::ClickTrigger::Disable)
+            {
+                return {};
+            }
+        }
+
+        if ( !node->mouseover )
+            return {};
+
+        if ( testPointVsRect( getPointerPosition(), node->quad ) )
+        {
+            return kege::ui::Record
+            {
+                .user_id = node->user_id.value,
+                .index = node_index,
+            };
+        }
+        return {};
     }
 
     kege::ui::Record GUI::getHotElem(bool button)
@@ -283,7 +366,7 @@ namespace kege{
         kege::ui::Record hot = {};
         for (int i = 0; i < _layouts.size(); ++i)
         {
-            kege::ui::Record result = _layouts[ i ].getHotElem( button );
+            kege::ui::Record result = getHotElem( _layouts[i]._head, button );
             if ( result.user_id != 0 )
             {
                 hot = result;
@@ -309,25 +392,23 @@ namespace kege{
     void GUI::handleInputEvents()
     {
         _next.hit.user_id = 0;
-
-        // when mouse button not down scan for hot element
-
         _mouse = _input_manager->getMouse();
-
         _left_click_state = _mouse->isDown( kege::MouseButtonCode::Left );
+
+        // when mouse left button is not down, scan for hot element
         if ( !_left_click_state )
         {
+            // if a click was registered in the previous frame and left mouse
+            // button is released this frame, process click on-release selection.
             if ( _click_registered )
             {
                 _click_registered = false;
-                //_active_index = find( _active );
-
-                if (_next.hot.index != 0 && _next.hot.index < _widgets.size())
+                if (_next.hot.index != 0 && _next.hot.index < _nodes.size())
                 {
                     kege::dvec2 position = _mouse->getClickPosition( kege::MouseButtonCode::Left );
-                    if( testPointVsRect( position, _widgets[ _next.pressing.index ].rect ) )
+                    if( testPointVsRect( position, _nodes[ _next.pressing.index ].quad ) )
                     {
-                        if (_widgets[ _next.pressing.index ].single_click == kege::ui::ClickTrigger::OnRelease)
+                        if (_nodes[ _next.pressing.index ].single_click == kege::ui::ClickTrigger::OnRelease)
                         {
                             _next.focus = _next.hit = _next.pressing;
                             return;
@@ -336,9 +417,10 @@ namespace kege{
                 }
             }
 
-            _next.hot = getHotElem(false);
+            // then handle getting the next hot element.
+            _next.hot = getHotElem( _click_registered );
             _next.pressing = {};
-            //std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
+            std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
         }
         else if ( _left_click_state && !_click_registered )
         {
@@ -353,14 +435,14 @@ namespace kege{
             if ( _next.pressing.user_id == 0 && _next.hot.user_id != 0 )
             {
                 kege::dvec2 position = _mouse->getClickPosition( kege::MouseButtonCode::Left );
-                if( testPointVsRect( position, _widgets[ _next.hot.index ].rect ) )
+                if( testPointVsRect( position, _nodes[ _next.hot.index ].quad ) )
                 {
                     _next.clicks = (_mouse->isDoubleClick( kege::MouseButtonCode::Left ) ? 2 : 1);
                     _next.pressing = _next.hot;
                     _next.focus = _next.hot;
 
-                    if (_widgets[ _next.hot.index ].single_click == kege::ui::ClickTrigger::Immediate ||
-                        _widgets[ _next.hot.index ].single_click == kege::ui::ClickTrigger::Continuous)
+                    if (_nodes[ _next.hot.index ].single_click == kege::ui::ClickTrigger::Immediate ||
+                        _nodes[ _next.hot.index ].single_click == kege::ui::ClickTrigger::Continuous)
                     {
                         _next.hit = _next.hot;
                     }
@@ -369,8 +451,8 @@ namespace kege{
             else if ( _next.pressing.user_id != 0 )
             {
                 //_active_index = find( _active );
-                if (_widgets[ _next.pressing.index ].single_click == kege::ui::ClickTrigger::Continuous ||
-                    _widgets[ _next.pressing.index ].double_click == kege::ui::ClickTrigger::Continuous)
+                if (_nodes[ _next.pressing.index ].single_click == kege::ui::ClickTrigger::Continuous ||
+                    _nodes[ _next.pressing.index ].double_click == kege::ui::ClickTrigger::Continuous)
                 {
                     _next.hit = _next.pressing;
                 }
@@ -382,10 +464,127 @@ namespace kege{
         }
     }
 
+    bool GUI::isMouseDragging() const
+    {
+        return _drag_state;
+    }
+
+    bool GUI::isSelected(kege::ui::ID id) const
+    {
+        return ( _selected.empty() ) ? false : _selected.find( id ) != _selected.end();
+    }
+
+    void GUI::updateSelectionList()
+    {
+        if( leftClickDown() && !_updating_selection )
+        {
+            _updating_selection = true;
+            if( hasHit() )
+            {
+                if ( _nodes[ _curr.hit.index ].selectable )
+                {
+                    auto it = _selected.find(getHitId());
+                    Modifiers mods = Modifiers::Shift | Modifiers::Control;
+                    // if item is not in list add it
+                    if ( it == _selected.end() )
+                    {
+                        if ( contain( _input_manager->getMouse()->getModifiers(), mods ) )
+                        {
+                            _selected.insert( getHitId() );
+                        }
+                        else
+                        {
+                            _selected.clear();
+                            _selected.insert( getHitId() );
+                        }
+                    }
+                    // else if item already exist and shift is down them remove item
+                    else if( contain(_input_manager->getMouse()->getModifiers(), mods) )
+                    {
+                        _selected.erase(it);
+                    }
+                }
+            }
+            else
+            {
+                _selected.clear();
+            }
+        }
+        else if ( !leftClickDown() && _updating_selection )
+        {
+            _updating_selection = false;
+        }
+    }
+
+    void GUI::updateDragState()
+    {
+        if ( _curr.hit.user_id == 0 && leftClickDown() && _input_manager->getMouse()->moved() )
+        {
+            _drag_state = true;
+        }
+        else if ( !leftClickDown() && _drag_state )
+        {
+            _drag_state = false;
+        }
+    }
+
+    const kege::ui::Rect& GUI::getSelectionRect()const
+    {
+        return _marquee_rect;
+    }
+
+    bool GUI::isCastingSelectionRect(const kege::ui::ID& id)
+    {
+        if( leftClickDown() && _drag_state == true )
+        {
+            if ( _next.hot.user_id == id.value && _marquee_is_occupied.value == 0 )
+            {
+                _marquee_is_occupied = id;
+                _marquee_start.x = _input_manager->getMouse()->getPosition().x;
+                _marquee_start.y = _input_manager->getMouse()->getPosition().y;
+            }
+        }
+        return _marquee_is_occupied == id;
+    }
+
+    void GUI::trySelectByRect( const kege::ui::NodeId& node_id )
+    {
+        ui::Node* node = at(node_id);
+        if ( node )
+        {
+            if (ui::checkOverlap(node->quad, _marquee_rect))
+            {
+                auto it = _selected.find(node->user_id);
+                if ( it == _selected.end() )
+                {
+                    _selected.insert( node->user_id );
+                }
+            }
+        }
+    }
+
+    void GUI::updateSelectionRect()
+    {
+        if( leftClickDown() && _marquee_is_occupied.value != 0 && _drag_state == true )
+        {
+            _marquee_rect.x = kege::min(_marquee_start.x, _input_manager->getMouse()->getPosition().x);
+            _marquee_rect.y = kege::min(_marquee_start.y, _input_manager->getMouse()->getPosition().y);
+            _marquee_rect.width = abs(_marquee_start.x - _input_manager->getMouse()->getPosition().x);
+            _marquee_rect.height = abs(_marquee_start.y - _input_manager->getMouse()->getPosition().y);
+        }
+        else if( !leftClickDown() && _marquee_is_occupied.value != 0 )
+        {
+            _marquee_is_occupied.value = 0;
+            _marquee_rect = {};
+        }
+    }
+
     void GUI::begin( double dms )
     {
         _dms = dms;
         _widget_count = 1;
+        _node_count = 0;
+        _elem_count = 0;
         _deferred_operations.reset();
 
         // update current hit
@@ -420,9 +619,17 @@ namespace kege{
             _layouts[i].end();
         }
         handleInputEvents();
+        updateSelectionRect();
+        updateSelectionList();
+        updateDragState();
         _deferred_operations.execute( this );
         //popLayer();
     }
+
+//    bool GUI::onTextInput(const ui::NodeId& node_id, char* str, size_t& size)
+//    {
+//        return _cursor.onInput(Cursor::InputType::Any, uid, _font, str, size);
+//    }
 
     bool GUI::initialize( const GuiConfig& config )
     {
@@ -435,7 +642,8 @@ namespace kege{
         _rect.x = 0;
         _rect.y = 0;
 
-        _widgets.resize( config.max_widgets );
+        _elements.resize( config.max_widgets );
+        _nodes.resize( config.max_widgets );
         _layouts.resize( config.max_layouts );
 
         kege::string font_file = kege::vfs( config.font_path.c_str() );
@@ -689,10 +897,22 @@ namespace kege{
         batch->first_element = 0;
         batch->element_count = 4;
 
+        const ui::Node* node = nullptr;
         for (int32_t i = 0; i < layout.getLayerCount(); ++i)
         {
             const kege::ui::Layer& layer = layout.getLayer(i);
-            renderLayer( batch, layout, layer, first_instance );
+            for (uint32_t node_index = layer._head; node_index != 0; node_index = _nodes[ node_index ].layer.next)
+            {
+                node = &_nodes.at( node_index );
+                if ( kege::ui::checkOverlap( layout.getRect(), node->quad ))
+                {
+                    renderWidget( batch, layout, node, layout.getRect() );
+                }
+                else
+                {
+                    //printf("checkOverlap\n");
+                }
+            }
         }
     }
 
@@ -704,13 +924,13 @@ namespace kege{
         uint32_t first_instance
     )
     {
-        const ui::Widget* widget = nullptr;
+        const ui::Node* node = nullptr;
         for (uint32_t root = layer.getHeadRoot(); root != 0; root = layer.getNextRoot( root ))
         {
-            widget = at( root );
-            if ( kege::ui::checkOverlap( layout.getRect(), widget->rect ))
+            node = &_nodes.at( root );
+            if ( kege::ui::checkOverlap( layout.getRect(), node->quad ))
             {
-                renderWidget( batch, layout, widget, layout.getRect() );
+                renderWidget( batch, layout, node, layout.getRect() );
             }
             else
             {
@@ -723,90 +943,106 @@ namespace kege{
     (
         kege::ui::DrawBatch* batch,
         const kege::ui::Layout& layout,
-        const kege::ui::Widget* widget,
+        const kege::ui::Node* node,
         kege::ui::Rect clip_rect
     )
     {
         kege::ui::DrawInstance& instance = _draw_buffer[ batch->instance_count++ ];
-        instance.rect = widget->rect;
-        instance.texel = widget->texel;
-        instance.border = widget->border;
-        instance.clip_rect = clip_rect;
-        instance.color = widget->color;
-        instance.texr_info = widget->texr_info;
+        kege::ui::Elem* elem = &_elements[ node->wid.index ];
+        instance.rect.x = node->quad.x;
+        instance.rect.y = node->quad.y;
+        instance.rect.width = node->quad.width;
+        instance.rect.height = node->quad.height;
+        instance.color = isSelected(node->user_id)? 0xFFFFFF30 : node->quad.color;
 
-        if ( widget->clip_overflow )
+        instance.clip_rect.x = clip_rect.x;
+        instance.clip_rect.y = clip_rect.y;
+        instance.clip_rect.width = clip_rect.width;
+        instance.clip_rect.height = clip_rect.height;
+
+        instance.texel.x = elem->texr_info.x;
+        instance.texel.y = elem->texr_info.y;
+        instance.texel.width = elem->texr_info.width;
+        instance.texel.height = elem->texr_info.height;
+
+        instance.border.radius = elem->corner_curves;
+        instance.border.width = elem->border.width;
+        instance.border.color = elem->border.color;
+        //instance.clip_rect = clip_rect;
+        instance.texr_info = elem->texr_id;
+
+        if ( node->clip_overflow )
         {
-            clip_rect = widget->rect;
-            clip_rect.x += widget->padding.left;
-            clip_rect.y += widget->padding.above;
-            clip_rect.width -= widget->padding.left + widget->padding.right;
-            clip_rect.height -= widget->padding.above + widget->padding.below;
+            clip_rect = node->quad;
+            clip_rect.x += elem->padding.left;
+            clip_rect.y += elem->padding.above;
+            clip_rect.width -= elem->padding.left + elem->padding.right;
+            clip_rect.height -= elem->padding.above + elem->padding.below;
         }
 
-        if ( widget->text.ptr && _font )
+        if ( node->text && _font )
         {
-            kege::vec2 start = { widget->rect.x, widget->rect.y };
-            const kege::ui::Padding& padding = ((widget->style) ? widget->style->padding : widget->padding);
+            kege::vec2 start = { node->quad.x, node->quad.y };
+            const kege::ui::Padding& padding = elem->padding;
 
-            switch ( ((widget->style) ? widget->style->align_text : widget->text.align) )
-            {
-                case kege::ui::AlignText::Center:
-                {
-                    start.x += (widget->rect.width  - widget->text.width) * 0.5;
-                    start.y += (widget->rect.height - widget->text.height) * 0.5;
-                    break;
-                }
-
-                case kege::ui::AlignText::Right:
-                {
-                    if ( widget->text.width != 0 )
-                    {
-                        start.x += ( widget->rect.width - widget->text.width - padding.right);
-                    }
-                    if ( widget->text.height != 0 )
-                    {
-                        start.y +=  widget->text.y + padding.above;
-                    }
-                    break;
-                }
-
-                case kege::ui::AlignText::Left:
-                default:
-                {
-                    if ( widget->text.width != 0 )
-                    {
-                        start.x += widget->text.x + padding.left;
-                    }
-                    if ( widget->text.height != 0 )
-                    {
-                        start.y += widget->text.y + padding.above;
-                    }
-                    break;
-                };
-            }
+//            switch ( widget->text_align )
+//            {
+//                case kege::ui::AlignText::Center:
+//                {
+//                    //start.x += (widget->rect.width  - widget->text.width) * 0.5;
+//                    //start.y += (widget->rect.height - widget->text.height) * 0.5;
+//                    break;
+//                }
+//
+//                case kege::ui::AlignText::Right:
+//                {
+//                    if ( widget->text.width != 0 )
+//                    {
+//                        start.x += ( widget->rect.width - widget->text.width - padding.right);
+//                    }
+//                    if ( widget->text.height != 0 )
+//                    {
+//                        start.y +=  widget->text.y + padding.above;
+//                    }
+//                    break;
+//                }
+//
+//                case kege::ui::AlignText::Left:
+//                default:
+//                {
+//                    if ( widget->text.width != 0 )
+//                    {
+//                        start.x += widget->text.x + padding.left;
+//                    }
+//                    if ( widget->text.height != 0 )
+//                    {
+//                        start.y += widget->text.y + padding.above;
+//                    }
+//                    break;
+//                };
+//            }
 
             renderText
             (
                 batch,
                 start,
-                widget->rect.width - padding.left - padding.right,
-                widget->text.font_size,
-                widget->text.color,
-                widget->alignment.wrap.enable,
-                widget->text.ptr,
+                node->quad.width - padding.left - padding.right,
+                node->text.font_size,
+                node->text.color,
+                elem->text_wrap,
+                node->text.data,
                 clip_rect
             );
         }
 
         if ( clip_rect.width > 0 && clip_rect.height > 0 )
         {
-            for ( uint32_t eid = widget->head; eid != 0; eid = _widgets[ eid ].next )
+            for ( uint32_t node_index = node->layer.head; node_index != 0; node_index = _nodes[ node_index ].layer.next )
             {
-                const kege::ui::Widget* child = &_widgets[ eid ];
-                if ( kege::ui::checkOverlap( child->rect, clip_rect ) )
+                const kege::ui::Node* child = &_nodes[ node_index ];
+                if ( kege::ui::checkOverlap( child->quad, clip_rect ) )
                 {
-                    renderWidget( batch, layout,child, clip_rect );
+                    renderWidget( batch, layout, child, clip_rect );
                 }
                 else
                 {
@@ -839,7 +1075,7 @@ namespace kege{
         kege::ui::Extent extent = {};
         float baseline = font_size - 1;
 
-        for (const char* c = text; 0 < *c && batch->instance_count < _widgets.size(); ++c )
+        for (const char* c = text; 0 < *c && batch->instance_count < _nodes.size(); ++c )
         {
             const kege::Glyph& g = _font->glyphs()[ *c ];
             float fw  = font_size * g.scaled_width;
@@ -897,7 +1133,7 @@ namespace kege{
 
     bool GUI::indexIsValid( uint32_t index ) const
     {
-        return (index < _widgets.size());
+        return (index < _nodes.size());
     }
 
     kege::ui::Widget* GUI::newWidget()
@@ -926,6 +1162,78 @@ namespace kege{
         return widget;
     }
 
+    kege::ui::WID GUI::newElem( const kege::ui::Elem& elem )
+    {
+        if ( !indexIsValid( _node_count ) )
+        {
+            kege::Log::error << "exceeding maximum ui widget capacity.";
+            return {0};
+        }
+
+        //uint32_t elem_index = _elem_count;
+        _elem_count += 1;
+        
+        kege::ui::Elem* e = &_elements.at( _elem_count );
+        memcpy(e, &elem, sizeof( kege::ui::Elem ));
+        e->wid.index = _elem_count;
+        //e->text = elem.text;
+
+        return e->wid;
+    }
+
+    kege::ui::Node* GUI::newNode( const kege::ui::NodeDesc& desc )
+    {
+        if ( !indexIsValid( _node_count ) )
+        {
+            kege::Log::error << "exceeding maximum ui widget capacity.";
+            return nullptr;
+        }
+
+        _node_count += 1;
+        
+        kege::ui::Node* node = &_nodes.at( _node_count );
+        node->version = node->version + 1;
+        node->index   = _node_count;
+        node->parent  = 0;
+        node->count   = 0;
+        node->head    = 0;
+        node->tail    = 0;
+        node->next    = 0;
+        node->prev    = 0;
+        node->name    = desc.name;
+
+        node->layer = {};
+
+        node->wid = desc.wid;
+        node->user_id = desc.user_id;
+        node->quad = desc.quad;
+        node->text = desc.text;
+        node->single_click = desc.single_click;
+        node->double_click = desc.double_click;
+        node->mouseover = desc.mouseover;
+        node->inactive = desc.inactive;
+        node->visible = desc.visible;
+        node->selectable = desc.selectable;
+        node->clip_overflow = desc.clip_overflow;
+
+        if( desc.wid.index != 0 )
+        {
+            kege::ui::Elem& elem = _elements[ desc.wid.index ];
+            if( elem.quad_color.has )
+                node->quad.color = elem.quad_color.value;
+            
+            if( elem.text_color.has )
+                node->text.color = elem.text_color.value;
+
+            if( elem.width.type == ui::SizingType::Fixed )
+                node->quad.width = elem.width.size;
+            
+            if( elem.height.type == ui::SizingType::Fixed )
+                node->quad.height = elem.height.size;
+        }
+        return node;
+    }
+
     const kege::mat44& GUI::getProjection()const
     {
         return _proj_matrix;
@@ -943,6 +1251,8 @@ namespace kege{
     ,   _window( window )
     ,   _cursor( this )
     ,   _widget_count( 0 )
+    ,   _updating_selection( false )
+    ,   _drag_state( false )
     {
         _mouse = input_manager->getMouse();
     }

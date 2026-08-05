@@ -47,10 +47,10 @@ namespace kege::ui{
         if (type == "OpenCreateMeshWindow")
         {
             _open_window = true;
-            _rect.width = 600;
-            _rect.height = 400;
-            _rect.x = (_ui->gui()->getRect().width - _rect.width) * 0.5;
-            _rect.y = (_ui->gui()->getRect().height - _rect.height) * 0.5;
+            _quad.width = 600;
+            _quad.height = 400;
+            _quad.x = (_ui->gui()->getRect().width - _quad.width) * 0.5;
+            _quad.y = (_ui->gui()->getRect().height - _quad.height) * 0.5;
         }
     }
     
@@ -60,59 +60,67 @@ namespace kege::ui{
 
         uint16_t border_radius = 6;
         _open_window = true;
-        _rect.width = 600;
-        _rect.height = 400;
-        _rect.x = (_ui->gui()->getRect().width - _rect.width) * 0.5;
-        _rect.y = (_ui->gui()->getRect().height - _rect.height) * 0.5;
+        _quad.width = 600;
+        _quad.height = 400;
+        _quad.color = 0x18141D00;
+        _quad.x = (_ui->gui()->getRect().width - _quad.width) * 0.5;
+        _quad.y = (_ui->gui()->getRect().height - _quad.height) * 0.5;
 
         // Generate the outter container for the create mesh window
         _ui->push
         ({
-            .rect = _rect,
-            .position = Positioning::Independent,
-            .color = 0x18141D00,
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::RIGHT,
-            }
+            .wid = _ui->newElem
+            ({
+                .position = Positioning::Independent,
+                .alignment =
+                {
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::RIGHT},
+                }
+            }),
+            .quad = _quad,
         });
         {
             // The selection panel for the different mesh types
             _ui->push
             ({
-                .border.corner_curves = {border_radius,0,0,border_radius},
-                .rect = {0,0,200,400},
-                .color = 0x202020FF,
-                .gap = {2,5},
-                .padding = {10,10,0,10},
-                .alignment =
-                {
-                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                    .direction = ui::AlignDir::DOWN,
-                    .items = ui::AlignItem::END,
-                }
+                .wid = _ui->newElem({
+                    .quad_color = 0x202020FF,
+                    .padding = {10,10,0,10},
+                    .alignment =
+                    {
+                        .gap = {2,5},
+                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                        .direction = {ui::AlignDir::DOWN},
+                        //.items = ui::AlignItem::END,
+                    },
+                    .corner_curves = {border_radius,0,0,border_radius},
+                }),
+                .quad = {0,0,200,400},
             });
             {
                 for (int i=0; i<_shape_labels.size(); ++i)
                 {
-                    ui::WidgetId widget_id = _ui->put
+                    ui::NodeId node_id = _ui->put
                     ({
                         .user_id = _uid[i],
+                        .wid = _ui->newElem
+                        ({
+                            .quad_color = 0xFFFFFF08,
+                            .padding = {10,5,5,10},
+                        }),
+                        .quad = {0,0, ((_selection != i) ? 180.f : 200.f), 30},
                         .text = _shape_labels[i],
                         .single_click = ui::ClickTrigger::OnRelease,
-                        .rect = {0,0, ((_selection != i) ? 180.f : 200.f), 30},
-                        .color = 0xFFFFFF08,
-                        .padding = {10,5,5,10},
                     });
                     if( _ui->click( _uid[i] ) )
                     {
                         _selection = i;
-                        _ui->get( widget_id )->rect.width = 200;
+                        _ui->get( node_id )->quad.width = 200;
                     }
                     if( _ui->mouseover( _uid[i] ) )
                     {
-                        _ui->get( widget_id )->color = 0xFFFFFF12;
+                        _ui->get( node_id )->quad.color = 0xFFFFFF12;
                     }
                 }
             }
@@ -121,63 +129,69 @@ namespace kege::ui{
             // The panel for the selected mesh type
             _ui->push
             ({
-                .border.corner_curves = {0,border_radius,border_radius,0},
-                .rect = {0,0,400,400},
-                .color = 0x18141DFF,
-                .padding = {10,10,10,10},
-                .alignment =
-                {
-                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                    .direction = ui::AlignDir::DOWN,
-                }
+                .wid = _ui->newElem
+                ({
+                    .quad_color = 0x18141DFF,
+                    .padding = {10,10,10,10},
+                    .alignment =
+                    {
+                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                        .direction = {ui::AlignDir::DOWN},
+                    },
+                    .corner_curves = {0,border_radius,border_radius,0},
+                }),
+                .quad = {0,0,400,400},
             });
             {
                 _ui->push
                 ({
-                    .border.corner_curves = {border_radius,0,0,border_radius},
-                    .width = extend(),
-                    .height = fixed(40),
-                    .color = 0x20202000,
-                    .alignment =
-                    {
-                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                        .direction = ui::AlignDir::RIGHT,
-                        .items = ui::AlignItem::CENTER,
-                    }
+                    .wid = _ui->newElem
+                    ({
+                        .width = extend(),
+                        .height = fixed(40),
+                        .quad_color = 0x20202000,
+                        .alignment =
+                        {
+                            .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                            .direction = {ui::AlignDir::RIGHT},
+                            //.items = ui::AlignItem::CENTER,
+                        },
+                        .corner_curves = {border_radius,0,0,border_radius},
+                    }),
                 });
                 {
                     // the title and name of the mesh being created
                     _ui->put
                     ({
-                        .text = ui::Text
-                        {
-                            .width = 100,
-                            .height = 24,
-                            .color = 0xFFFFFF30,
+                        .wid = _ui->newElem
+                        ({
+                            .position = Positioning::Independent,
+                            .quad_color = 0xFFFFFF00,
+                            .padding = {10,5,5,10},
+                            .alignment =
+                            {
+                                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                                .direction = {ui::AlignDir::RIGHT},
+                            },
                             .font_size = 30,
-                            .ptr = "Create"
-                        },
+                        }),
+                        .quad = {0,0, 70, 40},
+                        .text = {.color = 0xFFFFFF30, .data = "Create"},
                         .single_click = ui::ClickTrigger::OnRelease,
-                        .rect = {0,0, 70, 40},
-                        .color = 0xFFFFFF00,
-                        .padding = {10,5,5,10},
                     });
                     _ui->put
                     ({
+                        .quad = {0,0, 100, 40,0xFFFFFF00},
                         .text = ui::Text
                         {
                             .width = 100,
-                            .height = 24,
-                            .color = 0xFFFFFF30,
                             .font_size = 30,
-                            .ptr = _create_mesh_uis[_selection]->getName().c_str()
+                            .color = 0xFFFFFF30,
+                            .data = _create_mesh_uis[_selection]->getName().c_str(),
                         },
                         .single_click = ui::ClickTrigger::OnRelease,
-                        .rect = {0,0, 100, 40},
-                        .color = 0xFFFFFF00,
-                        .padding = {10,5,5,10},
                     });
-                    _ui->put({.style = &_ui->theme()->x_seperator});
+                    _ui->put({.wid = _ui->newElem(_ui->theme()->x_seperator)});
                     _ui->charButn(_uid[ _id_offset ], "x", 7, 0);
                 }
                 _ui->pop();

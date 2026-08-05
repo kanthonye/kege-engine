@@ -76,10 +76,10 @@ namespace kege::ui{
             _categories[i] = ui::Text
             {
                 .width = 100,
-                .color = 0xFFFFFFFF,
-                .ptr = _string_categories[i].c_str(),
                 .font_size = 20,
-                .align = AlignText::Left,
+                .color = 0xFFFFFFFF,
+                .data = _string_categories[i].c_str(),
+                //.align = AlignText::Left,
             };
         }
 

@@ -45,39 +45,97 @@ namespace kege::ui{
         return 0;
     }
 
-    kege::ui::WidgetId Layout::pushRoot( const kege::ui::WidgetDesc& desc )
+    void Layout::beginRoot()
     {
-        return _layers[ _curr_layer ].pushRoot( desc );
+        if (_root_stack.size() <= _root_stack_count) _root_stack.resize(1 + 2 * _root_stack.size());
+        _root_stack[ _root_stack_count++ ] = _curr_parent;
+        _curr_parent = 0;
+
+        _layers[ _curr_layer ].beginRoot();
     }
 
-    kege::ui::WidgetId Layout::putRoot( const kege::ui::WidgetDesc& desc )
+    void Layout::endRoot()
     {
-        return _layers[ _curr_layer ].put( desc, true );
+        _layers[ _curr_layer ].endRoot();
+        if (0 < _root_stack_count)
+        {
+            int index = _root_stack_count - 1;
+            _curr_parent = _root_stack[ index ];
+            _root_stack_count = index;
+        }
     }
 
-    void Layout::popRoot()
+    kege::ui::NodeId Layout::push( kege::ui::Node* node )
     {
-        return _layers[ _curr_layer ].popRoot();
-    }
-
-    kege::ui::WidgetId Layout::push( const kege::ui::WidgetDesc& desc )
-    {
-        return _layers[ _curr_layer ].push( desc );
+        _layers[ _curr_layer ].push( node );
+        insert( node );
+        _curr_parent = node->index;
+        return {node->index, node->version};
     }
 
     uint32_t Layout::pop()
     {
-        return _layers[ _curr_layer ].pop();
+        _layers[ _curr_layer ].pop();
+        if ( _curr_parent )
+        {
+            _curr_parent = _gui->_nodes[ _curr_parent ].parent;
+        }
+        return _curr_parent;
     }
 
-    kege::ui::WidgetId Layout::put( const kege::ui::WidgetDesc& desc )
+    kege::ui::NodeId Layout::put( kege::ui::Node* node )
     {
-        return _layers[ _curr_layer ].put( desc, false );
+        _layers[ _curr_layer ].put( node );
+        insert( node );
+        return {node->index, node->version};
     }
 
-    kege::ui::WidgetId Layout::text( const kege::ui::Text& text )
+    void Layout::insert( kege::ui::Node* node )
     {
-        return _layers[ _curr_layer ].text( text );
+        if ( _curr_parent != 0 )
+        {
+            kege::ui::Node* parent = &_gui->_nodes[ _curr_parent ];
+            node->parent = _curr_parent;
+            
+            if ( parent->head == 0 )
+            {
+                parent->tail = parent->head = node->index;
+            }
+            else
+            {
+                _gui->_nodes[ parent->tail ].next = node->index;
+                node->prev = parent->tail;
+                parent->tail = node->index;
+            }
+            parent->count++;
+        }
+        else // insert as root node
+        {
+            if ( _head == 0 )
+            {
+                _tail = _head = node->index;
+            }
+            else
+            {
+                _gui->_nodes[ _tail ].next = node->index;
+                node->prev = _tail;
+                _tail = node->index;
+            }
+            _count += 1;
+        }
+    }
+
+    kege::ui::NodeId Layout::text( const kege::ui::Text& text )
+    {
+        return put( _gui->newNode({
+            .wid = _gui->newElem
+            ({
+                .font_size = text.font_size,
+                //.text_align = text.align,
+            }),
+                .quad = kege::ui::Quad{.width = text.width, .height = static_cast<float>(text.font_size)},
+            .text = text
+        }) );
     }
 
     void Layout::pushLayer( uint32_t index )
@@ -103,14 +161,34 @@ namespace kege::ui{
         _rect.width = width;
     }
 
-    const kege::ui::Widget* Layout::operator[](uint32_t index) const
+    const kege::ui::Elem* Layout::elem( const kege::ui::NodeId& id ) const
     {
-        return _gui->at( index );
+        return _gui->elem( id );
     }
 
-    kege::ui::Widget* Layout::operator[](uint32_t index)
+    kege::ui::Elem* Layout::elem( const kege::ui::NodeId& id )
     {
-        return _gui->at( index );
+        return _gui->elem( id );
+    }
+
+    const kege::ui::Elem* Layout::elem( const ui::Node* node )const
+    {
+        return _gui->elem( node );
+    }
+    
+    kege::ui::Elem* Layout::elem( const ui::Node* node )
+    {
+        return _gui->elem( node );
+    }
+
+    const kege::ui::Node* Layout::operator[](uint32_t index) const
+    {
+        return &_gui->_nodes[ index ];
+    }
+
+    kege::ui::Node* Layout::operator[](uint32_t index)
+    {
+        return &_gui->_nodes[ index ];
     }
 
     uint32_t Layout::parent( uint32_t index )const
@@ -150,19 +228,23 @@ namespace kege::ui{
 
     void Layout::begin( double dms )
     {
+        _root_stack_count = 0;
+        _head = _tail = _count = 0;
         _curr_layer = 0;
         _curr_parent = 0;
+        _count = 0;
         for (Layer& layer : _layers)
         {
-            layer.begin( dms );
+            layer.reset( dms );
         }
     }
 
     void Layout::end()
     {
-        for (Layer& layer : _layers)
+        for (uint32_t root = _head; root != 0; root = _gui->_nodes[ root ].next )
         {
-            layer.end();
+            kege::ui::Resizer::resize( *this, root );
+            kege::ui::Aligner::align( *this, root );
         }
     }
 
@@ -180,7 +262,7 @@ namespace kege::ui{
         _gui = gui;
         for(auto& layer : _layers )
         {
-            layer.initalize( gui, this );
+            layer.initalize( gui );
         }
     }
 

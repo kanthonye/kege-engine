@@ -107,6 +107,7 @@ namespace kege::ui{
         ui::WidgetHandle _uid_create_entity;
         ui::Text text_create;
 
+        ui::UID _user_id;
         ui::UID _uid_root;
 
         ui::ID _container[2];

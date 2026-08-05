@@ -8,6 +8,7 @@
 #ifndef ui_gui_hpp
 #define ui_gui_hpp
 
+#include <unordered_set>
 #include "ui-layout.hpp"
 #include "ui-renderer.hpp"
 #include "ui-post-layout-ops.hpp"
@@ -48,7 +49,7 @@ namespace kege{
         template<typename Params> void pushDeferredOp
         (
             kege::ui::ID user_id,
-            kege::ui::WidgetId widget_index,
+            kege::ui::NodeId widget_index,
             kege::ui::DeferredOperation fn,
             const Params& params
         )
@@ -59,7 +60,7 @@ namespace kege{
         template<typename Params> void pushDeferredOpPtr
         (
             kege::ui::ID user_id,
-            kege::ui::WidgetId widget_index,
+            kege::ui::NodeId widget_index,
             kege::ui::DeferredOperation fn,
             Params* params
         )
@@ -70,24 +71,16 @@ namespace kege{
 
         uint32_t computeExtent( int font_size, const char* text, float& width, float& height );
 
+        kege::ui::WID newElem( const kege::ui::Elem& );
+
+        kege::ui::Node* newNode( const kege::ui::NodeDesc& desc );
+
         kege::ui::Text text( const char* str, int font_size );
 
         void onWindowResize(int width, int height);
 
-        /**
-         * Creates a parent UI element with the give info.
-         *
-         * @param desc This refers to the ui element id
-         *
-         * @return reference to the ui element.
-         */
-        kege::ui::WidgetId pushRoot( const kege::ui::WidgetDesc& desc );
-        kege::ui::WidgetId putRoot( const kege::ui::WidgetDesc& desc );
-
-        /**
-         * Pops the current parent UI element from the parent stack.
-         */
-        void popRoot();
+        void beginRoot();
+        void endRoot();
 
         /**
          * Creates a parent UI element with the give info.
@@ -96,7 +89,7 @@ namespace kege{
          *
          * @return reference to the ui element.
          */
-        kege::ui::WidgetId push( const kege::ui::WidgetDesc& desc );
+        kege::ui::NodeId push( const kege::ui::NodeDesc& desc );
 
         /**
          * Pops the current parent UI element from the parent stack.
@@ -112,8 +105,9 @@ namespace kege{
          *
          * @return reference to the ui element.
          */
-        kege::ui::WidgetId put( const kege::ui::WidgetDesc& desc );
-        kege::ui::WidgetId text( const kege::ui::Text& text );
+        kege::ui::NodeId put( const kege::ui::NodeDesc& desc );
+
+        kege::ui::NodeId text( const kege::ui::Text& text );
 
         /**
          * Push an existing layer onto the layer stack, so that, that layer can
@@ -195,42 +189,29 @@ namespace kege{
          */
         bool hasFocus( const kege::ui::ID& uid )const;
 
-        /**
-         * Retrieves a UI element by its index (const version).
-         *
-         * @param uid The ui element index.
-         *
-         * @return The UI element at the specified index.
-         */
-        const kege::ui::Widget* elem( const kege::ui::WidgetId& uid ) const;
+        const kege::ui::Elem* elem( const kege::ui::Node* node ) const;
+        kege::ui::Elem* elem( const kege::ui::Node* node );
 
-        /**
-         * Retrieves a UI element by its index (non-const version).
-         *
-         * @param uid The ui element index.
-         *
-         * @return The UI element at the specified index.
-         */
-        kege::ui::Widget* elem( const kege::ui::WidgetId& uid );
-        kege::ui::Widget* elemParent( const kege::ui::WidgetId& uid );
+        const kege::ui::Elem* elem( const kege::ui::NodeId& id ) const;
+        kege::ui::Elem* elem( const kege::ui::NodeId& id );
 
         /**
          * Retrieves a UI element by its index (const version).
          *
-         * @param index The ui element index.
+         * @param id The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        const kege::ui::Widget* at(uint32_t index) const;
+        const kege::ui::Node* at( const kege::ui::NodeId& id ) const;
 
         /**
          * Retrieves a UI element by its index (non-const version).
          *
-         * @param index The ui element index.
+         * @param id The ui element index.
          *
          * @return The UI element at the specified index.
          */
-        kege::ui::Widget* at(uint32_t index);
+        kege::ui::Node* at( const kege::ui::NodeId& id );
 
         /**
          * Retrieves the parent index of a UI element.
@@ -286,6 +267,7 @@ namespace kege{
 
         bool leftClickDown()const;
 
+        //bool onTextInput(const ui::NodeId& node_id, char* str, size_t& size);
 
         /**
          * Retrieves the input handler associated with the layout.
@@ -306,6 +288,10 @@ namespace kege{
 
         const kege::ui::Rect& getRect()const;
 
+        ui::Record getHitRecord()const;
+        ui::Record getHotRecord()const;
+
+        ui::ID getHitId()const;
         bool hasHit()const;
 
         bool initialize( const GuiConfig& config );
@@ -326,6 +312,12 @@ namespace kege{
 
         const kege::mat44& getProjection()const;
 
+        const kege::ui::Rect& getSelectionRect()const;
+        bool isCastingSelectionRect(const kege::ui::ID& id);
+        void trySelectByRect( const kege::ui::NodeId& node_id );
+        bool isSelected(kege::ui::ID id) const;
+        bool isMouseDragging() const;
+
         ~GUI();
         
         GUI
@@ -338,9 +330,13 @@ namespace kege{
 
     private:
 
+        kege::ui::Record getHotElem(uint32_t node_index, bool button);
         kege::ui::Record getHotElem(bool button);
         uint32_t find(uint64_t user_id);
         void handleInputEvents();
+        void updateSelectionList();
+        void updateSelectionRect();
+        void updateDragState();
 
         void renderLayout
         (
@@ -361,7 +357,7 @@ namespace kege{
         (
             kege::ui::DrawBatch* batch,
             const kege::ui::Layout& layout,
-            const kege::ui::Widget* widget,
+            const kege::ui::Node* node,
             kege::ui::Rect clip_rect
         );
 
@@ -388,12 +384,25 @@ namespace kege{
         kege::array< kege::ui::Layout > _layouts;
         kege::array< kege::ui::Widget > _widgets;
 
+        std::unordered_set< kege::ui::ID > _selected;
+        bool _updating_selection;
+        bool _drag_state;
+        kege::ui::ID _marquee_is_occupied;
+        kege::dvec2 _marquee_start;
+        kege::ui::Rect _marquee_rect;
+
+        //kege::array< kege::ui::NodeId > _;
+
+        kege::array< kege::ui::Elem > _elements;
+        uint32_t _elem_count;
+        kege::array< kege::ui::Node > _nodes;
+        uint32_t _node_count;
+
         const kege::InputManager* _input_manager;
         kege::AssetManager* _asset_manager;
         kege::GraphicsDevice* _graphic_device;
         const kege::AppWindow* _window;
         const kege::Mouse* _mouse;
-
 
         kege::array< kege::ref::Buffer > _mesh_storage_buffers;
         kege::array< kege::ui::DrawRecord > _draw_records;

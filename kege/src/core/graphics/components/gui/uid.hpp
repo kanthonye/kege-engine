@@ -31,14 +31,6 @@ namespace kege::ui{
     constexpr inline bool operator==(const ui::Id &a, const ui::Id &b) { return a.num == b.num; }
     constexpr inline bool operator!=(const ui::Id &a, const ui::Id &b) { return a.num != b.num; }
 
-//    struct Handle
-//    {
-//        //private:
-//        ui::ID user_id;
-//        Id handle;
-//    };
-
-
     struct EID
     {
         ui::Id global;
@@ -114,6 +106,16 @@ namespace kege::ui{
 
     struct ID
     {
+        friend bool operator!=(const ID& a, const ID& b)
+        {
+            return a.value != b.value;
+        }
+
+        bool operator==(const ID& other)
+        {
+            return value == other.value;
+        }
+
         operator uint64_t()const
         {
             return value;
@@ -165,5 +167,13 @@ namespace kege::ui{
         friend struct UID;
     };
 
+}
+namespace std {
+    template<>
+    struct hash<kege::ui::ID> {
+        std::size_t operator()(const kege::ui::ID& id) const noexcept {
+            return std::hash<uint64_t>{}(id.value);  // Hash the internal value
+        }
+    };
 }
 #endif  /* kege_uid_hpp */

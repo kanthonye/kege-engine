@@ -31,7 +31,7 @@ namespace kege::ui{
 //         */
 //        ui::Text text
 //        {
-//            .ptr = "Renderable",
+//            .data = "Renderable",
 //            .width = 64,
 //            .font_size = 20,
 //            .height = 15,
@@ -48,24 +48,24 @@ namespace kege::ui{
 //                list[1] = text;
 //                //list[2].text = text;
 //
-//                list[0].ptr = "Asset";
+//                list[0].data = "Asset";
 //                list[0].width = 100;
 //
-//                list[1].ptr = "Procedural";
+//                list[1].data = "Procedural";
 //                list[1].width = 150;
 //            }
 //
 //            ui->push({.style = &ui->theme()->column});
 //            {
 //                text.width = 150;
-//                text.ptr = "Geometry:";
-//                ui->put({.text = text, .rect = {.width = 55, .height = 20} });
+//                text.data = "Geometry:";
+//                ui->put({.text = text, .quad = {.width = 55, .height = 20} });
 //
 //                int mesh_option;
 //                text.width = 150;
-//                text.ptr = "Source:";
+//                text.data = "Source:";
 //                ui->push({.style = &ui->theme()->row});
-//                ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+//                ui->put({.text = text, .quad = {.width = 45, .height = 20} });
 //                ui->options(uid, layer, list, mesh_option);
 //                ui->pop();
 //                switch (mesh_option)
@@ -73,10 +73,10 @@ namespace kege::ui{
 //                    case 0: // Loaded Asset
 //                    {
 //                        kege::Renderable* comp = ecs->get< kege::Renderable >( entity );
-//                        text.ptr = "Target:";
+//                        text.data = "Target:";
 //                        text.width = 55;
 //                        ui->push({.style = &ui->theme()->row});
-//                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+//                        ui->put({.text = text, .quad = {.width = 45, .height = 20} });
 //                        if(ui->textField( uid[10], layer, comp->fname, 64, comp->size ))
 //                        {
 //                            comp->mesh_handle = am->getId< kege::Ref<MeshPrimitive> >(comp->fname);
@@ -108,10 +108,10 @@ namespace kege::ui{
 ////                            mesh_types[5].text = generators[5]->text;
 ////                        }
 ////
-////                        text.ptr = "Target:";
+////                        text.data = "Target:";
 ////                        text.width = 55;
 ////                        ui->push({.style = &ui->theme()->row});
-////                        ui->put({.text = text, .rect = {.width = 45, .height = 20} });
+////                        ui->put({.text = text, .quad = {.width = 45, .height = 20} });
 ////                        ui->options(layer, ui->getAddressAsInt(generators[mesh_option]), mesh_types, mesh_option);
 ////                        ui->pop();
 ////

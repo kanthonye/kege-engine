@@ -32,8 +32,8 @@ namespace kege{
         uint32_t getActiveKeyCount() const;
         bool anyKeyDown() const;
 
-        bool isPressed( int key );
-        bool isDown( int key );
+        bool isPressed( int key ) const;
+        bool isDown( int key ) const;
 
         Modifiers getModifiers() const;
 

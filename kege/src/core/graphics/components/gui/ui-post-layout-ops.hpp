@@ -18,7 +18,7 @@ namespace kege::ui{
         size_t size;
     };
 
-    typedef void (*DeferredOperation)(kege::GUI* gui, ui::ID user_id, WidgetId widget_id, void* data);
+    typedef void (*DeferredOperation)(kege::GUI* gui, ui::ID user_id, NodeId node_id, void* data);
 
     class PostLayoutOpsExecutor
     {
@@ -29,12 +29,12 @@ namespace kege::ui{
             DeferredOperation fn;
             AllocParam alloc;
             ui::ID user_id;
-            WidgetId widget_id;
+            NodeId node_id;
         };
 
     public:
 
-        template<typename Params>void pushPtr(ui::ID user_id, WidgetId widget_id, DeferredOperation fn, Params* params)
+        template<typename Params>void pushPtr(ui::ID user_id, NodeId node_id, DeferredOperation fn, Params* params)
         {
             AllocParam alloc = this->alloc(sizeof(Params*));
             void* dst = getDst(alloc);
@@ -47,11 +47,11 @@ namespace kege::ui{
             {
                 _operations.resize((_operations.empty()) ? 32 : 2 * _operations.size());
             }
-            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .widget_id = widget_id};
+            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .node_id = node_id};
             _op_count += 1;
         }
 
-        template<typename Params>void push(ui::ID user_id, WidgetId widget_id, DeferredOperation fn, const Params& params)
+        template<typename Params>void push(ui::ID user_id, NodeId node_id, DeferredOperation fn, const Params& params)
         {
             AllocParam alloc = this->alloc(sizeof(params));
             void* dst = getDst(alloc);
@@ -61,7 +61,7 @@ namespace kege::ui{
             {
                 _operations.resize((_operations.empty()) ? 32 : 2 * _operations.size());
             }
-            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .widget_id  = widget_id};
+            _operations[_op_count] = OpEntry{.fn = fn, .alloc = alloc, .user_id = user_id, .node_id  = node_id};
             _op_count += 1;
         }
 

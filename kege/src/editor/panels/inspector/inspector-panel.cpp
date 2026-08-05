@@ -41,7 +41,7 @@ namespace kege{
 
     void InspectorPanel::updateAddComponent()
     {
-        if( _ui->button(_uid_main[7], _text_add) )
+        if( _ui->button( _uid_main[7], _text_add ) )
         {
             _show_component_selections = !_show_component_selections;
         }
@@ -86,7 +86,7 @@ namespace kege{
 
         const CompInfo& info = _infos[ itr->second ];
 
-        _ui->push({ .style = &_ui->theme()->card });
+        _ui->push({ .wid = _ui->newElem(_ui->theme()->card) });
         ui::ID id[4] = {info.uid[0], info.uid[1], info.uid[2], info.uid[3]};
         switch ( _ui->removableHeader(id, _listed_component[info.index]) )
         {
@@ -197,19 +197,19 @@ namespace kege{
     {
         _text_add = _ui->gui()->text("Add Component", 20);
 
-        _styles[1] = kege::ui::Style
+        _styles[1] = kege::ui::Elem
         {
-            .background = ui::Background(0xFFFFFF10),
             .width = ui::extend(),
             .height = ui::flexible(),
+            .quad_color = 0xFFFFFF10,//ui::Background(0xFFFFFF10),
+            .padding = {10,10,10,10},
             .alignment =
             {
+                .gap = {2,2},
                 .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
                 .content = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::DOWN
+                .direction = {ui::AlignDir::DOWN}
             },
-            .padding = {10,10,10,10},
-            .gap = {2,2},
         };
 
         Communication::add< const ui::SetSelectedEntity&, InspectorPanel >( this );
@@ -217,31 +217,85 @@ namespace kege{
         ComponentAddFn component_add_fn;
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Transform >(e); };
-        registerAddComponentAction("Transform", ecs::Component::type< kege::Transform >(), component_add_fn, ui::transform);
+        registerAddComponentAction
+        (
+            "Transform",
+            ecs::Component::type< kege::Transform >(),
+            component_add_fn,
+            ui::transform
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Rigidbody >(e); };
-        registerAddComponentAction("Rigidbody", ecs::Component::type< kege::Rigidbody >(), component_add_fn, ui::rigidbody);
+        registerAddComponentAction
+        (
+         "Rigidbody",
+         ecs::Component::type< kege::Rigidbody >(),
+         component_add_fn,
+         ui::rigidbody
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Camera >(e); ecs->add< kege::Perspective >(e); };
-        registerAddComponentAction("PerspCamera", ecs::Component::type< kege::Perspective >(), component_add_fn, ui::perspectiveCamera);
+        registerAddComponentAction
+        (
+         "PerspCamera",
+         ecs::Component::type< kege::Perspective >(),
+         component_add_fn,
+         ui::perspectiveCamera
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Camera >(e); ecs->add< kege::Orthographic >(e); };
-        registerAddComponentAction("OrthoCamera", ecs::Component::type< kege::Orthographic >(), component_add_fn, ui::orthographicCamera);
+        registerAddComponentAction
+        (
+         "OrthoCamera",
+         ecs::Component::type< kege::Orthographic >(),
+         component_add_fn,
+         ui::orthographicCamera
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::Renderable >(e); };
-        registerAddComponentAction("Mesh", ecs::Component::type< kege::Renderable >(), component_add_fn, ui::renderable);
+        registerAddComponentAction
+        (
+         "Mesh",
+         ecs::Component::type< kege::Renderable >(),
+         component_add_fn,
+         ui::renderable
+         );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::DirectionalLight >(e); };
-        registerAddComponentAction("DirectionalLight", ecs::Component::type< kege::DirectionalLight >(), component_add_fn, ui::directionalLight);
+        registerAddComponentAction
+        (
+         "DirectionalLight",
+         ecs::Component::type< kege::DirectionalLight >(),
+         component_add_fn,
+         ui::directionalLight
+         );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::PointLight >(e); };
-        registerAddComponentAction("PointLight", ecs::Component::type< kege::PointLight >(), component_add_fn, ui::pointLight);
+        registerAddComponentAction
+        (
+         "PointLight",
+         ecs::Component::type< kege::PointLight >(),
+         component_add_fn,
+         ui::pointLight
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::SpotLight >(e); };
-        registerAddComponentAction("SpotLight", ecs::Component::type< kege::SpotLight >(), component_add_fn, ui::spotLight);
+        registerAddComponentAction
+        (
+         "SpotLight",
+         ecs::Component::type< kege::SpotLight >(),
+         component_add_fn,
+         ui::spotLight
+        );
 
         component_add_fn = [](kege::ECS* ecs, ecs::Entity& e){ ecs->add< kege::ParticleEffect >(e); };
-        registerAddComponentAction("Particle Effect", ecs::Component::type< kege::ParticleEffect >(), component_add_fn, ui::particleEffect);
+        registerAddComponentAction
+        (
+            "Particle Effect",
+            ecs::Component::type< kege::ParticleEffect >(),
+            component_add_fn,
+            ui::particleEffect
+        );
 
         initSelectListElements();
     }

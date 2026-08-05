@@ -23,7 +23,7 @@ namespace kege::ui{
         struct FileEntry
         {
             ui::UID uid;
-            ui::WidgetId widget_id;
+            ui::NodeId node_id;
 
             ui::Text name_text;
             fs::path path;
@@ -131,7 +131,7 @@ namespace kege::ui{
 
         // UI element IDs (persistent across frames)
         ui::UID _uid_main;
-        ui::WidgetId _id_main_widget;
+        ui::NodeId _id_main_widget;
 
         ui::WidgetHandle _up_button_uid;
         ui::WidgetHandle _back_button_uid;
@@ -147,7 +147,7 @@ namespace kege::ui{
         std::vector<FileEntry> _filtered_files; // Files after applying filter
 
         // Selection state
-        ui::Rect _selection_box;
+        ui::Quad _selection_box;
         kege::dvec2 _selection_start;
         std::vector<size_t> _selected_indices;
 

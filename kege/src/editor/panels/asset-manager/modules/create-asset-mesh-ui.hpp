@@ -34,7 +34,7 @@ namespace kege::ui{
 
         //ui::ID _close_butn;
         bool _open_window;
-        ui::Rect _rect;
+        ui::Quad _quad;
         int _selection;
 
         size_t _current_size = 0;

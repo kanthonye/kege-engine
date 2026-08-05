@@ -16,19 +16,20 @@ namespace kege::ui{
         ui->put
         ({
             .user_id = _uid[0],
+            .wid = ui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::fixed(30),
+                .quad_color = 0xFFFFFF08,
+                .padding = {10,5,5,10},
+            }),
             .text = ui::Text{
                 .width = 50,
-                .height = 20,
-                .color = 0xFFFFFF30,
                 .font_size = 24,
-                .align = ui::AlignText::Center,
-                .ptr = label
+                .color = 0xFFFFFF30,
+                .data = label
             },
             .single_click = ui::ClickTrigger::OnRelease,
-            .color = 0xFFFFFF08,
-            .padding = {10,5,5,10},
-            .width = ui::extend(),
-            .height = ui::fixed(30),
         });
         return ui->click(_uid[0]);
     }
@@ -42,32 +43,35 @@ namespace kege::ui{
         }
         ui->push
         ({
-            .rect = {0,0,0,0},
-            .color = 0xFFFFFF00,
-            .padding = {20,20,20,20},
-            .gap = {2,2},
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::DOWN,
-            },
-            .width = ui::extend(),
-            .height = ui::extend(),
+            .wid = ui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0xFFFFFF00,
+                .padding = {20,20,20,20},
+                .alignment =
+                {
+                    .gap = {2,2},
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::DOWN},
+                },
+            }),
+            .quad = {0,0,0,0},
         });
         {
             ui->labelInput("Name:", _uid[1], _text_input_mode, _text);
-            ui->put({.rect = {0,0,50,20}});
+            ui->put({.quad = {0,0,50,20}});
 
-            ui::Text text = {.width = 50, .height = 20, .font_size = 20};
+            ui::Text text = {.width = 50, .font_size = 20};
 
-            text.ptr = "Width:";
+            text.data = "Width:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[2], text, _width);
-            text.ptr = "Height:";
+            text.data = "Height:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _height);
-            text.ptr = "Depth:";
+            text.data = "Depth:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _depth);
 
-            ui->put({.style = &ui->theme()->y_seperator});
+            ui->put({.wid = ui->newElem(ui->theme()->y_seperator) });
 
             if( submit(ui, "Submit") )
             {

@@ -13,17 +13,17 @@ namespace kege::ui{
         UI_PROP
         (
             kege::vec2, x, kege::ui::PropertyMeta{
-                .text = {.ptr = "X:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "X:" },
             }
         ),
         UI_PROP
         (
             kege::vec2, y, kege::ui::PropertyMeta{
-                .text = {.ptr = "Y:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Y:", },
             }
         )
     };
@@ -33,25 +33,25 @@ namespace kege::ui{
         UI_PROP
         (
             kege::vec3, x, kege::ui::PropertyMeta{
-                .text = {.ptr = "X:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "X:",  },
             }
         ),
         UI_PROP
         (
             kege::vec3, y, kege::ui::PropertyMeta{
-                .text = {.ptr = "Y:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Y:",  },
             }
         ),
         UI_PROP
         (
             kege::vec3, z, kege::ui::PropertyMeta{
-                .text = {.ptr = "Z:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Z:",  },
             }
         )
     };
@@ -61,33 +61,33 @@ namespace kege::ui{
         UI_PROP
         (
             kege::vec4, x, kege::ui::PropertyMeta{
-                .text = {.ptr = "X:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "X:"},
             }
         ),
         UI_PROP
         (
             kege::vec4, y, kege::ui::PropertyMeta{
-                .text = {.ptr = "Y:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Y:", },
             }
         ),
         UI_PROP
         (
             kege::vec4, z, kege::ui::PropertyMeta{
-                .text = {.ptr = "Z:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Z:", },
             }
         ),
         UI_PROP
         (
             kege::vec4, w, kege::ui::PropertyMeta{
-                .text = {.ptr = "W:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "W:", },
             }
         )
     };
@@ -97,17 +97,17 @@ namespace kege::ui{
         UI_PROP
         (
             kege::quat, w, kege::ui::PropertyMeta{
-                .text = {.ptr = "Rotation:", 0.f, 0.f, 60.f, 20.f },
+                .type = PropertyType::Float,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Float
+                .text = {0.f, 0.f, 60.f, 20, 0xFFFFFFFF, "Rotation:"},
             }
         ),
         UI_PROP
         (
             kege::quat, xyz, kege::ui::PropertyMeta{
-                .text = {.ptr = "Axis:", 0.f, 0.f, 20.f, 20.f },
+                .type = PropertyType::Vec3,
                 .hint = {kege::ui::UIHint::DragNum, false},
-                .type = PropertyType::Vec3
+                .text = {0.f, 0.f, 20.f, 20, 0xFFFFFFFF, "Axis:"},
             }
         ),
     };

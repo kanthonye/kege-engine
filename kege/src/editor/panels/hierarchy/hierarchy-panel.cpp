@@ -31,16 +31,29 @@ namespace kege::ui{
             }
         }
 
-        kege::ui::ID id = _uid_root[0];
-        _ui->push({.style = &_ui->theme()->hierarchy_main_bar});
+        _ui->push
+        ({
+            .user_id = _user_id[0],
+            .wid = _ui->newElem({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0xFFFFFF00,
+                .alignment =
+                {
+                    .direction = {ui::AlignDir::DOWN}
+                },
+            }),
+            .mouseover = true,
+        });
+        //kege::ui::ID id = _uid_root[0];
+        _ui->push({ .wid = _ui->newElem(_ui->theme()->hierarchy_main_bar) });
         _ui->label(ui::Text{
-            .ptr = "Scene",
             .x = 0.f,
             .y = 0.f,
-            . width = 100.f,
-            . height = 20.f,
+            .width = 100.f,
             .font_size = 20,
             .color = 0xFFFFFFFF,
+            .data = "Scene",
         });
         if( _ui->charButn(_uid_root[0], "+", 7, 2) )
         {
@@ -68,6 +81,7 @@ namespace kege::ui{
             updateSelection();
         }
         //_ui->endScrollContainer();
+        _ui->pop();
     }
 
     void HierarchyPanel::updateToolbar()
@@ -77,15 +91,17 @@ namespace kege::ui{
         uint32_t bg_color = 0xFFFFFF08;
 
         _ui->beginRow(0);
-        _ui->push({.style = &_ui->theme()->hierarchy_main_bar});
+        _ui->push({ .wid = _ui->newElem(_ui->theme()->hierarchy_main_bar) });
 
         _ui->put
         ({
             .user_id = _create_entity_uid,
-            .rect = {.width = 60.f, .height = 20.f},
-            .border = {.corner_curves = corner_curves},
+            .wid = _ui->newElem({
+                .quad_color = _ui->mouseover(_create_entity_uid) ? hover_color : bg_color,
+                .corner_curves = corner_curves
+            }),
+            .quad = {.width = 60.f, .height = 20.f},
             .text = _text_create_entity,
-            .color = _ui->mouseover(_create_entity_uid) ? hover_color : bg_color,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -94,15 +110,17 @@ namespace kege::ui{
             createEntity();
         }
 
-        _ui->put({.style = &_ui->theme()->x_seperator});
+        _ui->put({ .wid = _ui->newElem(_ui->theme()->x_seperator) });
 
         _ui->put
         ({
             .user_id = _delete_uid,
-            .rect = {.width = 66.f, .height = 20.f},
-            .border = {.corner_curves = corner_curves},
+            .wid = _ui->newElem({
+                .quad_color = _ui->mouseover(_delete_uid) ? hover_color : bg_color,
+                .corner_curves = corner_curves
+            }),
+            .quad = {.width = 66.f, .height = 20.f},
             .text = _text_delete,
-            .color = _ui->mouseover(_delete_uid) ? hover_color : bg_color,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -111,15 +129,17 @@ namespace kege::ui{
             deleteSelectedEntities();
         }
 
-        _ui->put({.style = &_ui->theme()->x_seperator});
+        _ui->put({ .wid = _ui->newElem(_ui->theme()->x_seperator) });
 
         _ui->put
         ({
             .user_id = _duplicate_uid,
-            .rect = {.width = 80.f, .height = 20.f},
-            .border = {.corner_curves = corner_curves},
+            .wid = _ui->newElem({
+                .quad_color = _ui->mouseover(_duplicate_uid) ? hover_color : bg_color,
+                .corner_curves = corner_curves
+            }),
+            .quad = {.width = 80.f, .height = 20.f},
             .text = _text_duplicate,
-            .color = _ui->mouseover(_duplicate_uid) ? hover_color : bg_color,
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -142,28 +162,25 @@ namespace kege::ui{
 
         bool highlight = node->selected || _ui->mouseover(node->uid[0]);
 
-        _ui->push
+        ui::NodeId node_id = _ui->push
         ({
             .user_id = node->uid[0],
-            .style = highlight ? &_ui->theme()->hierarchy_entity_selected : &_ui->theme()->hierarchy_entity,
+            .wid = _ui->newElem(highlight ? _ui->theme()->hierarchy_entity_selected : _ui->theme()->hierarchy_entity),
             .single_click = ui::ClickTrigger::Immediate,
             .double_click = ui::ClickTrigger::Immediate,
+            .selectable = true,
         });
 
         _ui->put
         ({
             .user_id = node->uid[1],
-            .rect = {.width = 15,.height = 15},
-            .text = ui::Text
-            {
-                .ptr = node->expand ? "+" : "-",
-                .width = 6.f,
-                .height = 20.f,
+            .wid = _ui->newElem({
+                .quad_color = _ui->mouseover(node->uid[1]) ? small_butn_hot_colr : small_butn_colr,
                 .font_size = 20,
-                .color = 0xFFFFFFFF,
-                .align = ui::AlignText::Center
-            },
-            .color = _ui->mouseover(node->uid[1]) ? small_butn_hot_colr : small_butn_colr,
+                .text_align = ui::AlignText::Center
+            }),
+            .quad = {.width = 15,.height = 15},
+            .text = {.color = 0xFFFFFFFF, .data = node->expand ? "+" : "-"},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -174,25 +191,17 @@ namespace kege::ui{
 
         _ui->label(node->text_name);
 
-        _ui->put
-        ({
-            .style = &_ui->theme()->x_seperator
-        });
+        _ui->put({ .wid = _ui->newElem(_ui->theme()->x_seperator) });
 
         _ui->put
         ({
             .user_id = node->uid[2],
-            .rect = {.width = 15,.height = 15},
-            .text = ui::Text
-            {
-                .ptr = node->visible ? "o" : "-",
-                .width = node->visible ? 6.f : 5.f,
-                .height = 18.f,
+            .wid = _ui->newElem({
+                .quad_color = _ui->mouseover(node->uid[2]) ? small_butn_hot_colr : small_butn_colr,
                 .font_size = 20,
-                .color = 0xFFFFFFFF,
-                .align = ui::AlignText::Center
-            },
-            .color = _ui->mouseover(node->uid[2]) ? small_butn_hot_colr : small_butn_colr,
+                .text_align = ui::AlignText::Center
+            }),
+            .quad = {.width = node->visible ? 6.f : 5.f,.height = 15},
             .single_click = ui::ClickTrigger::OnRelease,
             .double_click = ui::ClickTrigger::Immediate,
         });
@@ -204,10 +213,10 @@ namespace kege::ui{
 //        _ui->put
 //        ({
 //            .user_id = node->uid[3],
-//            .rect = {.width = 15,.height = 15},
+//            .quad = {.width = 15,.height = 15},
 //            .text = ui::Text
 //            {
-//                .ptr = "x",
+//                .data = "x",
 //                .width = 5,
 //                .height = 18.f,
 //                .font_size = 20,
@@ -233,6 +242,12 @@ namespace kege::ui{
             clearSelection();
             _selected_nodes.push_back( node->entity_id );
         }
+
+
+        if( _ui->gui()->isCastingSelectionRect( _user_id[0] ) )
+        {
+            _ui->gui()->trySelectByRect( node_id );
+        }
     }
 
     void HierarchyPanel::updateTreeView( ecs::Entity entity, int depth )
@@ -249,7 +264,7 @@ namespace kege::ui{
     void HierarchyPanel::updateTreeView( ecs::Entity entity )
     {
         kege::ECS* ecs = _manager->getECS();
-        _ui->push({.style = &_ui->theme()->column});
+        _ui->push({ .wid = _ui->newElem(_ui->theme()->column) });
         for (ecs::Entity child = ecs->begin(entity); child != 0; child = ecs->next(child))
         {
             updateTreeView(child, 0);
@@ -410,17 +425,17 @@ namespace kege::ui{
     {
         text_create = _ui->gui()->text("create", 20);
         _text_create_entity = _ui->gui()->text("Create", 20);
-        _text_create_entity.align = ui::AlignText::Center;
+        //_text_create_entity.align = ui::AlignText::Center;
         _text_create_entity.color = 0xFFFFFF6F;
 
         _text_create_folder = _ui->gui()->text("+ Folder", 20);
 
         _text_delete = _ui->gui()->text("Delete", 20);
-        _text_delete.align = ui::AlignText::Center;
+        //_text_delete.align = ui::AlignText::Center;
         _text_delete.color = 0xFFFFFF6F;
 
         _text_duplicate = _ui->gui()->text("Duplicate", 20);
-        _text_duplicate.align = ui::AlignText::Center;
+        //_text_duplicate.align = ui::AlignText::Center;
         _text_duplicate.color = 0xFFFFFF6F;
 
         _text_expand_all = _ui->gui()->text("Expand All", 20);

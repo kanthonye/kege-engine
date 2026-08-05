@@ -21,7 +21,6 @@ namespace kege{
 
     public:
 
-        kege::ui::Style _style;
         ui::WidgetHandle _main;
     };
 }

@@ -18,10 +18,10 @@
 //        virtual void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity)
 //        {
 //            ui->push({.style = &ui->theme()->row, .single_click = ui::ClickTrigger::Continuous});
-//            ui->put({.text = text, .rect = {.width = 100, .height = 20} });
+//            ui->put({.text = text, .quad = {.width = 100, .height = 20} });
 //            ui->put({.style = &ui->theme()->x_seperator});
-//            ui->put({.color = 0x00FF00FF, .rect = {.width = 10, .height = 10} });
-//            ui->put({.color = 0xFF0000FF, .rect = {.width = 10, .height = 10} });
+//            ui->put({.color = 0x00FF00FF, .quad = {.width = 10, .height = 10} });
+//            ui->put({.color = 0xFF0000FF, .quad = {.width = 10, .height = 10} });
 //            ui->pop();
 //        }
 //        MeshShapeGenerator(){}
@@ -86,24 +86,24 @@
 //            lengths = {0.f, 0.f, 0.f};
 //            center = {0.f, 0.f, 0.f};
 //
-//            text.ptr = "Cuboid";
+//            text.data = "Cuboid";
 //            text.width = 100;
 //            text.font_size = 20;
 //            text.height = 15;
 //            text.color = 0xFFFFFFFF;
 //
-//            text_butn.ptr = "Regenerate:";
+//            text_butn.data = "Regenerate:";
 //            text_butn.width = 40;
 //
 //            text_width = text;
 //            text_height = text;
 //            text_depth = text;
 //
-//            text_width.ptr = "Width:";
+//            text_width.data = "Width:";
 //            text_width.width = 35;
-//            text_height.ptr = "Height:";
+//            text_height.data = "Height:";
 //            text_height.width = 40;
-//            text_depth.ptr = "Depth:";
+//            text_depth.data = "Depth:";
 //            text_depth.width = 35;
 //            gen_state = EDITING;
 //        }
@@ -122,7 +122,7 @@
 //        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeEllipsoidGenerator()
 //        {
-//            text.ptr = "Ellipsoid";
+//            text.data = "Ellipsoid";
 //            text.width = 100;
 //            text.font_size = 20;
 //            text.height = 15;
@@ -135,7 +135,7 @@
 //        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeCylinderGenerator()
 //        {
-//            text.ptr = "Cylinder";
+//            text.data = "Cylinder";
 //            text.width = 100;
 //            text.font_size = 20;
 //            text.height = 15;
@@ -148,7 +148,7 @@
 //        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapeConeGenerator()
 //        {
-//            text.ptr = "Cone";
+//            text.data = "Cone";
 //            text.width = 100;
 //            text.font_size = 20;
 //            text.height = 15;
@@ -161,7 +161,7 @@
 //        void update(kege::AssetManager* am, kege::UI* ui, kege::ECS* ecs, ecs::Entity& entity){}
 //        ShapePlaneGenerator()
 //        {
-//            text.ptr = "Plane";
+//            text.data = "Plane";
 //            text.width = 100;
 //            text.font_size = 20;
 //            text.height = 15;

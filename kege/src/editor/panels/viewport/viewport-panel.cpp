@@ -13,9 +13,6 @@ namespace kege{
     ViewportPanel::ViewportPanel( kege::ui::DockManager* dm )
     :   kege::ui::Panel( "Viewport", dm )
     {
-        _style.height = ui::extend();
-        _style.width = ui::extend();
-        _style.background = ui::Background( 0x340505FF );
     }
 
     void ViewportPanel::updateLayout()
@@ -23,11 +20,17 @@ namespace kege{
         _ui->put
         ({
             .user_id = _uid[0],
-            .style = &_style,
-            .texel = ui::Rect{0.f,0.f,1.f,1.f},
-            .texr_info = ui::TexrInfo{.id = 2, .index = 2},
+            .wid = _ui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0x340505FF,
+                .texr_info = ui::Rect{0.f, 0.f, 1.f, 1.f},
+                .texr_id = ui::TexrId{.id = 2, .index = 2},
+            }),
             .mouseover = false,
         });
     }
 
 }
+

@@ -39,13 +39,12 @@ namespace kege::ui{
                 names = std::vector<std::string>{"Mesh", "Material", "Textures", "Shader", "Sounds", "Scripts"};
                 for (int i=0; i<names.size(); ++i)
                 {
-                    list.push_back(
-                    {
-                        .ptr = names[i].c_str(),
+                    list.push_back
+                    ({
                         .width = 100,
-                        .height = 15,
                         .font_size = 20,
-                        .color = 0xFFFFFFFF
+                        .color = 0xFFFFFFFF,
+                        .data = names[i].c_str(),
                     });
                     creates.push_back("OpenCreate" + names[i] + "Window");
                 }
@@ -55,13 +54,15 @@ namespace kege::ui{
             _ui->push
             ({
                 .user_id = _uid[ id_offset ],
-                .color = 0x000000FF,
-                .padding = {20,20,20,20},
-                .clip_overflow = true,
-                .rect = {0.5f, 20.0f, 300.f, 200.f},
-                .position = Positioning::Absolute,
+                .wid = _ui->newElem
+                ({
+                    .position = Positioning::Absolute,
+                    .padding = {20,20,20,20},
+                }),
+                .quad = {0.5f, 20.0f, 300.f, 200.f, 0x000000FF},
                 .single_click = ui::ClickTrigger::Immediate,
                 .double_click = ui::ClickTrigger::Immediate,
+                .clip_overflow = true,
             });
             int selected_index;
             if( _ui->select(_uid, list, selected_index) )

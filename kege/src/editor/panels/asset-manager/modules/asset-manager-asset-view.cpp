@@ -6,6 +6,7 @@
 //
 
 #include "../ui-asset-manager.hpp"
+#include "../../../dock/ui-dock-manager.hpp"
 #include "asset-manager-asset-view.hpp"
 
 namespace kege::ui{
@@ -104,13 +105,17 @@ namespace kege::ui{
             DragObj& obj = _dragged_asset_handles.at(0);
             obj.snum = std::to_string(_dragged_asset_handles.size());
             // Draw drag preview at pointer position
-            _drag_element.user_id = _uid_drag[0];
-            _drag_element.color = assets->at(0).type_color();
-            _drag_element.text.ptr = obj.snum.c_str();
-            _drag_element.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
+            _drag_node.user_id = _uid_drag[0];
+            _drag_node.text.data = obj.snum.c_str();
+            _drag_node.quad = {
+                float(_drag_start.x + 10),
+                float(_drag_start.y + 10),
+                80, 80, assets->at(0).type_color()
+            };
+            _drag_node.wid = _ui->newElem(_drag_elem);
 
             _ui->pushLayer(ui::UILayer::LAYER_DRAGGING);
-            _ui->put(_drag_element);
+            _ui->put(_drag_node);
             _ui->pop();
         }
 
@@ -168,39 +173,41 @@ namespace kege::ui{
             //uid::ID id[2] = {_uid_root[visible_idx + 1]};
 
             // Begin column for file item
-            asset.widget_id = _ui->push
+            asset.node_id = _ui->push
             ({
                 .user_id = asset.uid[0],
-                .rect =
+                .wid = _ui->newElem
+                ({
+                    .padding = {6,6,6,6},
+                    .alignment = ui::Alignment
+                    {
+                        .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                        .direction = ui::AlignDir::DOWN,
+                        //.items = ui::AlignItem::CENTER,
+                    },
+                    .corner_curves = {8,8,8,8},
+                }),
+                .quad =
                 {
+                    .x = 0,
+                    .y = 0,
                     .width = ITEM_W,
                     .height = ITEM_H,
-                    .x = 0,
-                    .y = 0
-                },
-                .alignment = ui::Alignment
-                {
-                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                    .direction = ui::AlignDir::DOWN,
-                    .items = ui::AlignItem::CENTER,
+                    .color = 0xFFFFFF0A,
                 },
                 .single_click = ClickTrigger::Immediate,
                 .double_click = ClickTrigger::Immediate,
-                .border.corner_curves = {8,8,8,8},
-                .padding = {6,6,6,6},
-                .color = 0xFFFFFF0A,
             });
             {
                 // File icon
-                ui::WidgetDesc icon_desc;
+                ui::NodeDesc icon_desc;
                 icon_desc.user_id = asset.uid[1];
-                icon_desc.rect = {0, 0, ICON_SIZE, ICON_SIZE};
-                icon_desc.color = 0xFFFFFF0A;
-                icon_desc.border.corner_curves = {6,6,6,6};
+                icon_desc.quad = {0, 0, ICON_SIZE, ICON_SIZE, 0xFFFFFF0A};
+                icon_desc.wid = _ui->newElem({.corner_curves = {6,6,6,6}});
 
                 // Use put for the icon (no container)
                 _ui->put(icon_desc);
-                _ui->put({.style = &_ui->theme()->y_seperator});
+                _ui->put({.wid = _ui->newElem(_ui->theme()->y_seperator) });
 
                 // Check for interactions
                 if (_ui->click( asset.uid[0] ))
@@ -249,16 +256,15 @@ namespace kege::ui{
 //                _ui->label(0, name_text);
 //
 //
-//                file.name_text.ptr = file.display_name.c_str();
+//                file.name_text.data = file.display_name.c_str();
 
                 _ui->label(ui::Text{
                     .x      = 0,
                     .y      = 0,
                     .width  = 50,
-                    .height = 20,
-                    .color  = 0xFFFFFFFF,
                     .font_size = font_size,
-                    .ptr    = asset.display_name.data(),
+                    .color  = 0xFFFFFFFF,
+                    .data    = asset.display_name.data(),
                 });
             }
             _ui->pop();
@@ -292,11 +298,13 @@ namespace kege::ui{
             }
         }
     }
+
     void AssetManagerAssetView::updateListView()
     {
         // TODO: Implement list view with columns
         // Similar to grid view but with different layout
     }
+
     void AssetManagerAssetView::update()
     {
         if (_view_mode == ViewMode::GRID)
@@ -313,8 +321,13 @@ namespace kege::ui{
         std::vector<AssetMetadata>* assets = getAssets();
         for (size_t idx : *selected_indices)
         {
-            _ui->get( assets->at(idx).widget_id )->color = 0x80FFFF22;
+            _ui->get( assets->at(idx).node_id )->quad.color = 0x80FFFF22;
         }
+
+
+        kege::ui::SelectionController* selector = _manager->getManager()->getSelectionController();
+        //selector->selection().empty();
+        selector->updateMarqueeRectangule();
     }
 
     AssetManagerAssetView::AssetManagerAssetView(AssetManagerUI* m,kege::UI* g)
@@ -323,14 +336,13 @@ namespace kege::ui{
         _scroll_container[0] = _uid_root[1];
         _scroll_container[1] = _uid_root[2];
 
-        _drag_element.user_id = _uid_drag[0];
-        _drag_element.border.corner_curves = {5,5,5,5};
-        _drag_element.position = Positioning::Independent;
-        _drag_element.text.width = 30;
-        _drag_element.text.height = 20;
-        _drag_element.text.font_size = 20;
-        _drag_element.text.color = 0xFFFFFFFF;
-        _drag_element.rect = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
+        _drag_elem.corner_curves = {5,5,5,5};
+        _drag_elem.position = Positioning::Independent;
+        _drag_node.user_id = _uid_drag[0];
+        _drag_node.text.width = 30;
+        _drag_node.text.font_size = 20;
+        _drag_node.text.color = 0xFFFFFFFF;
+        _drag_node.quad = { float(_drag_start.x + 10), float(_drag_start.y + 10), 80, 80 };
     }
 }
 

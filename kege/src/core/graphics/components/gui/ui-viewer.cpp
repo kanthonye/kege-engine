@@ -46,7 +46,7 @@
 //        const ui::Rect& rect,
 //        const ui::Color& color,
 //        const ui::Border& border,
-//        const ui::TexrInfo& texr_info,
+//        const ui::TexrID& texr_info,
 //        const ui::Rect& texel,
 //        const ui::Rect& clip_rect
 //    )
@@ -86,7 +86,7 @@
 //
 //        //ui::Rect rect;
 //        //ui::Border border = {};
-//        //ui::TexrInfo texr = {1};
+//        //ui::TexrID texr = {1};
 //        ui::Extent extent = {};
 //
 //        UIDrawInstance instance = {};
@@ -164,7 +164,7 @@
 //            instance.clip_rect  = clip_rect;
 //        };
 //
-//        if ( widget.text.ptr && _font )
+//        if ( widget.text.data && _font )
 //        {
 //            kege::vec2 start = { widget.rect.x, widget.rect.y };
 //            const Padding& padding = ((widget.style) ? widget.style->padding : widget.padding);
@@ -228,7 +228,7 @@
 //                widget.text.font_size,
 //                widget.text.color,
 //                widget.alignment.wrap.enable,
-//                widget.text.ptr,
+//                widget.text.data,
 //                clip_rect
 //            );
 //        }

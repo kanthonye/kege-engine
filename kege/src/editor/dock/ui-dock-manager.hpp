@@ -10,20 +10,35 @@
 
 #include "ui-dock.hpp"
 #include "ui-dock-split.hpp"
+#include "../panels/selection-controller.hpp"
 
 namespace kege::ui{
 
     class DockManager : public kege::RefCounter{
     public:
 
-        DockSplit* split(float slit_ratio, ui::Dock::SplitDirection dir, const std::vector< std::string >& a, const std::vector< std::string >& b);
-        DockSplit* split(float slit_ratio, ui::Dock::SplitDirection dir, const std::vector< int >& a = {}, const std::vector< int >& b = {});
+        DockSplit* split
+        (
+            float slit_ratio,
+            ui::Dock::SplitDirection dir,
+            const std::vector< std::string >& a,
+            const std::vector< std::string >& b
+        );
+
+        DockSplit* split
+        (
+            float slit_ratio,
+            ui::Dock::SplitDirection dir,
+            const std::vector< int >& a = {},
+            const std::vector< int >& b = {}
+        );
 
         void operator()(const kege::ui::AssetMetadataDropOff& event);
 
         void operator()(const kege::WindowFrameBufferSizeEvent& event);
         void operator()(const kege::WindowSizeEvent& event);
 
+        kege::ui::SelectionController* getSelectionController();
         kege::ProjectManager* getProjectManager();
         kege::GraphicsDevice* getGraphicsDevice();
         kege::AssetManager* getAssetManager();
@@ -36,6 +51,8 @@ namespace kege::ui{
         ui::Panel* getPanel( uint32_t index );
         ui::GhostObject* getGhostObject();
 
+        void drawDragGhost(const kege::ui::DragPayload& payload, const kege::dvec2& position);
+
         void addPanel( Ref< ui::Panel > panel );
         void onWindowResize(int width, int height);
         void displayPanel( uint32_t index );
@@ -44,7 +61,7 @@ namespace kege::ui{
 
         DockManager
         (
-            const kege::ui::Rect& rect,
+            const kege::ui::Quad& quad,
             kege::GUI* gui,
             kege::UI* ui,
             kege::ProjectManager* pm,
@@ -58,15 +75,17 @@ namespace kege::ui{
         std::vector< Ref< ui::Panel > > _panels;
         kege::ProjectManager* _project_manager;
 
-        ui::GhostObject _ghost;
+        kege::ui::SelectionController _dragdrop;
+        kege::ui::GhostObject _ghost;
 
-        ui::Dock _root;
+        kege::ui::Dock _root;
 
         kege::GUI* _gui;
         kege::ECS* _ecs;
         kege::UI* _ui;
         
-        kege::ui::Rect _rect;
+        kege::ui::Quad _quad;
+        kege::ui::UID _uid;
     };
 }
 #endif /* ui_dock_manager_hpp */

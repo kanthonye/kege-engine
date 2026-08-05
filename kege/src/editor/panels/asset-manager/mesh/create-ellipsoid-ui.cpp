@@ -20,34 +20,36 @@ namespace kege::ui{
         }
         ui->push
         ({
-            .rect = {0,0,0,0},
-            .color = 0xFFFFFF00,
-            .padding = {20,20,20,20},
-            .gap = {2,2},
-            .alignment =
-            {
-                .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
-                .direction = ui::AlignDir::DOWN,
-            },
-            .width = ui::extend(),
-            .height = ui::extend(),
+            .wid = ui->newElem
+            ({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0xFFFFFF00,
+                .padding = {20,20,20,20},
+                .alignment =
+                {
+                    .gap = {2,2},
+                    .origin = {ui::AlignX::LEFT, ui::AlignY::TOP},
+                    .direction = {ui::AlignDir::DOWN},
+                },
+            }),
         });
         {
             ui->labelInput("Name:", _uid[1], _text_input_mode, _text);
-            ui->put({.rect = {0,0,50,20}});
+            ui->put({.quad = {0,0,50,20}});
 
-            ui::Text text = {.width = 50, .height = 20, .font_size = 20};
+            ui::Text text = {.width = 50, .font_size = 20};
 
-            text.ptr = "RadiusX:";
+            text.data = "RadiusX:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[1], text, _radius_x);
-            text.ptr = "RadiusY:";
+            text.data = "RadiusY:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[2], text, _radius_y);
-            text.ptr = "Columns:";
+            text.data = "Columns:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[3], text, _cols);
-            text.ptr = "Rows:";
+            text.data = "Rows:";
             ui->labelScrubber<float>(ScrubberState::Type::F32, _uid[4], text, _rows);
 
-            ui->put({.style = &ui->theme()->y_seperator});
+            ui->put({.wid = ui->newElem(ui->theme()->y_seperator)});
 
             if( ui->submit(_uid[5], "Submit") )
             {

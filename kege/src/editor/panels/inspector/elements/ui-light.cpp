@@ -16,7 +16,7 @@ namespace kege::ui{
 //
 //        ui::Text main_label
 //        {
-//            .ptr = "Light",
+//            .data = "Light",
 //            .width = 64,
 //            .font_size = 20,
 //            .height = 15,
@@ -36,7 +36,7 @@ namespace kege::ui{
 //            list.push_back
 //            ({
 //                .align = ui::AlignText::Left,
-//                .ptr = "Point Light",
+//                .data = "Point Light",
 //                .color = 0xFFFFFFFF,
 //                .font_size = 20,
 //                .width = 200,
@@ -44,7 +44,7 @@ namespace kege::ui{
 //            list.push_back
 //            ({
 //                .align = ui::AlignText::Left,
-//                .ptr = "Directional Light",
+//                .data = "Directional Light",
 //                .color = 0xFFFFFFFF,
 //                .font_size = 20,
 //                .width = 200,
@@ -52,7 +52,7 @@ namespace kege::ui{
 //            list.push_back
 //            ({
 //                .align = ui::AlignText::Left,
-//                .ptr = "Spot Light",
+//                .data = "Spot Light",
 //                .color = 0xFFFFFFFF,
 //                .font_size = 20,
 //                .width = 200,
@@ -64,7 +64,7 @@ namespace kege::ui{
 //        if ( light->type == Light::POINT )
 //        {
 //            ui::ID id[3] = {uid[10],uid[11],uid[12]};
-//            text.ptr = "Color:";
+//            text.data = "Color:";
 //            text.width = 100;
 ////            ui->scrubber3
 ////            (
@@ -76,11 +76,11 @@ namespace kege::ui{
 ////                light->color.z
 ////            );
 ////
-////            text.ptr = "Linear Attenuation:";
+////            text.data = "Linear Attenuation:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[13], layer, text, light->spot_exponent );
 ////
-////            text.ptr = "Quadratic Attenuation:";
+////            text.data = "Quadratic Attenuation:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[14], layer, text, light->spot_exponent );
 //        }
@@ -89,7 +89,7 @@ namespace kege::ui{
 //            ui::ID id_dir[3] = {uid[10],uid[11],uid[12]};
 //            ui::ID id_col[3] = {uid[13],uid[14],uid[15]};
 //
-//            text.ptr = "Direction:";
+//            text.data = "Direction:";
 //            text.width = 100;
 ////            ui->scrubber3
 ////            (
@@ -101,7 +101,7 @@ namespace kege::ui{
 ////                light->color.z
 ////            );
 //
-//            text.ptr = "Color:";
+//            text.data = "Color:";
 //            text.width = 100;
 ////            ui->scrubber3
 ////            (
@@ -118,7 +118,7 @@ namespace kege::ui{
 //            ui::ID id_dir[3] = {uid[10],uid[11],uid[12]};
 //            ui::ID id_col[3] = {uid[13],uid[14],uid[15]};
 //
-//            text.ptr = "Direction:";
+//            text.data = "Direction:";
 //            text.width = 100;
 //            drawProperties
 //            (
@@ -130,7 +130,7 @@ namespace kege::ui{
 //            );
 //
 //
-//            text.ptr = "Color:";
+//            text.data = "Color:";
 //            text.width = 100;
 //            drawProperties
 //            (
@@ -141,19 +141,19 @@ namespace kege::ui{
 //                Vec3Properties
 //            );
 //
-////            text.ptr = "Spot Exponent:";
+////            text.data = "Spot Exponent:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[16], layer, text, light->spot_exponent );
 ////
-////            text.ptr = "Spot Cutoff:";
+////            text.data = "Spot Cutoff:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[17], layer, text, light->spot_cutoff );
 ////
-////            text.ptr = "Linear Attenuation:";
+////            text.data = "Linear Attenuation:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[18], layer, text, light->spot_exponent );
 ////
-////            text.ptr = "Quadratic Attenuation:";
+////            text.data = "Quadratic Attenuation:";
 ////            text.width = 100;
 ////            ui->scrubber( uid[19], layer, text, light->spot_exponent );
 //        }
