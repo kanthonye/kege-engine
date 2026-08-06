@@ -153,25 +153,24 @@ namespace kege::ui{
     {
         if( _ui->gui()->isMouseDragging() )
         {
-            _ui->pushLayer(LAYER_DRAGGING_OVERLAY);
-            _ui->gui()->beginRoot();
-            _ui->put
-            ({
-                //.layer = 1,
-                .user_id = _uid_ghost[0],
-                //.wid = _ui->newElem({.wid = _ui->newElem(_ui->theme()->ghost),}),
-                .quad = {
-                    .x = static_cast<float>(_ui->gui()->getInputManager()->getMouse()->getPosition().x),
-                    .y = static_cast<float>(_ui->gui()->getInputManager()->getMouse()->getPosition().y),
-                    .width = 100,
-                    .height = 100,
-                    .color = 0xffffff20,
-                },
-                //.text = _manager->getGhostObject()->dock->_tab.list[ _manager->getGhostObject()->tab_selection ].text,
-
-            });
-            _ui->gui()->endRoot();
-            _ui->popLayer();
+//            _ui->pushLayer(LAYER_DRAGGING_OVERLAY);
+//            _ui->gui()->beginRoot();
+//            _ui->put
+//            ({
+//                //.layer = 1,
+//                .user_id = _uid_ghost[0],
+//                //.wid = _ui->newElem({.wid = _ui->newElem(_ui->theme()->ghost),}),
+//                .quad = {
+//                    .x = static_cast<float>(_ui->gui()->getInputManager()->getMouse()->getPosition().x),
+//                    .y = static_cast<float>(_ui->gui()->getInputManager()->getMouse()->getPosition().y),
+//                    .width = 100,
+//                    .height = 100,
+//                    .color = 0xffffff20,
+//                },
+//                //.text = _manager->getGhostObject()->dock->_tab.list[ _manager->getGhostObject()->tab_selection ].text,
+//            });
+//            _ui->gui()->endRoot();
+//            _ui->popLayer();
         }
 
 //        if( _manager->getGhostObject()->dragging )

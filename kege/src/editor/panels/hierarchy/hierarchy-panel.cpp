@@ -31,20 +31,6 @@ namespace kege::ui{
             }
         }
 
-        _ui->push
-        ({
-            .user_id = _user_id[0],
-            .wid = _ui->newElem({
-                .width = ui::extend(),
-                .height = ui::extend(),
-                .quad_color = 0xFFFFFF00,
-                .alignment =
-                {
-                    .direction = {ui::AlignDir::DOWN}
-                },
-            }),
-            .mouseover = true,
-        });
         //kege::ui::ID id = _uid_root[0];
         _ui->push({ .wid = _ui->newElem(_ui->theme()->hierarchy_main_bar) });
         _ui->label(ui::Text{
@@ -81,7 +67,6 @@ namespace kege::ui{
             updateSelection();
         }
         //_ui->endScrollContainer();
-        _ui->pop();
     }
 
     void HierarchyPanel::updateToolbar()
@@ -243,7 +228,6 @@ namespace kege::ui{
             _selected_nodes.push_back( node->entity_id );
         }
 
-
         if( _ui->gui()->isCastingSelectionRect( _user_id[0] ) )
         {
             _ui->gui()->trySelectByRect( node_id );
@@ -264,11 +248,28 @@ namespace kege::ui{
     void HierarchyPanel::updateTreeView( ecs::Entity entity )
     {
         kege::ECS* ecs = _manager->getECS();
+        _ui->push
+        ({
+            .user_id = _user_id[0],
+            .wid = _ui->newElem({
+                .width = ui::extend(),
+                .height = ui::extend(),
+                .quad_color = 0xFF00FF30,
+                .alignment =
+                {
+                    .direction = {ui::AlignDir::DOWN}
+                },
+            }),
+            .single_click = ui::ClickTrigger::OnRelease,
+            .double_click = ui::ClickTrigger::Immediate,
+            .mouseover = true,
+        });
         _ui->push({ .wid = _ui->newElem(_ui->theme()->column) });
         for (ecs::Entity child = ecs->begin(entity); child != 0; child = ecs->next(child))
         {
             updateTreeView(child, 0);
         }
+        _ui->pop();
         _ui->pop();
     }
 

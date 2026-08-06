@@ -420,7 +420,7 @@ namespace kege{
             // then handle getting the next hot element.
             _next.hot = getHotElem( _click_registered );
             _next.pressing = {};
-            std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
+            //std::cout <<"INDEX: "<< _next.hot.index << " : " << _next.hot.user_id <<"\n";
         }
         else if ( _left_click_state && !_click_registered )
         {
@@ -476,6 +476,52 @@ namespace kege{
 
     void GUI::updateSelectionList()
     {
+        /**
+         * The following code block is responsible for updating the selection list 
+         * based on a selection rectangle. It checks if there are any elements in 
+         * the `_marquee_hit_list_test` vector, which contains the IDs of UI elements 
+         * that needs to be tested for selection via a marquee (selection rectangle). 
+         * If there are elements in this list, it checks if the left mouse button is down and 
+         * if the selection is being updated. If so, it clears the current selection. Then, 
+         * it iterates through each element in the `_marquee_hit_list_test`, retrieves the 
+         * corresponding node, and checks if its quad overlaps with the `_marquee_rect`. 
+         * If there is an overlap and the element is not already selected, it adds the element's 
+         * user ID to the `_selected` set. Finally, it clears the `_marquee_hit_list_test` 
+         * vector to prepare for the next update cycle.
+         */
+        if ( !_marquee_hit_list_test.empty() )
+        {
+            if( leftClickDown() && _updating_selection )
+                _selected.clear();
+            for (kege::ui::NodeId node_id : _marquee_hit_list_test)
+            {
+                ui::Node* node = at(node_id);
+                if (ui::checkOverlap(node->quad, _marquee_rect))
+                {
+                    auto it = _selected.find(node->user_id);
+                    if ( it == _selected.end() )
+                    {
+                        _selected.insert( node->user_id );
+                    }
+                }
+            }
+            _marquee_hit_list_test.clear();
+        }
+
+        /**
+         * The following code block is responsible for updating the selection list based on 
+         * user input events, specifically mouse clicks. It checks if the left mouse button 
+         * is down and if the selection is not currently being updated. If both conditions 
+         * are met, it sets the `_updating_selection` flag to true. Then, it checks if there 
+         * is a hit (i.e., a UI element clicked on). If there is a hit and the element is 
+         * selectable, it checks if the element's user ID is already in the `_selected` set. 
+         * If it is not in the set, it adds it to the selection. If the Shift or Control modifier 
+         * keys are held down during the click, it allows for multi-selection by adding or 
+         * removing elements from the selection set accordingly. If there is no hit, it clears 
+         * the selection. Finally, if the left mouse button is released while updating selection, 
+         * it resets the `_updating_selection` flag to false. This logic enables both single and 
+         * multi-selection of UI elements based on user interactions.
+         */
         if( leftClickDown() && !_updating_selection )
         {
             _updating_selection = true;
@@ -535,14 +581,28 @@ namespace kege{
 
     bool GUI::isCastingSelectionRect(const kege::ui::ID& id)
     {
-        if( leftClickDown() && _drag_state == true )
+        /** 
+         * The following code block is responsible for determining if a selection rectangle 
+         * (marquee) is currently being cast (drawn) for a specific UI element identified by 
+         * its user ID. It checks if the drag state is active and if the next hot element's 
+         * user ID matches the provided ID. If both conditions are met, it checks if the 
+         * marquee is not already occupied. If it is not occupied, it sets the marquee as 
+         * occupied by the provided ID and records the starting position of the marquee based 
+         * on the current mouse position. It also sets a flag indicating that selection is 
+         * being updated. Finally, it returns whether the marquee is currently occupied by 
+         * the provided ID, allowing other parts of the code to know if a selection rectangle 
+         * is being cast for that specific UI element.
+         */
+        if( _drag_state == true && _next.hot.user_id == id.value )
         {
-            if ( _next.hot.user_id == id.value && _marquee_is_occupied.value == 0 )
+            if( _marquee_is_occupied.value == 0 )
             {
                 _marquee_is_occupied = id;
                 _marquee_start.x = _input_manager->getMouse()->getPosition().x;
                 _marquee_start.y = _input_manager->getMouse()->getPosition().y;
             }
+            _marquee_is_occupied = id;
+            _updating_selection = true;
         }
         return _marquee_is_occupied == id;
     }
@@ -550,32 +610,69 @@ namespace kege{
     void GUI::trySelectByRect( const kege::ui::NodeId& node_id )
     {
         ui::Node* node = at(node_id);
-        if ( node )
+        if ( node && _marquee_is_occupied.value != 0 )
         {
-            if (ui::checkOverlap(node->quad, _marquee_rect))
-            {
-                auto it = _selected.find(node->user_id);
-                if ( it == _selected.end() )
-                {
-                    _selected.insert( node->user_id );
-                }
-            }
+            _marquee_hit_list_test.push_back( node_id );
         }
     }
 
     void GUI::updateSelectionRect()
     {
-        if( leftClickDown() && _marquee_is_occupied.value != 0 && _drag_state == true )
+        /**
+         * The following code block is responsible for updating the selection rectangle 
+         * (marquee) based on user input events, specifically mouse dragging. It checks 
+         * if the marquee is currently occupied (i.e., a selection is being made) and if 
+         * the drag state is active. If both conditions are met, it calculates the current 
+         * position of the mouse and updates the dimensions of the selection rectangle 
+         * accordingly. The rectangle's position and size are adjusted to ensure that it 
+         * remains within the bounds of the initial marquee area. If the drag state is no 
+         * longer active but the marquee is still occupied, it resets the marquee state 
+         * and clears the selection rectangle.
+         */
+        if( _marquee_is_occupied.value != 0 && _drag_state == true )
         {
-            _marquee_rect.x = kege::min(_marquee_start.x, _input_manager->getMouse()->getPosition().x);
-            _marquee_rect.y = kege::min(_marquee_start.y, _input_manager->getMouse()->getPosition().y);
-            _marquee_rect.width = abs(_marquee_start.x - _input_manager->getMouse()->getPosition().x);
-            _marquee_rect.height = abs(_marquee_start.y - _input_manager->getMouse()->getPosition().y);
+            float x,y;
+            _marquee_bound = _nodes[ _next.hit.index ].quad;
+
+            x = kege::max<float>( _marquee_bound.x, _input_manager->getMouse()->getPosition().x );
+            y = kege::max<float>( _marquee_bound.y, _input_manager->getMouse()->getPosition().y );
+            x = kege::min<float>( _marquee_bound.x + _marquee_bound.width, x );
+            y = kege::min<float>( _marquee_bound.y + _marquee_bound.height, y );
+
+            _marquee_rect.x = kege::min<float>(_marquee_start.x, x);
+            _marquee_rect.y = kege::min<float>(_marquee_start.y, y);
+            _marquee_rect.width = abs(_marquee_start.x - x);
+            _marquee_rect.height = abs(_marquee_start.y - y);
         }
-        else if( !leftClickDown() && _marquee_is_occupied.value != 0 )
+        else if( !_drag_state && _marquee_is_occupied.value != 0 )
         {
             _marquee_is_occupied.value = 0;
             _marquee_rect = {};
+        }
+
+        /**
+         * Finally, if the marquee is occupied, it renders a visual representation 
+         * of the selection rectangle on top of other UI elements by pushing a new 
+         * layer and drawing a semi-transparent quad that represents the selection 
+         * area.
+         */
+        if (_marquee_is_occupied.value != 0)
+        {
+            pushLayer(kege::ui::LAYER_DRAGGING_OVERLAY);
+            beginRoot();
+            put
+            ({
+                .quad =
+                {
+                    .x = _marquee_rect.x,
+                    .y = _marquee_rect.y,
+                    .width = _marquee_rect.width,
+                    .height = _marquee_rect.height,
+                    .color = 0xffffff20,
+                }
+            });
+            endRoot();
+            popLayer();
         }
     }
 

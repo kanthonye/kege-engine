@@ -384,12 +384,15 @@ namespace kege{
         kege::array< kege::ui::Layout > _layouts;
         kege::array< kege::ui::Widget > _widgets;
 
+        std::vector< kege::ui::NodeId > _marquee_hit_list_test;
         std::unordered_set< kege::ui::ID > _selected;
         bool _updating_selection;
         bool _drag_state;
         kege::ui::ID _marquee_is_occupied;
+
         kege::dvec2 _marquee_start;
         kege::ui::Rect _marquee_rect;
+        kege::ui::Rect _marquee_bound;
 
         //kege::array< kege::ui::NodeId > _;
 
